@@ -63,7 +63,7 @@ let usedToggle = false
 let toggleBorders = document.getElementById('borderToggle');
 let selectedCountryLayer = L.geoJSON();
 
-let mylat, mylng, capitalMarker, timer, zoomLocationTimer, allRestCountrieslet, myBounds, newBounds,currentCountry, currentCountryPolygons, layersControl, currentisoA2, fijiUpdated, russiaUpdated, invisibleBorders, userLocationMarker,userPopup, wikiLayer, corner1, corner2, viewportBounds, userCircle
+let mylat, mylng, capitalMarker, timer, zoomLocationTimer, allRestCountrieslet, myBounds, newBounds,currentCountry, currentCountryPolygons, layersControl, currentisoA2, fijiUpdated, russiaUpdated, invisibleBorders, userLocationMarker, userPopup, wikiLayer, corner1, corner2, viewportBounds, userCircle
 
 let l1 = L.tileLayer('https://{s}.tile.thunderforest.com/mobile-atlas/{z}/{x}/{y}.png?apikey={apikey}', {
 	attribution: '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>',
@@ -662,7 +662,15 @@ function displayCountry(isoa3Code) {
 
                       newPolygons = [];
                       wikiLayer = L.layerGroup(listOfMarkers);
-                      wikiLayer.addTo(mymap);
+                      //wikiLayer.addTo(mymap);
+											
+											let wikiClusterMarkers = L.markerClusterGroup();
+
+											for (let i = 0; i < listOfMarkers.length; i++) {
+												wikiClusterMarkers.addLayer(listOfMarkers[i]);
+											}
+
+											mymap.addLayer(wikiClusterMarkers);
                       
 											if (firstLoad == false) {
 												selectedCountryLayer.addTo(mymap);
@@ -672,10 +680,12 @@ function displayCountry(isoa3Code) {
 											let overlays = {
                         "Capital": capitalMarker,
                         "Highlight": selectedCountryLayer,
-                        "Wikipedia": wikiLayer
+                        //"Wikipedia": wikiLayer,
+												"WikiCluster": wikiClusterMarkers
                       }
                       layersControl = L.control.layers(baseMaps, overlays);
                       layersControl.addTo(mymap);
+											
 											// TOAST DISPLAY
 											/*if (displayCount == 2) {
 												document.getElementById('toastie').setAttribute('class', 'toast show');
