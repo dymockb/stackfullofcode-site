@@ -153,7 +153,7 @@ L.easyButton('fa-home', function() {
         longitude
       } = position.coords;
       $.ajax({
-        url: "dist/php/openCage.php",
+        url: "libs/php/openCage.php",
         type: "POST",
         dataType: "json",
         data: {
@@ -602,7 +602,7 @@ function displayCountry(isoa3Code) {
                   //document.getElementById("viewCountryText").innerHTML = 'fetching more wikipedia data';
 									document.getElementById("loadingText").innerHTML = 'fetching more wikipedia data';
                   document.getElementById("progressBar").setAttribute('style', "width: 90%;");
-									console.log('north', bounds['_northEast'].lat, 'south', bounds['_southWest'].lat, 'east', bounds['_northEast'].lng, 'west', bounds['_southWest'].lng);
+						
                   $.ajax({
                     url: "libs/php/geonamesWikibbox.php",
                     type: "POST",
