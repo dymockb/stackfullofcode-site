@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>AJAX/PHP/CURL/JSON example</title>
+    <meta name="description" content="AJAX/PHP/CURL/JSON example">
+    <meta name="author" content="who the f is Paddy Evans">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="libs/css/styles.css" rel="Stylesheet" type="text/css" />
+  </head>
+  <body>
+    <h1>ITCS Part 4 - Task</h1>
+		<br>
+    <main>
+				<div class="wrapper">
+        <!-- </div><article class="flow"> -->
+          <figure class="callout">
+            <p>APIs from <a href="https://www.geonames.org/export/ws-overview.html" target="_blank">geonames.org</a></p>
+            <p><strong>Responsive display for mobile use.</strong></p>
+          </figure>
+					<hr>
+					<div class="outerContainer">					
+						<div class="container" id="container">
+							<div class="box">
+								<div>API Name:</div>
+								<div>
+								<a href="https://www.geonames.org/export/web-services.html#countryInfo" target="_blank" >countryInfo</a>
+								</div>
+							</div>
+							<div class="box">
+								<div>User inputs:</div>
+								<select id="selCountry">
+									<option value="GB">Great Britain</option>
+									<option value="FR">France</option>
+									<option value="DE">Germany</option>
+									<option value="US">USA</option>
+								</select>
+								<select id="selLanguage">
+									<option value="en">English</option>
+									<option value="fr">Francais</option>
+									<option value="de">Deutsche</option>
+								</select></div>
+							<div class="box">
+								<button id="btnRun">Run</button>
+							</div>
+						</div>
+						<div class="container">
+								<div class="box" id="divResults">
+									<div>
+									CountryInfo Results
+									</div>
+									<table>
+										<tr>
+											<td id="txtContinent"></td>
+										</tr>
+										<tr>
+											<td align="center" id="txtCapital"></td>
+										</tr>
+										<tr>
+											<td id="txtLanguages"></td>
+										</tr>
+										<tr>
+											<td id="txtPopulation"></td>
+										</tr>
+										<tr>
+											<td id="txtArea"></td>
+										</tr>
+									</table>	
+							</div>
+						</div>
+						<hr>
+						<div class="container" id="container2">
+							<div class="box">
+							<div>API Name:</div>
+							<a href="https://www.geonames.org/export/place-hierarchy.html#neighbours" target="_blank">neighbours</a>
+							</div>
+							<div class="box">
+							<div>User inputs:</div>
+								<select id="selCountry2">
+									<option value="GBR">Great Britain</option>
+									<option value="ESP">Spain</option>
+									<option value="DEU">Germany</option>
+									<option value="GRC">Greece</option>
+								</select>
+							</div>
+							<div class="box">
+								<button id="btn2Run">Run</button>
+							</div>
+						</div>
+						<div class="container">
+							<div class="box">
+									<div>
+									Neighbours Results
+									</div>
+									<table>
+										<tr>
+											<td id="txtContinent2"></td>
+										</tr>
+										<tr>
+											<td id="txtCapital2"></td>
+										</tr>
+										<tr>
+											<td id="txtLanguages2"></td>
+										</tr>
+										<tr>
+											<td id="txtPopulation2"></td>
+										</tr>
+										<tr>
+											<td id="txtArea2"></td>
+										</tr>
+									</table>
+							</div>
+					</div>
+						<hr>
+						<div class="container" id="container3">
+							<div class="box">
+							<div>API Name:</div>
+							<a href="https://www.geonames.org/export/web-services.html#timezone" target="_blank">timezone</a>
+							</div>
+							<div class="box">
+							<div>User inputs:</div>
+								<label for="latitude">Latitude (-90 to 90)</label>
+								<input id="latitude" type="number" name="latitude">
+								<br>
+								<label for="longitude">Longitude(-180 to 180)</label>
+								<input id="longitude" type="number" name="longitude">
+							</div>
+							<div class="box">
+								<button id="btn3Run">Run</button>
+							</div>
+						</div>
+						<div class="container">
+							<div class="box">
+									<div>
+									Timezone Results (London Lat: 51 Long: 0)
+									</div>
+									<table>
+										<tr>
+											<td id="txtTimezone"></td>
+										</tr>
+										<tr>
+											<td id="txtCurrentTime"></td>
+										</tr>
+									</table>
+							</div>
+					</div>
+ 
+				<!-- </article> -->
+      </div>
+    </main>
+    <script type="application/javascript" src="libs/js/jquery-2.2.3.min.js"></script>
+    <script type="application/javascript" src="libs/js/script.js"></script>
+  </body>
+</html>

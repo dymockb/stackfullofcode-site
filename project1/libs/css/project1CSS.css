@@ -1,0 +1,297 @@
+html {
+	font-size: 0.75rem;
+	margin: 0px
+}
+
+.col-12 {
+	padding: 0px;
+}
+
+html, body {
+	height: 100%;
+	padding: 0px;
+}
+.container-fluid {
+	padding: 0px;
+}
+.h-100 {
+	height: 100%;
+	padding: 0px;
+}
+
+.row {
+	margin: 0
+}
+#topMenu {
+	background-color: white;
+	padding-top: 0.5rem;
+	padding-bottom: 0.3rem;
+	padding-left: 2rem;
+	padding-right: 2rem
+}
+
+#viewCountryText {
+	color: #6a6a6a;
+	opacity: 1;
+	font-weight: bold
+}
+
+#viewCountryBtn {
+	height: 100%;
+	border: none;
+	text-align: left
+}
+
+#infoSym {
+	margin-left: 0.3rem;
+	margin-right: 0.3rem;
+	height: 100%;
+	width: 15%;
+	display: none
+}
+
+.fa-info-circle {
+	color: #6a6a6a;
+}
+
+#selectCountryBtn {
+	height: 100%;
+	width: 25%
+}
+
+#fetching, #progressBar {
+	position:relative;
+}
+
+.centerButtonTxt {
+	margin-left: auto;
+	margin-right: auto
+}
+
+.buttonTxt {
+	margin-right: auto;
+	padding: 0px
+}
+
+#borderToggle {
+	padding-top: 1rem;
+	margin-top: 0.5rem;
+	margin-left: auto;
+	margin-right: auto;
+	height: 1.5rem;
+	width: 2.8rem
+}
+
+#mapid {
+	z-index: 0
+}
+.form-switch {
+	padding: 0px;
+}
+.form-check-label {
+	padding-top: 0.5rem
+}
+#toggleLabel {
+	margin-left: 0.3rem;
+	padding-top: 0.4rem;
+	display: none
+}
+#borderToggle {
+	margin-left: 1rem;
+	margin-right: 0.5rem
+}
+.leaflet-touch .leaflet-bar button {
+	height: 2.7rem;
+	width: 2.7rem
+}
+span.fa.fa-home {
+	font-size: 1.6rem;
+	padding-top: 0.5rem;
+	color: #0291c3;
+}
+
+span.fa.fa-info-circle {
+    font-size: 1.8rem;
+    padding-top: 0.35rem;
+    color: #0291c3;
+}
+
+.progress {
+	background-color: white;
+}
+
+.me-auto {
+	text-align: right	
+}
+.errorCountry {
+	display: none;
+}
+#loadingText {
+	position: absolute;
+	z-index: 10;
+	top: 25%;
+	left: 10%;
+	background-color: #fcfcfc;
+	color: #026689
+}
+
+#startMap {
+	position: absolute;
+	z-index: 20;
+	top: 30%;
+	width: 33%;
+	left: 50%;
+	display: none;
+	transition: none;
+	background-color: #fcfcfc;
+	transform: translateX(-50%);
+}
+
+#loadingText {
+	position: absolute;
+	z-index: 30;
+	top: 90%;
+	width: fit-content;
+	left: 3rem;
+	transition: none;
+	background-color: #fcfcfc;
+}
+
+#startBtn {
+	width: 100%
+}
+
+.leaflet-container a.leaflet-popup-close-button {
+	top: -8px;
+	right: -8px;
+	color: black
+}
+div>h2 {
+	text-align: center
+}
+#flagIMG {
+	display: block;
+	border-color: gray;
+	border-width: 4px;
+	border-style: solid;
+	width: 80%;
+	margin-left: auto;
+	margin-right: auto;
+	padding: 1rem;
+	background: #e5e5e5;
+}
+#flagContainer {
+	background-color: white
+}
+
+#nativeName {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 0px;
+	padding: 0.5rem;
+	width: fit-content;
+}
+
+.badge {
+	font-size: 1rem;
+	display: block;
+	width: fit-content;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: 0.4rem;
+}
+
+#weatherIcon {
+	height: 40px;
+}
+
+.modal-footer {
+	border-top: none;
+}
+
+.leaflet-popup-content {
+	margin: 8px;
+}
+
+.leaflet-popup-content > a {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	width: fit-content;
+}
+
+.leaflet-popup-content-wrapper {
+	background-color: #ffffff00;
+	box-shadow: none;
+}
+
+.leaflet-popup-tip {
+	background-color: white;	
+}
+
+.userPopup, .wikiPopup {
+	background-color: white;
+	border-radius: 10px;
+}
+
+#preloader {
+position: fixed;
+top: 0;
+left: 0;
+right: 0;
+bottom: 0;
+z-index: 9999;
+overflow: hidden;
+background: #fff;
+}
+#preloader:before {
+content: "";
+position: fixed;
+top: calc(50% - 30px);
+left: calc(50% - 30px);
+border: 6px solid #f2f2f2;
+border-top: 6px solid #56829e ;
+border-radius: 50%;
+width: 60px;
+height: 60px;
+-webkit-animation: animate-preloader 1s linear infinite;
+animation: animate-preloader 1s linear infinite;
+}
+@-webkit-keyframes animate-preloader {
+0% {
+-webkit-transform: rotate(0deg);
+transform: rotate(0deg);
+}
+100% {
+-webkit-transform: rotate(360deg);
+transform: rotate(360deg);
+}
+}
+@keyframes animate-preloader {
+0% {
+-webkit-transform: rotate(0deg);
+transform: rotate(0deg);
+}
+100% {
+-webkit-transform: rotate(360deg);
+transform: rotate(360deg);
+}
+}
+
+
+@media (min-width: 450px) {
+
+html {
+		font-size: 1rem;
+	}
+	
+#toggleLabel {
+	display: block;
+	}
+	
+#toastie {
+	left: 22rem; 
+}
+
+}
