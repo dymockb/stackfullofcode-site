@@ -62,8 +62,11 @@ let toggleStatus = false
 let usedToggle = false
 let toggleBorders = document.getElementById('borderToggle');
 let selectedCountryLayer = L.geoJSON();
+let dropdownList = [];
 
-let mylat, mylng, capitalMarker, timer, zoomLocationTimer, allRestCountrieslet, myBounds, newBounds,currentCountry, currentCountryPolygons, layersControl, currentisoA2, fijiUpdated, russiaUpdated, invisibleBorders, userLocationMarker, wikiLayer, userPopup, corner1, corner2, viewportBounds, userCircle
+let mylat, mylng, capitalMarker, timer, zoomLocationTimer, allRestCountrieslet, myBounds, newBounds, currentCountry, selectedCountry, currentCountryPolygons, layersControl, currentisoA2, fijiUpdated, russiaUpdated, invisibleBorders, userLocationMarker, wikiLayer, userPopup, corner1, corner2, viewportBounds, userCircle
+
+const selectDropDown = document.getElementById("selectCountries");
 
 let l1 = L.tileLayer('https://{s}.tile.thunderforest.com/mobile-atlas/{z}/{x}/{y}.png?apikey={apikey}', {
 	attribution: '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>',
@@ -165,15 +168,24 @@ L.easyButton('fa-home', function() {
           for (let i = 0; i < countryBorders.length; i++) {
             if (countryBorders[i]["properties"].iso_a3 == result.data.results[0].components["ISO_3166-1_alpha-3"]) {
               isoa3Code = countryBorders[i]["properties"]["iso_a3"];
+							let countryName = countryBorders[i]['properties']['name'];
+							for (let icountry = 0; icountry < dropdownList.length; icountry++) {
+								if (dropdownList[icountry].includes(countryName)) {
+									selectedCountry = dropdownList[icountry];
+								}
+							}
+							//selectedCountry = 'Europe: United Kingdom';
             }
           }
           mymap.removeLayer(selectedCountryLayer);
-          mymap.removeLayer(wikiLayer);
+          //mymap.removeLayer(wikiLayer);
           mymap.removeControl(layersControl);
           if (mymap.hasLayer(invisibleBorders)) {
             document.getElementById('borderToggle').click();
           }
+					document.getElementById('selectCountries').value = selectedCountry;
           displayCountry(isoa3Code);
+					
         },
         error: function(jqXHR, textStatus, errorThrown) {
           console.log(textStatus);
@@ -221,12 +233,20 @@ function onLocationFound(e) {
   userCircle = L.circle(e.latlng, radius);
 
   let userIcon = new L.Icon({ 
-    iconUrl: 'img/marker-icon-2x-green.png',
+    iconUrl: 'img/map-pin-solid.svg',
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
     //shadowSize: [41, 41]
   });
+	
+	//let userIcon = L.ExtraMarkers.icon({
+	//	icon: 'fa-map-pin',
+	//	markerColor: 'white',
+	//	iconColor: 'blue',
+	//	shape: 'square',
+	//	prefix: 'fas'
+	//});
 
   userPopup = L.popup({
     autoClose: false,
@@ -673,10 +693,10 @@ function displayCountry(isoa3Code) {
                           } // end of polygons for loop
                         } // end of result.data.geonames loop
                       
-												
-																		
-												console.log(isoa3Code);
 												/* tomtom */
+												document.getElementById("loadingText").innerHTML = 'fetching points of interest';
+												document.getElementById("progressBar").setAttribute('style', "width: 95%;");
+
 												$.ajax({
 												url: "libs/php/tomTomPOI.php",
 												type: "POST",
@@ -688,7 +708,7 @@ function displayCountry(isoa3Code) {
 													btmR: bounds['_southWest'].lat + ',' + bounds['_northEast'].lng
 												},
 												success: function (result) {
-													console.log(result)
+													document.getElementById("loadingText").innerHTML = '';
 													
 													let listOfPOIMarkers = [];
 													//let listOfTitlesPlace = [];
@@ -717,10 +737,11 @@ function displayCountry(isoa3Code) {
 															let poiURL;
 															if (pointOfInterest.poi.url) {
 																poiURL = pointOfInterest.poi.url;
+																poiPopup.setContent('<a href=http://' + `${poiURL}` + ' target="_blank">' + `${pointOfInterest.poi.name}` + '</a>');
 															} else {
-																poiURL = "";
+																poiPopup.setContent(pointOfInterest.poi.name);		
 															}
-															poiPopup.setContent('<a href=http://' + `${poiURL}` + ' target="_blank">' + `${pointOfInterest.poi.name}` + '</a>');
+															
 															//poiPopup.setContent(pointOfInterest.poi.name);
 															
 															let poiMarker = L.ExtraMarkers.icon({
@@ -758,13 +779,15 @@ function displayCountry(isoa3Code) {
 														},
 														showCoverageOnHover: false
 													});
+													
+													
 													//let tomTomLayer = L.layerGroup(listOfPOIMarkers);
 													
 													for (let ttm = 0; ttm < listOfPOIMarkers.length; ttm++) {
 														tomTomClusterMarkers.addLayer(listOfPOIMarkers[ttm]);
 													}
 													
-													wikiLayer = L.layerGroup(listOfMarkers);
+													//wikiLayer = L.layerGroup(listOfMarkers);
 													//wikiLayer.addTo(mymap);
 													
 													let wikiClusterMarkers = L.markerClusterGroup({
@@ -788,7 +811,7 @@ function displayCountry(isoa3Code) {
 														wikiClusterMarkers.addLayer(listOfMarkers[i]);
 													}
 
-													mymap.addLayer(wikiClusterMarkers);
+													//mymap.addLayer(wikiClusterMarkers);
 													
 													if (firstLoad == false) {
 														selectedCountryLayer.addTo(mymap);
@@ -804,7 +827,7 @@ function displayCountry(isoa3Code) {
 													}
 													layersControl = L.control.layers(baseMaps, overlays);
 													layersControl.addTo(mymap);
-													
+																										
 												},
 												error: function (jqXHR, textStatus, errorThrown) {
 														// error code
@@ -1002,7 +1025,7 @@ function countryBordersFunc(response) {
 					
 					mymap.removeLayer(selectedCountryLayer);
 					mymap.removeLayer(invisibleBorders);
-					mymap.removeLayer(wikiLayer);
+					//mymap.removeLayer(wikiLayer);
 					mymap.removeControl(layersControl);
 		          
 					toggleBorders.checked = toggleBorders.checked == true ? false : true;
@@ -1056,6 +1079,7 @@ function countryBordersFunc(response) {
           let node = document.createElement("option");
           node.innerHTML = textValue;
           node.setAttribute("value", textValue);
+					dropdownList.push(textValue);
           document.getElementById("selectCountries").appendChild(node);
           // use this to manually choose user country on load
           //if (countryBorders[i]['properties'].name == "United Kingdom") {
@@ -1125,7 +1149,7 @@ $('#goToCountry').click(function(event) {
   if (completeFunction == true) {
     mymap.removeLayer(selectedCountryLayer);
     mymap.removeLayer(invisibleBorders);
-    mymap.removeLayer(wikiLayer);
+    //mymap.removeLayer(wikiLayer);
     mymap.removeControl(layersControl);
     clearTimeout(timer);
     let isoa3Code;
@@ -1139,11 +1163,9 @@ $('#goToCountry').click(function(event) {
   }
 }); // end of goToCountryBtn
 
-const selectDropDown = document.getElementById("selectCountries");
-
 selectDropDown.addEventListener("change", function (event) {
   let completeFunction = true
-  let selectedCountry = event.target.value;
+  selectedCountry = event.target.value;
 	if (selectedCountry == "") {
     //document.getElementById('goToCountry').setAttribute('data-dismiss', "stop");
     document.getElementById('selectCountryError').setAttribute('style', 'visibility: visible')
@@ -1156,7 +1178,7 @@ selectDropDown.addEventListener("change", function (event) {
   if (completeFunction == true) {
     mymap.removeLayer(selectedCountryLayer);
     mymap.removeLayer(invisibleBorders);
-    mymap.removeLayer(wikiLayer);
+    //mymap.removeLayer(wikiLayer);
     mymap.removeControl(layersControl);
     clearTimeout(timer);
     let isoa3Code;
@@ -1217,7 +1239,7 @@ $("#backToUser").click(function() {
             }
           }
           mymap.removeLayer(selectedCountryLayer);
-          mymap.removeLayer(wikiLayer);
+          //mymap.removeLayer(wikiLayer);
           mymap.removeControl(layersControl);
           mymap.removeLayer(invisibleBorders);
           displayCountry(isoa3Code);
