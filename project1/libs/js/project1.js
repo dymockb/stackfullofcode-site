@@ -259,7 +259,7 @@ function loadingTime(count) {
 function displayCountry(isoa3Code) {
 	displayCount++
 	document.getElementById('startMap').setAttribute('style', 'display: none');
-	//document.getElementById('viewCountryText').innerHTML = '';
+	document.getElementById('viewCountryText').innerHTML = 'Loading...';
 	
 	$('#viewCountryBtn').button('toggle')
   let bounds;
@@ -585,11 +585,19 @@ function displayCountry(isoa3Code) {
                       if (!placeArticle.thumbnailImg) {
                         placePopup.setContent('<a href=' + `${wikiurl}` + ' target="_blank">' + `${placeArticle.title}` + '</a>');
                       } else {
-                        let imgurl = '"' + placeArticle.thumbnailImg.toString() + '"'
+                        let imgurl = '"' + placeArticle.thumbnailImg.toString() + '"';
                         placePopup.setContent('<a href=' + `${wikiurl}` + ' target="_blank">' + `${placeArticle.title}` + '</a>');
                       }
                       													
-                      let marker = L.marker([placeArticle.lat, placeArticle.lng]).bindPopup(placePopup);
+											let wikiMarker = L.ExtraMarkers.icon({
+												icon: 'fa-wikipedia-w',
+												markerColor: 'white',
+												iconColor: 'blue',
+												shape: 'square',
+												prefix: 'fab'
+											});
+																								
+                      let marker = L.marker([placeArticle.lat, placeArticle.lng], {icon: wikiMarker}).bindPopup(placePopup);
                       for (let n = 0; n < newPolygons.length; n++) {
                         let onePolygon = L.polygon(newPolygons[n]);
                         if (onePolygon.contains(marker.getLatLng())) {
@@ -641,7 +649,16 @@ function displayCountry(isoa3Code) {
 														className: 'wikiPopup'
 													});
                           popup.setContent('<a href=' + `${wikiurl}` + ' target="_blank">' + `${article.title}` + '</a>');
-                          let marker = L.marker([article.lat, article.lng]).bindPopup(popup);
+													
+													let wikiMarker = L.ExtraMarkers.icon({
+														icon: 'fa-wikipedia-w',
+														markerColor: 'white',
+														iconColor: 'blue',
+														shape: 'square',
+														prefix: 'fab'
+													});
+													
+                          let marker = L.marker([article.lat, article.lng], {icon: wikiMarker}).bindPopup(popup);
                           for (let n = 0; n < newPolygons.length; n++) {
                             let onePolygon = L.polygon(newPolygons[n]);
                             if (onePolygon.contains(marker.getLatLng())) {
@@ -657,34 +674,106 @@ function displayCountry(isoa3Code) {
                         } // end of result.data.geonames loop
                       
 												
+																		
+												console.log(isoa3Code);
+												/* tomtom */
+												$.ajax({
+												url: "libs/php/tomTomPOI.php",
+												type: "POST",
+												dataType: "json",
+												data: {
+													isoa3	: isoa3Code,
+													lon: -119.417931,
+													topL: bounds['_northEast'].lat + ',' + bounds['_southWest'].lng,
+													btmR: bounds['_southWest'].lat + ',' + bounds['_northEast'].lng
+												},
+												success: function (result) {
+													console.log(result)
+													
+													let listOfPOIMarkers = [];
+													//let listOfTitlesPlace = [];
+													//let polygons = currentCountryPolygons;
+													//let newPolygons = []
+													//for (let p = 0; p < polygons.length; p++) {
+													//	let polygonToEdit = polygons[p][0]
+													//	let updatePolygon = [];
+													//	for (let u = 0; u < polygonToEdit.length; u++) {
+													//		let newPoint = []
+													//		newPoint.push(polygonToEdit[u][1]);
+													//		newPoint.push(polygonToEdit[u][0]);
+													//		updatePolygon.push(newPoint);
+													//	}
+													//	newPolygons.push(updatePolygon);
+													//}
+													//if (!result.data.geonames) {
+													//	document.getElementById("wikierror").innerHTML = result.data.status.message;
+													//} else {
+														for (let poi = 0; poi < result.data.results.length; poi++) {
+															let pointOfInterest = result.data.results[poi];
+															let poiPopup = L.popup({
+																//className: 'wikiPopup'
+															});
+															
+															//poiPopup.setContent('<a href=' + `${wikiurl}` + ' target="_blank">' + `${placeArticle.title}` + '</a>');
+															poiPopup.setContent(pointOfInterest.poi.name);
+															
+															let poiMarker = L.ExtraMarkers.icon({
+																icon: 'fa-clinic-medical',
+																markerColor: 'red',
+																shape: 'square',
+																prefix: 'fas '
+															});
+																												
+															let marker = L.marker([pointOfInterest.position.lat, pointOfInterest.position.lon], {icon: poiMarker}).bindPopup(poiPopup);
+															listOfPOIMarkers.push(marker);
+															
+																}
+															//} end of else
+														
+													//} end of else
+														
+													//keep at center ajax (move inside exchange when active);
+
+													newPolygons = [];
+													
+													let tomTomLayer = L.layerGroup(listOfPOIMarkers);
+													
+													wikiLayer = L.layerGroup(listOfMarkers);
+													//wikiLayer.addTo(mymap);
+													
+													let wikiClusterMarkers = L.markerClusterGroup();
+
+													for (let i = 0; i < listOfMarkers.length; i++) {
+														wikiClusterMarkers.addLayer(listOfMarkers[i]);
+													}
+
+													mymap.addLayer(wikiClusterMarkers);
+													
+													if (firstLoad == false) {
+														selectedCountryLayer.addTo(mymap);
+														capitalMarker.addTo(mymap).openPopup();
+													}
+													
+													let overlays = {
+														"Capital": capitalMarker,
+														"Highlight": selectedCountryLayer,
+														//"Wikipedia": wikiLayer,
+														"WikiCluster": wikiClusterMarkers,
+														"TomTom": tomTomLayer
+													}
+													layersControl = L.control.layers(baseMaps, overlays);
+													layersControl.addTo(mymap);
+													
+												},
+												error: function (jqXHR, textStatus, errorThrown) {
+														// error code
+														console.log('TomTom error');
+														console.log(textStatus);
+														console.log(errorThrown);
+													},
+												}); // end of TOMTOM ajax
 											
-                      //keep at center ajax (move inside exchange when active);
-
-                      newPolygons = [];
-                      wikiLayer = L.layerGroup(listOfMarkers);
-                      //wikiLayer.addTo(mymap);
-											
-											let wikiClusterMarkers = L.markerClusterGroup();
-
-											for (let i = 0; i < listOfMarkers.length; i++) {
-												wikiClusterMarkers.addLayer(listOfMarkers[i]);
-											}
-
-											mymap.addLayer(wikiClusterMarkers);
                       
-											if (firstLoad == false) {
-												selectedCountryLayer.addTo(mymap);
-												capitalMarker.addTo(mymap).openPopup();
-											}
-											
-											let overlays = {
-                        "Capital": capitalMarker,
-                        "Highlight": selectedCountryLayer,
-                        //"Wikipedia": wikiLayer,
-												"WikiCluster": wikiClusterMarkers
-                      }
-                      layersControl = L.control.layers(baseMaps, overlays);
-                      layersControl.addTo(mymap);
 											
 											// TOAST DISPLAY
 											/*if (displayCount == 2) {
@@ -699,8 +788,9 @@ function displayCountry(isoa3Code) {
                       //remove when exchange rate active
                       document.getElementById("exchangeRate").innerHTML = '1 USD = ' + "0.745335";
 
-                      } // close else
-											
+                      } // close wiki bbox else
+											                     
+								
 											/* AMADEUS
 											
 											let amadeusToken;											
@@ -717,13 +807,28 @@ function displayCountry(isoa3Code) {
                       	console.log(result);
 												amadeusToken = result.data.access_token;
 												console.log(amadeusToken);
+												console.log(
+														'box',
+														bounds['_northEast'].lat,
+														bounds['_southWest'].lat,
+														bounds['_northEast'].lng,
+														bounds['_southWest'].lng
+												)
 												
 												$.ajax({
 													url: "libs/php/amadeusRequest.php",
 													type: "GET",
 													dataType: "json",
 													data: {
-														amToken: amadeusToken
+														amToken: amadeusToken,
+														//north: bounds['_northEast'].lat,
+														//south: bounds['_southWest'].lat,
+														//east: bounds['_northEast'].lng,
+														//west: bounds['_southWest'].lng
+														north: 42.081917,
+														south: 41.934977,
+														east: 2.932138,
+														west: 2.767233
 													},
 													success: function (result) {
 														console.log(result);													
@@ -996,7 +1101,6 @@ $('#goToCountry').click(function(event) {
 const selectDropDown = document.getElementById("selectCountries");
 
 selectDropDown.addEventListener("change", function (event) {
-	console.log(event.target.value);
   let completeFunction = true
   let selectedCountry = event.target.value;
 	if (selectedCountry == "") {

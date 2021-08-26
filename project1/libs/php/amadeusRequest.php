@@ -7,7 +7,9 @@
 	$executionStartTime = microtime(true);
 
 	//$url='https://test.api.amadeus.com/v1/shopping/flight-destinations?origin=PAR&maxPrice=200';
-	$url='https://test.api.amadeus.com/v1/reference-data/locations/pois?latitude=41.397158&longitude=2.160873';
+	//$url='https://test.api.amadeus.com/v1/reference-data/locations/pois?latitude=41.397158&longitude=2.160873';
+	$url='https://test.api.amadeus.com/v1/reference-data/locations/pois/by-square?north=' . $_REQUEST['north'] . '&west=' . $_REQUEST['west'] . '&south=' . $_REQUEST['south'] . '&east=' . $_REQUEST['east'] . '&page%5Blimit%5D=10&page%5Boffset%5D=0';
+	//'https://test.api.amadeus.com/v1/reference-data/locations/pois/by-square?north=41.397158&west=2.160873&south=41.394582&east=2.177181&page%5Blimit%5D=10&page%5Boffset%5D=0';
 	
 	$ch = curl_init();
 	$authorization = 'Authorization: Bearer ' . $_REQUEST['amToken'];
