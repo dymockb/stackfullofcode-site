@@ -1,3 +1,49 @@
+.tt-marker-cluster-small {
+	background-color: #a23337;
+	}
+
+.tt-marker-cluster-small div {
+	background-color: white;
+	}
+	
+.tt-marker-cluster-medium {
+	background-color: #a23337;
+	}
+
+.tt-marker-cluster-medium div {
+	background-color: white;
+	}
+	
+.tt-marker-cluster-large {
+	background-color: #a23337;
+	}
+
+.tt-marker-cluster-large div {
+	background-color: white;
+	}
+
+.wiki-marker-cluster-small {
+	background-color: blue;
+	}
+.wiki-marker-cluster-small div {
+	background-color: white;
+	}
+
+.wiki-marker-cluster-medium {
+	background-color: blue;
+	}
+.wiki-marker-cluster-medium div {
+	background-color: white;
+	}
+
+.wiki-marker-cluster-large {
+	background-color: blue;
+	}
+.wiki-marker-cluster-large div {
+	background-color: white;
+	}
+
+
 .marker-cluster-small {
 	background-color: rgba(181, 226, 140, 0.6);
 	}

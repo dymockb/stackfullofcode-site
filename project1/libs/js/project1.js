@@ -63,7 +63,7 @@ let usedToggle = false
 let toggleBorders = document.getElementById('borderToggle');
 let selectedCountryLayer = L.geoJSON();
 
-let mylat, mylng, capitalMarker, timer, zoomLocationTimer, allRestCountrieslet, myBounds, newBounds,currentCountry, currentCountryPolygons, layersControl, currentisoA2, fijiUpdated, russiaUpdated, invisibleBorders, userLocationMarker, userPopup, wikiLayer, corner1, corner2, viewportBounds, userCircle
+let mylat, mylng, capitalMarker, timer, zoomLocationTimer, allRestCountrieslet, myBounds, newBounds,currentCountry, currentCountryPolygons, layersControl, currentisoA2, fijiUpdated, russiaUpdated, invisibleBorders, userLocationMarker, wikiLayer, userPopup, corner1, corner2, viewportBounds, userCircle
 
 let l1 = L.tileLayer('https://{s}.tile.thunderforest.com/mobile-atlas/{z}/{x}/{y}.png?apikey={apikey}', {
 	attribution: '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>',
@@ -711,11 +711,17 @@ function displayCountry(isoa3Code) {
 														for (let poi = 0; poi < result.data.results.length; poi++) {
 															let pointOfInterest = result.data.results[poi];
 															let poiPopup = L.popup({
-																//className: 'wikiPopup'
+																className: 'wikiPopup'
 															});
 															
-															//poiPopup.setContent('<a href=' + `${wikiurl}` + ' target="_blank">' + `${placeArticle.title}` + '</a>');
-															poiPopup.setContent(pointOfInterest.poi.name);
+															let poiURL;
+															if (pointOfInterest.poi.url) {
+																poiURL = pointOfInterest.poi.url;
+															} else {
+																poiURL = "";
+															}
+															poiPopup.setContent('<a href=http://' + `${poiURL}` + ' target="_blank">' + `${pointOfInterest.poi.name}` + '</a>');
+															//poiPopup.setContent(pointOfInterest.poi.name);
 															
 															let poiMarker = L.ExtraMarkers.icon({
 																icon: 'fa-clinic-medical',
@@ -736,12 +742,47 @@ function displayCountry(isoa3Code) {
 
 													newPolygons = [];
 													
-													let tomTomLayer = L.layerGroup(listOfPOIMarkers);
+													let tomTomClusterMarkers = L.markerClusterGroup({
+														iconCreateFunction: function(cluster) {
+															let childCount = cluster.getChildCount();
+															let c = ' tt-marker-cluster-';
+															if (childCount < 10) {
+																c += 'small';
+															} else if (childCount < 100) {
+																c += 'medium';
+															} else {
+																c += 'large';
+															}
+
+															return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) });
+														},
+														showCoverageOnHover: false
+													});
+													//let tomTomLayer = L.layerGroup(listOfPOIMarkers);
+													
+													for (let ttm = 0; ttm < listOfPOIMarkers.length; ttm++) {
+														tomTomClusterMarkers.addLayer(listOfPOIMarkers[ttm]);
+													}
 													
 													wikiLayer = L.layerGroup(listOfMarkers);
 													//wikiLayer.addTo(mymap);
 													
-													let wikiClusterMarkers = L.markerClusterGroup();
+													let wikiClusterMarkers = L.markerClusterGroup({
+														iconCreateFunction: function(cluster) {
+															let childCount = cluster.getChildCount();
+															let c = ' wiki-marker-cluster-';
+															if (childCount < 10) {
+																c += 'small';
+															} else if (childCount < 100) {
+																c += 'medium';
+															} else {
+																c += 'large';
+															}
+
+															return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) });
+														},
+														showCoverageOnHover: false
+													});
 
 													for (let i = 0; i < listOfMarkers.length; i++) {
 														wikiClusterMarkers.addLayer(listOfMarkers[i]);
@@ -758,8 +799,8 @@ function displayCountry(isoa3Code) {
 														"Capital": capitalMarker,
 														"Highlight": selectedCountryLayer,
 														//"Wikipedia": wikiLayer,
-														"WikiCluster": wikiClusterMarkers,
-														"TomTom": tomTomLayer
+														"Wikipedia Articles": wikiClusterMarkers,
+														"Hospitals": tomTomClusterMarkers
 													}
 													layersControl = L.control.layers(baseMaps, overlays);
 													layersControl.addTo(mymap);
