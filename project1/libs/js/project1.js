@@ -2,54 +2,6 @@
 //#sourceMappingURL=bootstrap/js/bootstrap.bundle.min.js.map
 //#sourceMappingURL=bootstrap/js/bootstrap.min.js.map
 
-window.onload = (event) => {	
-	if ($('#preloader').length) {
-		$('#preloader').delay(1000).fadeOut('slow', function () {
-		$(this).remove();
-		console.log("Window loaded");
-		});
-	};
-}
-	
-let loadingTimer;
-let loadingCount = 0
-let stopLoadingCount = false
-		
-$(document).ready(function () {
-
-function loadingpage(loadingCount) {
-	loadingTimer = setTimeout(function () {
-		loadingCount++;
-		if (loadingCount < 8) {
-			if (stopLoadingCount == false) { 
-				loadingpage(loadingCount);
-			}
-		} else {
-		document.getElementById('viewCountryText').innerHTML = 'Connection error. Please reload the page';
-		//$('#viewCountryText').fadeIn(250);
-		clearTimeout(loadingTimer);
-		}
-	}, 1000);
-}
-
-loadingpage(loadingCount);
-
-$.ajax({
-	url: "libs/php/getCountryBorders.php",
-	type: "POST",
-	dataType: "json",
-	data: {},
-	success: function (result) {
-		countryBordersFunc(result.data);
-	},
-	error: function (jqXHR, textStatus, errorThrown) {
-			console.log('country borders error');
-			console.log(textStatus);
-			console.log(errorThrown);
-		},
-	});
-});
-
 //global variables
 
 let firstLoad = true;
@@ -65,6 +17,10 @@ let selectedCountryLayer = L.geoJSON();
 let dropdownList = [];
 
 let mylat, mylng, capitalMarker, timer, zoomLocationTimer, allRestCountrieslet, myBounds, newBounds, currentCountry, selectedCountry, currentCountryPolygons, layersControl, currentisoA2, fijiUpdated, russiaUpdated, invisibleBorders, userLocationMarker, wikiLayer, userPopup,corner1, corner2, viewportBounds, userCircle
+
+let loadingTimer;
+let loadingCount = 0
+let stopLoadingCount = false
 
 const selectDropDown = document.getElementById("selectCountries");
 
@@ -84,20 +40,12 @@ let l2 = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{
 	ext: 'jpg'
 });
 
-/*
-let Stamen_TerrainLabels = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/terrain-labels/{z}/{x}/{y}{r}.{ext}', {
-	attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-	subdomains: 'abcd',
-	minZoom: 0,
-	maxZoom: 18,
-	ext: 'png'
-});
-*/
-
 let mymap = L.map("mapid", {
-  worldCopyJump: true,
-  zoomControl: false,
-  layers: [l1]
+	worldCopyJump: true,
+	zoomControl: false,
+	center: [51.505, -0.09],
+  zoom: 2,
+	layers: [l1]
 });
 
 let baseMaps = {
@@ -106,120 +54,9 @@ let baseMaps = {
 }
 
 new L.Control.Zoom({
-  position: "bottomright"
+	position: "bottomright"
 }).addTo(mymap);
 
-
-mymap.on('overlayadd', function(e) {
-  if (e.name == 'All Borders') {
-    console.log('add', e.name);
-    mymap.flyTo(mymap.getCenter(), 4);
-    if (usedToggle == false) {
-      console.log('add used toggle false')
-      toggleBorders.checked = toggleBorders.checked == true ? false : true;
-      if (mapAdviceCount == 0) {
-        document.getElementById("openMapAdvice").click();
-        mapAdviceCount++;
-      }
-    } else {
-      mymap.flyTo(mymap.getCenter(), 4);
-      console.log('add usedToggle true')
-    }
-  } else if (e.name == 'Capital') {
-    capitalMarker.openPopup();
-  }
-});
-
-mymap.on('overlayremove', function(e) {
-  if (e.name == 'All Borders') {
-    console.log('remove', e.name);
-    if (usedToggle == false) {
-      console.log('remove usedToggle false')
-      toggleBorders.checked = toggleBorders.checked == true ? false : true;
-    } else {
-      console.log('remove usedToggle true')
-    }
-  }
-});
-
-//https://github.com/CliffCloud/Leaflet.EasyButton
-L.easyButton('fa-home', function() {
-  clearTimeout(timer);
-	if (firstLoad == true) {
-		//document.getElementById('startMap').setAttribute('style', 'display: none');
-		firstLoad = false;
-	}
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      const {
-        latitude,
-        longitude
-      } = position.coords;
-      $.ajax({
-        url: "libs/php/openCage.php",
-        type: "POST",
-        dataType: "json",
-        data: {
-          lat: latitude,
-          lng: longitude,
-        },
-        success: function(result) {
-          let isoa3Code;
-          for (let i = 0; i < countryBorders.length; i++) {
-            if (countryBorders[i]["properties"].iso_a3 == result.data.results[0].components["ISO_3166-1_alpha-3"]) {
-              isoa3Code = countryBorders[i]["properties"]["iso_a3"];
-							let countryName = countryBorders[i]['properties']['name'];
-							for (let icountry = 0; icountry < dropdownList.length; icountry++) {
-								if (dropdownList[icountry].includes(countryName)) {
-									selectedCountry = dropdownList[icountry];
-								}
-							}
-							//selectedCountry = 'Europe: United Kingdom';
-            }
-          }
-          mymap.removeLayer(selectedCountryLayer);
-          //mymap.removeLayer(wikiLayer);
-          mymap.removeControl(layersControl);
-          if (mymap.hasLayer(invisibleBorders)) {
-            document.getElementById('borderToggle').click();
-          }
-					document.getElementById('selectCountries').value = selectedCountry;
-          displayCountry(isoa3Code);
-					
-        },
-        error: function(jqXHR, textStatus, errorThrown) {
-          console.log(textStatus);
-          console.log(errorThrown);
-        },
-      });
-    }, (error) => {
-      console.log(error);
-      if (error.code == error.PERMISSION_DENIED) console.log("where are you");
-      mymap.setView([0, 0], 1);
-    });
-}).addTo(mymap);
-
-L.easyButton('fa-info-circle', function() {
-	document.getElementById('infoSym').click();
-}).addTo(mymap);
-
-// https://leafletjs.com/examples/mobile/  https://stackoverflow.com/questions/10563789/how-to-locate-user-with-leaflet-locate
-
-mymap.locate({
-  setView: true,
-  maxZoom: 1
-}).on("locationfound", onLocationFound).on("locationerror", onLocationError);
-
-//Functions 
-
-// Utility functions
-function countLayers() {
-  let il = 0;
-  mymap.eachLayer(function() {
-    il += 1;
-  });
-  return (`Map has ${il} layers.`);
-}
 
 function onLocationFound(e) {
   let radius = e.accuracy;
@@ -257,11 +94,35 @@ function onLocationFound(e) {
   userLocationMarker = L.marker(e.latlng, {
       icon: userIcon
     })
-		
 	//userLocationMarker.addTo(mymap).bindPopup(userPopup)
-  //  .openPopup();
-		
-		
+  //  .openPopup();	
+	
+	userLocationMarker.addTo(mymap).bindPopup(userPopup).openPopup();
+
+	$.ajax({
+		url: "libs/php/openCage.php",
+		type: "POST",
+		dataType: "json",
+		data: {
+			lat: mylat,
+			lng: mylng,
+		},
+		success: function(result) {
+			let isoa3Code;
+			for (let i = 0; i < countryBorders.length; i++) {
+				if (countryBorders[i]["properties"].iso_a3 == result.data.results[0].components["ISO_3166-1_alpha-3"]) {
+					myBounds = countryBorders[i]["properties"].bounds;
+					isoa3Code = countryBorders[i]["properties"]["iso_a3"];
+				}
+			}
+								
+			displayCountry(isoa3Code);
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			console.log(textStatus);
+			console.log(errorThrown);
+		},
+	});
 }
 
 function onLocationError(e) {
@@ -269,13 +130,103 @@ function onLocationError(e) {
   mymap.setView([51, 0], 16);
 }
 
-function loadingTime(count) {
-  //document.getElementById("loadingTimer").innerHTML = count;
-  count++
-  loadingTimer = setTimeout(function() {
-    loadingTime(count);
-  }, 1000);
-}
+L.easyButton('fa-home', function() {
+	clearTimeout(timer);
+	if (firstLoad == true) {
+		//document.getElementById('startMap').setAttribute('style', 'display: none');
+		firstLoad = false;
+	}
+	navigator.geolocation.getCurrentPosition(
+		(position) => {
+			const {
+				latitude,
+				longitude
+			} = position.coords;
+			$.ajax({
+				url: "libs/php/openCage.php",
+				type: "POST",
+				dataType: "json",
+				data: {
+					lat: latitude,
+					lng: longitude,
+				},
+				success: function(result) {
+					let isoa3Code;
+					for (let i = 0; i < countryBorders.length; i++) {
+						if (countryBorders[i]["properties"].iso_a3 == result.data.results[0].components["ISO_3166-1_alpha-3"]) {
+							isoa3Code = countryBorders[i]["properties"]["iso_a3"];
+							let countryName = countryBorders[i]['properties']['name'];
+							for (let icountry = 0; icountry < dropdownList.length; icountry++) {
+								if (dropdownList[icountry].includes(countryName)) {
+									selectedCountry = dropdownList[icountry];
+								}
+							}
+							//selectedCountry = 'Europe: United Kingdom';
+						}
+					}
+					mymap.removeLayer(selectedCountryLayer);
+					//mymap.removeLayer(wikiLayer);
+					mymap.removeControl(layersControl);
+					if (mymap.hasLayer(invisibleBorders)) {
+						document.getElementById('borderToggle').click();
+					}
+					document.getElementById('selectCountries').value = selectedCountry;
+					displayCountry(isoa3Code);
+					
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					console.log(textStatus);
+					console.log(errorThrown);
+				},
+			});
+		}, (error) => {
+			console.log(error);
+			if (error.code == error.PERMISSION_DENIED) console.log("where are you");
+			mymap.setView([0, 0], 1);
+		});
+}).addTo(mymap);
+
+L.easyButton('fa-info-circle', function() {
+	document.getElementById('infoSym').click();
+}).addTo(mymap);
+
+window.onload = (event) => {	
+	if ($('#preloader').length) {
+		$('#preloader').delay(1000).fadeOut('slow', function () {
+		$(this).remove();
+		console.log("Window loaded");
+		});
+	};
+}	
+		
+$(document).ready(function () {
+
+$.ajax({
+	url: "libs/php/getCountryBorders.php",
+	type: "POST",
+	dataType: "json",
+	data: {},
+	success: function (result) {
+		
+		countryBordersFunc(result.data);
+	},
+	error: function (jqXHR, textStatus, errorThrown) {
+			console.log('country borders error');
+			console.log(textStatus);
+			console.log(errorThrown);
+		},
+	});
+});
+
+
+// https://leafletjs.com/examples/mobile/  https://stackoverflow.com/questions/10563789/how-to-locate-user-with-leaflet-locate
+
+//mymap.locate({
+//  setView: true,
+//  maxZoom: 1
+//}).on("locationfound", onLocationFound).on("locationerror", onLocationError);
+
+//Functions 
 
 function displayCountry(isoa3Code) {
 	displayCount++
@@ -316,18 +267,12 @@ function displayCountry(isoa3Code) {
   mySouthWest = bounds._southWest;
   fitBoundsArr = [];
 
-  let {
-    lat,
-    lng
-  } = myNorthEast;
+  let { lat, lng } = myNorthEast;
 
   fitBoundsArr.push([lat, lng]);
 
   corner1 = L.latLng(lat, lng);
-  ({
-    lat,
-    lng
-  } = mySouthWest);
+  ({ lat, lng } = mySouthWest);
 
   fitBoundsArr.push([lat, lng]);
 
@@ -337,7 +282,7 @@ function displayCountry(isoa3Code) {
 	//userLocationMarker.openPopup();
 
   mymap.flyToBounds(viewportBounds, {
-      duration: 0.15
+      duration: 3
   });
 
   //if (firstLoad == false) {
@@ -424,7 +369,7 @@ function displayCountry(isoa3Code) {
     capitalMarker.remove();
   }
 
-  loadingTime(0);
+  //loadingTime(0);
 
   document.getElementById("progressBar").setAttribute('style', 'visibility: initial');
 	//document.getElementById("viewCountryText").innerHTML = 'fetching capital city';
@@ -663,7 +608,7 @@ function displayCountry(isoa3Code) {
 													document.getElementById("progressBar").setAttribute('style', "width: 0%; visibility: hidden");
 													if (firstLoad == true ){
 															userCircle.addTo(mymap);
-															userLocationMarker.addTo(mymap).bindPopup(userPopup).openPopup();
+														  //userLocationMarker.addTo(mymap).bindPopup(userPopup).openPopup();
 															capitalMarker.addTo(mymap).openPopup();
 															selectedCountryLayer.addTo(mymap);
 															//$("#startMap").fadeIn(250);
@@ -704,7 +649,7 @@ function displayCountry(isoa3Code) {
                         } // end of result.data.geonames loop
                       
 
-												document.getElementById("loadingText").innerHTML = 'fetching points of interest';
+												document.getElementById("loadingText").innerHTML = 'fetching cities';
 												document.getElementById("progressBar").setAttribute('style', "width: 95%;");
 												
 												
@@ -757,6 +702,8 @@ function displayCountry(isoa3Code) {
 														}
 															
 															//keep at center ajax
+															
+															document.getElementById("loadingText").innerHTML = '';
 															
 															let citiesLayer = L.layerGroup(citiesMarkers);
 
@@ -1005,8 +952,8 @@ function displayCountry(isoa3Code) {
                     complete: function() {
                       //document.getElementById("loadingTimer").innerHTML = "";
                       //clearTimeout(loadingTimer);
-											clearTimeout(loadingTimer);
-											stopLoadingCount = true;
+											//clearTimeout(loadingTimer);
+											//stopLoadingCount = true;
                     }
                   }); //end of geonamesWikibbox
                 },
@@ -1036,7 +983,8 @@ function displayCountry(isoa3Code) {
       console.log(errorThrown);
     }
   }); //end of OpenCage ajax		
-} 
+
+} // end of DISPLAY COUNTRY 
 
 function countryBordersFunc(response) {
 
@@ -1145,33 +1093,13 @@ function countryBordersFunc(response) {
     }
 		
     //displayCountry(myBounds) to be  used with code above
+				
+		mymap.locate({
+			//setView: false,
+			//maxZoom: 4
+		}).on("locationfound", onLocationFound).on("locationerror", onLocationError);
     
-		// this will set the map to user location's full country on load
-
-    $.ajax({
-      url: "libs/php/openCage.php",
-      type: "POST",
-      dataType: "json",
-      data: {
-        lat: mylat,
-        lng: mylng,
-      },
-      success: function(result) {
-        let isoa3Code;
-        for (let i = 0; i < countryBorders.length; i++) {
-          if (countryBorders[i]["properties"].iso_a3 == result.data.results[0].components["ISO_3166-1_alpha-3"]) {
-            myBounds = countryBorders[i]["properties"].bounds;
-            isoa3Code = countryBorders[i]["properties"]["iso_a3"];
-          }
-        }
-									
-        displayCountry(isoa3Code);
-      },
-      error: function(jqXHR, textStatus, errorThrown) {
-        console.log(textStatus);
-        console.log(errorThrown);
-      },
-    });
+		
   },
 	error: function (jqXHR, textStatus, errorThrown) {
 			console.log('country borders error');
@@ -1311,6 +1239,15 @@ $("#backToUser").click(function() {
     });
 });
 
+
+
+$('#closeToastie').click(function (){
+	console.log('check');
+	document.getElementById('toastie').setAttribute('class', 'toast');
+});
+
+/* stuff
+
 /*
 $('#startMap').click(function (){
 	displayCount++;
@@ -1327,14 +1264,7 @@ $('#startMap').click(function (){
 	selectedCountryLayer.addTo(mymap);
 	});
 	});
-*/
 
-$('#closeToastie').click(function (){
-	console.log('check');
-	document.getElementById('toastie').setAttribute('class', 'toast');
-});
-
-/* stuff
 
 OVERPASS CITIES - needs a button to work
 $("#showCities").click(function() {
@@ -1567,6 +1497,62 @@ var redMarker = L.ExtraMarkers.icon({
 });
 
 L.marker([39.76725, -104.98202], { icon: redMarker }).addTo(mymap);
+
+// Utility functions
+function countLayers() {
+  let il = 0;
+  mymap.eachLayer(function() {
+    il += 1;
+  });
+  return (`Map has ${il} layers.`);
+}
+
+/*
+let Stamen_TerrainLabels = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/terrain-labels/{z}/{x}/{y}{r}.{ext}', {
+	attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+	subdomains: 'abcd',
+	minZoom: 0,
+	maxZoom: 18,
+	ext: 'png'
+});
+*/
+
+/*
+mymap.on('overlayadd', function(e) {
+  if (e.name == 'All Borders') {
+    console.log('add', e.name);
+    mymap.flyTo(mymap.getCenter(), 4);
+    if (usedToggle == false) {
+      console.log('add used toggle false')
+      toggleBorders.checked = toggleBorders.checked == true ? false : true;
+      if (mapAdviceCount == 0) {
+        document.getElementById("openMapAdvice").click();
+        mapAdviceCount++;
+      }
+    } else {
+      mymap.flyTo(mymap.getCenter(), 4);
+      console.log('add usedToggle true')
+    }
+  } else if (e.name == 'Capital') {
+    capitalMarker.openPopup();
+  }
+});
+
+mymap.on('overlayremove', function(e) {
+  if (e.name == 'All Borders') {
+    console.log('remove', e.name);
+    if (usedToggle == false) {
+      console.log('remove usedToggle false')
+      toggleBorders.checked = toggleBorders.checked == true ? false : true;
+    } else {
+      console.log('remove usedToggle true')
+    }
+  }
+});
+
+
+//https://github.com/CliffCloud/Leaflet.EasyButton
+
 	
 QUESTIONS:
 
