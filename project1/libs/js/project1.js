@@ -194,13 +194,15 @@ window.onload = (event) => {
 	if ($('#preloader').length) {
 		$('#preloader').delay(1000).fadeOut('slow', function () {
 		$(this).remove();
-		console.log("Window loaded");
-		});
-	};
-}	
+		console.log("Window loaded", event);
+				
+//		});
+//	};
+//}	
 		
 $(document).ready(function () {
 
+console.log('document.ready');
 $.ajax({
 	url: "libs/php/getCountryBorders.php",
 	type: "POST",
@@ -217,6 +219,10 @@ $.ajax({
 		},
 	});
 });
+
+		});
+	};
+}
 
 
 // https://leafletjs.com/examples/mobile/  https://stackoverflow.com/questions/10563789/how-to-locate-user-with-leaflet-locate
