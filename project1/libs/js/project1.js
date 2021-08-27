@@ -64,7 +64,7 @@ let toggleBorders = document.getElementById('borderToggle');
 let selectedCountryLayer = L.geoJSON();
 let dropdownList = [];
 
-let mylat, mylng, capitalMarker, timer, zoomLocationTimer, allRestCountrieslet, myBounds, newBounds, currentCountry, selectedCountry, currentCountryPolygons, layersControl, currentisoA2, fijiUpdated, russiaUpdated, invisibleBorders, userLocationMarker, wikiLayer, userPopup, corner1, corner2, viewportBounds, userCircle
+let mylat, mylng, capitalMarker, timer, zoomLocationTimer, allRestCountrieslet, myBounds, newBounds, currentCountry, selectedCountry, currentCountryPolygons, layersControl, currentisoA2, fijiUpdated, russiaUpdated, invisibleBorders, userLocationMarker, wikiLayer, userPopup,corner1, corner2, viewportBounds, userCircle
 
 const selectDropDown = document.getElementById("selectCountries");
 
@@ -237,6 +237,7 @@ function onLocationFound(e) {
     iconSize: [25, 41],
     iconAnchor: [12, 41],
     popupAnchor: [1, -34],
+		className: 'userIconStyle'
     //shadowSize: [41, 41]
   });
 	
@@ -737,7 +738,11 @@ function displayCountry(isoa3Code) {
 															let poiURL;
 															if (pointOfInterest.poi.url) {
 																poiURL = pointOfInterest.poi.url;
-																poiPopup.setContent('<a href=http://' + `${poiURL}` + ' target="_blank">' + `${pointOfInterest.poi.name}` + '</a>');
+																if (poiURL.includes('http')) {
+																	poiPopup.setContent('<a href=' + `${poiURL}` + ' target="_blank">' + `${pointOfInterest.poi.name}` + '</a>');																	
+																} else {
+																	poiPopup.setContent('<a href=http://' + `${poiURL}` + ' target="_blank">' + `${pointOfInterest.poi.name}` + '</a>');																	
+																}
 															} else {
 																poiPopup.setContent(pointOfInterest.poi.name);		
 															}

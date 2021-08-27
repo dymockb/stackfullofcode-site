@@ -161,6 +161,10 @@ span.fa.fa-info-circle {
 	width: 100%
 }
 
+.userIconStyle {
+	filter: invert(38%) sepia(31%) saturate(5987%) hue-rotate(171deg) brightness(98%) contrast(98%);
+}
+
 .leaflet-container a.leaflet-popup-close-button {
 	top: -8px;
 	right: -8px;
