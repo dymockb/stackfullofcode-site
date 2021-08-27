@@ -615,7 +615,8 @@ function displayCountry(isoa3Code) {
 												markerColor: 'white',
 												iconColor: 'blue',
 												shape: 'square',
-												prefix: 'fab'
+												prefix: 'fab',
+												shadowSize: [0, 0]
 											});
 																								
                       let marker = L.marker([placeArticle.lat, placeArticle.lng], {icon: wikiMarker}).bindPopup(placePopup);
@@ -676,7 +677,8 @@ function displayCountry(isoa3Code) {
 														markerColor: 'white',
 														iconColor: 'blue',
 														shape: 'square',
-														prefix: 'fab'
+														prefix: 'fab',
+														shadowSize: [0, 0]
 													});
 													
                           let marker = L.marker([article.lat, article.lng], {icon: wikiMarker}).bindPopup(popup);
@@ -753,7 +755,8 @@ function displayCountry(isoa3Code) {
 																icon: 'fa-clinic-medical',
 																markerColor: 'red',
 																shape: 'square',
-																prefix: 'fas '
+																prefix: 'fas',
+																shadowSize: [0, 0]
 															});
 																												
 															let marker = L.marker([pointOfInterest.position.lat, pointOfInterest.position.lon], {icon: poiMarker}).bindPopup(poiPopup);
