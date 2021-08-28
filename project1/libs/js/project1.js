@@ -16,7 +16,7 @@ let toggleBorders = document.getElementById('borderToggle');
 let selectedCountryLayer = L.geoJSON();
 let dropdownList = [];
 
-let mylat, mylng, capitalMarker, timer, zoomLocationTimer, allRestCountrieslet, myBounds, newBounds, currentCountry, selectedCountry, currentCountryPolygons, layersControl, currentisoA2, fijiUpdated, russiaUpdated, invisibleBorders, userLocationMarker, wikiLayer, userPopup,corner1, corner2, viewportBounds, userCircle
+let mylat, mylng, capitalMarker, timer, zoomLocationTimer, allRestCountrieslet, myBounds, newBounds, currentCountry, selectedCountry, currentCountryPolygons, layersControl, currentisoA2, fijiUpdated, russiaUpdated, invisibleBorders, userLocationMarker, wikiLayer, wikiClusterMarkers, citiesLayer, userPopup,corner1, corner2, viewportBounds, userCircle
 
 let loadingTimer;
 let loadingCount = 0
@@ -166,6 +166,8 @@ L.easyButton('fa-home', function() {
 					}
 					mymap.removeLayer(selectedCountryLayer);
 					//mymap.removeLayer(wikiLayer);
+					mymap.removeLayer(wikiClusterMarkers);
+					mymap.removeLayer(citiesLayer);
 					mymap.removeControl(layersControl);
 					if (mymap.hasLayer(invisibleBorders)) {
 						document.getElementById('borderToggle').click();
@@ -190,41 +192,6 @@ L.easyButton('fa-info-circle', function() {
 	document.getElementById('infoSym').click();
 }).addTo(mymap);
 
-window.onload = (event) => {	
-	if ($('#preloader').length) {
-		$('#preloader').delay(1000).fadeOut('slow', function () {
-		$(this).remove();
-		console.log("Window loaded", event);
-				
-//		});
-//	};
-//}	
-		
-$(document).ready(function () {
-
-console.log('document.ready');
-$.ajax({
-	url: "libs/php/getCountryBorders.php",
-	type: "POST",
-	dataType: "json",
-	data: {},
-	success: function (result) {
-		
-		countryBordersFunc(result.data);
-	},
-	error: function (jqXHR, textStatus, errorThrown) {
-			console.log('country borders error');
-			console.log(textStatus);
-			console.log(errorThrown);
-		},
-	});
-});
-
-		});
-	};
-}
-
-
 // https://leafletjs.com/examples/mobile/  https://stackoverflow.com/questions/10563789/how-to-locate-user-with-leaflet-locate
 
 //mymap.locate({
@@ -241,25 +208,25 @@ function displayCountry(isoa3Code) {
 	
 	$('#viewCountryBtn').button('toggle')
   let bounds;
-  for (let c = 0; c < countryBorders.length; c++) {
-    if (countryBorders[c].properties.iso_a3 == isoa3Code) {
-      bounds = countryBorders[c].properties.bounds;
-    }
-  }
-  if (!fijiUpdated) {
-    if (isoa3Code == 'FJI') {
-      bounds._southWest.lng += 360;
-      fijiUpdated = true;
-      console.log(bounds);
-    }
-  }
-  if (!russiaUpdated) {
-    if (isoa3Code == 'RUS') {
-      bounds._southWest.lng += 360;
-      russiaUpdated = true;
-      console.log(bounds);
-    }
-  }
+	for (let c = 0; c < countryBorders.length; c++) {
+		if (countryBorders[c].properties.iso_a3 == isoa3Code) {
+			bounds = countryBorders[c].properties.bounds;
+		}
+	}
+	if (!fijiUpdated) {
+		if (isoa3Code == 'FJI') {
+			bounds._southWest.lng += 360;
+			fijiUpdated = true;
+			console.log(bounds);
+		}
+	}
+	if (!russiaUpdated) {
+		if (isoa3Code == 'RUS') {
+			bounds._southWest.lng += 360;
+			russiaUpdated = true;
+			console.log(bounds);
+		}
+	}
 	
   selectedCountryLayer = L.geoJSON();
 
@@ -288,7 +255,7 @@ function displayCountry(isoa3Code) {
 	//userLocationMarker.openPopup();
 
   mymap.flyToBounds(viewportBounds, {
-      duration: 3
+      duration: 1.5
   });
 
   //if (firstLoad == false) {
@@ -296,7 +263,6 @@ function displayCountry(isoa3Code) {
   //    duration: 1.5
   //  });
   //}
-
 	
 	//else {
     //firstLoad = false;
@@ -695,27 +661,42 @@ function displayCountry(isoa3Code) {
 															
 															cityPopup.setContent(city.name);
 															
+															/*
 															let cityMarker = L.ExtraMarkers.icon({
-																//icon: 'fa-clinic-medical',
+																icon: 'fa-number',
 																markerColor: 'green',
 																shape: 'square',
 																//prefix: 'fas',
+																number: 'A',
+																//innerHTML: '<span>what is this</span>',
 																shadowSize: [0, 0]
 															});
-																												
+															*/
+
+															let cityMarker = L.divIcon({
+																className: 'cityMarkerStyle',
+																html: city.name
+															});
+															
 															let marker = L.marker([city.lat, city.lng], {icon: cityMarker}).bindPopup(cityPopup);
-															citiesMarkers.push(marker);
+												      for (let n = 0; n < newPolygons.length; n++) {
+																let onePolygon = L.polygon(newPolygons[n]);
+																if (onePolygon.contains(marker.getLatLng())) {
+																	citiesMarkers.push(marker);
+																}
+															}
+
 														}
 															
 															//keep at center ajax
 															
 															document.getElementById("loadingText").innerHTML = '';
 															
-															let citiesLayer = L.layerGroup(citiesMarkers);
+															citiesLayer = L.layerGroup(citiesMarkers);
 
 															newPolygons = [];
 																									
-															let wikiClusterMarkers = L.markerClusterGroup({
+															wikiClusterMarkers = L.markerClusterGroup({
 																iconCreateFunction: function(cluster) {
 																	let childCount = cluster.getChildCount();
 																	let c = ' wiki-marker-cluster-';
@@ -1168,6 +1149,8 @@ selectDropDown.addEventListener("change", function (event) {
     mymap.removeLayer(selectedCountryLayer);
     mymap.removeLayer(invisibleBorders);
     //mymap.removeLayer(wikiLayer);
+    mymap.removeLayer(wikiClusterMarkers);
+    mymap.removeLayer(citiesLayer);
     mymap.removeControl(layersControl);
     clearTimeout(timer);
     let isoa3Code;
@@ -1229,6 +1212,8 @@ $("#backToUser").click(function() {
           }
           mymap.removeLayer(selectedCountryLayer);
           //mymap.removeLayer(wikiLayer);
+					mymap.removeLayer(wikiClusterMarkers);
+					mymap.removeLayer(citiesLayer);
           mymap.removeControl(layersControl);
           mymap.removeLayer(invisibleBorders);
           displayCountry(isoa3Code);
@@ -1251,6 +1236,42 @@ $('#closeToastie').click(function (){
 	console.log('check');
 	document.getElementById('toastie').setAttribute('class', 'toast');
 });
+
+
+window.onload = (event) => {	
+	if ($('#preloader').length) {
+		$('#preloader').delay(1000).fadeOut('slow', function () {
+		$(this).remove();
+		console.log("Window loaded", event);
+				
+//		});
+//	};
+//}	
+		
+$(document).ready(function () {
+
+console.log('document.ready');
+$.ajax({
+	url: "libs/php/getCountryBorders.php",
+	type: "POST",
+	dataType: "json",
+	data: {},
+	success: function (result) {
+		
+		countryBordersFunc(result.data);
+	},
+	error: function (jqXHR, textStatus, errorThrown) {
+			console.log('country borders error');
+			console.log(textStatus);
+			console.log(errorThrown);
+		},
+	});
+});
+
+		});
+	};
+}
+
 
 /* stuff
 
