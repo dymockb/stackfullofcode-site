@@ -93,11 +93,11 @@ function onLocationFound(e) {
 
   userLocationMarker = L.marker(e.latlng, {
       icon: userIcon
-    })
+    }).bindPopup(userPopup);
 	//userLocationMarker.addTo(mymap).bindPopup(userPopup)
   //  .openPopup();	
 	
-	userLocationMarker.addTo(mymap).bindPopup(userPopup).openPopup();
+
 
 	$.ajax({
 		url: "libs/php/openCage.php",
@@ -392,7 +392,7 @@ function displayCountry(isoa3Code) {
 
       lat = chooseCity.geometry.lat;
       lng = chooseCity.geometry.lng;
-      let capitalPopup = L.popup({autoPan: false, autoClose: false});
+      let capitalPopup = L.popup({autoPan: false, autoClose: false, closeOnClick: false});
       let node = document.createElement("button");
       node.innerHTML = capital;
       node.setAttribute("type", "button");
@@ -401,10 +401,20 @@ function displayCountry(isoa3Code) {
       node.setAttribute("style", "font-size: 1rem");
       node.setAttribute("data-target", "#viewCountry");
       capitalPopup.setContent(node);
-      capitalMarker = L.circleMarker([lat, lng], {
-        color: 'red'
-      }).bindPopup(capitalPopup);
       
+			capitalMarkerIcon = L.divIcon({
+				className: 'capitalMarkerIcon'
+			});
+      
+			capitalMarker = L.marker([lat, lng], {
+				icon: capitalMarkerIcon
+      }).bindPopup(capitalPopup);
+			
+			
+			capitalMarker.getPopup().on('remove', function () {
+				mymap.removeLayer(capitalMarker);
+			});
+			
 			//document.getElementById("viewCountryText").innerHTML = 'fetching weather data';
 			document.getElementById("loadingText").innerHTML = 'fetching weather data';
       document.getElementById("progressBar").setAttribute('style', "width: 30%;");
@@ -579,7 +589,7 @@ function displayCountry(isoa3Code) {
                           //document.getElementById("progressBar").setAttribute('style', 'visibility: hidden');		
 													document.getElementById("progressBar").setAttribute('style', "width: 0%; visibility: hidden");
 													if (firstLoad == true ){
-															userCircle.addTo(mymap);
+															//userCircle.addTo(mymap);
 														  //userLocationMarker.addTo(mymap).bindPopup(userPopup).openPopup();
 															capitalMarker.addTo(mymap).openPopup();
 															selectedCountryLayer.addTo(mymap);
@@ -644,6 +654,7 @@ function displayCountry(isoa3Code) {
 														} else {
 														
 														let citiesMarkers = [];
+														let citiesCircles = [];
 														
 														for (let icity = 0; icity < result.data.geonames.length; icity++) {
 															let city = result.data.geonames[icity];
@@ -663,7 +674,7 @@ function displayCountry(isoa3Code) {
 															//	poiPopup.setContent(pointOfInterest.poi.name);															
 															//}
 															
-															cityPopup.setContent('Population: ' + city.population);
+															cityPopup.setContent(city.name + ' - Population: ' + city.population	);
 															
 															/*
 															let cityMarker = L.ExtraMarkers.icon({
@@ -676,6 +687,7 @@ function displayCountry(isoa3Code) {
 																shadowSize: [0, 0]
 															});
 															*/
+
 			
 															let cityMarker;
 															if (city.population < 10000) {
@@ -725,13 +737,15 @@ function displayCountry(isoa3Code) {
 																});
 															}
 															
-															
-															
+
+															let radius = city.population/100 > 20000 ? 20000 : city.population/100;
+															let cityCircle = L.circle([city.lat, city.lng], radius).bindPopup(cityPopup);
 															let marker = L.marker([city.lat, city.lng], {icon: cityMarker}).bindPopup(cityPopup);
 															for (let n = 0; n < newPolygons.length; n++) {
 																let onePolygon = L.polygon(newPolygons[n]);
 																if (onePolygon.contains(marker.getLatLng())) {
 																	citiesMarkers.push(marker);
+																	citiesCircles.push(cityCircle);
 																}
 															}
 
@@ -741,8 +755,14 @@ function displayCountry(isoa3Code) {
 															
 															document.getElementById("loadingText").innerHTML = '';
 															
+															//userLocationMarker.addTo(mymap).bindPopup(userPopup).openPopup();
+															
 															citiesLayer = L.layerGroup(citiesMarkers);
-
+															cityCirclesLayer = L.layerGroup(citiesCircles);
+															userLayer = L.layerGroup([userCircle, userLocationMarker]);
+															userLayer.addTo(mymap);
+															userLocationMarker.openPopup();
+															
 															newPolygons = [];
 																									
 															wikiClusterMarkers = L.markerClusterGroup({
@@ -774,17 +794,17 @@ function displayCountry(isoa3Code) {
 															}
 															
 															let overlays = {
+																"Your location": userLayer,
 																"Capital": capitalMarker,
 																"Highlight": selectedCountryLayer,
 																//"Wikipedia": wikiLayer,
 																"Wikipedia Articles": wikiClusterMarkers,
-																'geoCities': citiesLayer
+																'geoCities': citiesLayer,
+																'citycircles': cityCirclesLayer
 																//"Hospitals": tomTomClusterMarkers
 															}
 															layersControl = L.control.layers(baseMaps, overlays);
 															layersControl.addTo(mymap);
-															
-															console.log('viewportBounds',viewportBounds);
 															
 															} // close else
 															// END OF KEEP AT CENTRE AJAX			
@@ -1290,8 +1310,13 @@ $('#closeToastie').click(function (){
 mymap.on('overlayadd', function(e) {
   if (e.name == 'Capital') {
 	capitalMarker.openPopup();
-  }
+  };
+	if (e.name == 'Your location') {
+	userLocationMarker.openPopup();	
+	}
 });
+
+
 
 
 

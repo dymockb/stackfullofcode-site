@@ -645,4 +645,8 @@ div[class*="cityMarkerStyle"] {
 	font-size: 0.8rem !important	
 }
 
+.capitalMarkerIcon {
+	display: none
+}
+
 
