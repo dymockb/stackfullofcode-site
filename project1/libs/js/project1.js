@@ -15,8 +15,9 @@ let usedToggle = false
 let toggleBorders = document.getElementById('borderToggle');
 let selectedCountryLayer = L.geoJSON();
 let dropdownList = [];
+let cityNamesRemovedByUser = true;
 
-let mylat, mylng, capitalMarker, timer, zoomLocationTimer, allRestCountrieslet, myBounds, newBounds, currentCountry, selectedCountry, currentCountryPolygons, layersControl, currentisoA2, fijiUpdated, russiaUpdated, invisibleBorders, userLocationMarker, wikiLayer, wikiClusterMarkers, citiesLayer, userPopup,corner1, corner2, viewportBounds, userCircle
+let mylat, mylng, capitalMarker, timer, zoomLocationTimer, allRestCountrieslet, myBounds, newBounds, currentCountry, selectedCountry, currentCountryPolygons, layersControl, currentisoA2, fijiUpdated, russiaUpdated, invisibleBorders, userLocationMarker, wikiLayer, wikiClusterMarkers, citiesLayer, userPopup, corner1, corner2, viewportBounds, userCircle 
 
 let loadingTimer;
 let loadingCount = 0
@@ -828,6 +829,23 @@ function displayCountry(isoa3Code) {
 															let touristMarkers = [];
 															let shopMarkers = [];
 															
+														  let touristMarker = L.ExtraMarkers.icon({
+																icon: 'fa-map',
+																markerColor: 'pink',
+																shape: 'square',
+																prefix: 'far',
+																shadowSize: [0, 0]
+															});
+																																											
+														  let shopMarker = L.ExtraMarkers.icon({
+																icon: 'fa-shopping-bag',
+																markerColor: 'white',
+																iconColor: 'blue',
+																shape: 'square',
+																prefix: 'fas',
+																shadowSize: [0, 0]
+															});
+															
 															for (let imarker = 0; imarker < poiMarkers.length; imarker ++) {
 																let oneMarker = poiMarkers[imarker];
 																if (oneMarker.name != "") {
@@ -836,7 +854,7 @@ function displayCountry(isoa3Code) {
 																			className: 'wikiPopup'
 																		});
 																		poiPopup.setContent(oneMarker.name);
-																		let poiMarker = L.marker([oneMarker.lat, oneMarker.lng]).bindPopup(poiPopup);
+																		let poiMarker = L.marker([oneMarker.lat, oneMarker.lng], {icon: touristMarker}).bindPopup(poiPopup);
 																		//, {icon: poiMarker}).bindPopup(poiPopup);
 																		touristMarkers.push(poiMarker);	
 																	} else if (oneMarker.typeClass == 'shop') {
@@ -844,7 +862,7 @@ function displayCountry(isoa3Code) {
 																			className: 'wikiPopup'
 																		});
 																		poiPopup.setContent(oneMarker.name);
-																		let poiMarker = L.marker([oneMarker.lat, oneMarker.lng]).bindPopup(poiPopup);
+																		let poiMarker = L.marker([oneMarker.lat, oneMarker.lng], {icon: shopMarker}).bindPopup(poiPopup);
 																		//, {icon: poiMarker}).bindPopup(poiPopup);
 																		shopMarkers.push(poiMarker);
 																	}
@@ -889,6 +907,26 @@ function displayCountry(isoa3Code) {
 															}
 															layersControl = L.control.layers(baseMaps, overlays);
 															layersControl.addTo(mymap);
+															
+															let layerCheck = 0;
+															
+															mymap.on('zoomend', function() {
+																if (mymap.hasLayer(citiesLayer)) {
+																	layerCheck = 1;
+																	if (mymap.getZoom() >= 7 ) {
+																		mymap.removeLayer(citiesLayer);
+																		cityNamesRemovedByUser = false;
+																	}
+																} else {
+																	if (mymap.getZoom() <=6) {
+																		if ( cityNamesRemovedByUser == false ) {
+																			citiesLayer.addTo(mymap);
+																			cityNamesRemovedByUser = true;
+																		}
+																	}
+																}	 
+															});
+
 											
 															// END OF KEEP AT CENTRE AJAX	
 															
@@ -1401,9 +1439,6 @@ mymap.on('overlayadd', function(e) {
 	userLocationMarker.openPopup();	
 	}
 });
-
-
-
 
 
 window.onload = (event) => {	
