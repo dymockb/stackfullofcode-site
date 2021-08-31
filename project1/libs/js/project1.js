@@ -771,13 +771,26 @@ function displayCountry(isoa3Code) {
 													
 												let poiMarkers = [];
 												
-												geonamesPoiFunc(citiesMarkers.slice(0,20));
+												let slicedCitiesMarkers = [...citiesMarkers];
 												
-												function geonamesPoiFunc (citiesMarkers) {
+												function getRandom(arr, size) {
+													var copy = arr.slice(0), rand = [];
+													for (var i = 0; i < size && i < copy.length; i++) {
+														var index = Math.floor(Math.random() * copy.length);
+														rand.push(copy.splice(index, 1)[0]);
+													}
+													return rand;
+												}
+												
+												let randomMarkers = getRandom(slicedCitiesMarkers, 20);
+																								
+												geonamesPoiFunc(randomMarkers);
+												
+												function geonamesPoiFunc(markerlist) {
 													
-													if (citiesMarkers.length > 0) {
+													if (markerlist.length > 0) {
 														
-														let { lat, lng } = citiesMarkers[0].getLatLng();
+														let { lat, lng } = markerlist[0].getLatLng();
 														
 														$.ajax({
 														url: "libs/php/geonamesPOI.php",
@@ -788,7 +801,7 @@ function displayCountry(isoa3Code) {
 															poilng: lng
 														},
 														success: function (result) {
-															console.log(citiesMarkers[0]._popup._content);
+															console.log(markerlist[0]._popup._content);
 															console.log(result.data);
 															
 															if (result.data.length != 0) {
@@ -797,11 +810,11 @@ function displayCountry(isoa3Code) {
 																	poiMarkers.push(onePoi);
 																}
 															}
-															geonamesPoiFunc(citiesMarkers.slice(1))															
+															geonamesPoiFunc(markerlist.slice(1))															
 														},
 														error: function (jqXHR, textStatus, errorThrown) {
 																// error code
-																console.log('TomTom error');
+																console.log('POI error');
 																console.log(textStatus);
 																console.log(errorThrown);
 															},
@@ -861,7 +874,7 @@ function displayCountry(isoa3Code) {
 															//	selectedCountryLayer.addTo(mymap);
 															//	capitalMarker.addTo(mymap).openPopup();
 															///}
-															
+
 															let overlays = {
 																"Your location": userLayer,
 																"Capital": capitalMarker,
