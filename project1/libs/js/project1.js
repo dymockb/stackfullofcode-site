@@ -638,6 +638,10 @@ function displayCountry(isoa3Code) {
 												},
 												success: function (result) {
 														console.log(result);
+														if (result.data.status) {
+															console.log(result.data.status.message);
+															document.getElementById("loadingText").innerHTML = 'Data error please reload the page';															
+														} else {
 														
 														let citiesMarkers = [];
 														
@@ -659,7 +663,7 @@ function displayCountry(isoa3Code) {
 															//	poiPopup.setContent(pointOfInterest.poi.name);															
 															//}
 															
-															cityPopup.setContent(city.name);
+															cityPopup.setContent('Population: ' + city.population);
 															
 															/*
 															let cityMarker = L.ExtraMarkers.icon({
@@ -672,14 +676,59 @@ function displayCountry(isoa3Code) {
 																shadowSize: [0, 0]
 															});
 															*/
-
-															let cityMarker = L.divIcon({
-																className: 'cityMarkerStyle',
+			
+															let cityMarker;
+															if (city.population < 10000) {
+																cityMarker = L.divIcon({
+																className: 'cityMarkerStyle1 badge rounded-pill bg-secondary1',
 																html: city.name
-															});
+																})
+															}	else if (city.population < 100000) {
+																cityMarker = L.divIcon({
+																className: 'cityMarkerStyle2 badge rounded-pill bg-secondary2',
+																html: city.name
+																});
+															} else if (city.population < 200000) {
+																cityMarker = L.divIcon({
+																className: 'cityMarkerStyle3 badge rounded-pill bg-secondary3',
+																html: city.name
+																});
+															} else if (city.population < 500000) {
+																cityMarker = L.divIcon({
+																className: 'cityMarkerStyle4 badge rounded-pill bg-secondary4',
+																html: city.name
+																});
+															} else if (city.population < 1000000) {
+																cityMarker = L.divIcon({
+																className: 'cityMarkerStyle5 badge rounded-pill bg-secondary5',
+																html: city.name
+																});
+															} else if (city.population < 1000000) {
+																cityMarker = L.divIcon({
+																className: 'cityMarkerStyle6 badge rounded-pill bg-secondary6',
+																html: city.name
+																});
+															} else if (city.population < 5000000) {
+																cityMarker = L.divIcon({
+																className: 'cityMarkerStyle7 badge rounded-pill bg-secondary7',
+																html: city.name
+																});
+															} else if (city.population < 10000000) {
+																cityMarker = L.divIcon({
+																className: 'cityMarkerStyle8 badge rounded-pill bg-secondary8',
+																html: city.name
+																});
+															} else {
+																cityMarker = L.divIcon({
+																className: 'cityMarkerStyle badge rounded-pill bg-secondary',
+																html: city.name
+																});
+															}
+															
+															
 															
 															let marker = L.marker([city.lat, city.lng], {icon: cityMarker}).bindPopup(cityPopup);
-												      for (let n = 0; n < newPolygons.length; n++) {
+															for (let n = 0; n < newPolygons.length; n++) {
 																let onePolygon = L.polygon(newPolygons[n]);
 																if (onePolygon.contains(marker.getLatLng())) {
 																	citiesMarkers.push(marker);
@@ -737,6 +786,7 @@ function displayCountry(isoa3Code) {
 															
 															console.log('viewportBounds',viewportBounds);
 															
+															} // close else
 															// END OF KEEP AT CENTRE AJAX			
 														
 												},
@@ -1236,6 +1286,13 @@ $('#closeToastie').click(function (){
 	console.log('check');
 	document.getElementById('toastie').setAttribute('class', 'toast');
 });
+
+mymap.on('overlayadd', function(e) {
+  if (e.name == 'Capital') {
+	capitalMarker.openPopup();
+  }
+});
+
 
 
 window.onload = (event) => {	

@@ -638,9 +638,11 @@ svg.leaflet-image-layer.leaflet-interactive path {
 	margin-left: -12px;
 	border-right-color: #fff;
 	}
-	
-.cityMarkerStyle {
+
+div[class*="cityMarkerStyle"] {
 	width: max-content !important;
-	text-align: center
+	height: max-content !important;
+	font-size: 0.8rem !important	
 }
+
 

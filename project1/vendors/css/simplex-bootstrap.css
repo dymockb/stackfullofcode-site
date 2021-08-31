@@ -8481,6 +8481,42 @@ fieldset:disabled .btn {
   background-color: rgba(var(--bs-secondary-rgb), var(--bs-bg-opacity)) !important;
 }
 
+div[class*="bg-secondary"] {
+	--bs-bg-opacity: 1;
+}
+
+.bg-secondary1 {
+  background-color: grey;
+}
+
+.bg-secondary2 {
+  background-color: pink;  
+}
+
+.bg-secondary3 {
+  background-color: purple;  
+}
+
+.bg-secondary4 {
+  background-color: blue;
+}
+
+.bg-secondary5 {
+  background-color: orange;
+}
+
+.bg-secondary6 {
+  background-color: red;
+}
+
+.bg-secondary7 {
+  background-color: green;
+}
+
+.bg-secondary8 {
+  background-color: brown;
+}
+
 .bg-success {
   --bs-bg-opacity: 1;
   background-color: rgba(var(--bs-success-rgb), var(--bs-bg-opacity)) !important;
