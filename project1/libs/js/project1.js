@@ -88,6 +88,7 @@ function onLocationFound(e) {
 
   userPopup = L.popup({
     autoClose: false,
+		autoPan: false,
 		className: 'userPopup'
   }).setContent("You are within " + Math.floor(radius) + " meters from this point");
 
@@ -635,6 +636,27 @@ function displayCountry(isoa3Code) {
 												document.getElementById("progressBar").setAttribute('style', "width: 95%;");
 												
 												
+												wikiClusterMarkers = L.markerClusterGroup({
+												iconCreateFunction: function(cluster) {
+													let childCount = cluster.getChildCount();
+													let c = ' wiki-marker-cluster-';
+													if (childCount < 10) {
+														c += 'small';
+													} else if (childCount < 100) {
+														c += 'medium';
+													} else {
+														c += 'large';
+													}
+
+													return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) });
+												},
+												showCoverageOnHover: false
+											});
+
+											for (let i = 0; i < listOfMarkers.length; i++) {
+												wikiClusterMarkers.addLayer(listOfMarkers[i]);
+											}
+												
 												/* geonames cities & POI */
 												$.ajax({
 												url: "libs/php/geonamesCities.php",
@@ -648,10 +670,6 @@ function displayCountry(isoa3Code) {
 												},
 												success: function (result) {
 														console.log(result);
-														if (result.data.status) {
-															console.log(result.data.status.message);
-															document.getElementById("loadingText").innerHTML = 'Data error please reload the page';															
-														} else {
 														
 														let citiesMarkers = [];
 														let citiesCircles = [];
@@ -750,48 +768,99 @@ function displayCountry(isoa3Code) {
 															}
 
 														}
+													
+												let poiMarkers = [];
+												
+												geonamesPoiFunc(citiesMarkers.slice(0,20));
+												
+												function geonamesPoiFunc (citiesMarkers) {
+													
+													if (citiesMarkers.length > 0) {
+														
+														let { lat, lng } = citiesMarkers[0].getLatLng();
+														
+														$.ajax({
+														url: "libs/php/geonamesPOI.php",
+														type: "POST",
+														dataType: "json",
+														data: {
+															poilat: lat,
+															poilng: lng
+														},
+														success: function (result) {
+															console.log(citiesMarkers[0]._popup._content);
+															console.log(result.data);
 															
+															if (result.data.length != 0) {
+																for (let ipoi = 0; ipoi < result.data.poi.length; ipoi ++) {
+																	let onePoi = result.data.poi[ipoi];
+																	poiMarkers.push(onePoi);
+																}
+															}
+															geonamesPoiFunc(citiesMarkers.slice(1))															
+														},
+														error: function (jqXHR, textStatus, errorThrown) {
+																// error code
+																console.log('TomTom error');
+																console.log(textStatus);
+																console.log(errorThrown);
+															},
+														}); // end of geonamesPOI ajax
+																	
+													
+													} else {
+														console.log('ALL Points of Interest:');
+														console.log(poiMarkers);
+															
+															let touristMarkers = [];
+															let shopMarkers = [];
+															
+															for (let imarker = 0; imarker < poiMarkers.length; imarker ++) {
+																let oneMarker = poiMarkers[imarker];
+																if (oneMarker.name != "") {
+																	if (oneMarker.typeClass == 'tourism') {
+																		let poiPopup = L.popup({
+																			className: 'wikiPopup'
+																		});
+																		poiPopup.setContent(oneMarker.name);
+																		let poiMarker = L.marker([oneMarker.lat, oneMarker.lng]).bindPopup(poiPopup);
+																		//, {icon: poiMarker}).bindPopup(poiPopup);
+																		touristMarkers.push(poiMarker);	
+																	} else if (oneMarker.typeClass == 'shop') {
+																		let poiPopup = L.popup({
+																			className: 'wikiPopup'
+																		});
+																		poiPopup.setContent(oneMarker.name);
+																		let poiMarker = L.marker([oneMarker.lat, oneMarker.lng]).bindPopup(poiPopup);
+																		//, {icon: poiMarker}).bindPopup(poiPopup);
+																		shopMarkers.push(poiMarker);
+																	}
+																} 
+															}
 															//keep at center ajax
-															
+
 															document.getElementById("loadingText").innerHTML = '';
 															
 															//userLocationMarker.addTo(mymap).bindPopup(userPopup).openPopup();
 															
+															touristLayer = L.layerGroup(touristMarkers);
+															shopLayer = L.layerGroup(shopMarkers);
 															citiesLayer = L.layerGroup(citiesMarkers);
 															cityCirclesLayer = L.layerGroup(citiesCircles);
 															userLayer = L.layerGroup([userCircle, userLocationMarker]);
 															userLayer.addTo(mymap);
+															
 															userLocationMarker.openPopup();
+
 															
 															newPolygons = [];
 																									
-															wikiClusterMarkers = L.markerClusterGroup({
-																iconCreateFunction: function(cluster) {
-																	let childCount = cluster.getChildCount();
-																	let c = ' wiki-marker-cluster-';
-																	if (childCount < 10) {
-																		c += 'small';
-																	} else if (childCount < 100) {
-																		c += 'medium';
-																	} else {
-																		c += 'large';
-																	}
-
-																	return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) });
-																},
-																showCoverageOnHover: false
-															});
-
-															for (let i = 0; i < listOfMarkers.length; i++) {
-																wikiClusterMarkers.addLayer(listOfMarkers[i]);
-															}
-
 															//mymap.addLayer(wikiClusterMarkers);
 															
-															if (firstLoad == false) {
-																selectedCountryLayer.addTo(mymap);
-																capitalMarker.addTo(mymap).openPopup();
-															}
+															//if (firstLoad == false) {
+															//	selectedCountryLayer.addTo(mymap);
+															//	capitalMarker.addTo(mymap).openPopup();
+															///}
 															
 															let overlays = {
 																"Your location": userLayer,
@@ -800,14 +869,18 @@ function displayCountry(isoa3Code) {
 																//"Wikipedia": wikiLayer,
 																"Wikipedia Articles": wikiClusterMarkers,
 																'geoCities': citiesLayer,
-																'citycircles': cityCirclesLayer
+																'citycircles': cityCirclesLayer,
+																'tourist pois': touristLayer,
+																'shops': shopLayer
 																//"Hospitals": tomTomClusterMarkers
 															}
 															layersControl = L.control.layers(baseMaps, overlays);
 															layersControl.addTo(mymap);
+											
+															// END OF KEEP AT CENTRE AJAX	
 															
-															} // close else
-															// END OF KEEP AT CENTRE AJAX			
+													} //  close else of geonamesPoiFunc
+												} // close geonamesPoiFunc
 														
 												},
 												error: function (jqXHR, textStatus, errorThrown) {
