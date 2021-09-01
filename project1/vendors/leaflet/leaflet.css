@@ -642,7 +642,8 @@ svg.leaflet-image-layer.leaflet-interactive path {
 div[class*="cityMarkerStyle"] {
 	width: max-content !important;
 	height: max-content !important;
-	font-size: 0.8rem !important	
+	font-size: 0.8rem !important;
+	color: blue !important;	
 }
 
 .capitalMarkerIcon {

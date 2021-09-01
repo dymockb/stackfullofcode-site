@@ -8481,8 +8481,8 @@ fieldset:disabled .btn {
   background-color: rgba(var(--bs-secondary-rgb), var(--bs-bg-opacity)) !important;
 }
 
-div[class*="bg-secondary"] {
-	--bs-bg-opacity: 1;
+div[class*="bg-secondary-cm"] {
+	--bs-bg-opacity: 0;
 }
 
 .bg-secondary1 {

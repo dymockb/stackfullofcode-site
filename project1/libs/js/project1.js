@@ -709,6 +709,7 @@ function displayCountry(isoa3Code) {
 
 			
 															let cityMarker;
+															/*
 															if (city.population < 10000) {
 																cityMarker = L.divIcon({
 																className: 'cityMarkerStyle1 badge rounded-pill bg-secondary1',
@@ -750,11 +751,13 @@ function displayCountry(isoa3Code) {
 																html: city.name
 																});
 															} else {
-																cityMarker = L.divIcon({
-																className: 'cityMarkerStyle badge rounded-pill bg-secondary',
-																html: city.name
-																});
 															}
+															*/
+															cityMarker = L.divIcon({
+																className: 'cityMarkerStyle badge rounded-pill bg-secondary-cm',
+																html: city.name
+															});
+															
 															
 
 															let radius = city.population/100 > 20000 ? 20000 : city.population/100;
@@ -899,10 +902,10 @@ function displayCountry(isoa3Code) {
 																"Highlight": selectedCountryLayer,
 																//"Wikipedia": wikiLayer,
 																"Wikipedia Articles": wikiClusterMarkers,
-																'geoCities': citiesLayer,
-																'citycircles': cityCirclesLayer,
-																'tourist pois': touristLayer,
-																'shops': shopLayer
+																//'geoCities': citiesLayer,
+																'Cities': cityCirclesLayer,
+																'Tourist Spots': touristLayer,
+																'Shops': shopLayer
 																//"Hospitals": tomTomClusterMarkers
 															}
 															layersControl = L.control.layers(baseMaps, overlays);
@@ -1433,13 +1436,21 @@ $('#closeToastie').click(function (){
 
 mymap.on('overlayadd', function(e) {
   if (e.name == 'Capital') {
-	capitalMarker.openPopup();
+		capitalMarker.openPopup();
   };
 	if (e.name == 'Your location') {
-	userLocationMarker.openPopup();	
-	}
+		userLocationMarker.openPopup();	
+	};
+	if (e.name == 'Cities') {
+		citiesLayer.addTo(mymap);
+	};
 });
 
+mymap.on('overlayremove', function(e) {
+	if (e.name == 'citycircles') {
+		mymap.removeLayer(citiesLayer);	
+	};
+});
 
 window.onload = (event) => {	
 	if ($('#preloader').length) {
