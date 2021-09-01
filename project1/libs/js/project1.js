@@ -787,7 +787,40 @@ function displayCountry(isoa3Code) {
 												}
 												
 												let randomMarkers = getRandom(slicedCitiesMarkers, 20);
-																								
+												console.log(randomMarkers);
+												
+												let poiObjs = []
+												
+												for ( let irandM = 0; irandM < randomMarkers.length; irandM ++) {
+														let {lat, lng} = randomMarkers[irandM].getLatLng();
+														let poiObj = {}
+														poiObj.index = irandM
+														poiObj['lat'] = lat;
+														poiObj['lng'] = lng;
+														poiObjs.push(poiObj);
+												}
+												
+												console.log('jsprint ',poiObjs);
+												
+												$.ajax({
+													url: "libs/php/echo.php",
+													type: "POST",
+													dataType: "json",
+													data: {
+														poiData: poiObjs
+													},
+													success: function (result) {
+														console.log('phpprint', result)
+													},
+													error: function (jqXHR, textStatus, errorThrown) {
+															// error code
+															console.log('POI error');
+															console.log(textStatus);
+															console.log(errorThrown);
+														},
+													}); // end of geonamesPOI ajax
+												/*
+												
 												geonamesPoiFunc(randomMarkers);
 												
 												function geonamesPoiFunc(markerlist) {
@@ -871,14 +904,18 @@ function displayCountry(isoa3Code) {
 																	}
 																} 
 															}
+														} //  close else of geonamesPoiFunc
+												} // close geonamesPoiFunc
+												
+												*/
 															//keep at center ajax
 
 															document.getElementById("loadingText").innerHTML = '';
 															
 															//userLocationMarker.addTo(mymap).bindPopup(userPopup).openPopup();
 															
-															touristLayer = L.layerGroup(touristMarkers);
-															shopLayer = L.layerGroup(shopMarkers);
+															//touristLayer = L.layerGroup(touristMarkers);
+															//shopLayer = L.layerGroup(shopMarkers);
 															citiesLayer = L.layerGroup(citiesMarkers);
 															cityCirclesLayer = L.layerGroup(citiesCircles);
 															userLayer = L.layerGroup([userCircle, userLocationMarker]);
@@ -904,8 +941,8 @@ function displayCountry(isoa3Code) {
 																"Wikipedia Articles": wikiClusterMarkers,
 																//'geoCities': citiesLayer,
 																'Cities': cityCirclesLayer,
-																'Tourist Spots': touristLayer,
-																'Shops': shopLayer
+																//'Tourist Spots': touristLayer,
+																//'Shops': shopLayer
 																//"Hospitals": tomTomClusterMarkers
 															}
 															layersControl = L.control.layers(baseMaps, overlays);
@@ -933,8 +970,8 @@ function displayCountry(isoa3Code) {
 											
 															// END OF KEEP AT CENTRE AJAX	
 															
-													} //  close else of geonamesPoiFunc
-												} // close geonamesPoiFunc
+													
+												
 														
 												},
 												error: function (jqXHR, textStatus, errorThrown) {
@@ -1442,7 +1479,9 @@ mymap.on('overlayadd', function(e) {
 		userLocationMarker.openPopup();	
 	};
 	if (e.name == 'Cities') {
+		if (mymap.getZoom() <= 6){
 		citiesLayer.addTo(mymap);
+		}
 	};
 });
 
@@ -1450,6 +1489,9 @@ mymap.on('overlayremove', function(e) {
 	if (e.name == 'citycircles') {
 		mymap.removeLayer(citiesLayer);	
 	};
+	if (e.name == 'Cities') {
+		mymap.removeLayer(citiesLayer);
+	}
 });
 
 window.onload = (event) => {	
