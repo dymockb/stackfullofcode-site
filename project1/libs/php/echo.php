@@ -16,7 +16,7 @@
 		
 		$lat = $citiesCoords[$x]['lat'];
 		$lng = $citiesCoords[$x]['lng'];
-		$url='http://api.geonames.org/findNearbyPOIsOSMJSON?lat=' . $lat . '&lng=' . $lng . '&username=dymockb';
+		$url='http://api.geonames.org/findNearbyPOIsOSMJSON?lat=' . $lat . '&lng=' . $lng . '&username=dymockb&maxRows=40';
 	
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);

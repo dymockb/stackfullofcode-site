@@ -42,6 +42,71 @@
 .wiki-marker-cluster-large div {
 	background-color: white;
 	}
+	
+.amenity-marker-cluster-small {
+	background-color: orange;
+	}
+.amenity-marker-cluster-small div {
+	background-color: white;
+	}
+
+.amenity-marker-cluster-medium {
+	background-color: orange;
+	}
+.amenity-marker-cluster-medium div {
+	background-color: white;
+	}
+
+.amenity-marker-cluster-large {
+	background-color: orange;
+	}
+.amenity-marker-cluster-large div {
+	background-color: white;
+	}
+	
+
+.tourist-marker-cluster-small {
+	background-color: purple;
+	}
+.tourist-marker-cluster-small div {
+	background-color: white;
+	}
+
+.tourist-marker-cluster-medium {
+	background-color: purple;
+	}
+.tourist-marker-cluster-medium div {
+	background-color: white;
+	}
+
+.tourist-marker-cluster-large {
+	background-color: purple;
+	}
+.tourist-marker-cluster-large div {
+	background-color: white;
+	}
+	
+	
+.shop-marker-cluster-small {
+	background-color: green;
+	}
+.shop-marker-cluster-small div {
+	background-color: white;
+	}
+
+.shop-marker-cluster-medium {
+	background-color: green;
+	}
+.shop-marker-cluster-medium div {
+	background-color: white;
+	}
+
+.shop-marker-cluster-large {
+	background-color: green;
+	}
+.shop-marker-cluster-large div {
+	background-color: white;
+	}
 
 
 .marker-cluster-small {

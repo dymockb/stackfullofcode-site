@@ -17,7 +17,7 @@ let selectedCountryLayer = L.geoJSON();
 let dropdownList = [];
 let cityNamesRemovedByUser = true;
 
-let mylat, mylng, capitalMarker, timer, zoomLocationTimer, allRestCountrieslet, myBounds, newBounds, currentCountry, selectedCountry, currentCountryPolygons, layersControl, currentisoA2, fijiUpdated, russiaUpdated, invisibleBorders, userLocationMarker, wikiLayer, wikiClusterMarkers, citiesLayer, userPopup, corner1, corner2, viewportBounds, userCircle 
+let mylat, mylng, capitalMarker, timer, zoomLocationTimer, allRestCountrieslet, myBounds, newBounds, currentCountry, selectedCountry, currentCountryPolygons, layersControl, currentisoA2, fijiUpdated, russiaUpdated, invisibleBorders, userLocationMarker, wikiLayer, wikiClusterMarkers, citiesLayer, cityCirclesLayer, touristLayer, shopLayer, amenityClusterMarkers, userPopup, corner1, corner2, viewportBounds, userCircle 
 
 let loadingTimer;
 let loadingCount = 0
@@ -167,9 +167,14 @@ L.easyButton('fa-home', function() {
 						}
 					}
 					mymap.removeLayer(selectedCountryLayer);
+					mymap.removeLayer(invisibleBorders);
 					//mymap.removeLayer(wikiLayer);
 					mymap.removeLayer(wikiClusterMarkers);
 					mymap.removeLayer(citiesLayer);
+					mymap.removeLayer(cityCirclesLayer);
+					mymap.removeLayer(touristLayer);
+					mymap.removeLayer(shopLayer);
+					mymap.removeLayer(amenityClusterMarkers);
 					mymap.removeControl(layersControl);
 					if (mymap.hasLayer(invisibleBorders)) {
 						document.getElementById('borderToggle').click();
@@ -765,27 +770,21 @@ function displayCountry(isoa3Code) {
 												function getRandom(arr, size) {
 													console.log('size', size);
 													let copy = arr.slice(0), rand = [];
-													for (let i = 0; i < size && i < copy.length; i++) {
+													//for (let i = 0; i < size && i < copy.length; i++) {
+													for (let i = 0; i < size; i++) {
 														let index = Math.floor(Math.random() * copy.length);
 														rand.push(copy.splice(index, 1)[0]);
-														console.log('size loop', size);
-														console.log('copy length', copy.length);
 													}
-													console.log('rand', rand);
 													return rand;
 												}
 												
 												let maxCities = slicedCitiesMarkers.length < 20 ? slicedCitiesMarkers.length : 20;
-												
-												console.log('maxCities', maxCities);
 												
 												let randomMarkers;
 												
 												if (maxCities < 20) {
 													randomMarkers = slicedCitiesMarkers;
 												} else {
-													console.log('else maxcities', maxCities);
-													console.log('sliced len', slicedCitiesMarkers.length);
 													randomMarkers = getRandom(slicedCitiesMarkers, maxCities);
 												}
 												console.log('cities sent to PHP',randomMarkers);
@@ -812,6 +811,7 @@ function displayCountry(isoa3Code) {
 														poiData: poiObjs
 													},
 													success: function (result) {
+														console.log(result);
 														
 														let allPois = []
 														
@@ -844,7 +844,7 @@ function displayCountry(isoa3Code) {
 														let shopMarker = L.ExtraMarkers.icon({
 															icon: 'fa-shopping-bag',
 															markerColor: 'white',
-															iconColor: 'blue',
+															iconColor: 'green',
 															shape: 'square',
 															prefix: 'fas',
 															shadowSize: [0, 0]
@@ -881,7 +881,18 @@ function displayCountry(isoa3Code) {
 																	let poiMarker = L.marker([oneMarker.lat, oneMarker.lng], {icon: shopMarker}).bindPopup(poiPopup);
 																	//, {icon: poiMarker}).bindPopup(poiPopup);
 																	shopMarkers.push(poiMarker);
-																} 
+																} else if (oneMarker.typeClass == 'amenity'){
+																		let poiPopup = L.popup({
+																			className: 'wikiPopup'
+																		});
+																		poiPopup.setContent(oneMarker.typeName);
+																		let poiMarker = L.marker([oneMarker.lat, oneMarker.lng], {icon: amenityMarker}).bindPopup(poiPopup);
+																		//, {icon: poiMarker}).bindPopup(poiPopup);
+																		amenityMarkers.push(poiMarker);
+																		if (!amenityTypes.includes(oneMarker.typeName)) {
+																			amenityTypes.push(oneMarker.typeName);
+																		}																	
+																}
 															} else {
 																	if (oneMarker.typeClass == 'amenity'){
 																		let poiPopup = L.popup({
@@ -901,7 +912,7 @@ function displayCountry(isoa3Code) {
 														amenityClusterMarkers = L.markerClusterGroup({
 														iconCreateFunction: function(cluster) {
 															let childCount = cluster.getChildCount();
-															let c = ' wiki-marker-cluster-';
+															let c = ' amenity-marker-cluster-';
 															if (childCount < 10) {
 																c += 'small';
 															} else if (childCount < 100) {
@@ -918,8 +929,51 @@ function displayCountry(isoa3Code) {
 														for (let i = 0; i < amenityMarkers.length; i++) {
 															amenityClusterMarkers.addLayer(amenityMarkers[i]);
 														}
+														
 														console.log('amenityTypes', amenityTypes);
 														console.log('poiTypes ', poiTypes);
+
+														touristClusterMarkers = L.markerClusterGroup({
+														iconCreateFunction: function(cluster) {
+															let childCount = cluster.getChildCount();
+															let c = ' tourist-marker-cluster-';
+															if (childCount < 10) {
+																c += 'small';
+															} else if (childCount < 100) {
+																c += 'medium';
+															} else {
+																c += 'large';
+															}
+
+															return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) });
+														},
+														showCoverageOnHover: false
+														});
+														
+														for (let i = 0; i < touristMarkers.length; i++) {
+															touristClusterMarkers.addLayer(touristMarkers[i]);
+														}
+
+														shopClusterMarkers = L.markerClusterGroup({
+														iconCreateFunction: function(cluster) {
+															let childCount = cluster.getChildCount();
+															let c = ' shop-marker-cluster-';
+															if (childCount < 10) {
+																c += 'small';
+															} else if (childCount < 100) {
+																c += 'medium';
+															} else {
+																c += 'large';
+															}
+
+															return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) });
+														},
+														showCoverageOnHover: false
+														});
+														
+														for (let i = 0; i < shopMarkers.length; i++) {
+															shopClusterMarkers.addLayer(shopMarkers[i]);
+														}
 														//keep at center ajax
 
 
@@ -932,10 +986,10 @@ function displayCountry(isoa3Code) {
 														if (firstLoad == true ){
 																//userCircle.addTo(mymap);
 																//userLocationMarker.addTo(mymap).bindPopup(userPopup).openPopup();
-																capitalMarker.addTo(mymap).openPopup();
-																selectedCountryLayer.addTo(mymap);
+																//capitalMarker.addTo(mymap).openPopup();
+																//selectedCountryLayer.addTo(mymap);
 																//$("#startMap").fadeIn(250);
-																firstLoad = false;
+																//firstLoad = false;
 														}
 														clearTimeout(progressTimer);
 														}, 1500);
@@ -958,8 +1012,8 @@ function displayCountry(isoa3Code) {
 															//mymap.addLayer(wikiClusterMarkers);
 															
 															//if (firstLoad == false) {
-															//	selectedCountryLayer.addTo(mymap);
-															//	capitalMarker.addTo(mymap).openPopup();
+															selectedCountryLayer.addTo(mymap);
+															capitalMarker.addTo(mymap).openPopup();
 															///}
 
 															let overlays = {
@@ -970,8 +1024,8 @@ function displayCountry(isoa3Code) {
 																"Wikipedia Articles": wikiClusterMarkers,
 																//'geoCities': citiesLayer,
 																'Cities': cityCirclesLayer,
-																'Tourist Spots': touristLayer,
-																'Shops': shopLayer,
+																'Tourist Spots': touristClusterMarkers,
+																'Shops': shopClusterMarkers,
 																'Amenities': amenityClusterMarkers
 																//"Hospitals": tomTomClusterMarkers
 															}
@@ -1511,6 +1565,10 @@ selectDropDown.addEventListener("change", function (event) {
     //mymap.removeLayer(wikiLayer);
     mymap.removeLayer(wikiClusterMarkers);
     mymap.removeLayer(citiesLayer);
+    mymap.removeLayer(cityCirclesLayer);
+    mymap.removeLayer(touristLayer);
+    mymap.removeLayer(shopLayer);
+		mymap.removeLayer(amenityClusterMarkers);
     mymap.removeControl(layersControl);
     clearTimeout(timer);
     let isoa3Code;
