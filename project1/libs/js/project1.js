@@ -17,7 +17,7 @@ let selectedCountryLayer = L.geoJSON();
 let dropdownList = [];
 let cityNamesRemovedByUser = true;
 
-let mylat, mylng, capitalMarker, timer, zoomLocationTimer, allRestCountrieslet, myBounds, newBounds, currentCountry, selectedCountry, currentCountryPolygons, layersControl, currentisoA2, fijiUpdated, russiaUpdated, invisibleBorders, userLocationMarker, wikiLayer, wikiClusterMarkers, citiesLayer, cityCirclesLayer, touristLayer, shopLayer, amenityClusterMarkers, userPopup, corner1, corner2, viewportBounds, userCircle 
+let baseLayerName, mylat, mylng, capitalMarker, timer, zoomLocationTimer, allRestCountrieslet, myBounds, newBounds, currentCountry, selectedCountry, currentCountryPolygons, layersControl, currentisoA2, fijiUpdated, russiaUpdated, invisibleBorders, userLocationMarker, wikiLayer, wikiClusterMarkers, citiesLayer, cityCirclesLayer, touristLayer, shopLayer, amenityClusterMarkers, userPopup, corner1, corner2, viewportBounds, userCircle 
 
 let loadingTimer;
 let loadingCount = 0
@@ -68,7 +68,7 @@ function onLocationFound(e) {
   mylat = lat;
   mylng = lng;
 
-  userCircle = L.circle(e.latlng, radius);
+  userCircle = L.circle(e.latlng, radius, {color: '#b30a08'});
 
   let userIcon = new L.Icon({ 
     iconUrl: 'img/map-pin-solid.svg',
@@ -1038,15 +1038,17 @@ function displayCountry(isoa3Code) {
 																if (mymap.hasLayer(citiesLayer)) {
 																	layerCheck = 1;
 																	if (mymap.getZoom() >= 7 ) {
+																		if (baseLayerName != 'Watercolour') {
 																		mymap.removeLayer(citiesLayer);
 																		cityNamesRemovedByUser = false;
+																		}
 																	}
 																} else {
 																	if (mymap.getZoom() <=6) {
-																		if ( cityNamesRemovedByUser == false ) {
+																		//if ( cityNamesRemovedByUser == false ) {
 																			citiesLayer.addTo(mymap);
 																			cityNamesRemovedByUser = true;
-																		}
+																		//}
 																	}
 																}	 
 															});
@@ -1673,8 +1675,27 @@ mymap.on('overlayremove', function(e) {
 	if (e.name == 'citycircles') {
 		mymap.removeLayer(citiesLayer);	
 	};
-	if (e.name == 'Cities') {
-		mymap.removeLayer(citiesLayer);
+		if (e.name == 'Cities') {
+			mymap.removeLayer(citiesLayer);	
+	}
+});
+
+mymap.on('baselayerchange', function(e) {
+  console.log('base layer changed to ' + e.name);
+	baseLayerName = e.name;
+	if (e.name == 'Atlas') {
+		if (mymap.hasLayer(citiesLayer)) {
+			if (mymap.getZoom() >= 7) {
+				mymap.removeLayer(citiesLayer);
+			}
+		}
+	};
+	if (e.name == 'Watercolour') {
+		if (!mymap.hasLayer(citiesLayer)) {
+			if (mymap.getZoom() >= 7) {
+				citiesLayer.addTo(mymap);
+			}
+		}
 	}
 });
 

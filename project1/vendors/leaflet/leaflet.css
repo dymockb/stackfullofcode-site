@@ -643,7 +643,7 @@ div[class*="cityMarkerStyle"] {
 	width: max-content !important;
 	height: max-content !important;
 	font-size: 0.8rem !important;
-	color: blue !important;	
+	color: #505050 !important;	
 }
 
 .capitalMarkerIcon {
