@@ -763,21 +763,29 @@ function displayCountry(isoa3Code) {
 												let slicedCitiesMarkers = [...citiesMarkers];
 												
 												function getRandom(arr, size) {
-													var copy = arr.slice(0), rand = [];
-													for (var i = 0; i < size && i < copy.length; i++) {
-														var index = Math.floor(Math.random() * copy.length);
+													console.log('size', size);
+													let copy = arr.slice(0), rand = [];
+													for (let i = 0; i < size && i < copy.length; i++) {
+														let index = Math.floor(Math.random() * copy.length);
 														rand.push(copy.splice(index, 1)[0]);
+														console.log('size loop', size);
+														console.log('copy length', copy.length);
 													}
+													console.log('rand', rand);
 													return rand;
 												}
 												
 												let maxCities = slicedCitiesMarkers.length < 20 ? slicedCitiesMarkers.length : 20;
+												
+												console.log('maxCities', maxCities);
 												
 												let randomMarkers;
 												
 												if (maxCities < 20) {
 													randomMarkers = slicedCitiesMarkers;
 												} else {
+													console.log('else maxcities', maxCities);
+													console.log('sliced len', slicedCitiesMarkers.length);
 													randomMarkers = getRandom(slicedCitiesMarkers, maxCities);
 												}
 												console.log('cities sent to PHP',randomMarkers);
@@ -817,12 +825,13 @@ function displayCountry(isoa3Code) {
 															}
 														}
 														
-														console.log(allPois)
+														console.log('allPois ', allPois)
 														
 														let touristMarkers = [];
 														let shopMarkers = [];
 														let amenityMarkers = [];
 														let amenityTypes = [];
+														let poiTypes = []
 														
 														let touristMarker = L.ExtraMarkers.icon({
 															icon: 'fa-map',
@@ -841,8 +850,20 @@ function displayCountry(isoa3Code) {
 															shadowSize: [0, 0]
 														});
 														
+														let amenityMarker = L.ExtraMarkers.icon({
+															icon: 'fa-star',
+															markerColor: 'orange',
+															iconColor: 'black',
+															shape: 'star',
+															prefix: 'fas',
+															shadowSize: [0, 0]
+														});
+														
 														for (let imarker = 0; imarker < allPois.length; imarker ++) {
 															let oneMarker = allPois[imarker];
+															if (!poiTypes.includes(oneMarker.typeClass)) {
+																poiTypes.push(oneMarker.typeClass);
+															};
 															if (oneMarker.name != "") {
 																if (oneMarker.typeClass == 'tourism') {
 																	let poiPopup = L.popup({
@@ -851,7 +872,7 @@ function displayCountry(isoa3Code) {
 																	poiPopup.setContent(oneMarker.name);
 																	let poiMarker = L.marker([oneMarker.lat, oneMarker.lng], {icon: touristMarker}).bindPopup(poiPopup);
 																	//, {icon: poiMarker}).bindPopup(poiPopup);
-																	touristMarkers.push(poiMarker);
+																	touristMarkers.push(poiMarker);																		
 																} else if (oneMarker.typeClass == 'shop') {
 																	let poiPopup = L.popup({
 																		className: 'wikiPopup'
@@ -860,23 +881,47 @@ function displayCountry(isoa3Code) {
 																	let poiMarker = L.marker([oneMarker.lat, oneMarker.lng], {icon: shopMarker}).bindPopup(poiPopup);
 																	//, {icon: poiMarker}).bindPopup(poiPopup);
 																	shopMarkers.push(poiMarker);
-																} else if (oneMarker.typeClass == 'amenity'){
-																	let poiPopup = L.popup({
-																		className: 'wikiPopup'
-																	});
-																	poiPopup.setContent(oneMarker.typeName);
-																	let poiMarker = L.marker([oneMarker.lat, oneMarker.lng]).bindPopup(poiPopup);
-																	//, {icon: poiMarker}).bindPopup(poiPopup);
-																	amenityMarkers.push(poiMarker);
-																	if (!amenityTypes.includes(oneMarker.typeName)) {
-																		amenityTypes.push(oneMarker.typeName);
-																	}																	
+																} 
+															} else {
+																	if (oneMarker.typeClass == 'amenity'){
+																		let poiPopup = L.popup({
+																			className: 'wikiPopup'
+																		});
+																		poiPopup.setContent(oneMarker.typeName);
+																		let poiMarker = L.marker([oneMarker.lat, oneMarker.lng], {icon: amenityMarker}).bindPopup(poiPopup);
+																		//, {icon: poiMarker}).bindPopup(poiPopup);
+																		amenityMarkers.push(poiMarker);
+																		if (!amenityTypes.includes(oneMarker.typeName)) {
+																			amenityTypes.push(oneMarker.typeName);
+																		}																	
 																}
-															} 
+															}
 														}
 														
+														amenityClusterMarkers = L.markerClusterGroup({
+														iconCreateFunction: function(cluster) {
+															let childCount = cluster.getChildCount();
+															let c = ' wiki-marker-cluster-';
+															if (childCount < 10) {
+																c += 'small';
+															} else if (childCount < 100) {
+																c += 'medium';
+															} else {
+																c += 'large';
+															}
+
+															return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) });
+														},
+														showCoverageOnHover: false
+														});
+														
+														for (let i = 0; i < amenityMarkers.length; i++) {
+															amenityClusterMarkers.addLayer(amenityMarkers[i]);
+														}
+														console.log('amenityTypes', amenityTypes);
+														console.log('poiTypes ', poiTypes);
 														//keep at center ajax
-														console.log(amenityTypes);
+
 
 														document.getElementById("loadingText").innerHTML = '';
 														document.getElementById("progressBar").setAttribute('style', "width: 100%;");
@@ -927,7 +972,7 @@ function displayCountry(isoa3Code) {
 																'Cities': cityCirclesLayer,
 																'Tourist Spots': touristLayer,
 																'Shops': shopLayer,
-																'Amenities': amenityLayer
+																'Amenities': amenityClusterMarkers
 																//"Hospitals": tomTomClusterMarkers
 															}
 															layersControl = L.control.layers(baseMaps, overlays);
