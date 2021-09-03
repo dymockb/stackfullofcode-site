@@ -16,8 +16,9 @@ let toggleBorders = document.getElementById('borderToggle');
 let selectedCountryLayer = L.geoJSON();
 let dropdownList = [];
 let cityNamesRemovedByUser = true;
+let userFound = true;
 
-let baseLayerName, mylat, mylng, capitalMarker, timer, zoomLocationTimer, allRestCountrieslet, myBounds, newBounds, currentCountry, selectedCountry, currentCountryPolygons, layersControl, currentisoA2, fijiUpdated, russiaUpdated, invisibleBorders, userLocationMarker, wikiLayer, wikiClusterMarkers, citiesLayer, cityCirclesLayer, touristLayer, shopLayer, amenityClusterMarkers, userPopup, corner1, corner2, viewportBounds, userCircle 
+let baseLayerName, mylat, mylng, capitalMarker, timer, zoomLocationTimer, allRestCountrieslet, myBounds, newBounds, currentCountry, selectedCountry, currentCountryPolygons, layersControl, currentisoA2, fijiUpdated, russiaUpdated, invisibleBorders, userLocationMarker, wikiLayer, wikiClusterMarkers, citiesLayer, cityCirclesLayer, touristLayer, shopLayer, amenityClusterMarkers, userPopup, corner1, corner2, viewportBounds, userCircle  
 
 let loadingTimer;
 let loadingCount = 0
@@ -128,8 +129,17 @@ function onLocationFound(e) {
 }
 
 function onLocationError(e) {
+	userFound = false;
   console.log(e.message);
-  mymap.setView([51, 0], 16);
+	let randCountry = countryBorders[Math.floor(Math.random()*countryBorders.length)];
+	console.log('random country: ', randCountry.properties.name, randCountry.properties.iso_a3);
+	displayCountry(randCountry.properties.iso_a3);
+  //mymap.setView([51, 0], 16);
+}
+
+function abortfunction () {
+	console.log('aborted');
+	return;
 }
 
 L.easyButton('fa-home', function() {
@@ -658,6 +668,9 @@ function displayCountry(isoa3Code) {
 													west: bounds['_southWest'].lng
 												},
 												success: function (result) {
+														if (!result.data.geonames) {
+															abortfunction();
+														}
 														console.log(result);
 														
 														let citiesMarkers = [];
@@ -749,7 +762,7 @@ function displayCountry(isoa3Code) {
 															
 
 															let radius = city.population/100 > 20000 ? 20000 : city.population/100;
-															let cityCircle = L.circle([city.lat, city.lng], radius).bindPopup(cityPopup);
+															let cityCircle = L.circle([city.lat, city.lng], radius, {color: '#b30a08'}).bindPopup(cityPopup);
 															let marker = L.marker([city.lat, city.lng], {icon: cityMarker}).bindPopup(cityPopup);
 															for (let n = 0; n < newPolygons.length; n++) {
 																let onePolygon = L.polygon(newPolygons[n]);
@@ -1001,10 +1014,12 @@ function displayCountry(isoa3Code) {
 															amenityLayer = L.layerGroup(amenityMarkers);
 															citiesLayer = L.layerGroup(citiesMarkers);
 															cityCirclesLayer = L.layerGroup(citiesCircles);
-															userLayer = L.layerGroup([userCircle, userLocationMarker]);
-															userLayer.addTo(mymap);
-															
-															userLocationMarker.openPopup();
+															if (userFound == true) {
+																userLayer = L.layerGroup([userCircle, userLocationMarker]);
+																userLayer.addTo(mymap);
+																userLocationMarker.openPopup();
+															}
+
 
 															
 															newPolygons = [];
@@ -1016,18 +1031,33 @@ function displayCountry(isoa3Code) {
 															capitalMarker.addTo(mymap).openPopup();
 															///}
 
-															let overlays = {
-																"Your location": userLayer,
-																"Capital": capitalMarker,
-																"Highlight": selectedCountryLayer,
-																//"Wikipedia": wikiLayer,
-																"Wikipedia Articles": wikiClusterMarkers,
-																//'geoCities': citiesLayer,
-																'Cities': cityCirclesLayer,
-																'Tourist Spots': touristClusterMarkers,
-																'Shops': shopClusterMarkers,
-																'Amenities': amenityClusterMarkers
-																//"Hospitals": tomTomClusterMarkers
+															if (userFound == true) {
+																let overlays = {
+																	"Your location": userLayer,
+																	"Capital": capitalMarker,
+																	"Highlight": selectedCountryLayer,
+																	//"Wikipedia": wikiLayer,
+																	"Wikipedia Articles": wikiClusterMarkers,
+																	//'geoCities': citiesLayer,
+																	'Cities': cityCirclesLayer,
+																	'Tourist Spots': touristClusterMarkers,
+																	'Shops': shopClusterMarkers,
+																	'Amenities': amenityClusterMarkers
+																	//"Hospitals": tomTomClusterMarkers
+																}
+															} else {
+																	let overlays = {
+																	"Capital": capitalMarker,
+																	"Highlight": selectedCountryLayer,
+																	//"Wikipedia": wikiLayer,
+																	"Wikipedia Articles": wikiClusterMarkers,
+																	//'geoCities': citiesLayer,
+																	'Cities': cityCirclesLayer,
+																	'Tourist Spots': touristClusterMarkers,
+																	'Shops': shopClusterMarkers,
+																	'Amenities': amenityClusterMarkers
+																	//"Hospitals": tomTomClusterMarkers
+																}	
 															}
 															layersControl = L.control.layers(baseMaps, overlays);
 															layersControl.addTo(mymap);
