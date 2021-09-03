@@ -183,8 +183,8 @@ L.easyButton('fa-home', function() {
 					mymap.removeLayer(wikiClusterMarkers);
 					mymap.removeLayer(citiesLayer);
 					mymap.removeLayer(cityCirclesLayer);
-					mymap.removeLayer(touristLayer);
-					mymap.removeLayer(shopLayer);
+					mymap.removeLayer(touristClusterMarkers);
+					mymap.removeLayer(shopClusterMarkers);
 					mymap.removeLayer(amenityClusterMarkers);
 					mymap.removeControl(layersControl);
 					if (mymap.hasLayer(invisibleBorders)) {
@@ -1669,8 +1669,8 @@ selectDropDown.addEventListener("change", function (event) {
     mymap.removeLayer(wikiClusterMarkers);
     mymap.removeLayer(citiesLayer);
     mymap.removeLayer(cityCirclesLayer);
-    mymap.removeLayer(touristLayer);
-    mymap.removeLayer(shopLayer);
+    mymap.removeLayer(touristClusterMarkers);
+    mymap.removeLayer(shopClusterMarkers);
 		mymap.removeLayer(amenityClusterMarkers);
     mymap.removeControl(layersControl);
     clearTimeout(timer);
