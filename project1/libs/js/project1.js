@@ -1124,23 +1124,29 @@ function displayCountry(isoa3Code) {
 															layersControl.addTo(mymap);
 															
 															let layerCheck = 0;
+															let zoomCount = 0;
 															
 															mymap.on('zoomend', function() {
+																zoomCount++;
 																
 																if (mymap.hasLayer(citiesLayer)) {
 																	if (mymap.getZoom() >= 7 ) {
+																			layerCheck = 1;
+																			console.log('zoomCount', zoomCount);
+																			console.log('zoom in layerCheck', layerCheck);
 																		if (baseLayerName != 'Watercolour') {
-																		mymap.removeLayer(citiesLayer);
-																		//layerCheck = 1;
+																			mymap.removeLayer(citiesLayer);
 																		}
 																	}
 																} else {
 																	if (mymap.getZoom() <=6) {
+																			console.log('zoomCount', zoomCount);
+																			console.log('zoom out layerCheck', layerCheck);
 																		//if ( cityNamesRemovedByUser == false ) {
-																			if (layerCheck != 0) {
+																		//	if (layerCheck != 0) {
 																				citiesLayer.addTo(mymap);
 																				layerCheck = 1;
-																			}
+																		//	}
 																		//}
 																	}
 																}	 
@@ -1758,9 +1764,11 @@ mymap.on('overlayadd', function(e) {
 		userLocationMarker.openPopup();	
 	};
 	if (e.name == 'Cities') {
-		if (mymap.getZoom() <= 6){
-		citiesLayer.addTo(mymap);
-		layerCheck = 1;
+		if (baseLayerName == 'Watercolour') {
+			citiesLayer.addTo(mymap);			
+		} else if (mymap.getZoom() <= 6){
+			citiesLayer.addTo(mymap);
+			layerCheck = 1;
 		}
 	};
 	if (e.name == 'Tourist Spots') {
@@ -1807,10 +1815,12 @@ mymap.on('baselayerchange', function(e) {
 		}
 	};
 	if (e.name == 'Watercolour') {
-		if (!mymap.hasLayer(citiesLayer)) {
-			if (mymap.getZoom() >= 7) {
-				citiesLayer.addTo(mymap);
-				layerCheck = 1;
+		if (mymap.hasLayer(cityCirclesLayer)) {
+			if (!mymap.hasLayer(citiesLayer)) {
+				if (mymap.getZoom() >= 7) {
+					citiesLayer.addTo(mymap);
+					layerCheck = 1;
+				}
 			}
 		}
 	}
