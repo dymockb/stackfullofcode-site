@@ -30,16 +30,16 @@
 </head>
 <body>
 	<div id="preloader"></div><!-- Modals -->
-	<!-- Border switch Modal -->
-	<div aria-hidden="true" aria-labelledby="exampleModalCenterTitle" class="modal fade" id="mapAdvice" role="dialog" tabindex="-1">
+	<!-- Need Location Modal -->
+	<div aria-hidden="true" aria-labelledby="exampleModalCenterTitle" class="modal fade" id="needLocationModal" role="dialog" tabindex="-1">
 		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalCenterTitle">Borders displayed</h5><button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+					<h5 class="modal-title" id="exampleModalCenterTitle">User location not enabled</h5><button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
 				</div>
 				<div class="modal-body">
 					<div class="form-group">
-						Click inside any border to choose a country.
+					Can't find your home location - please allow location sharing for this site.
 					</div>
 					<div class="modal-footer">
 						<button class="btn btn-secondary" data-dismiss="modal" type="button">Close</button> <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
@@ -47,7 +47,23 @@
 				</div>
 			</div>
 		</div>
-	</div><!-- End of Border switch Modal -->
+	</div><!-- End of need Location Modal -->
+	<!-- Empty Layer Modal -->
+	<div aria-hidden="true" aria-labelledby="exampleModalCenterTitle" class="modal fade" id="emptyLayerModal" role="dialog" tabindex="-1">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalCenterTitle">No data</h5><button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+				</div>
+				<div class="modal-body">
+					<div id="noMarkersFound" class="form-group"></div>
+					<div class="modal-footer">
+						<button class="btn btn-secondary" data-dismiss="modal" type="button">Close</button> <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div><!-- End of Empty Layer Modal -->
 	<!-- Select Country Modal -->
 	<div aria-hidden="true" aria-labelledby="exampleModalCenterTitle" class="modal fade" id="selectCountry" role="dialog" tabindex="-1">
 		<div class="modal-dialog modal-dialog-centered" role="document">
@@ -154,6 +170,15 @@
 						</select> 
 						
 						<button class="btn btn-secondary" data-target="#viewCountry" data-toggle="modal" id="infoSym" type="button">
+							<i class="fas fa-info-circle">
+							</i>
+						</button>
+						
+						<button class="btn btn-secondary" data-target="#emptyLayerModal" data-toggle="modal" id="emptyLayer" type="button">
+							<i class="fas fa-info-circle">
+							</i>
+						</button>
+						<button class="btn btn-secondary" data-target="#needLocationModal" data-toggle="modal" id="needLocation" type="button">
 							<i class="fas fa-info-circle">
 							</i>
 						</button>

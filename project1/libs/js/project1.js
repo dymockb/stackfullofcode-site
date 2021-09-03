@@ -18,7 +18,7 @@ let dropdownList = [];
 let cityNamesRemovedByUser = true;
 let userFound = true;
 
-let baseLayerName, mylat, mylng, capitalMarker, timer, zoomLocationTimer, allRestCountrieslet, myBounds, newBounds, currentCountry, selectedCountry, currentCountryPolygons, layersControl, currentisoA2, fijiUpdated, russiaUpdated, invisibleBorders, userLocationMarker, wikiLayer, wikiClusterMarkers, citiesLayer, cityCirclesLayer, touristLayer, shopLayer, amenityClusterMarkers, userPopup, corner1, corner2, viewportBounds, userCircle  
+let baseLayerName, mylat, mylng, capitalMarker, timer, zoomLocationTimer, allRestCountrieslet, myBounds, newBounds, currentCountry, selectedCountry, currentCountryPolygons, layersControl, currentisoA2, fijiUpdated, russiaUpdated, invisibleBorders, userLocationMarker, wikiLayer, wikiClusterMarkers, citiesLayer, cityCirclesLayer, touristLayer, shopLayer, amenityClusterMarkers, userPopup, corner1, corner2, viewportBounds, userCircle, overlays, touristMarkers, shopMarkers, amenityMarkers 
 
 let loadingTimer;
 let loadingCount = 0
@@ -137,9 +137,10 @@ function onLocationError(e) {
   //mymap.setView([51, 0], 16);
 }
 
-function abortfunction () {
-	console.log('aborted');
-	return;
+function abortfunction (string) {
+	console.log(string);
+	document.getElementById("viewCountryText").innerHTML = 'Data error - please refresh the page';
+	throw new Error('API error - reload page');
 }
 
 L.easyButton('fa-home', function() {
@@ -199,9 +200,31 @@ L.easyButton('fa-home', function() {
 				},
 			});
 		}, (error) => {
+			function handlePermission() {
+				navigator.permissions.query({name:'geolocation'}).then(function(result) {
+					if (result.state == 'granted') {
+						report(result.state);
+					} else if (result.state == 'prompt') {
+						report(result.state);
+						navigator.geolocation.getCurrentPosition(revealPosition,positionDenied,geoSettings);
+					} else if (result.state == 'denied') {
+						report(result.state);
+					}
+					result.onchange = function() {
+						report(result.state);
+					}
+				});
+			}
+
+			function report(state) {
+				console.log('Permission ' + state);
+			}
+
+			handlePermission();
+			
 			console.log(error);
 			if (error.code == error.PERMISSION_DENIED) console.log("where are you");
-			mymap.setView([0, 0], 1);
+				document.getElementById('needLocation').click();
 		});
 }).addTo(mymap);
 
@@ -373,6 +396,10 @@ function displayCountry(isoa3Code) {
       isoA2: isoA2,
     },
     success: function(result) {
+			console.log('cage capital', result);
+			if (!result.data.results) {
+				abortfunction('openCageCapital Error');
+			}
       let lat;
       let lng;
       let chooseCities = [];
@@ -445,6 +472,10 @@ function displayCountry(isoa3Code) {
           lng: lng,
         },
         success: function(result) {
+					console.log('weather', result);
+					if (!result.data.current) {
+						abortfunction('openWeather Error');
+					}
           document.getElementById("currentWeather").innerHTML = result.data.current.weather[0].description;
           /* Weather Icon
 						document
@@ -468,6 +499,10 @@ function displayCountry(isoa3Code) {
               lng: lng,
             },
             success: function(result) {
+							console.log('timezone', result);
+							if (!result.data.timezoneId) {
+								abortfunction('timeZone Error');
+							}
 							document.getElementById('timezone').innerHTML = result.data.timezoneId;
 							document.getElementById('localTime').innerHTML = result.data.time.slice(-5);
               document.getElementById("progressBar").setAttribute('style', "width: 60%;");
@@ -529,6 +564,10 @@ function displayCountry(isoa3Code) {
                   maxRows: '25'
                 },
                 success: function(result) {
+									console.log('wiki result', result);
+									if (!result.data.geonames) {
+										abortfunction('geonamesWiki Error');
+									}
                   let listOfMarkers = [];
                   let listOfTitlesPlace = [];
                   let polygons = currentCountryPolygons;
@@ -544,9 +583,9 @@ function displayCountry(isoa3Code) {
                     }
                     newPolygons.push(updatePolygon);
                   }
-                  if (!result.data.geonames) {
-                    document.getElementById("wikierror").innerHTML = result.data.status.message;
-                  } else {
+                  //if (!result.data.geonames) {
+                  //  document.getElementById("wikierror").innerHTML = result.data.status.message;
+                  //} else {
                     for (let oneArt = 0; oneArt < result.data.geonames.length; oneArt++) {
                       let placeArticle = result.data.geonames[oneArt];
                       let wikiurl = 'http://' + `${placeArticle.wikipediaUrl}`;
@@ -578,7 +617,7 @@ function displayCountry(isoa3Code) {
                         }
                       }
                     }
-                  }
+                  //}
                   //document.getElementById("viewCountryText").innerHTML = 'fetching more wikipedia data';
 									document.getElementById("loadingText").innerHTML = 'fetching more wikipedia data';
                   document.getElementById("progressBar").setAttribute('style', "width: 90%;");
@@ -594,6 +633,14 @@ function displayCountry(isoa3Code) {
                       west: bounds['_southWest'].lng
                     },
                     success: function(result) {
+										//if (result.length == 0) {
+										//	abortfunction();
+										//}
+											console.log('bbox result', result);
+											if (!result.data.geonames) {
+												abortfunction('geonamesWikibbox Error');
+											}
+										
                       let listOfTitlesbbox = []
                       //if (!result.data.geonames) {
                       //  document.getElementById("loadingText").innerHTML = "Sorry data didn't load please refresh the page";
@@ -669,9 +716,9 @@ function displayCountry(isoa3Code) {
 												},
 												success: function (result) {
 														if (!result.data.geonames) {
-															abortfunction();
+															abortfunction('geonamesCities Error');
 														}
-														console.log(result);
+														console.log('geonamesCities result', result);
 														
 														let citiesMarkers = [];
 														let citiesCircles = [];
@@ -693,9 +740,7 @@ function displayCountry(isoa3Code) {
 															//} else {
 															//	poiPopup.setContent(pointOfInterest.poi.name);															
 															//}
-															
-															cityPopup.setContent(city.name + ' - Population: ' + city.population	);
-															
+																														
 															/*
 															let cityMarker = L.ExtraMarkers.icon({
 																icon: 'fa-number',
@@ -759,10 +804,18 @@ function displayCountry(isoa3Code) {
 																html: city.name
 															});
 															
-															
+															let radius;
+															let cityCircle;
+															if (city.population) {
+																cityPopup.setContent(city.name + ' - Population: ' + city.population	);
+																radius = city.population/100 > 20000 ? 20000 : city.population/100;	
+															  cityCircle = L.circle([city.lat, city.lng], radius, {color: '#b30a08'}).bindPopup(cityPopup);
+															} else {
+																cityPopup.setContent(city.name + ' - Population unknown'	);
+																radius = 200;							
+															  cityCircle = L.circle([city.lat, city.lng], radius, {color: '#b30a08'}).bindPopup(cityPopup);
+															}
 
-															let radius = city.population/100 > 20000 ? 20000 : city.population/100;
-															let cityCircle = L.circle([city.lat, city.lng], radius, {color: '#b30a08'}).bindPopup(cityPopup);
 															let marker = L.marker([city.lat, city.lng], {icon: cityMarker}).bindPopup(cityPopup);
 															for (let n = 0; n < newPolygons.length; n++) {
 																let onePolygon = L.polygon(newPolygons[n]);
@@ -824,6 +877,9 @@ function displayCountry(isoa3Code) {
 														poiData: poiObjs
 													},
 													success: function (result) {
+														if (result.length == 0) {
+															abortfunction('echo error');
+														}
 														console.log(result);
 														
 														let allPois = []
@@ -840,9 +896,9 @@ function displayCountry(isoa3Code) {
 														
 														console.log('allPois ', allPois)
 														
-														let touristMarkers = [];
-														let shopMarkers = [];
-														let amenityMarkers = [];
+														touristMarkers = [];
+														shopMarkers = [];
+														amenityMarkers = [];
 														let amenityTypes = [];
 														let poiTypes = []
 														
@@ -989,6 +1045,9 @@ function displayCountry(isoa3Code) {
 														}
 														//keep at center ajax
 
+														console.log('tourist ',touristMarkers.length);
+														console.log('shops ', shopMarkers.length);
+														console.log('amenities ',amenityMarkers.length);
 
 														document.getElementById("loadingText").innerHTML = '';
 														document.getElementById("progressBar").setAttribute('style', "width: 100%;");
@@ -1031,8 +1090,9 @@ function displayCountry(isoa3Code) {
 															capitalMarker.addTo(mymap).openPopup();
 															///}
 
+															console.log('userFound', userFound);
 															if (userFound == true) {
-																let overlays = {
+																overlays = {
 																	"Your location": userLayer,
 																	"Capital": capitalMarker,
 																	"Highlight": selectedCountryLayer,
@@ -1045,8 +1105,9 @@ function displayCountry(isoa3Code) {
 																	'Amenities': amenityClusterMarkers
 																	//"Hospitals": tomTomClusterMarkers
 																}
-															} else {
-																	let overlays = {
+															} else if (userFound == false){
+																console.log('create overlays');
+																overlays = {
 																	"Capital": capitalMarker,
 																	"Highlight": selectedCountryLayer,
 																	//"Wikipedia": wikiLayer,
@@ -1065,19 +1126,21 @@ function displayCountry(isoa3Code) {
 															let layerCheck = 0;
 															
 															mymap.on('zoomend', function() {
+																
 																if (mymap.hasLayer(citiesLayer)) {
-																	layerCheck = 1;
 																	if (mymap.getZoom() >= 7 ) {
 																		if (baseLayerName != 'Watercolour') {
 																		mymap.removeLayer(citiesLayer);
-																		cityNamesRemovedByUser = false;
+																		//layerCheck = 1;
 																		}
 																	}
 																} else {
 																	if (mymap.getZoom() <=6) {
 																		//if ( cityNamesRemovedByUser == false ) {
-																			citiesLayer.addTo(mymap);
-																			cityNamesRemovedByUser = true;
+																			if (layerCheck != 0) {
+																				citiesLayer.addTo(mymap);
+																				layerCheck = 1;
+																			}
 																		//}
 																	}
 																}	 
@@ -1697,16 +1760,38 @@ mymap.on('overlayadd', function(e) {
 	if (e.name == 'Cities') {
 		if (mymap.getZoom() <= 6){
 		citiesLayer.addTo(mymap);
+		layerCheck = 1;
 		}
+	};
+	if (e.name == 'Tourist Spots') {
+		if (touristMarkers.length == 0) {
+			document.getElementById('noMarkersFound').innerHTML = 'No tourist spots were found for this country';
+			document.getElementById('emptyLayer').click();
+			console.log('No tourist info')
+		};
+	};
+	if (e.name == 'Shops') {
+		if (shopMarkers.length == 0) {
+			document.getElementById('noMarkersFound').innerHTML = 'No shops were found for this country';
+			document.getElementById('emptyLayer').click();
+			console.log('No shop info')
+		};
+	};
+	if (e.name == 'Amenities') {
+		if (amenityMarkers.length == 0) {
+			document.getElementById('noMarkersFound').innerHTML = 'No amenities were found for this country';
+			document.getElementById('emptyLayer').click();
+			console.log('No amenity info')
+		};
 	};
 });
 
 mymap.on('overlayremove', function(e) {
-	if (e.name == 'citycircles') {
+	//if (e.name == 'citycircles') {
+	//	mymap.removeLayer(citiesLayer);	
+	//};
+	if (e.name == 'Cities') {
 		mymap.removeLayer(citiesLayer);	
-	};
-		if (e.name == 'Cities') {
-			mymap.removeLayer(citiesLayer);	
 	}
 });
 
@@ -1717,6 +1802,7 @@ mymap.on('baselayerchange', function(e) {
 		if (mymap.hasLayer(citiesLayer)) {
 			if (mymap.getZoom() >= 7) {
 				mymap.removeLayer(citiesLayer);
+				layerCheck = 1;
 			}
 		}
 	};
@@ -1724,6 +1810,7 @@ mymap.on('baselayerchange', function(e) {
 		if (!mymap.hasLayer(citiesLayer)) {
 			if (mymap.getZoom() >= 7) {
 				citiesLayer.addTo(mymap);
+				layerCheck = 1;
 			}
 		}
 	}

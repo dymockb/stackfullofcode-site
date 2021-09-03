@@ -50,6 +50,22 @@ html, body {
 	display: none
 }
 
+#emptyLayer {
+	margin-left: 0.3rem;
+	margin-right: 0.3rem;
+	height: 100%;
+	width: 15%;
+	display: none	
+}
+
+#needLocation {
+	margin-left: 0.3rem;
+	margin-right: 0.3rem;
+	height: 100%;
+	width: 15%;
+	display: none	
+}
+
 .fa-info-circle {
 	color: #6a6a6a;
 }
