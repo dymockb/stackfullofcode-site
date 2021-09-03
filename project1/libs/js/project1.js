@@ -1129,27 +1129,29 @@ function displayCountry(isoa3Code) {
 															mymap.on('zoomend', function() {
 																zoomCount++;
 																
-																if (mymap.hasLayer(citiesLayer)) {
-																	if (mymap.getZoom() >= 7 ) {
-																			layerCheck = 1;
-																			console.log('zoomCount', zoomCount);
-																			console.log('zoom in layerCheck', layerCheck);
-																		if (baseLayerName != 'Watercolour') {
-																			mymap.removeLayer(citiesLayer);
+																if (mymap.hasLayer(cityCirclesLayer)) {
+																	if (mymap.hasLayer(citiesLayer)) {
+																		if (mymap.getZoom() >= 7 ) {
+																				layerCheck = 1;
+																				console.log('zoomCount', zoomCount);
+																				console.log('zoom in layerCheck', layerCheck);
+																			if (baseLayerName != 'Watercolour') {
+																				mymap.removeLayer(citiesLayer);
+																			}
+																		}
+																	} else {
+																		if (mymap.getZoom() <=6) {
+																				console.log('zoomCount', zoomCount);
+																				console.log('zoom out layerCheck', layerCheck);
+																			//if ( cityNamesRemovedByUser == false ) {
+																			//	if (layerCheck != 0) {
+																					citiesLayer.addTo(mymap);
+																					layerCheck = 1;
+																			//	}
+																			//}
 																		}
 																	}
-																} else {
-																	if (mymap.getZoom() <=6) {
-																			console.log('zoomCount', zoomCount);
-																			console.log('zoom out layerCheck', layerCheck);
-																		//if ( cityNamesRemovedByUser == false ) {
-																		//	if (layerCheck != 0) {
-																				citiesLayer.addTo(mymap);
-																				layerCheck = 1;
-																		//	}
-																		//}
-																	}
-																}	 
+																}																
 															});
 
 											
