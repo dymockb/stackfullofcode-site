@@ -346,9 +346,10 @@ function displayCountry(isoa3Code) {
     }
   }
 	
+	
 	function onEachFeature(feature, layer) {
-    layer.on({
-      click: function() {
+    layer.off({
+      hover: function() {
 				document.getElementById('infoSym').click();
          // close else
       } // end of click function
@@ -370,7 +371,8 @@ function displayCountry(isoa3Code) {
       } else {
         return true;
       }
-    },
+    }
+		,
 		onEachFeature: onEachFeature
   });
 
@@ -656,6 +658,7 @@ function displayCountry(isoa3Code) {
                           popup.setContent('<a href=' + `${wikiurl}` + ' target="_blank">' + `${article.title}` + '</a>');
 													
 													let wikiMarker = L.ExtraMarkers.icon({
+														extraClasses: cursorClass,
 														icon: 'fa-wikipedia-w',
 														markerColor: 'white',
 														iconColor: 'blue',
@@ -691,7 +694,7 @@ function displayCountry(isoa3Code) {
 														c += 'large';
 													}
 
-													return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) });
+													return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'cursorClass marker-cluster' + c, iconSize: new L.Point(40, 40) });
 												},
 												showCoverageOnHover: false
 											});
@@ -860,6 +863,7 @@ function displayCountry(isoa3Code) {
 														let poiTypes = []
 														
 														let touristMarker = L.ExtraMarkers.icon({
+															extraClasses: 'cursorClass',
 															icon: 'fa-map',
 															markerColor: 'pink',
 															shape: 'square',
@@ -868,6 +872,7 @@ function displayCountry(isoa3Code) {
 														});
 																																										
 														let shopMarker = L.ExtraMarkers.icon({
+															extraClasses: 'cursorClass',
 															icon: 'fa-shopping-bag',
 															markerColor: 'white',
 															iconColor: 'green',
@@ -877,6 +882,7 @@ function displayCountry(isoa3Code) {
 														});
 														
 														let amenityMarker = L.ExtraMarkers.icon({
+															extraClasses: 'cursorClass',
 															icon: 'fa-star',
 															markerColor: 'orange',
 															iconColor: 'black',
@@ -947,7 +953,7 @@ function displayCountry(isoa3Code) {
 																	c += 'large';
 																}
 
-																return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) });
+																return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'cursorClass marker-cluster' + c, iconSize: new L.Point(40, 40) });
 															},
 															showCoverageOnHover: false
 														});
@@ -971,7 +977,7 @@ function displayCountry(isoa3Code) {
 																	c += 'large';
 																}
 
-																return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) });
+																return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'cursorClass marker-cluster' + c, iconSize: new L.Point(40, 40) });
 															},
 															showCoverageOnHover: false
 														});
@@ -992,7 +998,7 @@ function displayCountry(isoa3Code) {
 																	c += 'large';
 																}
 
-																return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) });
+																return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'cursorClass marker-cluster' + c, iconSize: new L.Point(40, 40) });
 															},
 															showCoverageOnHover: false
 														});

@@ -206,8 +206,13 @@
 /* cursors */
 
 .leaflet-interactive {
-	cursor: pointer;
+	/*cursor: pointer;*/
 	}
+	
+.cursorClass {
+	cursor: pointer;
+}
+
 .leaflet-grab {
 	cursor: -webkit-grab;
 	cursor:    -moz-grab;
