@@ -658,7 +658,7 @@ function displayCountry(isoa3Code) {
                           popup.setContent('<a href=' + `${wikiurl}` + ' target="_blank">' + `${article.title}` + '</a>');
 													
 													let wikiMarker = L.ExtraMarkers.icon({
-														extraClasses: cursorClass,
+														extraClasses: 'cursorClass',
 														icon: 'fa-wikipedia-w',
 														markerColor: 'white',
 														iconColor: 'blue',
