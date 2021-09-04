@@ -836,22 +836,175 @@ function displayCountry(isoa3Code) {
 														
 														//keep at center ajax
 
-													document.getElementById("loadingText").innerHTML = '';
-													document.getElementById("progressBar").setAttribute('style', "width: 100%;");
-													document.getElementById("viewCountryText").innerHTML = currentCountry;
-													let progressTimer = setTimeout(function() {
-													//document.getElementById("progressBar").setAttribute('style', 'visibility: hidden');		
-													document.getElementById("progressBar").setAttribute('style', "width: 0%; visibility: hidden");
-													if (firstLoad == true ){
-															//userCircle.addTo(mymap);
-															//userLocationMarker.addTo(mymap).bindPopup(userPopup).openPopup();
-															//capitalMarker.addTo(mymap).openPopup();
-															//selectedCountryLayer.addTo(mymap);
-															//$("#startMap").fadeIn(250);
-															//firstLoad = false;
-													}
-													clearTimeout(progressTimer);
-													}, 1500);
+														document.getElementById("loadingText").innerHTML = '';
+														document.getElementById("progressBar").setAttribute('style', "width: 100%;");
+														document.getElementById("viewCountryText").innerHTML = currentCountry;
+														let progressTimer = setTimeout(function() {
+														//document.getElementById("progressBar").setAttribute('style', 'visibility: hidden');		
+														document.getElementById("progressBar").setAttribute('style', "width: 0%; visibility: hidden");
+														if (firstLoad == true ){
+																//userCircle.addTo(mymap);
+																//userLocationMarker.addTo(mymap).bindPopup(userPopup).openPopup();
+																//capitalMarker.addTo(mymap).openPopup();
+																//selectedCountryLayer.addTo(mymap);
+																//$("#startMap").fadeIn(250);
+																//firstLoad = false;
+														}
+														clearTimeout(progressTimer);
+														}, 1500);
+														
+														touristMarkers = [];
+														shopMarkers = [];
+														amenityMarkers = [];
+														let amenityTypes = [];
+														let poiTypes = []
+														
+														let touristMarker = L.ExtraMarkers.icon({
+															icon: 'fa-map',
+															markerColor: 'pink',
+															shape: 'square',
+															prefix: 'far',
+															shadowSize: [0, 0]
+														});
+																																										
+														let shopMarker = L.ExtraMarkers.icon({
+															icon: 'fa-shopping-bag',
+															markerColor: 'white',
+															iconColor: 'green',
+															shape: 'square',
+															prefix: 'fas',
+															shadowSize: [0, 0]
+														});
+														
+														let amenityMarker = L.ExtraMarkers.icon({
+															icon: 'fa-star',
+															markerColor: 'orange',
+															iconColor: 'black',
+															shape: 'star',
+															prefix: 'fas',
+															shadowSize: [0, 0]
+														});
+														
+														for (let imarker = 0; imarker < poiMarkers.length; imarker ++) {
+															let oneMarker = poiMarkers[imarker];
+															if (!poiTypes.includes(oneMarker.typeClass)) {
+																poiTypes.push(oneMarker.typeClass);
+															};
+															if (oneMarker.name != "") {
+																if (oneMarker.typeClass == 'tourism') {
+																	let poiPopup = L.popup({
+																		className: 'wikiPopup'
+																	});
+																	poiPopup.setContent(oneMarker.name);
+																	let poiMarker = L.marker([oneMarker.lat, oneMarker.lng], {icon: touristMarker}).bindPopup(poiPopup);
+																	//, {icon: poiMarker}).bindPopup(poiPopup);
+																	touristMarkers.push(poiMarker);																		
+																} else if (oneMarker.typeClass == 'shop') {
+																	let poiPopup = L.popup({
+																		className: 'wikiPopup'
+																	});
+																	poiPopup.setContent(oneMarker.name);
+																	let poiMarker = L.marker([oneMarker.lat, oneMarker.lng], {icon: shopMarker}).bindPopup(poiPopup);
+																	//, {icon: poiMarker}).bindPopup(poiPopup);
+																	shopMarkers.push(poiMarker);
+																} else if (oneMarker.typeClass == 'amenity'){
+																		let poiPopup = L.popup({
+																			className: 'wikiPopup'
+																		});
+																		poiPopup.setContent(oneMarker.typeName);
+																		let poiMarker = L.marker([oneMarker.lat, oneMarker.lng], {icon: amenityMarker}).bindPopup(poiPopup);
+																		//, {icon: poiMarker}).bindPopup(poiPopup);
+																		amenityMarkers.push(poiMarker);
+																		if (!amenityTypes.includes(oneMarker.typeName)) {
+																			amenityTypes.push(oneMarker.typeName);
+																		}																	
+																}
+															} else {
+																	if (oneMarker.typeClass == 'amenity'){
+																		let poiPopup = L.popup({
+																			className: 'wikiPopup'
+																		});
+																		poiPopup.setContent(oneMarker.typeName);
+																		let poiMarker = L.marker([oneMarker.lat, oneMarker.lng], {icon: amenityMarker}).bindPopup(poiPopup);
+																		//, {icon: poiMarker}).bindPopup(poiPopup);
+																		amenityMarkers.push(poiMarker);
+																		if (!amenityTypes.includes(oneMarker.typeName)) {
+																			amenityTypes.push(oneMarker.typeName);
+																		}																	
+																}
+															}
+														}
+														
+														amenityClusterMarkers = L.markerClusterGroup({
+															iconCreateFunction: function(cluster) {
+																let childCount = cluster.getChildCount();
+																let c = ' amenity-marker-cluster-';
+																if (childCount < 10) {
+																	c += 'small';
+																} else if (childCount < 100) {
+																	c += 'medium';
+																} else {
+																	c += 'large';
+																}
+
+																return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) });
+															},
+															showCoverageOnHover: false
+														});
+														
+														for (let i = 0; i < amenityMarkers.length; i++) {
+															amenityClusterMarkers.addLayer(amenityMarkers[i]);
+														}
+														
+														console.log('amenityTypes', amenityTypes);
+														console.log('poiTypes ', poiTypes);
+
+														touristClusterMarkers = L.markerClusterGroup({
+															iconCreateFunction: function(cluster) {
+																let childCount = cluster.getChildCount();
+																let c = ' tourist-marker-cluster-';
+																if (childCount < 10) {
+																	c += 'small';
+																} else if (childCount < 100) {
+																	c += 'medium';
+																} else {
+																	c += 'large';
+																}
+
+																return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) });
+															},
+															showCoverageOnHover: false
+														});
+														
+														for (let i = 0; i < touristMarkers.length; i++) {
+															touristClusterMarkers.addLayer(touristMarkers[i]);
+														}
+
+														shopClusterMarkers = L.markerClusterGroup({
+															iconCreateFunction: function(cluster) {
+																let childCount = cluster.getChildCount();
+																let c = ' shop-marker-cluster-';
+																if (childCount < 10) {
+																	c += 'small';
+																} else if (childCount < 100) {
+																	c += 'medium';
+																} else {
+																	c += 'large';
+																}
+
+																return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'marker-cluster' + c, iconSize: new L.Point(40, 40) });
+															},
+															showCoverageOnHover: false
+														});
+														
+														for (let i = 0; i < shopMarkers.length; i++) {
+															shopClusterMarkers.addLayer(shopMarkers[i]);
+														}
+														
+														console.log('tourist ',touristMarkers.length);
+														console.log('shops ', shopMarkers.length);
+														console.log('amenities ',amenityMarkers.length);
+													
 													
 														//userLocationMarker.addTo(mymap).bindPopup(userPopup).openPopup();
 														
@@ -888,9 +1041,9 @@ function displayCountry(isoa3Code) {
 																"Wikipedia Articles": wikiClusterMarkers,
 																//'geoCities': citiesLayer,
 																'Cities': cityCirclesLayer,
-																//'Tourist Spots': touristClusterMarkers,
-																//'Shops': shopClusterMarkers,
-																//'Amenities': amenityClusterMarkers
+																'Tourist Spots': touristClusterMarkers,
+																'Shops': shopClusterMarkers,
+																'Amenities': amenityClusterMarkers
 																//"Hospitals": tomTomClusterMarkers
 															}
 														} else if (userFound == false){
@@ -902,9 +1055,9 @@ function displayCountry(isoa3Code) {
 																"Wikipedia Articles": wikiClusterMarkers,
 																//'geoCities': citiesLayer,
 																'Cities': cityCirclesLayer,
-																//'Tourist Spots': touristClusterMarkers,
-																//'Shops': shopClusterMarkers,
-																//'Amenities': amenityClusterMarkers
+																'Tourist Spots': touristClusterMarkers,
+																'Shops': shopClusterMarkers,
+																'Amenities': amenityClusterMarkers
 																//"Hospitals": tomTomClusterMarkers
 															}	
 														}
