@@ -741,7 +741,7 @@ function displayCountry(isoa3Code) {
 														
 													//let cityMarker;	
 													cityMarker = L.divIcon({
-														className: 'cityMarkerStyle badge rounded-pill bg-secondary-cm',
+														className: 'cityMarkerStyle cursorClass badge rounded-pill bg-secondary-cm',
 														html: city.name
 													});
 													
@@ -750,11 +750,11 @@ function displayCountry(isoa3Code) {
 													if (city.population) {
 														cityPopup.setContent(city.name + ' - Population: ' + city.population	);
 														radius = city.population/100 > 20000 ? 20000 : city.population/100;	
-														cityCircle = L.circle([city.lat, city.lng], radius, {color: '#b30a08'}).bindPopup(cityPopup);
+														cityCircle = L.circle([city.lat, city.lng], radius, {color: '#b30a08', className: 'cursorClass'}).bindPopup(cityPopup);
 													} else {
 														cityPopup.setContent(city.name + ' - Population unknown'	);
 														radius = 200;							
-														cityCircle = L.circle([city.lat, city.lng], radius, {color: '#b30a08'}).bindPopup(cityPopup);
+														cityCircle = L.circle([city.lat, city.lng], radius, {color: '#b30a08', className: 'cursorClass'}).bindPopup(cityPopup);
 													}
 
 													let marker = L.marker([city.lat, city.lng], {icon: cityMarker}).bindPopup(cityPopup);
@@ -876,8 +876,8 @@ function displayCountry(isoa3Code) {
 														let shopMarker = L.ExtraMarkers.icon({
 															extraClasses: 'cursorClass',
 															icon: 'fa-shopping-bag',
-															markerColor: 'white',
-															iconColor: 'green',
+															markerColor: 'green',
+															iconColor: 'white',
 															shape: 'square',
 															prefix: 'fas',
 															shadowSize: [0, 0]
@@ -1045,10 +1045,10 @@ function displayCountry(isoa3Code) {
 																"Your location": userLayer,
 																"Capital": capitalMarker,
 																"Highlight": selectedCountryLayer,
+																'Cities': cityCirclesLayer,
 																//"Wikipedia": wikiLayer,
 																"Wikipedia Articles": wikiClusterMarkers,
 																//'geoCities': citiesLayer,
-																'Cities': cityCirclesLayer,
 																'Tourist Spots': touristClusterMarkers,
 																'Shops': shopClusterMarkers,
 																'Amenities': amenityClusterMarkers
@@ -1059,10 +1059,10 @@ function displayCountry(isoa3Code) {
 															overlays = {
 																"Capital": capitalMarker,
 																"Highlight": selectedCountryLayer,
+																'Cities': cityCirclesLayer,
 																//"Wikipedia": wikiLayer,
 																"Wikipedia Articles": wikiClusterMarkers,
 																//'geoCities': citiesLayer,
-																'Cities': cityCirclesLayer,
 																'Tourist Spots': touristClusterMarkers,
 																'Shops': shopClusterMarkers,
 																'Amenities': amenityClusterMarkers
