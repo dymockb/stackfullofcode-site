@@ -140,6 +140,7 @@ function onLocationError(e) {
 function abortfunction (string) {
 	console.log(string);
 	document.getElementById("viewCountryText").innerHTML = 'Data error - please refresh the page';
+	document.getElementById("dataError").click();
 	throw new Error('API error - reload page');
 }
 
@@ -492,6 +493,7 @@ function displayCountry(isoa3Code) {
           
 					//document.getElementById("viewCountryText").innerHTML = 'fetching time data';
 					document.getElementById("loadingText").innerHTML = 'fetching time data';					          
+					document.getElementById("progressBar").setAttribute('style', "width: 50%;");
 					$.ajax({
             url: "libs/php/timeZone.php",
             type: "POST",
@@ -507,7 +509,6 @@ function displayCountry(isoa3Code) {
 							}
 							document.getElementById('timezone').innerHTML = result.data.timezoneId;
 							document.getElementById('localTime').innerHTML = result.data.time.slice(-5);
-              document.getElementById("progressBar").setAttribute('style', "width: 60%;");
 							
 							let timeString = result.data.time.slice(-5);
 							
@@ -557,7 +558,8 @@ function displayCountry(isoa3Code) {
 							
 							//document.getElementById("viewCountryText").innerHTML = 'fetching wikipedia data';
 							document.getElementById("loadingText").innerHTML = 'fetching wikipedia data';
-              $.ajax({
+							document.getElementById("progressBar").setAttribute('style', "width: 60%;");           
+							$.ajax({
                 url: "libs/php/geonamesWiki.php",
                 type: "POST",
                 dataType: "json",
@@ -621,9 +623,7 @@ function displayCountry(isoa3Code) {
                     }
                   //}
                   //document.getElementById("viewCountryText").innerHTML = 'fetching more wikipedia data';
-									document.getElementById("loadingText").innerHTML = 'fetching more wikipedia data';
-                  document.getElementById("progressBar").setAttribute('style', "width: 90%;");
-						
+									
                   $.ajax({
                     url: "libs/php/geonamesWikibbox.php",
                     type: "POST",
@@ -703,12 +703,9 @@ function displayCountry(isoa3Code) {
 												wikiClusterMarkers.addLayer(listOfMarkers[i]);
 											}
 
-												document.getElementById("loadingText").innerHTML = 'fetching cities';
-												document.getElementById("progressBar").setAttribute('style', "width: 95%;");
-												
-												document.getElementById("loadingText").innerHTML = 'fetching points of interest';
-												document.getElementById("progressBar").setAttribute('style', "width: 97%;");
-												
+											document.getElementById("loadingText").innerHTML = 'fetching cities data';
+											document.getElementById("progressBar").setAttribute('style', "width: 75%;");
+																								
 											console.log('isoa2',isoA2);
 											$.ajax({
 												url: "libs/php/geonamesSearchCities.php",
@@ -718,9 +715,9 @@ function displayCountry(isoa3Code) {
 													country: isoA2
 												},
 												success: function (result) {
-													//if (result.length == 0) {
-													//	abortfunction('geonamesSearchCities error');
-													//}
+													if (result.data.length == 0) {
+														abortfunction('geonamesSearchCities error');
+													}
 													console.log(result);
 													
 													let citiesMarkers = [];
@@ -798,9 +795,7 @@ function displayCountry(isoa3Code) {
 													randomMarkers = getRandom(slicedCitiesMarkers, maxCities);
 												}
 												console.log('cities sent to PHP',randomMarkers);
-												
-												geonamesPoiFunc(randomMarkers);
-												
+																								
 												function geonamesPoiFunc(markerlist) {
 													
 													if (markerlist.length > 0) {
@@ -818,6 +813,9 @@ function displayCountry(isoa3Code) {
 														success: function (result) {
 															console.log(markerlist[0]._popup._content);
 															console.log(result.data);
+																													
+															document.getElementById('fetchingCity').innerHTML = markerlist[0]._popup._content;
+															
 															
 															if (result.data.length != 0) {
 																for (let ipoi = 0; ipoi < result.data.poi.length; ipoi ++) {
@@ -829,6 +827,8 @@ function displayCountry(isoa3Code) {
 														},
 														error: function (jqXHR, textStatus, errorThrown) {
 																// error code
+																document.getElementById('closeFetchingData').click();
+																abortfunction('poi error');
 																console.log('POI error');
 																console.log(textStatus);
 																console.log(errorThrown);
@@ -838,7 +838,9 @@ function displayCountry(isoa3Code) {
 													} else {
 														
 														//keep at center ajax
-
+														
+														document.getElementById('closeFetchingData').click();
+												
 														document.getElementById("loadingText").innerHTML = '';
 														document.getElementById("progressBar").setAttribute('style', "width: 100%;");
 														document.getElementById("viewCountryText").innerHTML = currentCountry;
@@ -1107,6 +1109,13 @@ function displayCountry(isoa3Code) {
 													} //end of recursive else
 							
 												} //end of recursive function	
+												
+												document.getElementById("loadingText").innerHTML = 'fetching points of interest';
+												document.getElementById("progressBar").setAttribute('style', "width: 90%;");
+												
+												// call recursive function
+												document.getElementById('fetchingData').click();
+												geonamesPoiFunc(randomMarkers);
 								
 												},
 												error: function (jqXHR, textStatus, errorThrown) {

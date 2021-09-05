@@ -66,6 +66,30 @@ html, body {
 	display: none	
 }
 
+#fetchingData {
+	margin-left: 0.3rem;
+	margin-right: 0.3rem;
+	height: 100%;
+	width: 15%;
+	display: none	
+}
+
+#dataError {
+	margin-left: 0.3rem;
+	margin-right: 0.3rem;
+	height: 100%;
+	width: 15%;
+	display: none	
+}
+
+#closeFetchingData {
+	display: none
+}
+
+#closeFetchingData2 {
+	display: none
+}
+
 .fa-info-circle {
 	color: #6a6a6a;
 }

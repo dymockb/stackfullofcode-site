@@ -30,6 +30,43 @@
 </head>
 <body>
 	<div id="preloader"></div><!-- Modals -->
+	<!-- POI data loading Modal -->
+	<div aria-hidden="true" aria-labelledby="exampleModalCenterTitle" class="modal fade" id="fetchingDataModal" role="dialog" tabindex="-1">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalCenterTitle">Fetching data</h5><button aria-label="Close" class="close" data-dismiss="modal" type="button" id="closeFetchingData2"><span aria-hidden="true">&times;</span></button>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+					Please wait. Fetching country data...</br>
+					<div id="fetchingCity"></div>
+					</div>
+					<div class="modal-footer">
+						<button class="btn btn-secondary" data-dismiss="modal" type="button" id="closeFetchingData">Close</button> <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div><!-- End of POI data loading Modal -->
+	<!-- Data Error Modal -->
+	<div aria-hidden="true" aria-labelledby="exampleModalCenterTitle" class="modal fade" id="dataErrorModal" role="dialog" tabindex="-1">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalCenterTitle">Data Error</h5><button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+					A problem occurred fetching data. Please reload the page.
+					</div>
+					<div class="modal-footer">
+						<button class="btn btn-secondary" data-dismiss="modal" type="button">Close</button> <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div><!-- Data Error Modal -->
 	<!-- Need Location Modal -->
 	<div aria-hidden="true" aria-labelledby="exampleModalCenterTitle" class="modal fade" id="needLocationModal" role="dialog" tabindex="-1">
 		<div class="modal-dialog modal-dialog-centered" role="document">
@@ -39,7 +76,7 @@
 				</div>
 				<div class="modal-body">
 					<div class="form-group">
-					Can't find your home location - please allow location sharing for this site.
+					Can't find your home location - please allow location sharing for this site and reload the page.
 					</div>
 					<div class="modal-footer">
 						<button class="btn btn-secondary" data-dismiss="modal" type="button">Close</button> <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
@@ -179,6 +216,14 @@
 							</i>
 						</button>
 						<button class="btn btn-secondary" data-target="#needLocationModal" data-toggle="modal" id="needLocation" type="button">
+							<i class="fas fa-info-circle">
+							</i>
+						</button>
+						<button class="btn btn-secondary" data-target="#fetchingDataModal" data-toggle="modal" id="fetchingData" type="button">
+							<i class="fas fa-info-circle">
+							</i>
+						</button>
+						<button class="btn btn-secondary" data-target="#dataErrorModal" data-toggle="modal" id="dataError" type="button">
 							<i class="fas fa-info-circle">
 							</i>
 						</button>
