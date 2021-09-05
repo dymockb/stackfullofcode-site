@@ -706,7 +706,6 @@ function displayCountry(isoa3Code) {
 											document.getElementById("loadingText").innerHTML = 'fetching cities data';
 											document.getElementById("progressBar").setAttribute('style', "width: 75%;");
 																								
-											console.log('isoa2',isoA2);
 											$.ajax({
 												url: "libs/php/geonamesSearchCities.php",
 												type: "POST",
@@ -718,7 +717,7 @@ function displayCountry(isoa3Code) {
 													if (result.data.length == 0) {
 														abortfunction('geonamesSearchCities error');
 													}
-													console.log(result);
+													console.log('geonamesSearchCities result',result);
 													
 													let citiesMarkers = [];
 													let citiesCircles = [];
@@ -775,7 +774,6 @@ function displayCountry(isoa3Code) {
 												let slicedCitiesMarkers = [...citiesMarkers];
 												
 												function getRandom(arr, size) {
-													console.log('size', size);
 													let copy = arr.slice(0), rand = [];
 													//for (let i = 0; i < size && i < copy.length; i++) {
 													for (let i = 0; i < size; i++) {
@@ -811,11 +809,8 @@ function displayCountry(isoa3Code) {
 															poilng: lng
 														},
 														success: function (result) {
-															console.log(markerlist[0]._popup._content);
-															console.log(result.data);
 																													
 															document.getElementById('fetchingCity').innerHTML = markerlist[0]._popup._content;
-															
 															
 															if (result.data.length != 0) {
 																for (let ipoi = 0; ipoi < result.data.poi.length; ipoi ++) {
@@ -963,9 +958,6 @@ function displayCountry(isoa3Code) {
 														for (let i = 0; i < amenityMarkers.length; i++) {
 															amenityClusterMarkers.addLayer(amenityMarkers[i]);
 														}
-														
-														console.log('amenityTypes', amenityTypes);
-														console.log('poiTypes ', poiTypes);
 
 														touristClusterMarkers = L.markerClusterGroup({
 															iconCreateFunction: function(cluster) {
@@ -1009,9 +1001,9 @@ function displayCountry(isoa3Code) {
 															shopClusterMarkers.addLayer(shopMarkers[i]);
 														}
 														
-														console.log('tourist ',touristMarkers.length);
-														console.log('shops ', shopMarkers.length);
-														console.log('amenities ',amenityMarkers.length);
+														console.log('tourist points found',touristMarkers.length);
+														console.log('shops found', shopMarkers.length);
+														console.log('amenities found',amenityMarkers.length);
 													
 													
 														//userLocationMarker.addTo(mymap).bindPopup(userPopup).openPopup();
@@ -1039,7 +1031,6 @@ function displayCountry(isoa3Code) {
 														capitalMarker.addTo(mymap).openPopup();
 														///}
 
-														console.log('userFound', userFound);
 														if (userFound == true) {
 															overlays = {
 																"Your location": userLayer,
@@ -1055,7 +1046,6 @@ function displayCountry(isoa3Code) {
 																//"Hospitals": tomTomClusterMarkers
 															}
 														} else if (userFound == false){
-															console.log('create overlays');
 															overlays = {
 																"Capital": capitalMarker,
 																"Highlight": selectedCountryLayer,
@@ -1082,16 +1072,12 @@ function displayCountry(isoa3Code) {
 																if (mymap.hasLayer(citiesLayer)) {
 																	if (mymap.getZoom() >= 7 ) {
 																			layerCheck = 1;
-																			console.log('zoomCount', zoomCount);
-																			console.log('zoom in layerCheck', layerCheck);
 																		if (baseLayerName != 'Watercolour') {
 																			mymap.removeLayer(citiesLayer);
 																		}
 																	}
 																} else {
 																	if (mymap.getZoom() <=6) {
-																			console.log('zoomCount', zoomCount);
-																			console.log('zoom out layerCheck', layerCheck);
 																		//if ( cityNamesRemovedByUser == false ) {
 																		//	if (layerCheck != 0) {
 																				citiesLayer.addTo(mymap);
@@ -2099,21 +2085,18 @@ mymap.on('overlayadd', function(e) {
 		if (touristMarkers.length == 0) {
 			document.getElementById('noMarkersFound').innerHTML = 'No tourist spots were found for this country';
 			document.getElementById('emptyLayer').click();
-			console.log('No tourist info')
 		};
 	};
 	if (e.name == 'Shops') {
 		if (shopMarkers.length == 0) {
 			document.getElementById('noMarkersFound').innerHTML = 'No shops were found for this country';
 			document.getElementById('emptyLayer').click();
-			console.log('No shop info')
 		};
 	};
 	if (e.name == 'Amenities') {
 		if (amenityMarkers.length == 0) {
 			document.getElementById('noMarkersFound').innerHTML = 'No amenities were found for this country';
 			document.getElementById('emptyLayer').click();
-			console.log('No amenity info')
 		};
 	};
 });
@@ -2128,7 +2111,6 @@ mymap.on('overlayremove', function(e) {
 });
 
 mymap.on('baselayerchange', function(e) {
-  console.log('base layer changed to ' + e.name);
 	baseLayerName = e.name;
 	if (e.name == 'Atlas') {
 		if (mymap.hasLayer(citiesLayer)) {
