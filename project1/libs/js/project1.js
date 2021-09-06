@@ -131,9 +131,19 @@ function onLocationFound(e) {
 function onLocationError(e) {
 	userFound = false;
   console.log(e.message);
-	let randCountry = countryBorders[Math.floor(Math.random()*countryBorders.length)];
-	console.log('random country: ', randCountry.properties.name, randCountry.properties.iso_a3);
-	displayCountry(randCountry.properties.iso_a3);
+	
+	function recursiveRandom(countriesParam) {
+		let randCountry = countryBorders[Math.floor(Math.random()*countryBorders.length)];		
+		console.log('random country: ', randCountry.properties.name, randCountry.properties.iso_a3);
+		if (randCountry.properties.name == 'Kosovo' || randCountry.properties.name == 'N. Cyprus' || randCountry.properties.name == 'Somaliland'){
+			recursiveRandom(countriesParam);
+		} else {
+			displayCountry(randCountry.properties.iso_a3);
+		};
+	}
+
+	recursiveRandom(countryBorders);
+
   //mymap.setView([51, 0], 16);
 }
 
@@ -476,7 +486,8 @@ function displayCountry(isoa3Code) {
         },
         success: function(result) {
 					console.log('weather', result);
-					if (!result.data.current) {
+					//if (!result.data.current) {
+					if (!result['status'].description == 'success') {
 						abortfunction('openWeather Error');
 					}
           document.getElementById("currentWeather").innerHTML = result.data.current.weather[0].description;
@@ -504,7 +515,7 @@ function displayCountry(isoa3Code) {
             },
             success: function(result) {
 							console.log('timezone', result);
-							if (!result.data.timezoneId) {
+						  if (!result.data.timezoneId) {
 								abortfunction('timeZone Error');
 							}
 							document.getElementById('timezone').innerHTML = result.data.timezoneId;
@@ -640,8 +651,8 @@ function displayCountry(isoa3Code) {
 										//}
 											console.log('bbox result', result);
 											if (!result.data.geonames) {
-												abortfunction('geonamesWikibbox Error');
-											}
+													abortfunction('geonamesWikibbox Error');
+												}
 										
                       let listOfTitlesbbox = []
                       //if (!result.data.geonames) {
@@ -818,13 +829,14 @@ function displayCountry(isoa3Code) {
 																	poiMarkers.push(onePoi);
 																}
 															}
-															geonamesPoiFunc(markerlist.slice(1))															
+															geonamesPoiFunc(markerlist.slice(1));															
 														},
 														error: function (jqXHR, textStatus, errorThrown) {
 																// error code
 																document.getElementById('closeFetchingData').click();
 																abortfunction('poi error');
 																console.log('POI error');
+																//geonamesPoiFunc(markerlist.slice())	
 																console.log(textStatus);
 																console.log(errorThrown);
 															},
@@ -2145,6 +2157,8 @@ window.onload = (event) => {
 $(document).ready(function () {
 
 console.log('document.ready');
+
+/*
 $.ajax({
 	url: "libs/php/getCountryBorders.php",
 	type: "POST",
@@ -2160,6 +2174,30 @@ $.ajax({
 			console.log(errorThrown);
 		},
 	});
+	*/
+function recursiveLoad () {
+	//if (loadCheck == 0) { 
+		$.ajax({
+		url: "libs/php/getCountryBorders.php",
+		type: "POST",
+		dataType: "json",
+		data: {},
+		success: function (result) {
+			
+			countryBordersFunc(result.data);
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+				console.log('country borders error');
+				console.log(textStatus);
+				console.log(errorThrown);
+				recursiveLoad();
+			},
+		});
+	//} else {};
+}
+
+recursiveLoad();
+	
 });
 
 		});
