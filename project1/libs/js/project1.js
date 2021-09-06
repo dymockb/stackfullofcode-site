@@ -18,7 +18,7 @@ let dropdownList = [];
 let cityNamesRemovedByUser = true;
 let userFound = true;
 
-let baseLayerName, mylat, mylng, capitalMarker, timer, zoomLocationTimer, allRestCountrieslet, myBounds, newBounds, currentCountry, selectedCountry, currentCountryPolygons, layersControl, currentisoA2, fijiUpdated, russiaUpdated, invisibleBorders, userLocationMarker, wikiLayer, wikiClusterMarkers, citiesLayer, cityCirclesLayer, touristLayer, shopLayer, amenityClusterMarkers, userPopup, corner1, corner2, viewportBounds, userCircle, overlays, touristMarkers, shopMarkers, amenityMarkers 
+let baseLayerName, mylat, mylng, capitalMarker, timer, zoomLocationTimer, recursiveLoadTimer, allRestCountrieslet, myBounds, newBounds, currentCountry, selectedCountry, currentCountryPolygons, layersControl, currentisoA2, fijiUpdated, russiaUpdated, invisibleBorders, userLocationMarker, wikiLayer, wikiClusterMarkers, citiesLayer, cityCirclesLayer, touristLayer, shopLayer, amenityClusterMarkers, userPopup, corner1, corner2, viewportBounds, userCircle, overlays, touristMarkers, shopMarkers, amenityMarkers 
 
 let loadingTimer;
 let loadingCount = 0
@@ -813,7 +813,7 @@ function displayCountry(isoa3Code) {
 														
 														$.ajax({
 														url: "libs/php/geonamesPOI.php",
-														type: "POST",
+														type: "GET",
 														dataType: "json",
 														data: {
 															poilat: lat,
@@ -2176,10 +2176,11 @@ $.ajax({
 	});
 	*/
 function recursiveLoad () {
+		
 	//if (loadCheck == 0) { 
 		$.ajax({
 		url: "libs/php/getCountryBorders.php",
-		type: "POST",
+		type: "GET",
 		dataType: "json",
 		data: {},
 		success: function (result) {
@@ -2190,7 +2191,11 @@ function recursiveLoad () {
 				console.log('country borders error');
 				console.log(textStatus);
 				console.log(errorThrown);
-				recursiveLoad();
+				recursiveLoadTimer = setTimeout(function () {
+						recursiveLoad();
+						clearTimeout(recursiveLoadTimer);
+				}, 3000)
+
 			},
 		});
 	//} else {};
