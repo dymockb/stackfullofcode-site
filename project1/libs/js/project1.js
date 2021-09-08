@@ -574,6 +574,7 @@ function displayCountry(isoa3Code) {
 											}
 																								
 											let wikiMarker = L.ExtraMarkers.icon({
+												extraClasses: 'cursorClass',
 												icon: 'fa-wikipedia-w',
 												markerColor: 'blue',
 												iconColor: 'white',
