@@ -8,7 +8,7 @@
 	
 	//http://api.geonames.org/searchJSON?country=GB&username=dymockb&maxRows=40
 	
-	$url='http://api.geonames.org/searchJSON?country=' . $_REQUEST['country'] . '&username=dymockb&maxRows=50';
+	$url='http://api.geonames.org/searchJSON?q=airport&country=' . $_REQUEST['country'] . '&username=dymockb&maxRows=50';
 	//$url='http://api.geonames.org/searchJSON?q=airport&country=GB&username=dymockb&maxRows=150';
 	
 	$ch = curl_init();

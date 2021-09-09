@@ -474,10 +474,91 @@ function getWikipedia (currentCountry, bounds) {
 	
 }
 
+function getGeonamesAirports (isoA2) {
+	console.log('isoa2',isoA2);									
+	$.ajax({
+		url: "libs/php/geonamesAirports.php",
+		type: "POST",
+		dataType: "json",
+		data: {
+			country: isoA2
+		},
+	success: function (result) {
+		console.log('airports result',result);
+		if (!result.data.geonames) {
+			abortfunction('airports error');
+		}
+		
+		let airportMarkers = [];
+
+		let airportMarker = L.ExtraMarkers.icon({
+			extraClasses: 'cursorClass',
+			icon: 'fa-wikipedia-w',
+			markerColor: 'blue',
+			iconColor: 'white',
+			shape: 'square',
+			prefix: 'fab',
+			shadowSize: [0, 0]
+		});
+		
+		for (let iairport = 0; iairport < result.data.geonames.length ; iairport ++) {
+
+			let airport = result.data.geonames[iairport];
+			
+			let popup = L.popup({
+				className: 'wikiPopup'
+			});
+
+			popup.setContent(airport.name);
+
+			let marker = L.marker([airport.lat, airport.lng], {icon: airportMarker}).bindPopup(popup);			
+			
+			airportMarkers.push(marker);
+
+		}
+		
+
+		
+		airportClusterMarkers = L.markerClusterGroup({
+			iconCreateFunction: function(cluster) {
+				let childCount = cluster.getChildCount();
+				let c = ' wiki-marker-cluster-';
+				if (childCount < 10) {
+					c += 'small';
+				} else if (childCount < 100) {
+					c += 'medium';
+				} else {
+					c += 'large';
+				}
+					
+				return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'cursorClass marker-cluster' + c, iconSize: new L.Point(40, 40) });
+			},
+			showCoverageOnHover: false
+		});
+
+		for (let i = 0; i < airportMarkers.length; i++) {
+			airportClusterMarkers.addLayer(airportMarkers[i]);
+		}
+		
+		airportClusterMarkers.addTo(mymap);
+		
+
+	},
+	error: function (jqXHR, textStatus, errorThrown) {
+		console.log('airports error');
+		console.log(textStatus);
+		console.log(errorThrown);
+	}
+	}); 	
+}
+
 function geonamesPoiFunc(markerlist) {
+	
 	if (markerlist.length > 0) {
 	
 		let { lat, lng } = markerlist[0].getLatLng();
+		
+		let poiMarkers = [];
 		
 		$.ajax({
 		url: "libs/php/geonamesPOI.php",
@@ -737,9 +818,7 @@ function getGeonamesCities (isoA2) {
 			citiesCircles.push(cityCircle);
 		
 		} // end of result.data loop
-	
-		let poiMarkers = [];
-		
+			
 		console.log('Cities found: ',citiesMarkers);
 		
 		citiesLayer = L.layerGroup(citiesMarkers);
@@ -902,7 +981,8 @@ function displayCountry(isoa3Code) {
 			borderLines = L.geoJSON(country, {
 				style: function(feature) {
 						return {
-							color: "#ff0000"
+							color: "#ff0000",
+							fillOpacity: 0
 					}
 				}
 			});
@@ -1016,6 +1096,7 @@ function displayCountry(isoa3Code) {
 				getTimezone(lat, lng);
 				getWikipedia(currentCountry, bounds);
 				getGeonamesCities(isoA2);
+				getGeonamesAirports(isoA2);
 			
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
