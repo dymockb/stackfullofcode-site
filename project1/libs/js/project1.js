@@ -96,14 +96,12 @@ function onLocationFound(e) {
 			lng: mylng,
 		},
 		success: function(result) {
-			let isoa3Code;
-			for (let i = 0; i < countryBorders.length; i++) {
-				if (countryBorders[i]["properties"].iso_a3 == result.data.results[0].components["ISO_3166-1_alpha-3"]) {
-					isoa3Code = countryBorders[i]["properties"]["iso_a3"];
-				}
-			}
-								
-			displayCountry(isoa3Code);
+			console.log(result);
+			console.log('oc', result.data.results[0].components['ISO_3166-1_alpha-3']);
+			let isoa3Code = result.data.results[0].components["ISO_3166-1_alpha-3"];
+			console.log(isoa3Code);
+			let userCountryBounds = result.data.results[0].bounds;
+			displayCountry(isoa3Code,userCountryBounds);
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			console.log(textStatus);
@@ -227,62 +225,175 @@ L.easyButton('fa-info-circle', function() {
 	document.getElementById('infoSym').click();
 }).addTo(mymap);
 
+function getWeather (lat, lng) {
+	
+		$.ajax({
+		url: "libs/php/openWeather.php",
+		type: "POST",
+		dataType: "json",
+		data: {
+			locationLat: lat,
+			locationLng: lng,
+		},
+		success: function(result) {
+			console.log('weather', result);
+			//if (!result.data.current) {
+			if (!result['status'].description == 'success') {
+				abortfunction('openWeather Error');
+			}
+			let weatherDescription = result.data.current.weather[0].description;
+			document.getElementById("currentWeather").innerHTML = weatherDescription.charAt(0).toUpperCase() + weatherDescription.slice(1);
+			/* Weather Icon
+				document
+				.getElementById("weatherIcon")
+				.setAttribute(
+				"src",
+				"http://openweathermap.org/img/wn/" +
+				 result.data.current.weather[0].icon +
+				 "@2x.png"
+				 ); 
+			*/
+			
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			console.log('OpenWeather error');
+			console.log(textStatus);
+			console.log(errorThrown);
+		}
+	}); //end of OpenWeather ajax
+	
+}
+
 function displayCountry(isoa3Code) {
-	displayCount++
+	//displayCount++
 	document.getElementById('viewCountryText').innerHTML = 'Loading...';
 	
-	$('#viewCountryBtn').button('toggle')
-  let bounds;
-	for (let c = 0; c < countryBorders.length; c++) {
-		if (countryBorders[c].properties.iso_a3 == isoa3Code) {
-			bounds = countryBorders[c].properties.bounds;
-		}
-	}
-	if (!fijiUpdated) {
-		if (isoa3Code == 'FJI') {
-			bounds._southWest.lng += 360;
-			fijiUpdated = true;
-			console.log(bounds);
-		}
-	}
-	if (!russiaUpdated) {
-		if (isoa3Code == 'RUS') {
-			bounds._southWest.lng += 360;
-			russiaUpdated = true;
-			console.log(bounds);
-		}
-	}
+	//$('#viewCountryBtn').button('toggle')
+  //let bounds;
+	//for (let c = 0; c < countryBorders.length; c++) {
+	//	if (countryBorders[c].properties.iso_a3 == isoa3Code) {
+	//		bounds = countryBorders[c].properties.bounds;
+	//	}
+	//}
+	if (typeof capitalMarker == "object") {
+    capitalMarker.remove();
+  }
 	
-  selectedCountryLayer = L.geoJSON();
+	$.ajax({
+		url: "libs/php/getPolygon.php",
+		type: "POST",
+		dataType: "json",
+		data: {
+			countryCode: isoa3Code
+		},
+		success: function (result) {
+			console.log(result.data);
+			
+			let country = result.data;
+			let geojsonLayer = L.geoJson(country);
+			let bounds = geojsonLayer.getBounds();
+			
+			if (!fijiUpdated) {
+				if (isoa3Code == 'FJI') {
+					bounds._southWest.lng += 360;
+					fijiUpdated = true;
+					console.log(bounds);
+				}
+			}
+			if (!russiaUpdated) {
+				if (isoa3Code == 'RUS') {
+					bounds._southWest.lng += 360;
+					russiaUpdated = true;
+					console.log(bounds);
+				}
+			}
+				
+			console.log(bounds);
+			myNorthEast = bounds._northEast;
+			mySouthWest = bounds._southWest;
+			
+			//myNorthEast = bounds._northEast;
+			//mySouthWest = bounds._southWest;
+			
+			fitBoundsArr = [];
 
-  let borderlines;
-  let isoA3;
-  let isoA2;
-  let capital;
-  let currency;
+			let { lat, lng } = myNorthEast;
 
-  myNorthEast = bounds._northEast;
-  mySouthWest = bounds._southWest;
-  fitBoundsArr = [];
+			fitBoundsArr.push([lat, lng]);
 
-  let { lat, lng } = myNorthEast;
+			corner1 = L.latLng(lat, lng);
+			({ lat, lng } = mySouthWest);
 
-  fitBoundsArr.push([lat, lng]);
+			fitBoundsArr.push([lat, lng]);
 
-  corner1 = L.latLng(lat, lng);
-  ({ lat, lng } = mySouthWest);
+			corner2 = L.latLng(lat, lng);
+			viewportBounds = L.latLngBounds(corner1, corner2);
 
-  fitBoundsArr.push([lat, lng]);
+			//userLocationMarker.openPopup();
+			
+	    currentCountry = result.data["properties"].name;
+      if (result.data["geometry"]["type"] == 'MultiPolygon') {
+        currentCountryPolygons = result.data["geometry"]["coordinates"];
+      } else {
+        currentCountryPolygons = [result.data["geometry"]["coordinates"]];
+      }
+			
+			selectedCountryLayer = L.geoJSON();
 
-  corner2 = L.latLng(lat, lng);
-  viewportBounds = L.latLngBounds(corner1, corner2);
+			//let borderlines;
+			let isoA3;
+			let isoA2;
+			let capital;
+			let currency;
+			//let lat;
+			//let lng;
+			
+      document.getElementById("countryModalTitle").innerHTML = currentCountry;
+			
+			mymap.flyToBounds(viewportBounds, {
+					duration: 1.5
+			});
+			
+			borderLines = L.geoJSON(country, {
+				style: function(feature) {
+						return {
+							color: "#ff0000"
+					}
+				}
+			});
 
-	//userLocationMarker.openPopup();
+			borderLines.addTo(selectedCountryLayer);
+			selectedCountryLayer.addTo(mymap);
+									
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+				console.log('get polygon error');
+				console.log(textStatus);
+				console.log(errorThrown);
+			},
+	});
+	
+	$.ajax({
+		url: "libs/php/oneRestCountry.php",
+		type: "GET",
+		dataType: "json",
+		data: {
+			countryCode: isoa3Code
+		},
+		success: function (result) {
+			console.log('orc', result.data);
 
-  mymap.flyToBounds(viewportBounds, {
-      duration: 1.5
-  });
-
+			let textValue = result.data.nativeName;
+			document.getElementById("nativeName").innerHTML = 'Native name: ' + textValue;
+			document.getElementById("population").innerHTML = parseInt(result.data.population).toLocaleString('en-US');
+			document.getElementById("currency").innerHTML = result.data.currencies[0].code;
+			currency = result.data.currencies[0].code;
+			document.getElementById("currencyName").innerHTML = result.data.currencies[0].name;
+			document.getElementById("flagIMG").setAttribute("src", result.data.flag);
+			document.getElementById("capital").innerHTML = result.data.capital;
+			capital = result.data.capital;
+				
+/*
   for (let i = 0; i < countryBorders.length; i++) {
     if (countryBorders[i]["properties"].bounds == bounds) {
       currentCountry = countryBorders[i]["properties"].name;
@@ -296,59 +407,114 @@ function displayCountry(isoa3Code) {
       isoA2 = countryBorders[i]["properties"].iso_a2;
     }
   }
+*/
+		isoA2 = result.data.alpha2Code;
 
-  for (let i = 0; i < allRestCountries.length; i++) {
-    if (allRestCountries[i].alpha3Code == isoA3) {
-      let textValue = allRestCountries[i].nativeName;
-      document.getElementById("nativeName").innerHTML = 'Native name: ' + textValue;
-      document.getElementById("population").innerHTML = parseInt(allRestCountries[i].population).toLocaleString('en-US');
-      document.getElementById("currency").innerHTML = allRestCountries[i].currencies[0].code;
-      currency = allRestCountries[i].currencies[0].code;
-      document.getElementById("currencyName").innerHTML = allRestCountries[i].currencies[0].name;
-      document.getElementById("flagIMG").setAttribute("src", allRestCountries[i].flag);
-      document.getElementById("capital").innerHTML = allRestCountries[i].capital;
-      capital = allRestCountries[i].capital;
-    }
-  }
-	
-	
-	function onEachFeature(feature, layer) {
-    layer.off({
-      hover: function() {
-				document.getElementById('infoSym').click();
-      }
-    });
-  } 	
-	
-  borderLines = L.geoJSON(countryBorders, {
-    style: function(feature) {
-      if (feature.properties.bounds == bounds) {
-        return {
-          color: "#ff0000"
-        };
-      }
-    },
-    filter: function(feature) {
-      if (feature.properties.bounds != bounds) {
-        return false;
-      } else {
-        return true;
-      }
-    }
-		,
-		onEachFeature: onEachFeature
-  });
+		$.ajax({
+				url: "libs/php/openCageCapital.php",
+				type: "POST",
+				dataType: "json",
+				data: {
+					capital: encodeURI(capital),
+					isoA2: isoA2,
+				},
+				success: function(result) {
+					console.log('cage capital', result);
+					if (!result.data.results) {
+						abortfunction('openCageCapital Error');
+					}
 
-  borderLines.addTo(selectedCountryLayer);
-  
-	if (typeof capitalMarker == "object") {
-    capitalMarker.remove();
-  }
+					let chooseCities = [];
+					let chooseCity;
+
+					function findBestConfidence(listOfCountries) {
+						let confidence = 10;
+						let selected = listOfCountries[0];
+						for (let i = 0; i < listOfCountries.length; i++) {
+							if (listOfCountries[i].confidence < confidence) {
+								selected = listOfCountries[i];
+								confidence = listOfCountries.confidence;
+							} else {
+								continue
+							}
+						}
+						return selected;
+					}
+
+					if (result.data.results.length == 1) {
+						chooseCity = result.data.results[0];
+					} else {
+						for (let i = 0; i < result.data.results.length; i++) {
+							if (result.data.results[i].components._type == "city" || result.data.results[i].components.city == capital) {
+								chooseCities.push(result.data.results[i]);
+							}
+						}
+						if (chooseCities.length) {
+							chooseCity = findBestConfidence(chooseCities);
+						} else {
+							chooseCity = findBestConfidence(result.data.results);
+						}
+					}
+
+					lat = chooseCity.geometry.lat;
+					lng = chooseCity.geometry.lng;
+					let capitalPopup = L.popup({autoPan: false, autoClose: false, closeOnClick: false});
+					let node = document.createElement("button");
+					node.innerHTML = capital;
+					node.setAttribute("type", "button");
+					node.setAttribute("class", "badge rounded-pill bg-secondary");
+					node.setAttribute("data-toggle", "modal");
+					node.setAttribute("style", "font-size: 1rem");
+					node.setAttribute("data-target", "#viewCountry");
+					capitalPopup.setContent(node);
+					
+					capitalMarkerIcon = L.divIcon({
+						className: 'capitalMarkerIcon'
+					});
+					
+					capitalMarker = L.marker([lat, lng], {
+						icon: capitalMarkerIcon
+					}).bindPopup(capitalPopup);
+					
+					capitalMarker.getPopup().on('remove', function () {
+						mymap.removeLayer(capitalMarker);
+					});
+					
+					capitalMarker.addTo(mymap).openPopup();
+					
+					getWeather(lat, lng);
+				
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+					console.log(textStatus);
+					console.log(errorThrown);
+			}
+			}); //end of OpenCage  Capital ajax
+			
+		},
+	error: function (jqXHR, textStatus, errorThrown) {
+			console.log('one rest country error');
+			console.log(textStatus);
+			console.log(errorThrown);
+	},
+	});
+
+	
+
 
   document.getElementById("progressBar").setAttribute('style', 'visibility: initial');
 	document.getElementById("loadingText").innerHTML = 'fetching exchange rate';
   document.getElementById("progressBar").setAttribute('style', "width: 10%;");
+	document.getElementById("loadingText").innerHTML = 'fetching capital city';
+	document.getElementById("progressBar").setAttribute('style', "width: 15%;");
+	document.getElementById("loadingText").innerHTML = 'fetching weather data';
+	document.getElementById("progressBar").setAttribute('style', "width: 30%;");
+	document.getElementById("loadingText").innerHTML = 'fetching time data';					          
+	document.getElementById("progressBar").setAttribute('style', "width: 50%;");	
+	document.getElementById("loadingText").innerHTML = 'fetching wikipedia data';
+	document.getElementById("progressBar").setAttribute('style', "width: 60%;");
 	
+	/*  ONLY RETURN CORRECT CURRENCY
 	$.ajax({
 		url: "libs/php/openExchange.php",
 		type: "POST",
@@ -363,175 +529,85 @@ function displayCountry(isoa3Code) {
 				if (key == currency) {
 					document.getElementById("exchangeRate").innerHTML = value.toFixed(2) + ' ' + currency + ' = 1 USD';
 				};
-			};		
-  
-		document.getElementById("loadingText").innerHTML = 'fetching capital city';
-		document.getElementById("progressBar").setAttribute('style', "width: 15%;");
+			};	
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			// error code
+			console.log('OpenExchange error');
+			console.log(textStatus);
+			console.log(errorThrown);
+		}
+	}); // end of OpenExchange ajax			
+  */
+				
 
-		$.ajax({
-			url: "libs/php/openCageCapital.php",
-			type: "POST",
-			dataType: "json",
-			data: {
-				capital: encodeURI(capital),
-				isoA2: isoA2,
-			},
-			success: function(result) {
-				console.log('cage capital', result);
-				if (!result.data.results) {
-					abortfunction('openCageCapital Error');
+
+	$.ajax({
+		url: "libs/php/timeZone.php",
+		type: "POST",
+		dataType: "json",
+		data: {
+			lat: lat,
+			lng: lng,
+		},
+		success: function(result) {
+			console.log('timezone', result);
+			if (!result.data.timezoneId) {
+				abortfunction('timeZone Error');
+			}
+			document.getElementById('timezone').innerHTML = result.data.timezoneId;
+			document.getElementById('localTime').innerHTML = result.data.time.slice(-5);
+			
+			let timeString = result.data.time.slice(-5);
+			
+			function startTime(timeString) {
+				function checkTime(i) {
+					if (i < 10) {
+						i = "0" + i;
+					} // add zero in front of numbers < 10
+					return i;
 				}
-				let lat;
-				let lng;
-				let chooseCities = [];
-				let chooseCity;
-
-				function findBestConfidence(listOfCountries) {
-					let confidence = 10;
-					let selected = listOfCountries[0];
-					for (let i = 0; i < listOfCountries.length; i++) {
-						if (listOfCountries[i].confidence < confidence) {
-							selected = listOfCountries[i];
-							confidence = listOfCountries.confidence;
+				let now = new Date();
+				let h = parseInt(timeString.slice(0,2));
+				let m = parseInt(timeString.slice(3));
+				let s = checkTime(now.getSeconds());
+											
+				let minutesMax = 60;
+				let hoursMax = 24;
+				
+				if (s == '00') {
+					if (m == 59) {
+						if (h == 23) {
+							h = 0;
 						} else {
-							continue
+							h+=1
 						}
-					}
-					return selected;
-				}
-
-				if (result.data.results.length == 1) {
-					chooseCity = result.data.results[0];
-				} else {
-					for (let i = 0; i < result.data.results.length; i++) {
-						if (result.data.results[i].components._type == "city" || result.data.results[i].components.city == capital) {
-							chooseCities.push(result.data.results[i]);
-						}
-					}
-					if (chooseCities.length) {
-						chooseCity = findBestConfidence(chooseCities);
+						m = 0;
 					} else {
-						chooseCity = findBestConfidence(result.data.results);
+						m+= 1										
 					}
 				}
-
-				lat = chooseCity.geometry.lat;
-				lng = chooseCity.geometry.lng;
-				let capitalPopup = L.popup({autoPan: false, autoClose: false, closeOnClick: false});
-				let node = document.createElement("button");
-				node.innerHTML = capital;
-				node.setAttribute("type", "button");
-				node.setAttribute("class", "badge rounded-pill bg-secondary");
-				node.setAttribute("data-toggle", "modal");
-				node.setAttribute("style", "font-size: 1rem");
-				node.setAttribute("data-target", "#viewCountry");
-				capitalPopup.setContent(node);
+					
+				let hStr = checkTime(h);
+				let mStr = checkTime(m);
+				timeString = hStr + ':' + mStr
 				
-				capitalMarkerIcon = L.divIcon({
-					className: 'capitalMarkerIcon'
-				});
-				
-				capitalMarker = L.marker([lat, lng], {
-					icon: capitalMarkerIcon
-				}).bindPopup(capitalPopup);
-				
-				
-				capitalMarker.getPopup().on('remove', function () {
-					mymap.removeLayer(capitalMarker);
-				});
-				
-				document.getElementById("loadingText").innerHTML = 'fetching weather data';
-				document.getElementById("progressBar").setAttribute('style', "width: 30%;");
-				
-				$.ajax({
-					url: "libs/php/openWeather.php",
-					type: "POST",
-					dataType: "json",
-					data: {
-						lat: lat,
-						lng: lng,
-					},
-					success: function(result) {
-						console.log('weather', result);
-						//if (!result.data.current) {
-						if (!result['status'].description == 'success') {
-							abortfunction('openWeather Error');
-						}
-						let weatherDescription = result.data.current.weather[0].description;
-						document.getElementById("currentWeather").innerHTML = weatherDescription.charAt(0).toUpperCase() + weatherDescription.slice(1);
-						/* Weather Icon
-							document
-							.getElementById("weatherIcon")
-							.setAttribute(
-							"src",
-							"http://openweathermap.org/img/wn/" +
-							 result.data.current.weather[0].icon +
-							 "@2x.png"
-							 ); 
-						*/
-						
-						document.getElementById("loadingText").innerHTML = 'fetching time data';					          
-						document.getElementById("progressBar").setAttribute('style', "width: 50%;");
-						$.ajax({
-							url: "libs/php/timeZone.php",
-							type: "POST",
-							dataType: "json",
-							data: {
-								lat: lat,
-								lng: lng,
-							},
-							success: function(result) {
-								console.log('timezone', result);
-								if (!result.data.timezoneId) {
-									abortfunction('timeZone Error');
-								}
-								document.getElementById('timezone').innerHTML = result.data.timezoneId;
-								document.getElementById('localTime').innerHTML = result.data.time.slice(-5);
-								
-								let timeString = result.data.time.slice(-5);
-								
-								function startTime(timeString) {
-									function checkTime(i) {
-										if (i < 10) {
-											i = "0" + i;
-										} // add zero in front of numbers < 10
-										return i;
-									}
-									let now = new Date();
-									let h = parseInt(timeString.slice(0,2));
-									let m = parseInt(timeString.slice(3));
-									let s = checkTime(now.getSeconds());
-																
-									let minutesMax = 60;
-									let hoursMax = 24;
-									
-									if (s == '00') {
-										if (m == 59) {
-											if (h == 23) {
-												h = 0;
-											} else {
-												h+=1
-											}
-											m = 0;
-										} else {
-											m+= 1										
-										}
-									}
-										
-									let hStr = checkTime(h);
-									let mStr = checkTime(m);
-									timeString = hStr + ':' + mStr
-									
-									document.getElementById("localTime").innerHTML = 'Local time: ' + hStr + ":" + mStr + ":" + s;
-									timer = setTimeout(function() {
-										startTime(timeString);
-									}, 1000);
-								}
-								
-								startTime(timeString);
-								
-								document.getElementById("loadingText").innerHTML = 'fetching wikipedia data';
-								document.getElementById("progressBar").setAttribute('style', "width: 60%;");           
+				document.getElementById("localTime").innerHTML = 'Local time: ' + hStr + ":" + mStr + ":" + s;
+				timer = setTimeout(function() {
+					startTime(timeString);
+				}, 1000);
+			}
+			
+			startTime(timeString);
+			
+	},
+	error: function(jqXHR, textStatus, errorThrown) {
+		console.log('timezone error');
+		console.log(textStatus);
+		console.log(errorThrown);
+		}
+	}); //end of timeZone ajax
+								           
 								$.ajax({
 									url: "libs/php/geonamesWiki.php",
 									type: "POST",
@@ -1052,39 +1128,26 @@ function displayCountry(isoa3Code) {
 										console.log(errorThrown);
 									}
 								}); //end of geonamesWiki ajax														
-							},
-							error: function(jqXHR, textStatus, errorThrown) {
-								console.log('timezone error');
-								console.log(textStatus);
-								console.log(errorThrown);
-							}
-						}); //end of timeZone ajax
-					},
-					error: function(jqXHR, textStatus, errorThrown) {
-						console.log('OpenWeather error');
-						console.log(textStatus);
-						console.log(errorThrown);
-					}
-				}); //end of OpenWeather ajax 
-			},
-			error: function(jqXHR, textStatus, errorThrown) {
-				console.log(textStatus);
-				console.log(errorThrown);
-			}
-		}); //end of OpenCage ajax
-	},
-	error: function (jqXHR, textStatus, errorThrown) {
-		// error code
-		console.log('OpenExchange error');
-		console.log(textStatus);
-		console.log(errorThrown);
-	}
-	}); // end of OpenExchange ajax
 
 } // end of DISPLAY COUNTRY 
 
 function countryBordersFunc(response) {
+	
+	let countryBorders = response;
+	for (let i = 0; i < countryBorders.length; i++) {
+		let textValue = countryBorders[i].name;
+		let node = document.createElement("option");
+		node.innerHTML = textValue;
+		node.setAttribute("value", textValue);
+		dropdownList.push(textValue);
+		document.getElementById("selectCountries").appendChild(node);
+		// use this to manually choose user country on load
+		//if (countryBorders[i]['properties'].name == "United Kingdom") {
+		//myBounds = countryBorders[i]['properties'].bounds;
+		//}
+	}
 
+/*
   countryBorders = response.features;
   for (let i = 0; i < countryBorders.length; i++) {
     let country = countryBorders[i];
@@ -1093,7 +1156,7 @@ function countryBordersFunc(response) {
     countryBorders[i]["properties"]["bounds"] = geojsonLayer.getBounds();
   }
 
-/*
+
   function onEachFeature(feature, layer) {
     layer.on({
       click: function() {
@@ -1148,7 +1211,7 @@ function countryBordersFunc(response) {
     },
     onEachFeature: onEachFeature
   });
-*/	
+	
 		
 	$.ajax({
 		url: "libs/php/getAllRestCountries.php",
@@ -1186,18 +1249,20 @@ function countryBordersFunc(response) {
 					}
 				}
 			}
-			
-			//displayCountry(myBounds) to be  used with code above
-					
-			mymap.locate().on("locationfound", onLocationFound).on("locationerror", onLocationError);
-			
-  },
+	},
 	error: function (jqXHR, textStatus, errorThrown) {
 		console.log('country borders error');
 		console.log(textStatus);
 		console.log(errorThrown);
 		}
-	});
+	});	
+*/
+			
+			//displayCountry(myBounds) to be  used with code above
+					
+	mymap.locate().on("locationfound", onLocationFound).on("locationerror", onLocationError);
+			
+
 } // end of countryBordersFunc
 
 //EVENT HANDLERS
@@ -1427,8 +1492,9 @@ window.onload = (event) => {
 					dataType: "json",
 					data: {},
 					success: function (result) {
-						
+						console.log('new', result.data);
 						countryBordersFunc(result.data);
+						
 					},
 					error: function (jqXHR, textStatus, errorThrown) {
 							console.log('country borders error');
