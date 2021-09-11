@@ -11,6 +11,7 @@
 
     <link href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" rel="stylesheet">
     <link href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" rel="stylesheet">
+			
 -->
 
 
@@ -19,17 +20,20 @@
 	<link href="vendors/css/jquery-ui.css" rel="stylesheet">
 	<link href="vendors/leaflet/leaflet.css" rel="stylesheet">
 
-
-
 	<link href="vendors/css/markerClusterDefault.css" rel="stylesheet">
 	<link href="vendors/css/markerCluster.css" rel="stylesheet">
 
-
 	<link href="vendors/css/easyButtonCSS.css" rel="stylesheet">
 	<link href="vendors/css/leaflet.extra-markers.min.css" rel="stylesheet">
+
+
 	<link href="vendors/bootstrap/css/bootstrap-grid.css" rel="stylesheet">
+	<link href="vendors/bootstrap/css/bootswatch.css" rel="stylesheet">	
+	
 	<link href="vendors/css/simplex-bootstrap.css" rel="stylesheet">
+	
 	<link href="libs/css/project1CSS.css" rel="stylesheet">
+	
 </head>
 <body>
 	<div id="preloader"></div><!-- Modals -->
@@ -142,7 +146,7 @@
 		</div>
 	</div><!--End of Error Country Modal -->
 	<!-- View Country Modal -->
-	<div aria-hidden="true" aria-labelledby="exampleModalCenterTitle" class="modal fade" id="viewCountry" role="dialog" tabindex="-1">
+	<div aria-hidden="true" aria-labelledby="exampleModalCenterTitle" class="modal fade" id="viewCountryModal" role="dialog" tabindex="-1">
 		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
@@ -196,6 +200,67 @@
 			</div>
 		</div>
 	</div><!-- End of View Country Modal -->
+	
+<!-- News Modal -->
+	<div aria-hidden="true" aria-labelledby="exampleModalCenterTitle" class="modal fade" id="newsArticlesModal" role="dialog" tabindex="-1">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">View Country</h5><button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+				</div>
+				<div class="modal-body">
+					<div class="form-group">
+						
+						<div class="accordion" id="accordionExample">
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingOne">
+      <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+        Accordion Item #1
+      </button>
+    </h2>
+    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+        <strong>This is the first item's accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+      </div>
+    </div>
+  </div>
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingTwo">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+        Accordion Item #2
+      </button>
+    </h2>
+    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+        <strong>This is the second item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+      </div>
+    </div>
+  </div>
+  <div class="accordion-item">
+    <h2 class="accordion-header" id="headingThree">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+        Accordion Item #3
+      </button>
+    </h2>
+    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+      <div class="accordion-body">
+        <strong>This is the third item's accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It's also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.
+      </div>
+    </div>
+  </div>
+</div>
+
+						
+					</div>
+					<div class="modal-footer">
+						<button class="btn btn-secondary" data-dismiss="modal" type="button">Close</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End of News Modal -->
+	
 	<div class="container-fluid h-100">
 		<div class="row justify-content-center h-100">
 								<div id="loadingText"></div>
@@ -209,7 +274,7 @@
 							</option>
 						</select> 
 						
-						<button class="btn btn-secondary" data-target="#viewCountry" data-toggle="modal" id="infoSym" type="button">
+						<button class="btn btn-secondary" data-target="#viewCountryModal" data-toggle="modal" id="infoSym" type="button">
 							<i class="fas fa-info-circle">
 							</i>
 						</button>
@@ -230,11 +295,16 @@
 							<i class="fas fa-info-circle">
 							</i>
 						</button>
+						<button class="btn btn-secondary" data-target="#newsArticlesModal" data-toggle="modal" id="newsArticles" type="button">
+							<i class="fas fa-info-circle">
+							</i>
+						</button>
 
 						<button class="btn btn-outline-dark" data-target="#viewCountry" data-toggle="modal" disabled id="viewCountryBtn" type="button">
 							<span class="buttonTxt" id="viewCountryText">Loading...
 							</span>
 						</button>
+						
 						</div>
 						
 						<audio controls src="http://live-icy.gss.dr.dk:8000/A/A03H.mp3?token=4bbf01dd182994778c347bcbe322ba31%2Fd12d0565"></audio>
@@ -288,17 +358,21 @@
 	
   <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js" >
 	</script>		
-	
+
+	<script src="vendors/bootstrap/js/bootstrap.bundle.min.js" type="text/javascript">
+	</script>	
    --> 
 	<script src="vendors/bootstrap/js/bootstrap.min.js" type="text/javascript">
 	</script> 
-	<script src="vendors/bootstrap/js/bootstrap.bundle.min.js" type="text/javascript">
+	<script src="vendors/js/simplexBootstrap.bundle.min.js" type="text/javascript">
 	</script> 
 	<script src="vendors/js/easy-button.js">
 	</script> 
 	<script src="https://kit.fontawesome.com/ac327db264.js">
 	</script> 
 	<script src="vendors/js/leaflet.extra-markers.min.js">
+	</script> 
+	<script src="vendors/js/leaflet-heat.js">
 	</script> 
 	<script src="vendors/js/wise-leaflet-pip.js" type="text/javascript">
 	</script>

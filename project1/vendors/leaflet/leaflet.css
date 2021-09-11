@@ -655,4 +655,11 @@ div[class*="cityMarkerStyle"] {
 	display: none
 }
 
+div[class*="weatherMarkerStyle"] {
+	width: max-content !important;
+	height: max-content !important;
+	font-size: 1.8rem !important;
+	color: blue !important;	
+}
+
 

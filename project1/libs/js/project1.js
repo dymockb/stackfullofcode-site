@@ -19,11 +19,16 @@ let cityNamesRemovedByUser = true;
 let userFound = true;
 
 //userLocationMarker,
-let baseLayerName, mylat, mylng, capitalMarker, timer, zoomLocationTimer, recursiveLoadTimer, allRestCountries, myBounds, currentCountry, selectedCountry, currentCountryPolygons, layersControl, fijiUpdated, russiaUpdated, invisibleBorders, wikiLayer, wikiClusterMarkers, citiesLayer, cityCirclesLayer, touristLayer, shopLayer, amenityClusterMarkers, userPopup, corner1, corner2, viewportBounds, userCircle, overlays, touristMarkers, shopMarkers, amenityMarkers 
+let baseLayerName, mylat, mylng, capitalMarker, timer, zoomLocationTimer, recursiveLoadTimer, allRestCountries, myBounds, currentCountry, selectedCountry, currentCountryPolygons, layersControl, fijiUpdated, russiaUpdated, invisibleBorders, wikiLayer, wikiClusterMarkers, citiesLayer, cityCirclesLayer, touristLayer, shopLayer, amenityClusterMarkers, userPopup, corner1, corner2, viewportBounds, userCircle, overlays, touristMarkers, shopMarkers, amenityMarkers, countryBorders
 
 let loadingTimer;
 let loadingCount = 0
 let stopLoadingCount = false
+
+let collapseElementList = [].slice.call(document.querySelectorAll('.collapse'));
+let collapseList = collapseElementList.map(function (collapseEl) {
+  return new bootstrap.Collapse(collapseEl)
+});
 
 const selectDropDown = document.getElementById("selectCountries");
 
@@ -94,14 +99,15 @@ function onLocationFound(e) {
 function onLocationError(e) {
 	userFound = false;
   console.log(e.message);
+	console.log('cb', countryBorders);
 	
 	function recursiveRandom(countriesParam) {
 		let randCountry = countryBorders[Math.floor(Math.random()*countryBorders.length)];		
-		console.log('random country: ', randCountry.properties.name, randCountry.properties.iso_a3);
-		if (randCountry.properties.name == 'Kosovo' || randCountry.properties.name == 'N. Cyprus' || randCountry.properties.name == 'Somaliland'){
+		console.log('random country: ', randCountry.name, randCountry.code);
+		if (randCountry.name == 'Kosovo' || randCountry.name == 'N. Cyprus' || randCountry.name == 'Somaliland'){
 			recursiveRandom(countriesParam);
 		} else {
-			displayCountry(randCountry.properties.iso_a3);
+			displayCountry(randCountry.code);
 		};
 	}
 
@@ -206,48 +212,168 @@ L.easyButton('fa-info-circle', function() {
 	document.getElementById('infoSym').click();
 }).addTo(mymap);
 
+L.easyButton('fa-rss-square', function() {
+	document.getElementById('newsArticles').click();
+}).addTo(mymap);
+
 
 //https://github.com/Hipo/university-domains-list-api
 //https://developer.flightstats.com/products
 //airports
 
-function getWeather (lat, lng) {
-		/*
-		$.ajax({
-		url: "libs/php/openWeather.php",
-		type: "POST",
-		dataType: "json",
-		data: {
-			locationLat: lat,
-			locationLng: lng,
-		},
-		success: function(result) {
-			console.log('weather', result);
-			//if (!result.data.current) {
-			if (!result['status'].description == 'success') {
-				abortfunction('openWeather Error');
-			}
-			let weatherDescription = result.data.current.weather[0].description;
-			document.getElementById("currentWeather").innerHTML = weatherDescription.charAt(0).toUpperCase() + weatherDescription.slice(1);
-			/* Weather Icon
-				document
-				.getElementById("weatherIcon")
-				.setAttribute(
-				"src",
-				"http://openweathermap.org/img/wn/" +
-				 result.data.current.weather[0].icon +
-				 "@2x.png"
-				 ); 
+function addWeatherLayer(listOfCities) {
+	//console.log(listOfCities);
+	let counter = 0;
+	
+	let allWeatherMarkers = [];
+	
+	function recursiveWeather(recursiveList, counter) {
+		
+		if (counter < 2) {
+			
+			let { lat, lng } = recursiveList[0].getLatLng();
+			
+			console.log(lat, lng);
+			
+			counter ++;
+			
+				$.ajax({
+				url: "libs/php/weatherbit16Day.php",
+				type: "POST",
+				dataType: "json",
+				data: {
+					locationLat: lat,
+					locationLng: lng,
+				},
+				success: function(result) {
+					console.log('weather', result.data);
+					//if (!result.data.current) {
+					//if (!result['status'].description == 'success') {
+					//	abortfunction('openWeather Error');
+					//}
+					//let weatherDescription = result.data.current.weather[0].description;
+					//document.getElementById("currentWeather").innerHTML = weatherDescription.charAt(0).toUpperCase() + weatherDescription.slice(1);	
+					let lat;
+					let lng;
+					let temp;
+					let weatherMarker;
+					let popup;
+					let marker;
+					let weatherMarkers = []
+					
+					for (let iweather = 0; iweather < result.data.features.length ; iweather ++) {
+
+						let weather = result.data.features[iweather];
+
+							lat = weather.geometry.coordinates[1];
+							lng = weather.geometry.coordinates[0];
+							temp = weather.properties.temp;				
+							popup = L.popup({
+								className: 'wikiPopup'
+							});
+
+							popup.setContent('weather');
+
+							weatherMarker = L.divIcon({
+								className: 'weatherMarkerStyle',
+								html: weather.properties.temp
+							})
+							
+							marker = L.marker([lat, lng], {icon: weatherMarker, time: weather.properties.time}).bindPopup(popup);			
+							//
+							weatherMarkers.push(marker);
+						
+						}
+			
+					allWeatherMarkers.push(weatherMarkers);
+					recursiveWeather(recursiveList.slice(1), counter);
+					
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					console.log('weatherbit error');
+					console.log(textStatus);
+					console.log(errorThrown);
+				}
+				}); //end of Weatherbit ajax
 			
 			
-		},
-		error: function(jqXHR, textStatus, errorThrown) {
-			console.log('OpenWeather error');
-			console.log(textStatus);
-			console.log(errorThrown);
+		} else {
+			
+				console.log('allWM',allWeatherMarkers);
+				
+
+				let weatherMarkersLayerGroup = L.layerGroup();
+
+				for (let t = 0; t < 16 ; t ++) {
+
+					let cityWeatherTimeMarkers = L.layerGroup([], {time: allWeatherMarkers[0][t].options.time});
+					
+					for (let a = 0; a < allWeatherMarkers.length; a++) {
+						cityWeatherTimeMarkers.addLayer(allWeatherMarkers[a][t]);
+					};
+					
+					weatherMarkersLayerGroup.addLayer(cityWeatherTimeMarkers);
+				};
+				
+				
+				
+									/*	
+				for (let a = 0; a < allWeatherMarkers.length; a++) {
+
+					for (let l = 0; l < allWeatherMarkers[a].length; l++) {
+							if (l==0) {
+								console.log('time', weatherMarkers0[l].options.time);
+							}
+							let cityWeatherMarkers = L.layerGroup([],{time: weatherMarkers0[l].options.time});
+							cityWeatherMarkers.addLayer(weatherMarkers0[l]);
+							cityWeatherMarkers.addLayer(weatherMarkers1[l]);
+							weatherMarkersLayerGroup.addLayer(cityWeatherMarkers);
+						}
+						
+				}
+					*/
+					
+					console.log('wm3',weatherMarkersLayerGroup);
+					//let allWeatherMarkers = weatherMarkers0.concat(weatherMarkers1);
+					//let weatherlayerGroup = weatherMarkersLayerGroup;
+					
+					//console.log('jsontest',jsontest);
+					//let testlayer = L.geoJson(jsontest);
+					//let weatherlayer = L.geoJson(result.data);
+					let sliderControl = L.control.sliderControl({
+						position: "topright", 
+						//layer: testlayer,
+						layer: weatherMarkersLayerGroup,
+						range: false,
+						follow: 1
+					});
+
+					//Make sure to add the slider to the map ;-)
+					mymap.addControl(sliderControl);
+					
+					//And initialize the slider
+					sliderControl.startSlider();	
+					
 		}
-	}); //end of OpenWeather ajax
-	*/
+	}
+	
+	recursiveWeather(listOfCities, counter);
+		
+	//for (let c = 0; c < 2; c++) {
+	//	let { lat, lng } = listOfCities[c].getLatLng();	
+	//	console.log(lat, lng);	
+	//	if (c<2) {		
+	//	getRecursiveWeather(lat,lng);	
+	//	}
+	//}
+	
+}
+
+
+function getRecursiveWeather (lat, lng) {
+	let weatherMarkers0 = [];
+	let weatherMarkers1 = [];
+	
 	$.ajax({
 	url: "libs/php/weatherbit16Day.php",
 	type: "POST",
@@ -257,22 +383,235 @@ function getWeather (lat, lng) {
 		locationLng: lng,
 	},
 	success: function(result) {
-		console.log('weather', result);
+		console.log('weather', result.data);
 		//if (!result.data.current) {
 		//if (!result['status'].description == 'success') {
 		//	abortfunction('openWeather Error');
 		//}
 		//let weatherDescription = result.data.current.weather[0].description;
-		//document.getElementById("currentWeather").innerHTML = weatherDescription.charAt(0).toUpperCase() + weatherDescription.slice(1);
+		//document.getElementById("currentWeather").innerHTML = weatherDescription.charAt(0).toUpperCase() + weatherDescription.slice(1);	
+		let lat;
+		let lng;
+		let temp;
+		let weatherMarker;
+		let popup;
+		let marker;
+		
+		for (let w=0; w < 2; w ++) {
+		console.log(w);
+		for (let iweather = 0; iweather < result.data.features.length ; iweather ++) {
 
+			let weather = result.data.features[iweather];
+			if (w==0) {
+				lat = weather.geometry.coordinates[1];
+				lng = weather.geometry.coordinates[0];
+				temp = weather.properties.temp;				
+				popup = L.popup({
+					className: 'wikiPopup'
+				});
+
+				popup.setContent('weather');
+
+				weatherMarker = L.divIcon({
+					className: 'weatherMarkerStyle',
+					html: weather.properties.temp
+				})
+				
+				marker = L.marker([lat, lng], {icon: weatherMarker, time: weather.properties.time}).bindPopup(popup);			
+				//
+				weatherMarkers0.push(marker);
+			
+			} else {
+				
+				lat = 51;
+				lng = 1;
+				
+				temp = weather.properties.temp;
+				popup = L.popup({
+					className: 'wikiPopup'
+				});
+
+				popup.setContent('weather');
+
+				weatherMarker = L.divIcon({
+					className: 'weatherMarkerStyle',
+					html: weather.properties.temp
+				})
+				
+				marker = L.marker([lat, lng], {icon: weatherMarker, time: weather.properties.time}).bindPopup(popup);	
+				//
+				weatherMarkers1.push(marker);
+			
+			}
+			
+		}
+		}
+		
+		console.log('wm0',weatherMarkers0);
+		console.log('wm1',weatherMarkers1);
+		
+		let weatherMarkers3 = L.layerGroup();
+		
+		for (let l = 0; l < weatherMarkers0.length; l ++) {
+			if (l==0) {
+				console.log('time', weatherMarkers0[l].options.time);
+			}
+			let cityWeatherMarkers = L.layerGroup([],{time: weatherMarkers0[l].options.time});
+			cityWeatherMarkers.addLayer(weatherMarkers0[l]);
+			cityWeatherMarkers.addLayer(weatherMarkers1[l]);
+			weatherMarkers3.addLayer(cityWeatherMarkers);
+		}
+		
+		console.log('wm3',weatherMarkers3);
+		//let allWeatherMarkers = weatherMarkers0.concat(weatherMarkers1);
+		let weatherlayerGroup = weatherMarkers3;
+		
+		//console.log('jsontest',jsontest);
+		//let testlayer = L.geoJson(jsontest);
+		//let weatherlayer = L.geoJson(result.data);
+		let sliderControl = L.control.sliderControl({
+			position: "topright", 
+			//layer: testlayer,
+			layer: weatherlayerGroup,
+			range: false,
+			follow: 1
+		});
+
+		//Make sure to add the slider to the map ;-)
+		mymap.addControl(sliderControl);
+		
+		//And initialize the slider
+		sliderControl.startSlider();			
+		
 	},
 	error: function(jqXHR, textStatus, errorThrown) {
 		console.log('OpenWeather error');
 		console.log(textStatus);
 		console.log(errorThrown);
 	}
-	}); //end of OpenWeather ajax
+	}); //end of Weatherbit ajax
+}
+
+function getWeather (lat, lng) {
+	let weatherMarkers0 = [];
+	let weatherMarkers1 = [];
 	
+	$.ajax({
+	url: "libs/php/weatherbit16Day.php",
+	type: "POST",
+	dataType: "json",
+	data: {
+		locationLat: lat,
+		locationLng: lng,
+	},
+	success: function(result) {
+		console.log('weather', result.data);
+		//if (!result.data.current) {
+		//if (!result['status'].description == 'success') {
+		//	abortfunction('openWeather Error');
+		//}
+		//let weatherDescription = result.data.current.weather[0].description;
+		//document.getElementById("currentWeather").innerHTML = weatherDescription.charAt(0).toUpperCase() + weatherDescription.slice(1);	
+		let lat;
+		let lng;
+		let temp;
+		let weatherMarker;
+		let popup;
+		let marker;
+		
+		for (let w=0; w < 2; w ++) {
+		console.log(w);
+		for (let iweather = 0; iweather < result.data.features.length ; iweather ++) {
+
+			let weather = result.data.features[iweather];
+			if (w==0) {
+				lat = weather.geometry.coordinates[1];
+				lng = weather.geometry.coordinates[0];
+				temp = weather.properties.temp;				
+				popup = L.popup({
+					className: 'wikiPopup'
+				});
+
+				popup.setContent('weather');
+
+				weatherMarker = L.divIcon({
+					className: 'weatherMarkerStyle',
+					html: weather.properties.temp
+				})
+				
+				marker = L.marker([lat, lng], {icon: weatherMarker, time: weather.properties.time}).bindPopup(popup);			
+				//
+				weatherMarkers0.push(marker);
+			
+			} else {
+				
+				lat = 51;
+				lng = 1;
+				
+				temp = weather.properties.temp;
+				popup = L.popup({
+					className: 'wikiPopup'
+				});
+
+				popup.setContent('weather');
+
+				weatherMarker = L.divIcon({
+					className: 'weatherMarkerStyle',
+					html: weather.properties.temp
+				})
+				
+				marker = L.marker([lat, lng], {icon: weatherMarker, time: weather.properties.time}).bindPopup(popup);	
+				//
+				weatherMarkers1.push(marker);
+			
+			}
+			
+		}
+		}
+		
+		console.log('wm0',weatherMarkers0);
+		console.log('wm1',weatherMarkers1);
+		
+		let weatherMarkers3 = L.layerGroup();
+		
+		for (let l = 0; l < weatherMarkers0.length; l ++) {
+			if (l==0) {
+				console.log('time', weatherMarkers0[l].options.time);
+			}
+			let cityWeatherMarkers = L.layerGroup([],{time: weatherMarkers0[l].options.time});
+			cityWeatherMarkers.addLayer(weatherMarkers0[l]);
+			cityWeatherMarkers.addLayer(weatherMarkers1[l]);
+			weatherMarkers3.addLayer(cityWeatherMarkers);
+		}
+		
+		console.log('wm3',weatherMarkers3);
+		//let allWeatherMarkers = weatherMarkers0.concat(weatherMarkers1);
+		let weatherlayerGroup = weatherMarkers3;
+		
+		//console.log('jsontest',jsontest);
+		//let testlayer = L.geoJson(jsontest);
+		//let weatherlayer = L.geoJson(result.data);
+		let sliderControl = L.control.sliderControl({
+			position: "topright", 
+			//layer: testlayer,
+			layer: weatherlayerGroup,
+			range: false,
+			follow: 1
+		});
+
+		//Make sure to add the slider to the map ;-)
+		mymap.addControl(sliderControl);
+		
+		//And initialize the slider
+		sliderControl.startSlider();			
+		
+	},
+	error: function(jqXHR, textStatus, errorThrown) {
+		console.log('OpenWeather error');
+		console.log(textStatus);
+		console.log(errorThrown);
+	}
+	}); //end of Weatherbit ajax
 }
 
 function getTimezone (lat,lng) {
@@ -344,6 +683,30 @@ function getTimezone (lat,lng) {
 	}); //end of timeZone ajax
 	
 } 
+
+function getNews (isoA2code) {
+	
+	$.ajax({
+		url: "libs/php/newsAPI.php",
+		type: "GET",
+		dataType: "json",
+		data: {
+			country: isoA2code
+		},
+	success: function (result) {
+		console.log('news result',result);
+		
+
+
+	},
+	error: function (jqXHR, textStatus, errorThrown) {
+		console.log('news error');
+		console.log(textStatus);
+		console.log(errorThrown);
+	}
+	}); 	
+	
+}
 
 function getWikipedia (currentCountry, bounds) {
 	
@@ -848,8 +1211,8 @@ function getGeonamesCities (isoA2) {
 		
 		citiesLayer = L.layerGroup(citiesMarkers);
 		cityCirclesLayer = L.layerGroup(citiesCircles);
-		citiesLayer.addTo(mymap);
-		cityCirclesLayer.addTo(mymap);
+		//citiesLayer.addTo(mymap);
+		//cityCirclesLayer.addTo(mymap);
 		
 		mymap.on('zoomend', function() {
 			//zoomCount++;
@@ -893,347 +1256,8 @@ function getGeonamesCities (isoA2) {
 		}
 		console.log('cities sent to PHP',randomMarkers);
 		
-		let jsontest = {
-    "type": "FeatureCollection",
-    "features": [
-        {
-            "type": "Feature",
-            "properties": {
-                "time": "2013-01-22 08:42:26+01"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    7.582512743,
-                    51.933292258,
-                    1
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "time": "2013-01-22 10:00:26+01"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    7.602516645,
-                    51.94962073,
-                    1
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "time": "2013-01-22 10:03:29+01"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    7.61132039,
-                    51.967614681,
-                    1
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "time": "2013-01-22 10:06:29+01"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    7.595284208,
-                    51.976391375,
-                    1
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "time": "2013-01-22 10:22:59+01"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    7.594649893,
-                    52.001819278,
-                    1
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "time": "2013-01-22 10:24:59+01"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    7.540678938,
-                    51.971138575,
-                    1
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "time": "2013-01-22 10:26:27+01"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    7.533023003,
-                    51.999112128,
-                    1
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "time": "2013-01-22 10:27:27+01"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    7.44920273,
-                    51.976204843,
-                    1
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "time": "2013-01-22 10:29:27+01"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    7.41380031,
-                    52.003490927,
-                    1
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "time": "2013-01-22 10:31:01+01"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    7.443067797,
-                    51.979804442,
-                    1
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "time": "2013-01-22 10:47:55+01"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    7.435868264,
-                    52.022940521,
-                    1
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "time": "2013-01-22 10:49:58+01"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    7.439209696,
-                    52.092283541,
-                    1
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "time": "2013-01-22 10:52:28+01"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    7.435977205,
-                    52.092974667,
-                    1
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "time": "2013-01-22 10:54:28+01"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    7.339575907,
-                    52.093185135,
-                    1
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "time": "2013-01-22 10:56:28+01"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    7.36779062,
-                    52.127758013,
-                    1
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "time": "2013-01-22 10:59:28+01"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    7.334295134,
-                    52.158013313,
-                    1
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "time": "2013-01-22 11:00:28+01"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    7.318746058,
-                    52.158721298,
-                    1
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "time": "2013-01-22 11:01:28+01"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    7.315620693,
-                    52.159356605,
-                    1
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "time": "2013-01-22 11:02:28+01"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    7.275112366,
-                    52.177521239,
-                    1
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "time": "2013-01-22 11:04:59+01"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    7.263751253,
-                    52.181860684,
-                    1
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "time": "2013-01-22 11:06:29+01"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    7.251078067,
-                    52.184513989,
-                    1
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "time": "2013-01-22 11:10:33+01"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    7.120151631,
-                    52.190692364,
-                    1
-                ]
-            }
-        },
-        {
-            "type": "Feature",
-            "properties": {
-                "time": "2013-01-22 11:17:07+01"
-            },
-            "geometry": {
-                "type": "Point",
-                "coordinates": [
-                    7.055918689,
-                    52.192587041,
-                    1
-                ]
-            }
-        }
-    ]
-}
-		let testlayer = L.geoJson(jsontest);
-		let sliderControl = L.control.sliderControl({
-			position: "topright", 
-			layer: testlayer,
-			range: false,
-			follow: 1
-		});
-
-		//Make sure to add the slider to the map ;-)
-		mymap.addControl(sliderControl);
-
-		//And initialize the slider
-		sliderControl.startSlider();
-
+		//addWeatherLayer(randomMarkers);
+			
 		// call recursive function
 		//document.getElementById('fetchingData').click();
 		//geonamesPoiFunc(randomMarkers);
@@ -1427,11 +1451,11 @@ function displayCountry(isoa3Code) {
 				
 				capitalMarker.addTo(mymap).openPopup();
 				
-				getWeather(lat, lng);
 				getTimezone(lat, lng);
 				getWikipedia(currentCountry, bounds);
 				getGeonamesCities(isoA2);
 				getGeonamesAirports(isoA2);
+				getNews(isoA2);
 				
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
@@ -1446,7 +1470,7 @@ function displayCountry(isoa3Code) {
 			console.log(textStatus);
 			console.log(errorThrown);
 		},
-	});
+	}); //end of One Rest Country ajax
 
 	let overlays = {
 			"Please wait data loading...": L.geoJSON(),
@@ -1507,7 +1531,7 @@ function displayCountry(isoa3Code) {
 
 function countryBordersFunc(response) {
 	
-	let countryBorders = response;
+	countryBorders = response;
 	
 	for (let i = 0; i < countryBorders.length; i++) {
 		let textValue = countryBorders[i].name;
