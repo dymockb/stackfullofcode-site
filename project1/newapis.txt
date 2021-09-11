@@ -21,6 +21,8 @@ https://pixabay.com/api/docs/
 
 https://www.earthcam.com/
 
+https://webcams.windy.com/webcams/public/embed/player/1171032474/lifetime
+
 http://opml.radiotime.com/Search.ashx?query=france
 https://en-gb.radioline.co/
 

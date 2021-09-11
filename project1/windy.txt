@@ -1,0 +1,15 @@
+/api/webcams/v2/list/country=DE
+https://api.windy.com/api/webcams/v2/list/country=DE?key=PANhpeI8Xm7rW8KmSe5W3JUDHPXfGFoF
+
+https://api.windy.com/api/webcams/v2/list/webcam=1361879037,1171032474?key=PANhpeI8Xm7rW8KmSe5W3JUDHPXfGFoF
+
+https://api.windy.com/api/webcams/v2/list/country=GB/limit=1?show=webcams:image,location,player,url,property&key=PANhpeI8Xm7rW8KmSe5W3JUDHPXfGFoF
+
+
+https://api.windy.com/api/webcams/v2/list/country=IT/orderby=popularity/limit=20?show=webcams:image,location,player,url,property&key=PANhpeI8Xm7rW8KmSe5W3JUDHPXfGFoF
+
+/api/webcams/v2/list?show=webcams:image,location;categories&lang=de
+
+https://api.windy.com/api/webcams/v2/list/country=GB/orderby=popularity,desc/limit=3?show=webcams:image,location,player,url,property,statistics&key=PANhpeI8Xm7rW8KmSe5W3JUDHPXfGFoF
+
+https://api.windy.com/api/webcams/v2/list/country=GB/orderby=popularity,desc/limit=20?show=webcams:image,location,player,url,property,statistics&key=PANhpeI8Xm7rW8KmSe5W3JUDHPXfGFoF
