@@ -212,7 +212,7 @@ L.easyButton('fa-info-circle', function() {
 //airports
 
 function getWeather (lat, lng) {
-	
+		/*
 		$.ajax({
 		url: "libs/php/openWeather.php",
 		type: "POST",
@@ -238,7 +238,7 @@ function getWeather (lat, lng) {
 				 result.data.current.weather[0].icon +
 				 "@2x.png"
 				 ); 
-			*/
+			
 			
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
@@ -246,6 +246,31 @@ function getWeather (lat, lng) {
 			console.log(textStatus);
 			console.log(errorThrown);
 		}
+	}); //end of OpenWeather ajax
+	*/
+	$.ajax({
+	url: "libs/php/weatherbit16Day.php",
+	type: "POST",
+	dataType: "json",
+	data: {
+		locationLat: lat,
+		locationLng: lng,
+	},
+	success: function(result) {
+		console.log('weather', result);
+		//if (!result.data.current) {
+		//if (!result['status'].description == 'success') {
+		//	abortfunction('openWeather Error');
+		//}
+		//let weatherDescription = result.data.current.weather[0].description;
+		//document.getElementById("currentWeather").innerHTML = weatherDescription.charAt(0).toUpperCase() + weatherDescription.slice(1);
+
+	},
+	error: function(jqXHR, textStatus, errorThrown) {
+		console.log('OpenWeather error');
+		console.log(textStatus);
+		console.log(errorThrown);
+	}
 	}); //end of OpenWeather ajax
 	
 }
@@ -493,12 +518,12 @@ function getGeonamesAirports (isoA2) {
 
 		let airportMarker = L.ExtraMarkers.icon({
 			extraClasses: 'cursorClass',
-			icon: 'fa-wikipedia-w',
-			markerColor: 'blue',
+			icon: 'fa-plane-departure',
+			markerColor: 'cyan',
 			iconColor: 'white',
 			shape: 'square',
-			prefix: 'fab',
-			shadowSize: [0, 0]
+			prefix: 'fas',
+			//shadowSize: [40, 0]
 		});
 		
 		for (let iairport = 0; iairport < result.data.geonames.length ; iairport ++) {
@@ -540,7 +565,7 @@ function getGeonamesAirports (isoA2) {
 			airportClusterMarkers.addLayer(airportMarkers[i]);
 		}
 		
-		airportClusterMarkers.addTo(mymap);
+		//airportClusterMarkers.addTo(mymap);
 		
 
 	},
@@ -867,6 +892,347 @@ function getGeonamesCities (isoA2) {
 			randomMarkers = getRandom(slicedCitiesMarkers, maxCities);
 		}
 		console.log('cities sent to PHP',randomMarkers);
+		
+		let jsontest = {
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "time": "2013-01-22 08:42:26+01"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.582512743,
+                    51.933292258,
+                    1
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "time": "2013-01-22 10:00:26+01"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.602516645,
+                    51.94962073,
+                    1
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "time": "2013-01-22 10:03:29+01"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.61132039,
+                    51.967614681,
+                    1
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "time": "2013-01-22 10:06:29+01"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.595284208,
+                    51.976391375,
+                    1
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "time": "2013-01-22 10:22:59+01"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.594649893,
+                    52.001819278,
+                    1
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "time": "2013-01-22 10:24:59+01"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.540678938,
+                    51.971138575,
+                    1
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "time": "2013-01-22 10:26:27+01"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.533023003,
+                    51.999112128,
+                    1
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "time": "2013-01-22 10:27:27+01"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.44920273,
+                    51.976204843,
+                    1
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "time": "2013-01-22 10:29:27+01"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.41380031,
+                    52.003490927,
+                    1
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "time": "2013-01-22 10:31:01+01"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.443067797,
+                    51.979804442,
+                    1
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "time": "2013-01-22 10:47:55+01"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.435868264,
+                    52.022940521,
+                    1
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "time": "2013-01-22 10:49:58+01"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.439209696,
+                    52.092283541,
+                    1
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "time": "2013-01-22 10:52:28+01"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.435977205,
+                    52.092974667,
+                    1
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "time": "2013-01-22 10:54:28+01"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.339575907,
+                    52.093185135,
+                    1
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "time": "2013-01-22 10:56:28+01"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.36779062,
+                    52.127758013,
+                    1
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "time": "2013-01-22 10:59:28+01"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.334295134,
+                    52.158013313,
+                    1
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "time": "2013-01-22 11:00:28+01"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.318746058,
+                    52.158721298,
+                    1
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "time": "2013-01-22 11:01:28+01"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.315620693,
+                    52.159356605,
+                    1
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "time": "2013-01-22 11:02:28+01"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.275112366,
+                    52.177521239,
+                    1
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "time": "2013-01-22 11:04:59+01"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.263751253,
+                    52.181860684,
+                    1
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "time": "2013-01-22 11:06:29+01"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.251078067,
+                    52.184513989,
+                    1
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "time": "2013-01-22 11:10:33+01"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.120151631,
+                    52.190692364,
+                    1
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "time": "2013-01-22 11:17:07+01"
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    7.055918689,
+                    52.192587041,
+                    1
+                ]
+            }
+        }
+    ]
+}
+		let testlayer = L.geoJson(jsontest);
+		let sliderControl = L.control.sliderControl({
+			position: "topright", 
+			layer: testlayer,
+			range: false,
+			follow: 1
+		});
+
+		//Make sure to add the slider to the map ;-)
+		mymap.addControl(sliderControl);
+
+		//And initialize the slider
+		sliderControl.startSlider();
 
 		// call recursive function
 		//document.getElementById('fetchingData').click();
@@ -1019,55 +1385,24 @@ function displayCountry(isoa3Code) {
 			capital = result.data.capital;
 
 			isoA2 = result.data.alpha2Code;
-
+			
 		$.ajax({
-			url: "libs/php/openCageCapital.php",
+			url: "libs/php/worldBankCapital.php",
 			type: "POST",
 			dataType: "json",
 			data: {
-				capital: encodeURI(capital),
-				isoA2: isoA2,
+				isoA3: isoa3Code
 			},
 			success: function(result) {
-				console.log('cage capital', result);
-				if (!result.data.results) {
-					abortfunction('openCageCapital Error');
-				}
+				console.log('WB capital', result);
+				console.log(result.data[1][0].latitude);
+				//if (!result.data.results) {
+				//	abortfunction('openCageCapital Error');
+				//}
 
-				let chooseCities = [];
-				let chooseCity;
-
-				function findBestConfidence(listOfCountries) {
-					let confidence = 10;
-					let selected = listOfCountries[0];
-					for (let i = 0; i < listOfCountries.length; i++) {
-						if (listOfCountries[i].confidence < confidence) {
-							selected = listOfCountries[i];
-							confidence = listOfCountries.confidence;
-						} else {
-							continue
-						}
-					}
-					return selected;
-				}
-
-				if (result.data.results.length == 1) {
-					chooseCity = result.data.results[0];
-				} else {
-					for (let i = 0; i < result.data.results.length; i++) {
-						if (result.data.results[i].components._type == "city" || result.data.results[i].components.city == capital) {
-							chooseCities.push(result.data.results[i]);
-						}
-					}
-					if (chooseCities.length) {
-						chooseCity = findBestConfidence(chooseCities);
-					} else {
-						chooseCity = findBestConfidence(result.data.results);
-					}
-				}
-
-				lat = chooseCity.geometry.lat;
-				lng = chooseCity.geometry.lng;
+				
+				lat = result.data[1][0].latitude;
+				lng = result.data[1][0].longitude;
 				let capitalPopup = L.popup({autoPan: false, autoClose: false, closeOnClick: false});
 				let node = document.createElement("button");
 				node.innerHTML = capital;
@@ -1097,13 +1432,14 @@ function displayCountry(isoa3Code) {
 				getWikipedia(currentCountry, bounds);
 				getGeonamesCities(isoA2);
 				getGeonamesAirports(isoA2);
-			
+				
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				console.log(textStatus);
 				console.log(errorThrown);
 			}
-			}); //end of OpenCage  Capital ajax
+			}); //end of World Bank Capital ajax
+			
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
 			console.log('one rest country error');
@@ -1843,6 +2179,93 @@ mymap.on('overlayremove', function(e) {
 
 
 //https://github.com/CliffCloud/Leaflet.EasyButton
+
+		/*
+		$.ajax({
+			url: "libs/php/openCageCapital.php",
+			type: "POST",
+			dataType: "json",
+			data: {
+				capital: encodeURI(capital),
+				isoA2: isoA2,
+			},
+			success: function(result) {
+				console.log('cage capital', result);
+				if (!result.data.results) {
+					abortfunction('openCageCapital Error');
+				}
+
+				let chooseCities = [];
+				let chooseCity;
+
+				function findBestConfidence(listOfCountries) {
+					let confidence = 10;
+					let selected = listOfCountries[0];
+					for (let i = 0; i < listOfCountries.length; i++) {
+						if (listOfCountries[i].confidence < confidence) {
+							selected = listOfCountries[i];
+							confidence = listOfCountries.confidence;
+						} else {
+							continue
+						}
+					}
+					return selected;
+				}
+
+				if (result.data.results.length == 1) {
+					chooseCity = result.data.results[0];
+				} else {
+					for (let i = 0; i < result.data.results.length; i++) {
+						if (result.data.results[i].components._type == "city" || result.data.results[i].components.city == capital) {
+							chooseCities.push(result.data.results[i]);
+						}
+					}
+					if (chooseCities.length) {
+						chooseCity = findBestConfidence(chooseCities);
+					} else {
+						chooseCity = findBestConfidence(result.data.results);
+					}
+				}
+
+				lat = chooseCity.geometry.lat;
+				lng = chooseCity.geometry.lng;
+				let capitalPopup = L.popup({autoPan: false, autoClose: false, closeOnClick: false});
+				let node = document.createElement("button");
+				node.innerHTML = capital;
+				node.setAttribute("type", "button");
+				node.setAttribute("class", "badge rounded-pill bg-secondary");
+				node.setAttribute("data-toggle", "modal");
+				node.setAttribute("style", "font-size: 1rem");
+				node.setAttribute("data-target", "#viewCountry");
+				capitalPopup.setContent(node);
+				
+				capitalMarkerIcon = L.divIcon({
+					className: 'capitalMarkerIcon'
+				});
+				
+				capitalMarker = L.marker([lat, lng], {
+					icon: capitalMarkerIcon
+				}).bindPopup(capitalPopup);
+				
+				capitalMarker.getPopup().on('remove', function () {
+					mymap.removeLayer(capitalMarker);
+				});
+				
+				capitalMarker.addTo(mymap).openPopup();
+				
+				getWeather(lat, lng);
+				getTimezone(lat, lng);
+				getWikipedia(currentCountry, bounds);
+				getGeonamesCities(isoA2);
+				getGeonamesAirports(isoA2);
+			
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				console.log(textStatus);
+				console.log(errorThrown);
+			}
+			}); //end of OpenCage  Capital ajax
+			
 
 	
 QUESTIONS:
