@@ -5,7 +5,8 @@
 	error_reporting(E_ALL);
 
 	$executionStartTime = microtime(true);
-
+	
+	/**/
 	$url='https://api.weatherbit.io/v2.0/forecast/daily?lat=' . $_REQUEST['locationLat'] . '&lon=' . $_REQUEST['locationLng'] . '&key=db7345f9de8c4d42b3478ec1ea7cf2f9';
 
 	$ch = curl_init();
@@ -18,6 +19,7 @@
 	curl_close($ch);
 
 	$decode = json_decode($result,true);	
+	
 	
 	//$decode = json_decode(file_get_contents('../../vendors/json/weatherbitStatic2.json'),true);
 

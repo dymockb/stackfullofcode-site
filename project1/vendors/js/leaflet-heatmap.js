@@ -81,6 +81,13 @@
 
       map.off('moveend', this._reset, this);
     },
+		
+		//reconfigure: function(cfg) {
+    //  this.cfg = cfg;
+    //  this._heatmap.configure(cfg);
+    //  this._reset();
+    //},
+		
     _draw: function() {
       if (!this._map) { return; }
       

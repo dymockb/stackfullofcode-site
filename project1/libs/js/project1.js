@@ -68,6 +68,7 @@ new L.Control.Zoom({
 	position: "bottomright"
 }).addTo(mymap);
 
+
 let cfg = {
   // radius should be small ONLY if scaleRadius is true (or small radius is intended)
   // if scaleRadius is false it will be the constant radius used in pixels
@@ -101,11 +102,19 @@ let heatmapData = {
 	data: []
 };
 
+function redrawHeatMap(heatmapData, color) {
+	console.log(heatmapData);
+	//mymap.removeLayer(heatmapLayer);
+	//heatmapLayer = new HeatmapOverlay(cfg);
+	cfg['gradient'] = {'.1' : 'white', '.95': color};
+	heatmapLayer._heatmap.configure(cfg);  // call private method but do not changethe original code
+	heatmapLayer._reset();
+	heatmapLayer.setData(heatmapData);
+}
+
 let heatmapLayer = new HeatmapOverlay(cfg);
-
 heatmapLayer.setData(heatmapData);
-
-heatmapLayer.addTo(mymap)
+//heatmapLayer.addTo(mymap)
 
 function onLocationFound(e) {
   let radius = e.accuracy;
@@ -416,21 +425,22 @@ function addWeatherLayer(listOfCities) {
 						
 	
 						cityWeatherTimeMarkers.on('add', function (e) {
-							console.log('hmdata',heatmapData);
-							console.log('has heatmp', mymap.hasLayer(heatmapLayer));
-							console.log('layer added', e.target.options);
+							//console.log('hmdata',heatmapData);
+							//console.log('has heatmp', mymap.hasLayer(heatmapLayer));
+							//console.log('layer added', e.target.options);
 							let updatedHeat = e.target.options.data;
-							console.log('updatedheat', updatedHeat);
-							if (e.target.options.maxtemp < 40) {
-								console.log('max temp less than 40');
-								cfg['gradient']['0.95'] = 'orange';
+							//console.log('updatedheat', updatedHeat);
+							if (e.target.options.maxtemp < 25) {
+								console.log('max temp less than 25');	
+								let color = 'orange';							
 								heatmapData['data'] = updatedHeat;
-								heatmapData.configure(cfg);
-								heatmapLayer.setData(heatmapData);
-							} else {
-								console.log('max temp more than 40');
+								redrawHeatMap(heatmapData, color);
+								
+							} else if (e.target.options.maxtemp < 35) {
+								console.log('max temp less than 35');
+								let color = 'red';							
 								heatmapData['data'] = updatedHeat;
-								heatmapLayer.setData(heatmapData);								
+								redrawHeatMap(heatmapData, color);
 							}
 
 						})
@@ -1563,6 +1573,7 @@ function addOverlays (overlaysObject) {
 }
 
 function displayCountry(isoa3Code) {
+	heatmapLayer.addTo(mymap)
 	document.getElementById('viewCountryText').innerHTML = 'Loading...';
 	
 	if (typeof capitalMarker == "object") {
@@ -1803,13 +1814,15 @@ function displayCountry(isoa3Code) {
 function countryBordersFunc(response) {
 	
 	countryBorders = response;
+	console.log('CB', countryBorders);
 	
 	for (let i = 0; i < countryBorders.length; i++) {
 		let textValue = countryBorders[i].name;
 		let node = document.createElement("option");
 		node.innerHTML = textValue;
-		node.setAttribute("value", textValue);
-		dropdownList.push(textValue);
+		//node.setAttribute("value", textValue);
+		node.setAttribute("value", countryBorders[i].code);		
+		//dropdownList.push(textValue);
 		document.getElementById("selectCountries").appendChild(node);
 	}	
 	
@@ -1821,7 +1834,8 @@ function countryBordersFunc(response) {
 
 selectDropDown.addEventListener("change", function (event) {
   let completeFunction = true
-  selectedCountry = event.target.value;
+  let selectedCountry = event.target.value;
+	console.log(selectedCountry);
 	if (selectedCountry == "") {
     //document.getElementById('goToCountry').setAttribute('data-dismiss', "stop");
     document.getElementById('selectCountryError').setAttribute('style', 'visibility: visible')
@@ -1837,18 +1851,21 @@ selectDropDown.addEventListener("change", function (event) {
     mymap.removeLayer(wikiClusterMarkers);
     mymap.removeLayer(citiesLayer);
     mymap.removeLayer(cityCirclesLayer);
-    mymap.removeLayer(touristClusterMarkers);
-    mymap.removeLayer(shopClusterMarkers);
-		mymap.removeLayer(amenityClusterMarkers);
+    mymap.removeLayer(heatmapLayer);
+    //mymap.removeLayer(touristClusterMarkers);
+    //mymap.removeLayer(shopClusterMarkers);
+		//mymap.removeLayer(amenityClusterMarkers);
     mymap.removeControl(layersControl);
     clearTimeout(timer);
-    let isoa3Code;
-    countryBorders.forEach(function(arrayItem) {
-      if (event.target.value.includes(arrayItem.properties.name)) {
-        isoa3Code = arrayItem.properties.iso_a3;
-      }
-    });
-    displayCountry(isoa3Code);
+    //let isoa3Code;
+    //countryBorders.forEach(function(arrayItem) {
+    //  if (event.target.value.includes(arrayItem.properties.name)) {
+    //    isoa3Code = arrayItem.properties.iso_a3;
+    //  }
+    //});
+		//isoa3Code = selectedCountry;
+    //displayCountry(isoa3Code);
+    displayCountry(selectedCountry);
   }
 }, false)
 
