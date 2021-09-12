@@ -17,6 +17,7 @@ let selectedCountryLayer = L.geoJSON();
 let dropdownList = [];
 let cityNamesRemovedByUser = true;
 let userFound = true;
+let previewCounter = 0;
 
 //userLocationMarker,
 let baseLayerName, mylat, mylng, capitalMarker, timer, zoomLocationTimer, recursiveLoadTimer, allRestCountries, myBounds, currentCountry, selectedCountry, currentCountryPolygons, layersControl, fijiUpdated, russiaUpdated, invisibleBorders, wikiLayer, wikiClusterMarkers, citiesLayer, cityCirclesLayer, touristLayer, shopLayer, amenityClusterMarkers, userPopup, corner1, corner2, viewportBounds, userCircle, overlays, touristMarkers, shopMarkers, amenityMarkers, countryBorders
@@ -31,6 +32,7 @@ let collapseList = collapseElementList.map(function (collapseEl) {
 });
 
 const selectDropDown = document.getElementById("selectCountries");
+const testE = document.getElementById("viewCountryBtn");
 
 let l1 = L.tileLayer('https://{s}.tile.thunderforest.com/mobile-atlas/{z}/{x}/{y}.png?apikey={apikey}', {
 	attribution: '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>',
@@ -213,7 +215,12 @@ L.easyButton('fa-info-circle', function() {
 }).addTo(mymap);
 
 L.easyButton('fa-rss-square', function() {
+	$('.collapse').collapse({
+	 toggle: true
+	});
 	document.getElementById('newsArticles').click();
+					console.log('document.ready');
+	
 }).addTo(mymap);
 
 
@@ -706,6 +713,124 @@ function getNews (isoA2code) {
 	}
 	}); 	
 	
+}
+
+function getWebcams (isoA2code) {
+	
+		$.ajax({
+		url: "libs/php/windyWebcams.php",
+		type: "POST",
+		dataType: "json",
+		data: {
+			countryCode: isoA2code
+		},
+	success: function (result) {
+		console.log('webcam result',result);
+		
+		let webcamMarkers = [];
+		for (let r = 0; r < result.data.length; r ++) {
+				
+			let lat = result.data[r].lat;
+			let lng = result.data[r].lng;
+			let webcamPopup = L.popup({autoPan: false, autoClose: false, closeOnClick: false});
+			//let node = document.createElement('a');
+			//node.setAttribute()
+			//let wcpreview = document.createElement('img');
+			//wcpreview.setAttribute("class", "webcamPreview");
+			//wcpreview.setAttribute('src', result.data[r].thumbnail);
+			//node.appendChild(wcpreview);
+			let node = document.createElement("button");
+			node.setAttribute("type", "button");
+			//node.setAttribute("class", "badge rounded-pill bg-secondary");
+			node.setAttribute("data-toggle", "modal");
+			node.setAttribute("style", "font-size: 1rem");
+			node.setAttribute("data-target", "#viewCountryModal");
+			let previewNode = document.createElement('img');
+			previewNode.setAttribute("class", "webcamPreview");
+			previewNode.setAttribute('src', result.data[r].thumbnail);
+			node.appendChild(previewNode);
+			
+			//let node = document.createElement("img");
+			//node.setAttribute("class", "webcamPreview");
+			//node.setAttribute('src', result.data[r].thumbnail);
+
+			webcamPopup.setContent(node);
+			
+			webcamMarkerIcon = L.divIcon({
+				//html: '<div><i class="fas fa-video"></i></div>',
+				className: 'cursorClass fas fa-video'
+				//className: 'capitalMarkerIcon'
+			});
+			
+			webcamMarker = L.marker([lat, lng], {
+				icon: webcamMarkerIcon,
+				className: 'cursorClass'
+			}).bindPopup(webcamPopup);
+			
+			webcamMarker.on('mouseover', function (e) {
+				previewCounter++;
+        this.openPopup();
+        });
+				
+      webcamMarker.on('mouseout', function (e) {
+        previewCounter = 0;
+				this.closePopup();
+				 //let webcamPreviewTimer = setTimeout(function(e){
+					// webcamMarker.closePopup();
+					// clearTimeout(webcamPreviewTimer);
+				 //}, 1000);
+       });
+			 
+			webcamMarker.on('click', function (e) {
+				document.getElementById('infoSym').click();
+				if (previewCounter != 0) {
+					//document.getElementById('viewCountryText').innerHTML = 'nothing yet';
+					//this.openPopup();
+					console.log(previewCounter);
+				} else {
+					//previewCounter = 0;
+					//this.openPopup();
+					//document.getElementById('viewCountryText').innerHTML = result.data[r].title;
+					console.log(result.data[r].title);
+					console.log(previewCounter);
+				}
+
+       });
+			 
+			 webcamMarker.getPopup().on('remove', function () {
+					console.log(previewCounter);
+					//previewCounter = 0;
+				});
+
+			 webcamMarker.getPopup().on('add', function () {
+					console.log(previewCounter);
+					//previewCounter++;
+				});
+				
+			 webcamMarker.getPopup().on('click', function () {
+					document.getElementById('viewCountryText').innerHTML = 'popup clicked';
+					//previewCounter++;
+				});
+			
+			//capitalMarker.getPopup().on('remove', function () {
+			//	mymap.removeLayer(capitalMarker);
+			//});
+			
+			webcamMarkers.push(webcamMarker);
+
+		}
+		
+			webcamLayer = L.layerGroup(webcamMarkers);
+		
+			webcamLayer.addTo(mymap);
+		
+	},
+	error: function (jqXHR, textStatus, errorThrown) {
+		console.log('webcam error');
+		console.log(textStatus);
+		console.log(errorThrown);
+	}
+	}); 
 }
 
 function getWikipedia (currentCountry, bounds) {
@@ -1211,8 +1336,9 @@ function getGeonamesCities (isoA2) {
 		
 		citiesLayer = L.layerGroup(citiesMarkers);
 		cityCirclesLayer = L.layerGroup(citiesCircles);
-		//citiesLayer.addTo(mymap);
-		//cityCirclesLayer.addTo(mymap);
+		
+		citiesLayer.addTo(mymap);
+		cityCirclesLayer.addTo(mymap);
 		
 		mymap.on('zoomend', function() {
 			//zoomCount++;
@@ -1434,7 +1560,7 @@ function displayCountry(isoa3Code) {
 				node.setAttribute("class", "badge rounded-pill bg-secondary");
 				node.setAttribute("data-toggle", "modal");
 				node.setAttribute("style", "font-size: 1rem");
-				node.setAttribute("data-target", "#viewCountry");
+				node.setAttribute("data-target", "#viewCountryModal");
 				capitalPopup.setContent(node);
 				
 				capitalMarkerIcon = L.divIcon({
@@ -1456,6 +1582,7 @@ function displayCountry(isoa3Code) {
 				getGeonamesCities(isoA2);
 				getGeonamesAirports(isoA2);
 				getNews(isoA2);
+				getWebcams(isoA2);
 				
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
@@ -1580,6 +1707,7 @@ selectDropDown.addEventListener("change", function (event) {
     displayCountry(isoa3Code);
   }
 }, false)
+
 	
 mymap.on('overlayadd', function(e) {
   if (e.name == 'Capital') {
@@ -1644,6 +1772,11 @@ mymap.on('baselayerchange', function(e) {
 	}
 });
 
+$("#viewCountryText").click(function() {
+	console.log('what');
+	//document.getElementById('viewCountryText').innerHTML = 'open modal';
+});
+
 window.onload = (event) => {	
 	if ($('#preloader').length) {
 		$('#preloader').delay(1000).fadeOut('slow', function () {
@@ -1651,9 +1784,7 @@ window.onload = (event) => {
 			console.log("Window loaded", event);
 		
 			$(document).ready(function () {
-
-				console.log('document.ready');
-
+				
 				function recursiveLoad () {
 					console.log('load attempt'); 
 					 

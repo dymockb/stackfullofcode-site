@@ -23,6 +23,9 @@ https://www.earthcam.com/
 
 https://webcams.windy.com/webcams/public/embed/player/1171032474/lifetime
 
+https://webcams.windy.com/webcams/public/embed/player/1171308030/lifetime
+1171308030
+
 http://opml.radiotime.com/Search.ashx?query=france
 https://en-gb.radioline.co/
 

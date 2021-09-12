@@ -170,6 +170,11 @@ span.fa.fa-rss-square {
     color: #0291c3;
 }
 
+.leaflet-marker-icon.cursorClass.fas.fa-video.leaflet-zoom-animated.leaflet-interactive {
+	  font-size: 1.4rem;
+    color: #0291c3;
+}
+
 .progress {
 	background-color: white;
 }
@@ -258,6 +263,10 @@ div>h2 {
 	margin-left: auto;
 	margin-right: auto;
 	margin-bottom: 0.4rem;
+}
+
+.webcamPreview {
+	width: 200px
 }
 
 #weatherIcon {

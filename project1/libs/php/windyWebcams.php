@@ -8,18 +8,18 @@
  
 	$url='https://api.windy.com/api/webcams/v2/list/country=' . $_REQUEST['countryCode'] . '/orderby=popularity,desc/limit=20?show=webcams:image,location,player,url,property,statistics&key=PANhpeI8Xm7rW8KmSe5W3JUDHPXfGFoF';
 
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($ch, CURLOPT_URL,$url);
+	//$ch = curl_init();
+	//curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	//curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	//curl_setopt($ch, CURLOPT_URL,$url);
 
-	$result=curl_exec($ch);
+	//$result=curl_exec($ch);
 
-	curl_close($ch);
+	//curl_close($ch);
 
-	$decode = json_decode($result,true);	
+	//$decode = json_decode($result,true);	
 	
-	//$decode = json_decode(file_get_contents('../../vendors/json/weatherbitStatic.json'),true);
+	$decode = json_decode(file_get_contents('../../vendors/json/webcamsStatic.json'),true);
 
 	$webcams = [];
 
