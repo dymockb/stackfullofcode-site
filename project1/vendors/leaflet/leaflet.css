@@ -655,11 +655,19 @@ div[class*="cityMarkerStyle"] {
 	display: none
 }
 
+
+
+/*
 div[class*="weatherMarkerStyle"] {
 	width: max-content !important;
 	height: max-content !important;
 	font-size: 1.8rem !important;
-	color: blue !important;	
 }
+	color: blue !important;	
+	
+div[class*="c04d"] {
+	background-image: url('img/weatherIcons/c04d.png')
+}
+*/
 
 

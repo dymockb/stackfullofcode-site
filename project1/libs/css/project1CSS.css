@@ -265,6 +265,10 @@ div>h2 {
 	margin-bottom: 0.4rem;
 }
 
+#embedWebcam {
+	width: 100%;
+}
+
 .webcamPreview {
 	width: 200px
 }
@@ -273,12 +277,21 @@ div>h2 {
 	height: 40px;
 }
 
+.c04d {
+	background-image: url('c04d.png');
+	background-size: cover;
+	background-repeat: no-repeat;
+}
+
 .modal-footer {
 	border-top: none;
 }
 
 .weatherMarkerStyle {
 	color: red;
+	width: 5rem !important;
+	height: 5rem !important;
+	font-size: 1.8rem;
 }
 
 .leaflet-popup-content {

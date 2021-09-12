@@ -6,20 +6,20 @@
 
 	$executionStartTime = microtime(true);
 
-	$url='https://api.weatherbit.io/v2.0/forecast/daily?lat=' . $_REQUEST['locationLat'] . '&lon=' . $_REQUEST['locationLng'] . '&key=db7345f9de8c4d42b3478ec1ea7cf2f9';
+	//$url='https://api.weatherbit.io/v2.0/forecast/daily?lat=' . $_REQUEST['locationLat'] . '&lon=' . $_REQUEST['locationLng'] . '&key=db7345f9de8c4d42b3478ec1ea7cf2f9';
 
-	$ch = curl_init();
-	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	curl_setopt($ch, CURLOPT_URL,$url);
+	//$ch = curl_init();
+	//curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	//curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	//curl_setopt($ch, CURLOPT_URL,$url);
 
-	$result=curl_exec($ch);
+	//$result=curl_exec($ch);
 
-	curl_close($ch);
+	//curl_close($ch);
 
-	$decode = json_decode($result,true);	
+	//$decode = json_decode($result,true);	
 	
-	//$decode = json_decode(file_get_contents('../../vendors/json/weatherbitStatic.json'),true);
+	$decode = json_decode(file_get_contents('../../vendors/json/weatherbitStatic2.json'),true);
 
 	$forecast = [];
 
@@ -27,8 +27,9 @@
 
 		$one = null;
 		$one['type'] = 'Feature';
-		$one['properties']['time'] = $day["datetime"] . ' 08:42:26+01';
+		$one['properties']['time'] = $day["datetime"];
 		$one['properties']['temp'] = $day["temp"];
+		$one['properties']['icon'] = $day["weather"]["icon"];
 		$one['geometry']['type'] = 'Point';
 		$one['geometry']['coordinates'][0] = $_REQUEST['locationLng'];
 		$one['geometry']['coordinates'][1] = $_REQUEST['locationLat'];

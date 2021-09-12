@@ -55,7 +55,8 @@ let mymap = L.map("mapid", {
 	zoomControl: false,
 	center: [51.505, -0.09],
   zoom: 2,
-	layers: [l1]
+	layers: [l1],
+	maxZoom: 15
 });
 
 let baseMaps = {
@@ -67,6 +68,42 @@ new L.Control.Zoom({
 	position: "bottomright"
 }).addTo(mymap);
 
+let cfg = {
+  // radius should be small ONLY if scaleRadius is true (or small radius is intended)
+  // if scaleRadius is false it will be the constant radius used in pixels
+  "radius": 1,
+  "maxOpacity": 0.8,
+  // scales the radius based on map zoom
+  "scaleRadius": true,
+  // if set to false the heatmap uses the global maximum for colorization
+  // if activated: uses the data maximum within the current map boundaries
+  //   (there will always be a red spot with useLocalExtremas true)
+  "useLocalExtrema": false,
+  // which field name in your data represents the latitude - default "lat"
+  latField: 'lat',
+  // which field name in your data represents the longitude - default "lng"
+  lngField: 'lng',
+  // which field name in your data represents the data value - default "value"
+  valueField: 'count',
+	gradient: {
+    // enter n keys between 0 and 1 here
+    // for gradient color customization
+    '.1': 'white',
+    //'.5': 'white',
+    '.95': 'red'
+  }
+};
+
+let heatmapData = {
+	max: 20,
+	data: []
+};
+
+let heatmapLayer = new HeatmapOverlay(cfg);
+
+heatmapLayer.setData(heatmapData);
+
+heatmapLayer.addTo(mymap)
 
 function onLocationFound(e) {
   let radius = e.accuracy;
@@ -234,13 +271,19 @@ function addWeatherLayer(listOfCities) {
 	
 	let allWeatherMarkers = [];
 	
+	let checklat;
+	let checklng;
+	
 	function recursiveWeather(recursiveList, counter) {
 		
-		if (counter < 2) {
+		if (counter < 1) {
 			
 			let { lat, lng } = recursiveList[0].getLatLng();
 			
-			console.log(lat, lng);
+			checklat = lat;
+			checklng = lng
+			
+			console.log('send to php', lat, lng);
 			
 			counter ++;
 			
@@ -274,23 +317,34 @@ function addWeatherLayer(listOfCities) {
 
 							lat = weather.geometry.coordinates[1];
 							lng = weather.geometry.coordinates[0];
+							
 							temp = weather.properties.temp;				
-							popup = L.popup({
-								className: 'wikiPopup'
-							});
+							//popup = L.popup({
+							//	className: 'wikiPopup'
+							//});
 
-							popup.setContent('weather');
+							//popup.setContent('weather');
 
 							weatherMarker = L.divIcon({
-								className: 'weatherMarkerStyle',
-								html: weather.properties.temp
+								className: 'weatherMarkerStyle ' + weather.properties.icon,
+								html: weather.properties.temp + weather.properties.icon,
+								iconSize: [40,40],
+								iconAnchor: [20,40]
+								//+ ' <img src="img/weatherIcons/' + weather.properties.icon + '.png"></img>'
 							})
 							
-							marker = L.marker([lat, lng], {icon: weatherMarker, time: weather.properties.time}).bindPopup(popup);			
+							marker = L.marker([lat, lng], {icon: weatherMarker, time: weather.properties.time, temp: weather.properties.temp});
+							//.bindPopup(popup);			
 							//
 							weatherMarkers.push(marker);
-						
+
 						}
+			
+			
+//heatmapData = {
+//	max: 8,
+//	data: [{lat: checklat, lng: checklng, count: 8}]
+//};	
 			
 					allWeatherMarkers.push(weatherMarkers);
 					recursiveWeather(recursiveList.slice(1), counter);
@@ -307,21 +361,72 @@ function addWeatherLayer(listOfCities) {
 		} else {
 			
 				console.log('allWM',allWeatherMarkers);
-				
 
 				let weatherMarkersLayerGroup = L.layerGroup();
 
+/*
+				let container = {};
+				
+							let {lat,lng} = allWeatherMarkers[a][t].getLatLng();
+						
+						console.log('a weather marker', allWeatherMarkers[a][t], lat, lng);
+
+						let addItems = {};
+						
+						addItems['lat'] = lat;
+						addItems['lng'] = lng;
+						addItems['count'] = allWeatherMarkers[a][t].options.temp;
+						
+						instance.push(addItems);
+					
+					
+					container['data'] = instance;
+					
+									heatlist.push(container);
+				
+				console.log('heatlist', heatlist);
+				console.log('container', container);
+					
+					//heatmapData = {
+//	max: 8,
+//	data: [{lat: checklat, lng: checklng, count: 8}]
+//};	
+					
+	*/				
 				for (let t = 0; t < 16 ; t ++) {
 
 					let cityWeatherTimeMarkers = L.layerGroup([], {time: allWeatherMarkers[0][t].options.time});
-					
+				
+					cityWeatherTimeMarkers['options']['data'] = [];
 					for (let a = 0; a < allWeatherMarkers.length; a++) {
+						let {lat,lng} = allWeatherMarkers[a][t].getLatLng();
+						let instance = {}
+						instance['lat'] = lat;
+						instance['lng'] = lng;
+						instance['count'] = allWeatherMarkers[a][t].options.temp;
+					
+						cityWeatherTimeMarkers['options']['data'].push(instance);
 						cityWeatherTimeMarkers.addLayer(allWeatherMarkers[a][t]);
+						
+	
+						cityWeatherTimeMarkers.on('add', function (e) {
+							console.log('has heatmp', mymap.hasLayer(heatmapLayer));
+							console.log('layer added', e.target.options);
+							let updatedHeat = e.target.options.data;
+							console.log('updatedheat', updatedHeat);
+							heatmapData['data'] = updatedHeat;
+							heatmapLayer.setData(heatmapData);
+						})
+						cityWeatherTimeMarkers.on('remove', function () {
+							console.log('layer removed');
+						})
+					
 					};
 					
 					weatherMarkersLayerGroup.addLayer(cityWeatherTimeMarkers);
-				};
-				
+					
+					};
+
 				
 				
 									/*	
@@ -360,6 +465,27 @@ function addWeatherLayer(listOfCities) {
 					
 					//And initialize the slider
 					sliderControl.startSlider();	
+					
+					console.log('ll', checklat,checklng);
+					//let heat = L.heatLayer([
+						//[50.5, 30.5, 0.8], // lat, lng, intensity
+						//[50.6, 30.4, 0.5]
+					//	[checklat, checklng, 1]
+					//], {
+					//	radius: 20,
+					//	max: 1,
+					//	}).addTo(mymap);
+
+//let heatmapData = {
+//	max: 20
+//	data: [{lat: checklat, lng: checklng, count: 8}]
+//};					
+
+//heatmapData['data'] = [{lat: checklat, lng: checklng, count: 18}];
+				
+//heatmapLayer.setData(heatmapData);
+
+//heatmapLayer.addTo(mymap)
 					
 		}
 	}
@@ -744,7 +870,7 @@ function getWebcams (isoA2code) {
 			//node.setAttribute("class", "badge rounded-pill bg-secondary");
 			node.setAttribute("data-toggle", "modal");
 			node.setAttribute("style", "font-size: 1rem");
-			node.setAttribute("data-target", "#viewCountryModal");
+			node.setAttribute("data-target", "#webcamModal");
 			let previewNode = document.createElement('img');
 			previewNode.setAttribute("class", "webcamPreview");
 			previewNode.setAttribute('src', result.data[r].thumbnail);
@@ -782,7 +908,8 @@ function getWebcams (isoA2code) {
        });
 			 
 			webcamMarker.on('click', function (e) {
-				document.getElementById('infoSym').click();
+				document.getElementById('embedWebcam').setAttribute('src', result.data[r].embed);
+				document.getElementById('webcamBtn').click();
 				if (previewCounter != 0) {
 					//document.getElementById('viewCountryText').innerHTML = 'nothing yet';
 					//this.openPopup();
@@ -798,12 +925,12 @@ function getWebcams (isoA2code) {
        });
 			 
 			 webcamMarker.getPopup().on('remove', function () {
-					console.log(previewCounter);
+					//console.log(previewCounter);
 					//previewCounter = 0;
 				});
 
 			 webcamMarker.getPopup().on('add', function () {
-					console.log(previewCounter);
+					//console.log(previewCounter);
 					//previewCounter++;
 				});
 				
@@ -1382,7 +1509,7 @@ function getGeonamesCities (isoA2) {
 		}
 		console.log('cities sent to PHP',randomMarkers);
 		
-		//addWeatherLayer(randomMarkers);
+		addWeatherLayer(randomMarkers);
 			
 		// call recursive function
 		//document.getElementById('fetchingData').click();
@@ -1581,7 +1708,7 @@ function displayCountry(isoa3Code) {
 				getWikipedia(currentCountry, bounds);
 				getGeonamesCities(isoA2);
 				getGeonamesAirports(isoA2);
-				getNews(isoA2);
+				//getNews(isoA2);
 				getWebcams(isoA2);
 				
 			},
