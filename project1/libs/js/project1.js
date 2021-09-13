@@ -16,6 +16,8 @@
 
 // local landmarks - show on map
 
+//NEXT - list of layers to remove, call function with select dropdown / home button.
+
 let firstLoad = true;
 let showToast = false;
 let displayCount = 0;
@@ -810,7 +812,8 @@ function getWikipedia (currentCountry, bounds) {
 				//} else {
 				//	let imgurl = '"' + placeArticle.thumbnailImg.toString() + '"';
 				//placeTooltip.setContent('<a href=' + `${wikiurl}` + ' target="_blank">' + `${placeArticle.title}` + '</a>');
-				placeTooltip.setContent(placeArticle.title + ' (Double click to view article)');
+				//placeTooltip.setContent(`<span>${placeArticle.title} + ' </br>(Double click to view article)'</span>`);
+				placeTooltip.setContent(`<span>${placeArticle.title}</br>(Double click to view article)</span>`);
 				//}
 																	
 				let wikiMarker = L.ExtraMarkers.icon({
@@ -866,7 +869,8 @@ function getWikipedia (currentCountry, bounds) {
 						sticky: true,
 						url: article.wikipediaUrl
 					});
-					tooltip.setContent(article.title + ' (Double click to view article)');
+					//tooltip.setContent(article.title + ' (Double click to view article)');
+					tooltip.setContent(`<span>${article.title}</br>(Double click to view article)</span>`);
 					//tooltip.setContent('<a href=' + `${wikiurl}` + ' target="_blank">' + `${article.title}` + '</a>');
 					
 					let wikiMarker = L.ExtraMarkers.icon({
