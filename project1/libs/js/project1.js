@@ -35,6 +35,8 @@ let layersAdded = 0;
 let layerNames = [];
 let overlaysObj = {};
 let overlaysCounter = 0;
+let overlayProbs = 0;
+let problemLayers = "";
 
 let landmarkList = [];
 let landmarkIDs = [];
@@ -808,7 +810,7 @@ function getWikipedia (currentCountry, bounds) {
 				//} else {
 				//	let imgurl = '"' + placeArticle.thumbnailImg.toString() + '"';
 				//placeTooltip.setContent('<a href=' + `${wikiurl}` + ' target="_blank">' + `${placeArticle.title}` + '</a>');
-				placeTooltip.setContent(placeArticle.title + ' (Click to view article)');
+				placeTooltip.setContent(placeArticle.title + ' (Double click to view article)');
 				//}
 																	
 				let wikiMarker = L.ExtraMarkers.icon({
@@ -823,7 +825,7 @@ function getWikipedia (currentCountry, bounds) {
 																	
 				let marker = L.marker([placeArticle.lat, placeArticle.lng], {icon: wikiMarker}).bindTooltip(placeTooltip);
 				
-				marker.on('click', function(e) {
+				marker.on('dblclick', function(e) {
 					console.log('clicked' ,e);
 					document.getElementById('targetLink').setAttribute('href', 'http://' + e.target._tooltip.options.url);
 					document.getElementById('targetLink').click();
@@ -864,7 +866,7 @@ function getWikipedia (currentCountry, bounds) {
 						sticky: true,
 						url: article.wikipediaUrl
 					});
-					tooltip.setContent(article.title + ' (Click to view article)');
+					tooltip.setContent(article.title + ' (Double click to view article)');
 					//tooltip.setContent('<a href=' + `${wikiurl}` + ' target="_blank">' + `${article.title}` + '</a>');
 					
 					let wikiMarker = L.ExtraMarkers.icon({
@@ -879,7 +881,7 @@ function getWikipedia (currentCountry, bounds) {
 					
 					let marker = L.marker([article.lat, article.lng], {icon: wikiMarker}).bindTooltip(tooltip);
 					
-					marker.on('click', function(e) {
+					marker.on('dblclick', function(e) {
 						console.log('clicked' ,e);
 						document.getElementById('targetLink').setAttribute('href', 'http://' + e.target._tooltip.options.url);
 						document.getElementById('targetLink').click();
@@ -928,6 +930,9 @@ function getWikipedia (currentCountry, bounds) {
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				document.getElementById("viewCountryText").innerHTML = "Sorry data didn't load please refresh the page";
+				layersAdded++;
+				overlayprobs++;
+				problemLayers += 'Wikipedia';
 				console.log('geonamesWikibbox error');
 				console.log(textStatus);
 				console.log(errorThrown);
@@ -1190,6 +1195,9 @@ function hereLandmarks(markerlist, landmarkIDs, landmarkTypes) {
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
 				//document.getElementById('closeFetchingData').click();
+				layersAdded++;
+				overlayProbs++;
+				problemLayers += 'Landmarks';
 				abortfunction('landmarks error');
 				console.log('landmarks error');
 				console.log(textStatus);
@@ -1584,9 +1592,16 @@ function addOverlays (overlaysObj) {
 	console.log('overlaysobj', overlaysObj);
 	console.log('layersAdded', layersAdded);
 	console.log('layernames', layerNames);
-	if (layersAdded == 8) {
+	if (layersAdded == 8 && overlayProbs == 0) {
 		layersControl = L.control.layers(baseMaps, overlaysObj);
 		layersControl.addTo(mymap);
+	} else if (layersAdded == 8 && overlayProbs > 0) {
+		layersControl = L.control.layers(baseMaps, overlaysObj);
+		layersControl.addTo(mymap);
+		console.log(problemLayers);
+		document.getElementById("viewCountryText").innerHTML = 'overlayprobs ' + overlayProbs;
+		document.getElementById("layerErrorText").innerHTML = problemLayers;
+		document.getElementById("dataError").click();
 	} else if (overlaysCounter < 6 ){
 		console.log('try again');
 		overlaysCounter++;
@@ -1771,12 +1786,17 @@ function displayCountry(isoa3Code) {
 				overlaysObj['Capital'] = capitalMarker;
 				layerNames.push('capitalMarker');
 				
+				console.log('gettimezone');
 				getTimezone(lat, lng);
-				console.log('cc before wiki', currentCountry);
+				console.log('get wiki');
 				getWikipedia(currentCountry, bounds);
+				console.log('get cities');
 				getGeonamesCities(isoA2);
+				console.log('get airports');
 				getGeonamesAirports(isoA2);
+				//console.log('gettimezone');
 				//getNews(isoA2);
+				console.log('get webcams');
 				getWebcams(isoA2);
 				
 			},
@@ -1896,6 +1916,7 @@ selectDropDown.addEventListener("change", function (event) {
     mymap.removeLayer(cityCirclesLayer);
 		mymap.removeLayer(capitalMarker);
 		mymap.removeLayer(landmarkClusterMarkers);
+		mymap.removeLayer(airportClusterMarkers);
     //mymap.removeLayer(heatmapLayer);
     //mymap.removeLayer(touristClusterMarkers);
     //mymap.removeLayer(shopClusterMarkers);
