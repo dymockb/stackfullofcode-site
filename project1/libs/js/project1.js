@@ -16,7 +16,7 @@
 
 // local landmarks - show on map
 
-//NEXT - list of layers to remove, call function with select dropdown / home button.
+//NEXT - list of layers to remove, call function with select dropdown / home button.  CORRECT text modal error when layers fail.
 
 let firstLoad = true;
 let showToast = false;
@@ -33,12 +33,15 @@ let cityNamesRemovedByUser = true;
 let userFound = true;
 let previewCounter = 0;
 let poiMarkers = [];
+
 let layersAdded = 0;
 let layerNames = [];
 let overlaysObj = {};
 let overlaysCounter = 0;
 let overlayProbs = 0;
 let problemLayers = "";
+let layersOnAndOff = [];
+let controlsOnAndOff = [];
 
 let landmarkList = [];
 let landmarkIDs = [];
@@ -147,8 +150,7 @@ function onLocationFound(e) {
   let {lat,lng} = e.latlng;
   mylat = lat;
   mylng = lng;
-	console.log('mylat', mylat, 'mylng', mylng);
-
+	
 	$.ajax({
 		url: "libs/php/openCage.php",
 		type: "POST",
@@ -158,10 +160,9 @@ function onLocationFound(e) {
 			lng: mylng,
 		},
 		success: function(result) {
-			console.log(result);
-			console.log('oc', result.data.results[0].components['ISO_3166-1_alpha-3']);
+			
 			let isoa3Code = result.data.results[0].components["ISO_3166-1_alpha-3"];
-			console.log(isoa3Code);
+			
 			let userCountryBounds = result.data.results[0].bounds;
 			displayCountry(isoa3Code,userCountryBounds);
 		},
@@ -230,6 +231,10 @@ L.easyButton('fa-home', function() {
 							}
 						}
 					}
+					
+					switchCountry(layersOnAndOff, controlsOnAndOff);
+					
+					/*
 					mymap.removeLayer(selectedCountryLayer);
 					//mymap.removeLayer(invisibleBorders);
 					mymap.removeLayer(wikiClusterMarkers);
@@ -242,6 +247,7 @@ L.easyButton('fa-home', function() {
 					//if (mymap.hasLayer(invisibleBorders)) {
 					//	document.getElementById('borderToggle').click();
 					//}
+					*/
 					document.getElementById('selectCountries').value = selectedCountry;
 					displayCountry(isoa3Code);
 					
@@ -563,7 +569,7 @@ function getTimezone (lat,lng) {
 			lng: lng,
 		},
 		success: function(result) {
-			console.log('timezone', result);
+			
 			if (!result.data.timezoneId) {
 				abortfunction('timeZone Error');
 			}
@@ -622,14 +628,41 @@ function getTimezone (lat,lng) {
 	
 } 
 
-function getNews (isoA2code) {
+function translateNews() {
+	
+	let testText = 'Hey how are you today?'
+	console.log(encodeURIComponent(testText));
 	
 	$.ajax({
-		url: "libs/php/newsAPI.php",
+		url: "libs/php/translate.php",
+		type: "POST",
+		dataType: "json",
+		data: {
+			//text: newsText
+		},
+	success: function (result) {
+		console.log('translate result',result);
+		
+
+
+	},
+	error: function (jqXHR, textStatus, errorThrown) {
+		console.log('translate error');
+		console.log(textStatus);
+		console.log(errorThrown);
+	}
+	}); 	
+	
+}
+
+function getNews(isoA2code) {
+	
+	$.ajax({
+		url: "libs/php/newscatcher.php",
 		type: "GET",
 		dataType: "json",
 		data: {
-			country: isoA2code
+			countryCode: isoA2code
 		},
 	success: function (result) {
 		console.log('news result',result);
@@ -656,7 +689,6 @@ function getWebcams (isoA2code) {
 			countryCode: isoA2code
 		},
 		success: function (result) {
-		console.log('webcam result',result);
 		
 		let webcamMarkers = [];
 		for (let r = 0; r < result.data.length; r ++) {
@@ -716,16 +748,16 @@ function getWebcams (isoA2code) {
 				document.getElementById('webcamTitle').innerHTML = 'Webcam: ' + result.data[r].title;
 				document.getElementById('embedWebcam').setAttribute('src', result.data[r].embed);
 				document.getElementById('webcamBtn').click();
+				
 				if (previewCounter != 0) {
 					//document.getElementById('viewCountryText').innerHTML = 'nothing yet';
 					//this.openPopup();
-					console.log(previewCounter);
+
 				} else {
 					//previewCounter = 0;
 					//this.openPopup();
 					//document.getElementById('viewCountryText').innerHTML = result.data[r].title;
-					console.log(result.data[r].title);
-					console.log(previewCounter);
+
 				}
 
        });
@@ -758,6 +790,7 @@ function getWebcams (isoA2code) {
 			webcamLayer.addTo(mymap);
 			overlaysObj['Webcams'] = webcamLayer;
 			layersAdded++;
+			layersOnAndOff.push(webcamLayer);
 			layerNames.push('webcamLayer');
 		
 	},
@@ -780,7 +813,7 @@ function getWikipedia (currentCountry, bounds) {
 			maxRows: '25'
 		},
 		success: function(result) {
-			console.log('wiki result', result);
+			
 			if (!result.data.geonames) {
 				abortfunction('geonamesWiki Error');
 			}
@@ -829,7 +862,7 @@ function getWikipedia (currentCountry, bounds) {
 				let marker = L.marker([placeArticle.lat, placeArticle.lng], {icon: wikiMarker}).bindTooltip(placeTooltip);
 				
 				marker.on('dblclick', function(e) {
-					console.log('clicked' ,e);
+					
 					document.getElementById('targetLink').setAttribute('href', 'http://' + e.target._tooltip.options.url);
 					document.getElementById('targetLink').click();
 				})
@@ -854,7 +887,7 @@ function getWikipedia (currentCountry, bounds) {
 				west: bounds['_southWest'].lng
 			},
 			success: function(result) {
-				console.log('bbox result', result);
+				
 				if (!result.data.geonames) {
 						abortfunction('geonamesWikibbox Error');
 					}
@@ -886,7 +919,7 @@ function getWikipedia (currentCountry, bounds) {
 					let marker = L.marker([article.lat, article.lng], {icon: wikiMarker}).bindTooltip(tooltip);
 					
 					marker.on('dblclick', function(e) {
-						console.log('clicked' ,e);
+						
 						document.getElementById('targetLink').setAttribute('href', 'http://' + e.target._tooltip.options.url);
 						document.getElementById('targetLink').click();
 					})
@@ -929,6 +962,7 @@ function getWikipedia (currentCountry, bounds) {
 				wikiClusterMarkers.addTo(mymap);
 				overlaysObj['Wikipedia Articles'] = wikiClusterMarkers;
 				layersAdded++;
+				layersOnAndOff.push(wikiClusterMarkers);
 				layerNames.push('wikiClusterMarkers');
 				
 			},
@@ -944,6 +978,9 @@ function getWikipedia (currentCountry, bounds) {
 		}); //end of geonamesWikibbox
 	},
 	error: function(jqXHR, textStatus, errorThrown) {
+		layersAdded++;
+		overlayprobs++;
+		problemLayers += 'Wikipedia';
 		console.log('geonamesWikierror');
 		console.log(textStatus);
 		console.log(errorThrown);
@@ -953,7 +990,7 @@ function getWikipedia (currentCountry, bounds) {
 }
 
 function getGeonamesAirports (isoA2) {
-	console.log('isoa2',isoA2);									
+										
 	$.ajax({
 		url: "libs/php/geonamesAirports.php",
 		type: "POST",
@@ -962,7 +999,7 @@ function getGeonamesAirports (isoA2) {
 			country: isoA2
 		},
 	success: function (result) {
-		console.log('airports result',result);
+		
 		if (!result.data.geonames) {
 			abortfunction('airports error');
 		}
@@ -1035,12 +1072,16 @@ function getGeonamesAirports (isoA2) {
 		airportClusterMarkers.addTo(mymap);
 		overlaysObj['Airports'] = airportClusterMarkers;
 		layersAdded++;
+		layersOnAndOff.push(airportClusterMarkers);
 		layerNames.push('airportClusterMarkers');
 		
 		
 
 	},
 	error: function (jqXHR, textStatus, errorThrown) {
+		layersAdded++;
+		overlayProbs++;
+		problemLayers += 'Airports'
 		console.log('airports error');
 		console.log(textStatus);
 		console.log(errorThrown);
@@ -1063,10 +1104,9 @@ function hereLandmarks(markerlist, landmarkIDs, landmarkTypes) {
 		data: {
 			markerLat: lat,
 			markerLng: lng,
-			lmIDs: landmarkIDs
+			//lmIDs: landmarkIDs
 		},
 			success: function (result) {
-				console.log('landmarks',result)
 		
 				for (let lm = 0; lm < result.data.length; lm++) {
 					landmarkIDs.push(result.data[lm].Location.Name);
@@ -1202,7 +1242,7 @@ function hereLandmarks(markerlist, landmarkIDs, landmarkTypes) {
 				layersAdded++;
 				overlayProbs++;
 				problemLayers += 'Landmarks';
-				abortfunction('landmarks error');
+				//abortfunction('landmarks error');
 				console.log('landmarks error');
 				console.log(textStatus);
 				console.log(errorThrown);
@@ -1210,11 +1250,7 @@ function hereLandmarks(markerlist, landmarkIDs, landmarkTypes) {
 		}); // end of hereLandmarks ajax
 
 	} else {
-		
-		console.log('landmarkIDs',landmarkIDs);
-		console.log('landmarkList',landmarkList);
-		console.log('landmarkTypes', landmarkTypes);
-		
+				
 		landmarkClusterMarkers = L.markerClusterGroup({
 		iconCreateFunction: function(cluster) {
 			let childCount = cluster.getChildCount();
@@ -1239,6 +1275,7 @@ function hereLandmarks(markerlist, landmarkIDs, landmarkTypes) {
 	landmarkClusterMarkers.addTo(mymap);
 	overlaysObj['Landmarks'] = landmarkClusterMarkers;
 	layersAdded++;
+	layersOnAndOff.push(landmarkClusterMarkers);
 	layerNames.push('landmarkClusterMarkers');
 
 	}
@@ -1320,7 +1357,6 @@ function geonamesPoiFunc(markerlist) {
 			shadowSize: [0, 0]
 		});
 		
-		console.log('poimarkers', poiMarkers);
 		for (let imarker = 0; imarker < poiMarkers.length; imarker ++) {
 			let oneMarker = poiMarkers[imarker];
 			if (!poiTypes.includes(oneMarker.typeClass)) {
@@ -1430,10 +1466,6 @@ function geonamesPoiFunc(markerlist) {
 	for (let i = 0; i < shopMarkers.length; i++) {
 		shopClusterMarkers.addLayer(shopMarkers[i]);
 	}
-
-	console.log('tourist points found',touristMarkers.length);
-	console.log('shops found', shopMarkers.length);
-	console.log('amenities found',amenityMarkers.length);
 	
 	//mymap.removeControl(layersControl);
 	//addOverlays();
@@ -1441,7 +1473,7 @@ function geonamesPoiFunc(markerlist) {
 }
 
 function getGeonamesCities (isoA2) {
-	console.log('isoa2',isoA2);									
+								
 	$.ajax({
 		url: "libs/php/geonamesSearchCities.php",
 		type: "POST",
@@ -1453,7 +1485,6 @@ function getGeonamesCities (isoA2) {
 		if (result.data.length == 0) {
 			abortfunction('geonamesSearchCities error');
 		}
-		console.log('geonamesSearchCities result',result);
 		
 		let citiesMarkers = [];
 		let citiesCircles = [];
@@ -1509,18 +1540,19 @@ function getGeonamesCities (isoA2) {
 			citiesCircles.push(cityCircle);
 		
 		} // end of result.data loop
-			
-		console.log('Cities found: ',citiesMarkers);
-		
+					
 		citiesLayer = L.layerGroup(citiesMarkers);
 		cityCirclesLayer = L.layerGroup(citiesCircles);
 		
+		//citiesLayer is added / removed by cityCirclesLayer
 		citiesLayer.addTo(mymap);
 		layersAdded++;
 		layerNames.push('citiesLayer');
+		
 		cityCirclesLayer.addTo(mymap);
 		overlaysObj['Cities'] = cityCirclesLayer;
 		layersAdded++;
+		layersOnAndOff.push(cityCirclesLayer);
 		layerNames.push('cityCirclesLayer');
 		
 		mymap.on('zoomend', function() {
@@ -1563,8 +1595,7 @@ function getGeonamesCities (isoA2) {
 		} else {
 			randomMarkers = getRandom(slicedCitiesMarkers, maxCities);
 		}
-		console.log('cities sent to PHP',randomMarkers);
-		
+				
 		landmarkList = [];
 		landmarkIDs = [];
 		landmarkTypes = [];
@@ -1592,38 +1623,42 @@ function getGeonamesCities (isoA2) {
 
 
 function addOverlays (overlaysObj) {
-	
-	console.log('overlaysobj', overlaysObj);
-	console.log('layersAdded', layersAdded);
-	console.log('layernames', layerNames);
+		
 	if (layersAdded == 8 && overlayProbs == 0) {
 		layersControl = L.control.layers(baseMaps, overlaysObj);
 		layersControl.addTo(mymap);
+		controlsOnAndOff.push(layersControl);
+		
 	} else if (layersAdded == 8 && overlayProbs > 0) {
 		layersControl = L.control.layers(baseMaps, overlaysObj);
 		layersControl.addTo(mymap);
-		console.log(problemLayers);
+		controlsOnAndOff.push(layersControl);
+		
 		document.getElementById("viewCountryText").innerHTML = 'overlayprobs ' + overlayProbs;
 		document.getElementById("layerErrorText").innerHTML = problemLayers;
 		document.getElementById("dataError").click();
+		
 	} else if (overlaysCounter < 6 ){
-		console.log('try again');
+		
 		overlaysCounter++;
+		
 		let overlayAgain = setTimeout(function () {
-			console.log('now');
+			
 			addOverlays(overlaysObj);
 			clearTimeout(overlayAgain);
 		},1500);
+		
 	} else {
+		
 		abortfunction('overlay error');
+		
 	}
 
 }
 
 function displayCountry(isoa3Code) {
 	overlaysCounter = 0;
-	//heatmapLayer.addTo(mymap)
-	console.log('sc',selectDropDown);
+		
 	selectDropDown['value'] = isoa3Code;
 	document.getElementById('viewCountryText').innerHTML = 'Loading...';
 	
@@ -1642,8 +1677,7 @@ function displayCountry(isoa3Code) {
 			countryCode: isoa3Code
 		},
 		success: function (result) {
-			console.log(result.data);
-			
+						
 			let country = result.data;
 			let geojsonLayer = L.geoJson(country);
 			bounds = geojsonLayer.getBounds();
@@ -1663,7 +1697,6 @@ function displayCountry(isoa3Code) {
 				}
 			}
 				
-			console.log(bounds);
 			let northEast = bounds._northEast;
 			let southWest = bounds._southWest;
 			
@@ -1682,7 +1715,7 @@ function displayCountry(isoa3Code) {
 			viewportBounds = L.latLngBounds(corner1, corner2);
 			
 	    currentCountry = result.data["properties"].name;
-			console.log('currentC', currentCountry);
+			
       if (result.data["geometry"]["type"] == 'MultiPolygon') {
         currentCountryPolygons = result.data["geometry"]["coordinates"];
       } else {
@@ -1714,10 +1747,14 @@ function displayCountry(isoa3Code) {
 			selectedCountryLayer.addTo(mymap);
 			overlaysObj['Highlight'] = selectedCountryLayer;
 			layersAdded++;
+			layersOnAndOff.push(selectedCountryLayer);
 			layerNames.push('selectedCountryLayer');
 									
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
+				layersAdded++;
+				problemLayers += 'polygon';
+				overlayProbs++;
 				console.log('get polygon error');
 				console.log(textStatus);
 				console.log(errorThrown);
@@ -1732,7 +1769,6 @@ function displayCountry(isoa3Code) {
 			countryCode: isoa3Code
 		},
 		success: function (result) {
-			console.log('orc', result.data);
 
 			let textValue = result.data.nativeName;
 			document.getElementById("nativeName").innerHTML = 'Native name: ' + textValue;
@@ -1754,13 +1790,7 @@ function displayCountry(isoa3Code) {
 				isoA3: isoa3Code
 			},
 			success: function(result) {
-				console.log('WB capital', result);
-				console.log(result.data[1][0].latitude);
-				//if (!result.data.results) {
-				//	abortfunction('openCageCapital Error');
-				//}
-
-				
+								
 				lat = result.data[1][0].latitude;
 				lng = result.data[1][0].longitude;
 				let capitalPopup = L.popup({autoPan: false, autoClose: false, closeOnClick: false});
@@ -1787,10 +1817,11 @@ function displayCountry(isoa3Code) {
 				
 				capitalMarker.addTo(mymap).openPopup();
 				layersAdded++;
+				layersOnAndOff.push(capitalMarker);
 				overlaysObj['Capital'] = capitalMarker;
 				layerNames.push('capitalMarker');
 				
-				console.log('gettimezone');
+				console.log('get timezone');
 				getTimezone(lat, lng);
 				console.log('get wiki');
 				getWikipedia(currentCountry, bounds);
@@ -1798,8 +1829,10 @@ function displayCountry(isoa3Code) {
 				getGeonamesCities(isoA2);
 				console.log('get airports');
 				getGeonamesAirports(isoA2);
-				//console.log('gettimezone');
-				//getNews(isoA2);
+				console.log('get news');
+				getNews(isoA2);
+				console.log('translate');
+				translateNews();
 				console.log('get webcams');
 				getWebcams(isoA2);
 				
@@ -1878,7 +1911,6 @@ function displayCountry(isoa3Code) {
 function countryBordersFunc(response) {
 	
 	countryBorders = response;
-	console.log('CB', countryBorders);
 	
 	for (let i = 0; i < countryBorders.length; i++) {
 		let textValue = countryBorders[i].name;
@@ -1895,6 +1927,16 @@ function countryBordersFunc(response) {
 } // end of countryBordersFunc
 
 //EVENT HANDLERS
+
+function switchCountry(layersOnAndOff, controlsOnAndOff){
+	for (let s = 0; s < layersOnAndOff.length; s++) {
+		mymap.removeLayer(layersOnAndOff[s]);
+	}
+	for (let c = 0; c < controlsOnAndOff.length; c ++) {
+		mymap.removeControl(controlsOnAndOff[c]);
+	}
+	clearTimeout(timer);
+}
 
 selectDropDown.addEventListener("change", function (event) {
   let completeFunction = true
@@ -1913,6 +1955,11 @@ selectDropDown.addEventListener("change", function (event) {
 		layersAdded = 0;
 		layerNames = [];
 		overlaysObj = {};
+		
+		console.log(controlsOnAndOff);
+		switchCountry(layersOnAndOff, controlsOnAndOff);
+		
+		/*
     mymap.removeLayer(selectedCountryLayer);
     //mymap.removeLayer(invisibleBorders);
     mymap.removeLayer(wikiClusterMarkers);
@@ -1929,6 +1976,7 @@ selectDropDown.addEventListener("change", function (event) {
     mymap.removeControl(layersControl);
 		//mymap.removeControl(sliderControl);
     clearTimeout(timer);
+		*/
     //let isoa3Code;
     //countryBorders.forEach(function(arrayItem) {
     //  if (event.target.value.includes(arrayItem.properties.name)) {
@@ -2005,6 +2053,7 @@ mymap.on('baselayerchange', function(e) {
 	}
 });
 
+/*
 $('#newsArticlesModal').on('shown.bs.modal', function () {
 	console.log('shown');
 	$('.btn-link').each(function(){
@@ -2013,6 +2062,7 @@ $('#newsArticlesModal').on('shown.bs.modal', function () {
 				//$(this).setAttribute('class', 'accordion-body collapse');
 });
 })
+*/
 
 window.onload = (event) => {	
 	if ($('#preloader').length) {
@@ -2031,7 +2081,7 @@ window.onload = (event) => {
 					dataType: "json",
 					data: {},
 					success: function (result) {
-						console.log('new', result.data);
+						
 						countryBordersFunc(result.data);
 						
 					},
