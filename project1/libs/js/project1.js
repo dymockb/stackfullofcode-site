@@ -4,6 +4,17 @@
 
 //global variables
 
+// weather : 
+//	chart for avg temp and rain - http://climatedataapi.worldbank.org/climateweb/rest/v1/country/cru/tas/month/GBR (tas / pr)
+// current temp heatmap & current weather icons
+
+// news:
+// articles in accordion
+
+// freedom status: - need to load excel file to server
+
+// local landmarks - show on map
+
 let firstLoad = true;
 let showToast = false;
 let displayCount = 0;
@@ -18,9 +29,13 @@ let dropdownList = [];
 let cityNamesRemovedByUser = true;
 let userFound = true;
 let previewCounter = 0;
+let poiMarkers = [];
+let layersAdded = 0;
+let layerNames = [];
+let overlaysObj = {};
 
 //userLocationMarker,
-let baseLayerName, mylat, mylng, capitalMarker, timer, zoomLocationTimer, recursiveLoadTimer, allRestCountries, myBounds, currentCountry, selectedCountry, currentCountryPolygons, layersControl, fijiUpdated, russiaUpdated, invisibleBorders, wikiLayer, wikiClusterMarkers, citiesLayer, cityCirclesLayer, touristLayer, shopLayer, amenityClusterMarkers, userPopup, corner1, corner2, viewportBounds, userCircle, overlays, touristMarkers, shopMarkers, amenityMarkers, countryBorders
+let baseLayerName, mylat, mylng, capitalMarker, timer, zoomLocationTimer, recursiveLoadTimer, allRestCountries, myBounds, currentCountry, selectedCountry, currentCountryPolygons, layersControl, sliderControl, fijiUpdated, russiaUpdated, invisibleBorders, wikiLayer, wikiClusterMarkers, citiesLayer, cityCirclesLayer, touristLayer, webcamLayer, shopLayer, amenityClusterMarkers, userPopup, corner1, corner2, viewportBounds, userCircle, overlays, touristMarkers, shopMarkers, amenityMarkers, countryBorders
 
 let loadingTimer;
 let loadingCount = 0
@@ -287,7 +302,7 @@ function addWeatherLayer(listOfCities) {
 	
 	function recursiveWeather(recursiveList, counter) {
 		
-		if (counter < 2) {
+		if (counter < 1) {
 			
 			let { lat, lng } = recursiveList[0].getLatLng();
 			
@@ -529,251 +544,6 @@ function addWeatherLayer(listOfCities) {
 	
 }
 
-
-function getRecursiveWeather (lat, lng) {
-	let weatherMarkers0 = [];
-	let weatherMarkers1 = [];
-	
-	$.ajax({
-	url: "libs/php/weatherbit16Day.php",
-	type: "POST",
-	dataType: "json",
-	data: {
-		locationLat: lat,
-		locationLng: lng,
-	},
-	success: function(result) {
-		console.log('weather', result.data);
-		//if (!result.data.current) {
-		//if (!result['status'].description == 'success') {
-		//	abortfunction('openWeather Error');
-		//}
-		//let weatherDescription = result.data.current.weather[0].description;
-		//document.getElementById("currentWeather").innerHTML = weatherDescription.charAt(0).toUpperCase() + weatherDescription.slice(1);	
-		let lat;
-		let lng;
-		let temp;
-		let weatherMarker;
-		let popup;
-		let marker;
-		
-		for (let w=0; w < 2; w ++) {
-		console.log(w);
-		for (let iweather = 0; iweather < result.data.features.length ; iweather ++) {
-
-			let weather = result.data.features[iweather];
-			if (w==0) {
-				lat = weather.geometry.coordinates[1];
-				lng = weather.geometry.coordinates[0];
-				temp = weather.properties.temp;				
-				popup = L.popup({
-					className: 'wikiPopup'
-				});
-
-				popup.setContent('weather');
-
-				weatherMarker = L.divIcon({
-					className: 'weatherMarkerStyle',
-					html: weather.properties.temp
-				})
-				
-				marker = L.marker([lat, lng], {icon: weatherMarker, time: weather.properties.time}).bindPopup(popup);			
-				//
-				weatherMarkers0.push(marker);
-			
-			} else {
-				
-				lat = 51;
-				lng = 1;
-				
-				temp = weather.properties.temp;
-				popup = L.popup({
-					className: 'wikiPopup'
-				});
-
-				popup.setContent('weather');
-
-				weatherMarker = L.divIcon({
-					className: 'weatherMarkerStyle',
-					html: weather.properties.temp
-				})
-				
-				marker = L.marker([lat, lng], {icon: weatherMarker, time: weather.properties.time}).bindPopup(popup);	
-				//
-				weatherMarkers1.push(marker);
-			
-			}
-			
-		}
-		}
-		
-		console.log('wm0',weatherMarkers0);
-		console.log('wm1',weatherMarkers1);
-		
-		let weatherMarkers3 = L.layerGroup();
-		
-		for (let l = 0; l < weatherMarkers0.length; l ++) {
-			if (l==0) {
-				console.log('time', weatherMarkers0[l].options.time);
-			}
-			let cityWeatherMarkers = L.layerGroup([],{time: weatherMarkers0[l].options.time});
-			cityWeatherMarkers.addLayer(weatherMarkers0[l]);
-			cityWeatherMarkers.addLayer(weatherMarkers1[l]);
-			weatherMarkers3.addLayer(cityWeatherMarkers);
-		}
-		
-		console.log('wm3',weatherMarkers3);
-		//let allWeatherMarkers = weatherMarkers0.concat(weatherMarkers1);
-		let weatherlayerGroup = weatherMarkers3;
-		
-		//console.log('jsontest',jsontest);
-		//let testlayer = L.geoJson(jsontest);
-		//let weatherlayer = L.geoJson(result.data);
-		let sliderControl = L.control.sliderControl({
-			position: "topright", 
-			//layer: testlayer,
-			layer: weatherlayerGroup,
-			range: false,
-			follow: 1
-		});
-
-		//Make sure to add the slider to the map ;-)
-		mymap.addControl(sliderControl);
-		
-		//And initialize the slider
-		sliderControl.startSlider();			
-		
-	},
-	error: function(jqXHR, textStatus, errorThrown) {
-		console.log('OpenWeather error');
-		console.log(textStatus);
-		console.log(errorThrown);
-	}
-	}); //end of Weatherbit ajax
-}
-
-function getWeather (lat, lng) {
-	let weatherMarkers0 = [];
-	let weatherMarkers1 = [];
-	
-	$.ajax({
-	url: "libs/php/weatherbit16Day.php",
-	type: "POST",
-	dataType: "json",
-	data: {
-		locationLat: lat,
-		locationLng: lng,
-	},
-	success: function(result) {
-		console.log('weather', result.data);
-		//if (!result.data.current) {
-		//if (!result['status'].description == 'success') {
-		//	abortfunction('openWeather Error');
-		//}
-		//let weatherDescription = result.data.current.weather[0].description;
-		//document.getElementById("currentWeather").innerHTML = weatherDescription.charAt(0).toUpperCase() + weatherDescription.slice(1);	
-		let lat;
-		let lng;
-		let temp;
-		let weatherMarker;
-		let popup;
-		let marker;
-		
-		for (let w=0; w < 2; w ++) {
-		console.log(w);
-		for (let iweather = 0; iweather < result.data.features.length ; iweather ++) {
-
-			let weather = result.data.features[iweather];
-			if (w==0) {
-				lat = weather.geometry.coordinates[1];
-				lng = weather.geometry.coordinates[0];
-				temp = weather.properties.temp;				
-				popup = L.popup({
-					className: 'wikiPopup'
-				});
-
-				popup.setContent('weather');
-
-				weatherMarker = L.divIcon({
-					className: 'weatherMarkerStyle',
-					html: weather.properties.temp
-				})
-				
-				marker = L.marker([lat, lng], {icon: weatherMarker, time: weather.properties.time}).bindPopup(popup);			
-				//
-				weatherMarkers0.push(marker);
-			
-			} else {
-				
-				lat = 51;
-				lng = 1;
-				
-				temp = weather.properties.temp;
-				popup = L.popup({
-					className: 'wikiPopup'
-				});
-
-				popup.setContent('weather');
-
-				weatherMarker = L.divIcon({
-					className: 'weatherMarkerStyle',
-					html: weather.properties.temp
-				})
-				
-				marker = L.marker([lat, lng], {icon: weatherMarker, time: weather.properties.time}).bindPopup(popup);	
-				//
-				weatherMarkers1.push(marker);
-			
-			}
-			
-		}
-		}
-		
-		console.log('wm0',weatherMarkers0);
-		console.log('wm1',weatherMarkers1);
-		
-		let weatherMarkers3 = L.layerGroup();
-		
-		for (let l = 0; l < weatherMarkers0.length; l ++) {
-			if (l==0) {
-				console.log('time', weatherMarkers0[l].options.time);
-			}
-			let cityWeatherMarkers = L.layerGroup([],{time: weatherMarkers0[l].options.time});
-			cityWeatherMarkers.addLayer(weatherMarkers0[l]);
-			cityWeatherMarkers.addLayer(weatherMarkers1[l]);
-			weatherMarkers3.addLayer(cityWeatherMarkers);
-		}
-		
-		console.log('wm3',weatherMarkers3);
-		//let allWeatherMarkers = weatherMarkers0.concat(weatherMarkers1);
-		let weatherlayerGroup = weatherMarkers3;
-		
-		//console.log('jsontest',jsontest);
-		//let testlayer = L.geoJson(jsontest);
-		//let weatherlayer = L.geoJson(result.data);
-		let sliderControl = L.control.sliderControl({
-			position: "topright", 
-			//layer: testlayer,
-			layer: weatherlayerGroup,
-			range: false,
-			follow: 1
-		});
-
-		//Make sure to add the slider to the map ;-)
-		mymap.addControl(sliderControl);
-		
-		//And initialize the slider
-		sliderControl.startSlider();			
-		
-	},
-	error: function(jqXHR, textStatus, errorThrown) {
-		console.log('OpenWeather error');
-		console.log(textStatus);
-		console.log(errorThrown);
-	}
-	}); //end of Weatherbit ajax
-}
-
 function getTimezone (lat,lng) {
 	
 		$.ajax({
@@ -877,7 +647,7 @@ function getWebcams (isoA2code) {
 		data: {
 			countryCode: isoA2code
 		},
-	success: function (result) {
+		success: function (result) {
 		console.log('webcam result',result);
 		
 		let webcamMarkers = [];
@@ -935,6 +705,7 @@ function getWebcams (isoA2code) {
        });
 			 
 			webcamMarker.on('click', function (e) {
+				document.getElementById('webcamTitle').innerHTML = 'Webcam: ' + result.data[r].title;
 				document.getElementById('embedWebcam').setAttribute('src', result.data[r].embed);
 				document.getElementById('webcamBtn').click();
 				if (previewCounter != 0) {
@@ -977,6 +748,9 @@ function getWebcams (isoA2code) {
 			webcamLayer = L.layerGroup(webcamMarkers);
 		
 			webcamLayer.addTo(mymap);
+			overlaysObj['Webcams'] = webcamLayer;
+			layersAdded++;
+			layerNames.push('webcamLayer');
 		
 	},
 	error: function (jqXHR, textStatus, errorThrown) {
@@ -1122,6 +896,10 @@ function getWikipedia (currentCountry, bounds) {
 				}
 				
 				newPolygons = [];
+				wikiClusterMarkers.addTo(mymap);
+				overlaysObj['Wikipedia Articles'] = wikiClusterMarkers;
+				layersAdded++;
+				layerNames.push('wikiClusterMarkers');
 				
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
@@ -1219,13 +997,93 @@ function getGeonamesAirports (isoA2) {
 	}); 	
 }
 
-function geonamesPoiFunc(markerlist) {
-	
-	if (markerlist.length > 0) {
-	
+function hereLandmarks(markerlist, landmarkIDs) {
+		
+	if (markerlist.length > 10) {
+		
 		let { lat, lng } = markerlist[0].getLatLng();
 		
-		let poiMarkers = [];
+		document.getElementById("viewCountryText").innerHTML = markerlist[0].options.icon.options.html;
+		
+		$.ajax({
+		url: "libs/php/hereLandmarks.php",
+		type: "POST",
+		dataType: "json",
+		data: {
+			markerLat: lat,
+			markerLng: lng,
+			lmIDs: landmarkIDs
+		},
+			success: function (result) {
+				console.log('landmarks',result)
+				
+				
+				for (let lm = 0; lm < result.data.length; lm++) {
+					landmarkIDs.push(result.data[lm].Location.Name);
+					
+					let popup = L.popup({
+						className: 'wikiPopup'
+					});
+					popup.setContent(result.data[lm].Location.Name);
+					
+					let marker = L.marker([result.data[lm].Location.DisplayPosition.Latitude, result.data[lm].Location.DisplayPosition.Longitude]).bindPopup(popup);
+					landmarkList.push(marker);	
+					
+				}
+					
+				hereLandmarks(markerlist.slice(1), landmarkIDs);
+				
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+				//document.getElementById('closeFetchingData').click();
+				abortfunction('landmarks error');
+				console.log('landmarks error');
+				console.log(textStatus);
+				console.log(errorThrown);
+			},
+		}); // end of hereLandmarks ajax
+
+	} else {
+		
+		console.log('landmarkIDs',landmarkIDs);
+		console.log('landmarkList',landmarkList);
+		
+		landmarkClusterMarkers = L.markerClusterGroup({
+		iconCreateFunction: function(cluster) {
+			let childCount = cluster.getChildCount();
+			let c = ' amenity-marker-cluster-';
+			if (childCount < 10) {
+				c += 'small';
+			} else if (childCount < 100) {
+				c += 'medium';
+			} else {
+				c += 'large';
+			}
+
+			return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'cursorClass marker-cluster' + c, iconSize: new L.Point(40, 40) });
+		},
+		showCoverageOnHover: false
+	});
+	
+	for (let i = 0; i < landmarkList.length; i++) {
+		landmarkClusterMarkers.addLayer(landmarkList[i]);
+	}
+	
+	landmarkClusterMarkers.addTo(mymap);
+	overlaysObj['Landmarks'] = landmarkClusterMarkers;
+	layersAdded++;
+	layerNames.push('landmarkClusterMarkers');
+
+	}
+}
+
+function geonamesPoiFunc(markerlist) {
+		
+	if (markerlist.length > 0) {
+		
+		let { lat, lng } = markerlist[0].getLatLng();
+		
+		document.getElementById("viewCountryText").innerHTML = markerlist[0].options.icon.options.html;
 		
 		$.ajax({
 		url: "libs/php/geonamesPOI.php",
@@ -1237,8 +1095,6 @@ function geonamesPoiFunc(markerlist) {
 		},
 			success: function (result) {
 																		
-				document.getElementById('fetchingCity').innerHTML = markerlist[0]._popup._content;
-				
 				if (result.data.length != 0) {
 					for (let ipoi = 0; ipoi < result.data.poi.length; ipoi ++) {
 						let onePoi = result.data.poi[ipoi];
@@ -1248,7 +1104,7 @@ function geonamesPoiFunc(markerlist) {
 				geonamesPoiFunc(markerlist.slice(1));															
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
-				document.getElementById('closeFetchingData').click();
+				//document.getElementById('closeFetchingData').click();
 				abortfunction('poi error');
 				console.log('POI error');
 				console.log(textStatus);
@@ -1260,7 +1116,7 @@ function geonamesPoiFunc(markerlist) {
 		
 		//keep at center ajax
 	
-		//document.getElementById('closeFetchingData').click();
+		document.getElementById('closeFetchingData').click();
 	
 		touristMarkers = [];
 		shopMarkers = [];
@@ -1297,6 +1153,7 @@ function geonamesPoiFunc(markerlist) {
 			shadowSize: [0, 0]
 		});
 		
+		console.log('poimarkers', poiMarkers);
 		for (let imarker = 0; imarker < poiMarkers.length; imarker ++) {
 			let oneMarker = poiMarkers[imarker];
 			if (!poiTypes.includes(oneMarker.typeClass)) {
@@ -1342,7 +1199,7 @@ function geonamesPoiFunc(markerlist) {
 				}
 			}		
 		}
-	}
+	
 	
 	amenityClusterMarkers = L.markerClusterGroup({
 		iconCreateFunction: function(cluster) {
@@ -1411,9 +1268,9 @@ function geonamesPoiFunc(markerlist) {
 	console.log('shops found', shopMarkers.length);
 	console.log('amenities found',amenityMarkers.length);
 	
-	mymap.removeControl(layersControl);
-	addOverlays ()
-	
+	//mymap.removeControl(layersControl);
+	//addOverlays();
+	}
 }
 
 function getGeonamesCities (isoA2) {
@@ -1492,7 +1349,12 @@ function getGeonamesCities (isoA2) {
 		cityCirclesLayer = L.layerGroup(citiesCircles);
 		
 		citiesLayer.addTo(mymap);
+		layersAdded++;
+		layerNames.push('citiesLayer');
 		cityCirclesLayer.addTo(mymap);
+		overlaysObj['Cities'] = cityCirclesLayer;
+		layersAdded++;
+		layerNames.push('cityCirclesLayer');
 		
 		mymap.on('zoomend', function() {
 			//zoomCount++;
@@ -1536,10 +1398,19 @@ function getGeonamesCities (isoA2) {
 		}
 		console.log('cities sent to PHP',randomMarkers);
 		
-		addWeatherLayer(randomMarkers);
+		landmarkList = [];
+		landmarkIDs = [];
+		hereLandmarks(randomMarkers, landmarkIDs);
+		//mymap.removeControl(layersControl);
+		addOverlays(overlaysObj);
+		
+		//addWeatherLayer(randomMarkers);
 			
-		// call recursive function
+		//show loading modal
 		//document.getElementById('fetchingData').click();
+		
+		// call recursive function - POIs
+		//poiMarkers = [];
 		//geonamesPoiFunc(randomMarkers);
 
 	},
@@ -1551,29 +1422,28 @@ function getGeonamesCities (isoA2) {
 	}); 	
 }
 
-function addOverlays (overlaysObject) {
-
-	overlays = {
-		//"Your location": userLayer,
-		"Capital": capitalMarker,
-		"Highlight": selectedCountryLayer,
-		'Cities': cityCirclesLayer,
-		"Wikipedia Articles": wikiClusterMarkers,
-		'Tourist Spots': touristClusterMarkers,
-		'Shops': shopClusterMarkers,
-		'Amenities': amenityClusterMarkers
-		}
-
-	layersControl = L.control.layers(baseMaps, overlays);
-	layersControl.addTo(mymap);
-
-	//let layerCheck = 0;
-	//let zoomCount = 0;
+function addOverlays (overlaysObj) {
+	console.log('overlaysobj', overlaysObj);
+	console.log('layersAdded', layersAdded);
+	console.log('layernames', layerNames);
+	if (layersAdded == 7) {
+		layersControl = L.control.layers(baseMaps, overlaysObj);
+		layersControl.addTo(mymap);
+	} else {
+		console.log('try again');
+		let overlayAgain = setTimeout(function () {
+			console.log('now');
+			addOverlays(overlaysObj);
+			clearTimeout(overlayAgain);
+		},1500);
+	}
 
 }
 
 function displayCountry(isoa3Code) {
-	heatmapLayer.addTo(mymap)
+	//heatmapLayer.addTo(mymap)
+	console.log('sc',selectDropDown);
+	selectDropDown['value'] = isoa3Code;
 	document.getElementById('viewCountryText').innerHTML = 'Loading...';
 	
 	if (typeof capitalMarker == "object") {
@@ -1631,6 +1501,7 @@ function displayCountry(isoa3Code) {
 			viewportBounds = L.latLngBounds(corner1, corner2);
 			
 	    currentCountry = result.data["properties"].name;
+			console.log('currentC', currentCountry);
       if (result.data["geometry"]["type"] == 'MultiPolygon') {
         currentCountryPolygons = result.data["geometry"]["coordinates"];
       } else {
@@ -1660,6 +1531,9 @@ function displayCountry(isoa3Code) {
 
 			borderLines.addTo(selectedCountryLayer);
 			selectedCountryLayer.addTo(mymap);
+			overlaysObj['Highlight'] = selectedCountryLayer;
+			layersAdded++;
+			layerNames.push('selectedCountryLayer');
 									
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
@@ -1731,8 +1605,12 @@ function displayCountry(isoa3Code) {
 				});
 				
 				capitalMarker.addTo(mymap).openPopup();
+				layersAdded++;
+				overlaysObj['Capital'] = capitalMarker;
+				layerNames.push('capitalMarker');
 				
 				getTimezone(lat, lng);
+				console.log('cc before wiki', currentCountry);
 				getWikipedia(currentCountry, bounds);
 				getGeonamesCities(isoA2);
 				getGeonamesAirports(isoA2);
@@ -1754,11 +1632,11 @@ function displayCountry(isoa3Code) {
 		},
 	}); //end of One Rest Country ajax
 
-	let overlays = {
-			"Please wait data loading...": L.geoJSON(),
-		}	
-	layersControl = L.control.layers(baseMaps, overlays);
-	layersControl.addTo(mymap)
+	//let overlays = {
+	//		"Please wait data loading...": L.geoJSON(),
+	//	}	
+	//layersControl = L.control.layers(baseMaps, overlays);
+	//layersControl.addTo(mymap)
 	
   document.getElementById("progressBar").setAttribute('style', 'visibility: initial');
 	document.getElementById("loadingText").innerHTML = 'fetching exchange rate';
@@ -1777,7 +1655,7 @@ function displayCountry(isoa3Code) {
 	document.getElementById("progressBar").setAttribute('style', "width: 90%;");
 	document.getElementById("loadingText").innerHTML = '';
 	document.getElementById("progressBar").setAttribute('style', "width: 100%;");
-	document.getElementById("viewCountryText").innerHTML = currentCountry;
+	document.getElementById("viewCountryText").innerHTML = 'delete';
 	let progressTimer = setTimeout(function() {
 		document.getElementById("progressBar").setAttribute('style', "width: 0%; visibility: hidden");
 		clearTimeout(progressTimer);
@@ -1835,7 +1713,7 @@ function countryBordersFunc(response) {
 selectDropDown.addEventListener("change", function (event) {
   let completeFunction = true
   let selectedCountry = event.target.value;
-	console.log(selectedCountry);
+	//console.log(selectedCountry);
 	if (selectedCountry == "") {
     //document.getElementById('goToCountry').setAttribute('data-dismiss', "stop");
     document.getElementById('selectCountryError').setAttribute('style', 'visibility: visible')
@@ -1846,16 +1724,22 @@ selectDropDown.addEventListener("change", function (event) {
     //}
   }
   if (completeFunction == true) {
+		layersAdded = 0;
+		layerNames = [];
+		overlaysObj = {};
     mymap.removeLayer(selectedCountryLayer);
     //mymap.removeLayer(invisibleBorders);
     mymap.removeLayer(wikiClusterMarkers);
     mymap.removeLayer(citiesLayer);
     mymap.removeLayer(cityCirclesLayer);
-    mymap.removeLayer(heatmapLayer);
+		mymap.removeLayer(capitalMarker);
+    //mymap.removeLayer(heatmapLayer);
     //mymap.removeLayer(touristClusterMarkers);
     //mymap.removeLayer(shopClusterMarkers);
 		//mymap.removeLayer(amenityClusterMarkers);
+		mymap.removeLayer(webcamLayer);
     mymap.removeControl(layersControl);
+		//mymap.removeControl(sliderControl);
     clearTimeout(timer);
     //let isoa3Code;
     //countryBorders.forEach(function(arrayItem) {
@@ -1931,11 +1815,6 @@ mymap.on('baselayerchange', function(e) {
 			}
 		}
 	}
-});
-
-$("#viewCountryText").click(function() {
-	console.log('what');
-	//document.getElementById('viewCountryText').innerHTML = 'open modal';
 });
 
 window.onload = (event) => {	
