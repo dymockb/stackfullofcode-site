@@ -11,25 +11,6 @@
 	/*
 	$url='https://api.weatherbit.io/v2.0/forecast/daily?lat=' . $_REQUEST['markerLat'] . '&lon=' . $_REQUEST['markerLng'] . '&key=db7345f9de8c4d42b3478ec1ea7cf2f9';
 	
-		$forecast = [];
-
-  foreach ($decode['data'] as $day) {
-
-		$one = null;
-		$one['type'] = 'Feature';
-		$one['properties']['time'] = $day["datetime"];
-		$one['properties']['temp'] = $day["temp"];
-		$one['properties']['icon'] = $day["weather"]["icon"];
-		$one['geometry']['type'] = 'Point';
-		$one['geometry']['coordinates'][0] = $_REQUEST['locationLng'];
-		$one['geometry']['coordinates'][1] = $_REQUEST['locationLat'];
-		$one['geometry']['coordinates'][2] = 1;
-
-
-
-		array_push($forecast, $one);
-
-	}
 	*/
 
 	$ch = curl_init();
@@ -42,12 +23,37 @@
 	curl_close($ch);
 
 	$decode = json_decode($result,true);	
+	
+	$landmarks = [];
+
+  foreach ($decode['Response']['View'][0]['Result'] as $landmark) {
+		
+		if ($landmark['Location']['LocationType'] == 'hospital'){
+			array_push($landmarks, $landmark);
+		}
+		
+		if ($landmark['Location']['LocationType'] == 'park'){
+			array_push($landmarks, $landmark);
+		}
+		
+		if ($landmark['Location']['LocationType'] == 'river'){
+			array_push($landmarks, $landmark);
+		}
+		
+		if ($landmark['Location']['LocationType'] == 'universityCollege'){
+			array_push($landmarks, $landmark);
+		}
+		
+		//array_push($landmarks, $landmark);
+
+	}
 
 	$output['status']['code'] = "200";
 	$output['status']['name'] = "ok";
 	$output['status']['description'] = "success";
 	$output['status']['returnedIn'] = intval((microtime(true) - $executionStartTime) * 1000) . " ms";
-	$output['data'] = $decode['Response']['View'][0]['Result'];
+	//$output['data'] = $decode['Response']['View'][0]['Result'];
+	$output['data'] = $landmarks;
 
 	header('Content-Type: application/json; charset=UTF-8');
 

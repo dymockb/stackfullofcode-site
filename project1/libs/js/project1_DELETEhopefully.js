@@ -285,8 +285,11 @@ L.easyButton('fa-info-circle', function() {
 }).addTo(mymap);
 
 L.easyButton('fa-rss-square', function() {
-
+	$('.collapse').collapse({
+	 toggle: true
+	});
 	document.getElementById('newsArticles').click();
+					console.log('document.ready');
 	
 }).addTo(mymap);
 
@@ -807,8 +810,7 @@ function getWikipedia (currentCountry, bounds) {
 				//	placeTooltip.setContent('<a href=' + `${wikiurl}` + ' target="_blank">' + `${placeArticle.title}` + '</a>');
 				//} else {
 				//	let imgurl = '"' + placeArticle.thumbnailImg.toString() + '"';
-				//placeTooltip.setContent('<a href=' + `${wikiurl}` + ' target="_blank">' + `${placeArticle.title}` + '</a>');
-				placeTooltip.setContent(placeArticle.title + ' (Click to view article)');
+					placeTooltip.setContent('<a href=' + `${wikiurl}` + ' target="_blank">' + `${placeArticle.title}` + '</a>');
 				//}
 																	
 				let wikiMarker = L.ExtraMarkers.icon({
@@ -864,8 +866,7 @@ function getWikipedia (currentCountry, bounds) {
 						sticky: true,
 						url: article.wikipediaUrl
 					});
-					tooltip.setContent(article.title + ' (Click to view article)');
-					//tooltip.setContent('<a href=' + `${wikiurl}` + ' target="_blank">' + `${article.title}` + '</a>');
+					tooltip.setContent('<a href=' + `${wikiurl}` + ' target="_blank">' + `${article.title}` + '</a>');
 					
 					let wikiMarker = L.ExtraMarkers.icon({
 						extraClasses: 'cursorClass',
@@ -1058,114 +1059,113 @@ function hereLandmarks(markerlist, landmarkIDs, landmarkTypes) {
 		},
 			success: function (result) {
 				console.log('landmarks',result)
-		
+				
+				//console.log('preinitial', landmarkMarker);
+				landmarkMarker = L.ExtraMarkers.icon({
+					extraClasses: 'cursorClass',
+					iconColor: 'white',
+					shape: 'square',
+					shadowSize: [40, 0],
+					test: 'idiot'
+				});
+									
+				console.log('b4 for', landmarkMarker.options);
+				
+				//for (let lm = 0; lm < result.data.length; lm++) {
 				for (let lm = 0; lm < result.data.length; lm++) {
 					landmarkIDs.push(result.data[lm].Location.Name);
 					landmarkTypes.push(result.data[lm].Location.LocationType);
 					
+					console.log('before if', landmarkMarker);
+					
 					if (result.data[lm].Location.LocationType == 'park') {
-						landmarkMarker = L.ExtraMarkers.icon({
-							extraClasses: 'cursorClass',
-							icon: 'fa-tree',
-							prefix: 'fas',
-							markerColor: 'green',
-							iconColor: 'white',
-							shape: 'square',
-							shadowSize: [40, 0],
-							test: 'idiot'
-						});
-
-						let tooltip = L.tooltip({
-							className: 'wikiPopup',
-							sticky: true
-						});
-						
-						tooltip.setContent(result.data[lm].Location.Name);
-
-						let marker = L.marker([result.data[lm].Location.DisplayPosition.Latitude, result.data[lm].Location.DisplayPosition.Longitude], 
-						{icon: landmarkMarker}).bindTooltip(tooltip);
-
-						landmarkList.push(marker);
+						landmarkMarker.options['icon'] = 'fa-tree';
+						landmarkMarker.options['prefix'] = 'fas';
+						landmarkMarker.options['markerColor'] = 'green';
+						landmarkMarker.options['test'] = result.data[lm].Location.Name;
+						console.log('park', landmarkMarker);
+					let popup = L.popup({
+						className: 'wikiPopup'
+					});
+					
+					console.log('location name', result.data[lm].Location.Name);
+					popup.setContent(result.data[lm].Location.Name);
+					
+					console.log(landmarkMarker.options.markerColor, result.data[lm].Location.Name);
+					console.log('landmarkMarker', landmarkMarker);
+					let marker = L.marker([result.data[lm].Location.DisplayPosition.Latitude, result.data[lm].Location.DisplayPosition.Longitude], 
+					{icon: landmarkMarker}).bindPopup(popup);
+					
+					console.log('next marker', marker);
+					landmarkList.push(marker);
 
 					} else if (result.data[lm].Location.LocationType == 'hospital') {
-
-						landmarkMarker = L.ExtraMarkers.icon({
-							extraClasses: 'cursorClass',
-							icon: 'fa-clinic-medical',
-							prefix: 'fas',
-							markerColor: 'red',
-							iconColor: 'white',
-							shape: 'square',
-							shadowSize: [40, 0],
-							test: 'idiot'
-						});						
-						
-						let tooltip = L.tooltip({
-							className: 'wikiPopup',
-							sticky: true
-						});
-						
-						tooltip.setContent(result.data[lm].Location.Name);
-
-						let marker = L.marker([result.data[lm].Location.DisplayPosition.Latitude, result.data[lm].Location.DisplayPosition.Longitude], 
-						{icon: landmarkMarker}).bindTooltip(tooltip);
-
-						landmarkList.push(marker);
+						landmarkMarker.options['icon'] = 'fa-clinic-medical';
+						landmarkMarker.options['prefix'] = 'fas';
+						landmarkMarker.options['markerColor'] = 'red';
+						landmarkMarker.options['test'] = result.data[lm].Location.Name;
+						console.log('hosp', landmarkMarker);
+						let popup = L.popup({
+						className: 'wikiPopup'
+					});
+					
+					console.log('location name', result.data[lm].Location.Name);
+					popup.setContent(result.data[lm].Location.Name);
+					
+					console.log(landmarkMarker.options.markerColor, result.data[lm].Location.Name);
+					console.log('landmarkMarker', landmarkMarker);
+					let marker = L.marker([result.data[lm].Location.DisplayPosition.Latitude, result.data[lm].Location.DisplayPosition.Longitude], 
+					{icon: landmarkMarker}).bindPopup(popup);
+					
+					console.log('next marker', marker);
+					landmarkList.push(marker);
 					
 					} else if (result.data[lm].Location.LocationType == 'river') {
-						
-						landmarkMarker = L.ExtraMarkers.icon({
-							extraClasses: 'cursorClass',
-							icon: 'fa-water',
-							prefix: 'fas',
-							markerColor: 'blue',
-							iconColor: 'white',
-							shape: 'square',
-							shadowSize: [40, 0],
-							test: 'idiot'
-						});	
-						
-						let tooltip = L.tooltip({
-							className: 'wikiPopup',
-							sticky: true
-						});
-						
-						tooltip.setContent(result.data[lm].Location.Name);
-
-						let marker = L.marker([result.data[lm].Location.DisplayPosition.Latitude, result.data[lm].Location.DisplayPosition.Longitude], 
-						{icon: landmarkMarker}).bindTooltip(tooltip);
-
-						landmarkList.push(marker);
-						
-					} else if (result.data[lm].Location.LocationType == 'universityCollege') {
-						
-						landmarkMarker = L.ExtraMarkers.icon({
-							extraClasses: 'cursorClass',
-							icon: 'fa-university',
-							prefix: 'fas',
-							markerColor: 'purple',
-							iconColor: 'white',
-							shape: 'square',
-							shadowSize: [40, 0],
-							test: 'idiot'
-						});							
-
-						let tooltip = L.tooltip({
-							className: 'wikiPopup',
-							sticky: true
-						});
-						
-						tooltip.setContent(result.data[lm].Location.Name);
-
-						let marker = L.marker([result.data[lm].Location.DisplayPosition.Latitude, result.data[lm].Location.DisplayPosition.Longitude], 
-						{icon: landmarkMarker}).bindTooltip(tooltip);
-
-						landmarkList.push(marker);
+						landmarkMarker.options['icon'] = 'fa-water';
+						landmarkMarker.options['prefix'] = 'fas';
+						landmarkMarker.options['markerColor'] = 'blue';
+						landmarkMarker.options['test'] = result.data[lm].Location.Name;
+						console.log('river', landmarkMarker);
+											let popup = L.popup({
+						className: 'wikiPopup'
+					});
+					
+					console.log('location name', result.data[lm].Location.Name);
+					popup.setContent(result.data[lm].Location.Name);
+					
+					console.log(landmarkMarker.options.markerColor, result.data[lm].Location.Name);
+					console.log('landmarkMarker', landmarkMarker);
+					let marker = L.marker([result.data[lm].Location.DisplayPosition.Latitude, result.data[lm].Location.DisplayPosition.Longitude], 
+					{icon: landmarkMarker}).bindPopup(popup);
+					
+					console.log('next marker', marker);
+					landmarkList.push(marker);
+										} else if (result.data[lm].Location.LocationType == 'universityCollege') {
+						landmarkMarker.options['icon'] = 'fa-university';
+						landmarkMarker.options['prefix'] = 'fas';
+						landmarkMarker.options['markerColor'] = 'purple';
+						landmarkMarker.options['test'] = result.data[lm].Location.Name;
+						console.log('UNIVERSITY TEST',result.data[lm].Location.Name);
+						console.log('UC', landmarkMarker);
+											let popup = L.popup({
+						className: 'wikiPopup'
+					});
+					
+					console.log('location name', result.data[lm].Location.Name);
+					popup.setContent(result.data[lm].Location.Name);
+					
+					console.log(landmarkMarker.options.markerColor, result.data[lm].Location.Name);
+					console.log('landmarkMarker', landmarkMarker);
+					let landmarkPlaceMarker = L.marker([result.data[lm].Location.DisplayPosition.Latitude, result.data[lm].Location.DisplayPosition.Longitude], 
+					{icon: landmarkMarker}).bindPopup(popup);
+					
+					console.log('next marker', landmarkPlaceMarker);
+					landmarkList.push(landmarkPlaceMarker);
 					
 					} else {
 						console.log("NOTHING!!!");
 					}
-					
+					console.log('after if', landmarkMarker);
 					/*				
 					let popup = L.popup({
 						className: 'wikiPopup'
@@ -1183,7 +1183,9 @@ function hereLandmarks(markerlist, landmarkIDs, landmarkTypes) {
 					landmarkList.push(marker);	
 					*/
 				}	
-			
+				
+				console.log('after for', landmarkMarker);
+				
 					
 				hereLandmarks(markerlist.slice(1), landmarkIDs, landmarkTypes);
 				
@@ -1980,15 +1982,6 @@ mymap.on('baselayerchange', function(e) {
 	}
 });
 
-$('#newsArticlesModal').on('shown.bs.modal', function () {
-	console.log('shown');
-	$('.btn-link').each(function(){
-				console.log(this);
-				//$(this).collapse();
-				//$(this).setAttribute('class', 'accordion-body collapse');
-});
-})
-
 window.onload = (event) => {	
 	if ($('#preloader').length) {
 		$('#preloader').delay(1000).fadeOut('slow', function () {
@@ -1996,7 +1989,7 @@ window.onload = (event) => {
 			console.log("Window loaded", event);
 		
 			$(document).ready(function () {
-								
+				
 				function recursiveLoad () {
 					console.log('load attempt'); 
 					 
