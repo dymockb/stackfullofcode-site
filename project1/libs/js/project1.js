@@ -2,7 +2,7 @@
 //#sourceMappingURL=bootstrap/js/bootstrap.bundle.min.js.map
 //#sourceMappingURL=bootstrap/js/bootstrap.min.js.map
 
-//global variables
+//PROBS: W. SAHARA (ESH), LINE 1865 (can't get capital)
 
 // weather : 
 //	chart for avg temp and rain - http://climatedataapi.worldbank.org/climateweb/rest/v1/country/cru/tas/month/GBR (tas / pr)
@@ -627,7 +627,7 @@ function getTimezone (lat,lng) {
 	}); //end of timeZone ajax
 	
 } 
-
+/*
 function translateNews() {
 	
 	let testText = 'Hey how are you today?'
@@ -654,11 +654,12 @@ function translateNews() {
 	}); 	
 	
 }
+*/
 
 function getNews(isoA2code) {
 	
 	$.ajax({
-		url: "libs/php/newscatcher.php",
+		url: "libs/php/newsAPI.php",
 		type: "GET",
 		dataType: "json",
 		data: {
@@ -667,8 +668,127 @@ function getNews(isoA2code) {
 	success: function (result) {
 		console.log('news result',result);
 		
+		let descriptionTranslations = [];
+		let titleTranslations = [];	
+		
+		function recursiveTranslate(articlesToTranslate) {
+			
+			if (articlesToTranslate.length > 0) {
+
+				console.log('articleToTranslate',articlesToTranslate[0]);					
+							
+				let articleText = articlesToTranslate[0].description;
+				let titleText =  articlesToTranslate[0].title;
+				
+				let content = [
+				{
+					type: 'description',
+					text: articleText
+				},
+				{
+					type: 'title',
+					text: titleText
+				}
+				];
+				
+				function recursiveContent(content) {
+					
+					if (content.length > 0) {
+						console.log('content.length', content.length)
+						
+						let contentObj = content[0];
+						console.log('contentObg', contentObj);
+						
+						$.ajax({
+						url: "libs/php/translate.php",
+						type: "GET",
+						dataType: "json",
+						data: {
+						//text: 'HELLO'
+						text: contentObj.text
+						},
+						success: function (result) {
+						console.log('translate result',result);
+						
+						if (contentObj.type == 'description') {
+							descriptionTranslations.push(result)
+						} else if (contentObj.type == 'title') {
+							titleTranslations.push(result);
+						} else {
+							console.log('what')
+						}
+						
+						//translations.push(result);
+						let translateTimer = setTimeout(function() {
+							recursiveContent(content.slice(1));
+							clearTimeout(translateTimer)
+						}, 500);
 
 
+					},
+						error: function (jqXHR, textStatus, errorThrown) {
+						console.log('translate error');
+						console.log(textStatus);
+						console.log(errorThrown);
+					}
+					}); 
+					
+					} else {
+												
+						recursiveTranslate(articlesToTranslate.slice(1));
+	
+					}
+					
+				}
+				
+				console.log('content',content);
+				recursiveContent(content);
+
+				} else {
+					
+						console.log('descs',descriptionTranslations);
+						console.log('titles',titleTranslations);
+						console.log('finished translating');
+		
+				}
+		
+		}
+		
+		//console.log('slice',result.data.slice(0,3));
+		recursiveTranslate(result.data.slice(0,3));
+				
+		function createAccordianArticle(oneArt, target) {
+			
+			let cardDiv = document.createElement('div');
+			
+			cardDiv.innerHTML = 
+			`<div class="card-header" id="headingOne">
+				<h5 class="mb-0">
+					<button class="btn btn-link" data-toggle="collapse" data-target="#collapse${target}" aria-expanded="true" aria-controls="collapseOne">
+						${oneArt.title}
+					</button>
+				</h5>
+			</div>
+
+			<div id="collapse${target}" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+				<div class="card-body">
+					${oneArt.summary}
+				</div>
+			</div>`;
+			
+			document.getElementById('accordion').appendChild(cardDiv);
+					
+		}	
+
+
+		//if (result.data.status == 'ok') {
+			
+		//	for (let oneArt = 0; oneArt < result.data.articles.length; oneArt++) {
+		//		createAccordianArticle(result.data.articles[oneArt], oneArt);
+		//	}		
+		
+		//}
+		
 	},
 	error: function (jqXHR, textStatus, errorThrown) {
 		console.log('news error');
@@ -1107,7 +1227,7 @@ function hereLandmarks(markerlist, landmarkIDs, landmarkTypes) {
 			//lmIDs: landmarkIDs
 		},
 			success: function (result) {
-		
+				console.log('landmarks result', result);
 				for (let lm = 0; lm < result.data.length; lm++) {
 					landmarkIDs.push(result.data[lm].Location.Name);
 					landmarkTypes.push(result.data[lm].Location.LocationType);
@@ -1791,7 +1911,7 @@ function displayCountry(isoa3Code) {
 			},
 			success: function(result) {
 								
-				lat = result.data[1][0].latitude;
+				lat = result.data[1][0].latitude; // W. Sahara ESH problem
 				lng = result.data[1][0].longitude;
 				let capitalPopup = L.popup({autoPan: false, autoClose: false, closeOnClick: false});
 				let node = document.createElement("button");
@@ -1831,8 +1951,8 @@ function displayCountry(isoa3Code) {
 				getGeonamesAirports(isoA2);
 				console.log('get news');
 				getNews(isoA2);
-				console.log('translate');
-				translateNews();
+				//console.log('translate');
+				//translateNews();
 				console.log('get webcams');
 				getWebcams(isoA2);
 				
@@ -1956,7 +2076,6 @@ selectDropDown.addEventListener("change", function (event) {
 		layerNames = [];
 		overlaysObj = {};
 		
-		console.log(controlsOnAndOff);
 		switchCountry(layersOnAndOff, controlsOnAndOff);
 		
 		/*

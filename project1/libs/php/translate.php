@@ -6,9 +6,13 @@
 
 
 $curl = curl_init();
+//$URL = "https://translo.p.rapidapi.com/translate?text=Hey%2C%20how%20are%20you%20today%3F&to=en";
+$URL = "https://translo.p.rapidapi.com/translate?text=" . urlencode($_REQUEST['text']) . "&to=en";
 
 curl_setopt_array($curl, [
-	CURLOPT_URL => "https://translo.p.rapidapi.com/translate?text=Hey%2C%20how%20are%20you%20today%3F&to=fr&from=en",
+	//CURLOPT_URL => "https://translo.p.rapidapi.com/translate?text=Hey%2C%20how%20are%20you%20today%3F&to=en",
+	//CURLOPT_URL => "https://translo.p.rapidapi.com/translate?text=Hey%2C%20how%20are%20you%20today%3F&to=fr&from=en",
+	CURLOPT_URL => $URL,
 	CURLOPT_RETURNTRANSFER => true,
 	CURLOPT_FOLLOWLOCATION => true,
 	CURLOPT_ENCODING => "",
