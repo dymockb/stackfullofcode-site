@@ -19,7 +19,7 @@
 //NEXT - list of layers to remove, call function with select dropdown / home button.  CORRECT text modal error when layers fail.
 
 let firstLoad = true;
-let showToast = false;
+let totalLayers = 7;
 let displayCount = 0;
 const countriesList = [];
 const regions = [];
@@ -47,6 +47,8 @@ let landmarkList = [];
 let landmarkIDs = [];
 let landmarkTypes = [];
 let landmarkMarker;
+
+let weatherOn = false;
 
 //userLocationMarker,
 let baseLayerName, mylat, mylng, capitalMarker, timer, zoomLocationTimer, recursiveLoadTimer, allRestCountries, myBounds, currentCountry, selectedCountry, currentCountryPolygons, layersControl, sliderControl, fijiUpdated, russiaUpdated, invisibleBorders, wikiLayer, wikiClusterMarkers, citiesLayer, cityCirclesLayer, touristLayer, webcamLayer, shopLayer, amenityClusterMarkers, userPopup, corner1, corner2, viewportBounds, userCircle, overlays, touristMarkers, shopMarkers, amenityMarkers, countryBorders
@@ -194,7 +196,7 @@ function onLocationError(e) {
 
 function abortfunction (string) {
 	console.log(string);
-	document.getElementById("viewCountryText").innerHTML = 'Data error - please refresh the page';
+	document.getElementById("viewCountryText").innerHTML = 'Abort Func';
 	document.getElementById("dataError").click();
 	throw new Error('API error - reload page');
 }
@@ -388,7 +390,9 @@ function addWeatherLayer(listOfCities) {
 			
 					allWeatherMarkers.push(weatherMarkers);
 					recursiveWeather(recursiveList.slice(1), counter);
-					
+				
+
+	
 				},
 				error: function(jqXHR, textStatus, errorThrown) {
 					console.log('weatherbit error');
@@ -451,8 +455,7 @@ function addWeatherLayer(listOfCities) {
 					
 						cityWeatherTimeMarkers['options']['data'].push(instance);
 						cityWeatherTimeMarkers.addLayer(allWeatherMarkers[a][t]);
-						
-	
+							
 						cityWeatherTimeMarkers.on('add', function (e) {
 							//console.log('hmdata',heatmapData);
 							//console.log('has heatmp', mymap.hasLayer(heatmapLayer));
@@ -668,54 +671,46 @@ function getNews(isoA2code) {
 	success: function (result) {
 		console.log('news result',result);
 		
-		let descriptionTranslations = [];
-		let titleTranslations = [];	
+		let translatedObjs = []
 		
 		function recursiveTranslate(articlesToTranslate) {
 			
 			if (articlesToTranslate.length > 0) {
-
-				console.log('articleToTranslate',articlesToTranslate[0]);					
 							
-				let articleText = articlesToTranslate[0].description;
-				let titleText =  articlesToTranslate[0].title;
-				
-				let content = [
-				{
-					type: 'description',
-					text: articleText
-				},
-				{
-					type: 'title',
-					text: titleText
-				}
-				];
-				
 				function recursiveContent(content) {
 					
 					if (content.length > 0) {
-						console.log('content.length', content.length)
 						
 						let contentObj = content[0];
-						console.log('contentObg', contentObj);
 						
 						$.ajax({
 						url: "libs/php/translate.php",
 						type: "GET",
 						dataType: "json",
 						data: {
-						//text: 'HELLO'
+							//text: 'HELLO'
 						text: contentObj.text
 						},
 						success: function (result) {
-						console.log('translate result',result);
+						
+						if (result.data.code == 200) {
 						
 						if (contentObj.type == 'description') {
-							descriptionTranslations.push(result)
+
+								translatedObj['description'] = result.data.translated_text 
+								translatedObj['EN_source'] = contentObj.text == result.data.translated_text ? true : false;							
+							
 						} else if (contentObj.type == 'title') {
-							titleTranslations.push(result);
+							
+								translatedObj['title'] = result.data.translated_text 
+								translatedObj['EN_source'] = contentObj.text == result.data.translated_text ? true : false;							
+							
 						} else {
-							console.log('what')
+							console.log('what???')
+						}
+						
+						} else {
+							console.log('translate error code', result.data.code);
 						}
 						
 						//translations.push(result);
@@ -734,21 +729,81 @@ function getNews(isoA2code) {
 					}); 
 					
 					} else {
-												
+						
+						translatedObjs.push(translatedObj);
 						recursiveTranslate(articlesToTranslate.slice(1));
 	
 					}
 					
 				}
+
+				let articleText = articlesToTranslate[0].description;
+				let titleText =  articlesToTranslate[0].title;
 				
+				let content = [
+				{
+					type: 'description',
+					text: articleText
+				},
+				{
+					type: 'title',
+					text: titleText
+				}
+				];
+					
 				console.log('content',content);
+				
+				let translatedObj = {};
+				translatedObj['url'] = articlesToTranslate[0].url;
+				translatedObj['imgURL'] = articlesToTranslate[0].urlToImage;
 				recursiveContent(content);
 
 				} else {
 					
-						console.log('descs',descriptionTranslations);
-						console.log('titles',titleTranslations);
-						console.log('finished translating');
+						console.log('translatedObjs', translatedObjs)
+						
+					function createAccordianArticle(oneArt, target) {
+			
+						let cardDiv = document.createElement('div');
+						
+//<button class="btn btn-link" data-toggle="collapse" data-target="#collapse${target}" aria-expanded="true" aria-controls="collapseOne">
+
+						cardDiv.innerHTML = 
+						`<div class="card-header" id="headingOne">
+							<h5 class="mb-0">
+							
+								<button class="accordion-button collapsed" data-toggle="collapse" data-target="#collapse${target}" aria-expanded="false" aria-controls="collapseOne">
+									${oneArt.title}
+								</button>
+							</h5>
+						</div>
+
+						<div id="collapse${target}" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+							<div class="card-body">
+							<div>${oneArt.url}</div>
+							<div>${oneArt.description}</div>
+							<img src="${oneArt.imgURL}" class="newsImage"/>
+							</div>
+						</div>`;
+						
+						document.getElementById('accordion').appendChild(cardDiv);
+							
+					}
+
+					for (let oneArt = 0; oneArt < translatedObjs.length; oneArt++) {
+						
+						let fields = ['title', 'description'];
+						
+						for (let f = 0; f < fields.length; f++) {
+
+							if (!translatedObjs[oneArt][fields[f]]) {
+									translatedObjs[oneArt][fields[f]] = 'NO DATA';
+								}
+							}
+						
+						createAccordianArticle(translatedObjs[oneArt], oneArt);
+
+					}					
 		
 				}
 		
@@ -757,35 +812,12 @@ function getNews(isoA2code) {
 		//console.log('slice',result.data.slice(0,3));
 		recursiveTranslate(result.data.slice(0,3));
 				
-		function createAccordianArticle(oneArt, target) {
-			
-			let cardDiv = document.createElement('div');
-			
-			cardDiv.innerHTML = 
-			`<div class="card-header" id="headingOne">
-				<h5 class="mb-0">
-					<button class="btn btn-link" data-toggle="collapse" data-target="#collapse${target}" aria-expanded="true" aria-controls="collapseOne">
-						${oneArt.title}
-					</button>
-				</h5>
-			</div>
 
-			<div id="collapse${target}" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
-				<div class="card-body">
-					${oneArt.summary}
-				</div>
-			</div>`;
-			
-			document.getElementById('accordion').appendChild(cardDiv);
-					
-		}	
 
 
 		//if (result.data.status == 'ok') {
 			
-		//	for (let oneArt = 0; oneArt < result.data.articles.length; oneArt++) {
-		//		createAccordianArticle(result.data.articles[oneArt], oneArt);
-		//	}		
+		
 		
 		//}
 		
@@ -1217,6 +1249,7 @@ function hereLandmarks(markerlist, landmarkIDs, landmarkTypes) {
 		
 		document.getElementById("viewCountryText").innerHTML = markerlist[0].options.icon.options.html;
 		
+		//console.log('landmark params', markerlist, landmarkIDs, landmarkTypes);
 		$.ajax({
 		url: "libs/php/hereLandmarks.php",
 		type: "POST",
@@ -1400,6 +1433,7 @@ function hereLandmarks(markerlist, landmarkIDs, landmarkTypes) {
 
 	}
 }
+
 
 function geonamesPoiFunc(markerlist) {
 		
@@ -1719,7 +1753,61 @@ function getGeonamesCities (isoA2) {
 		landmarkList = [];
 		landmarkIDs = [];
 		landmarkTypes = [];
-		hereLandmarks(randomMarkers, landmarkIDs, landmarkTypes);
+
+		console.log('randomMarkers',randomMarkers);
+		//hereLandmarks(randomMarkers, landmarkIDs, landmarkTypes);
+		
+		let currentWeatherData = [];
+		
+		function getCurrentWeather(locations) {
+			console.log('cwd',currentWeatherData);
+			
+			if (locations.length > 0) {
+				
+				$.ajax({
+					url: "libs/php/weatherbitCurrent.php",
+					type: "POST",
+					dataType: "json",
+					data: {
+						locationLat: lat,
+						locationLng: lng,
+					},
+					success: function(result) {
+						
+						console.log(result);
+						currentWeatherData.push(result);
+						getCurrentWeather(locations.slice(1));
+					
+					},
+					error: function(jqXHR, textStatus, errorThrown) {
+						console.log('weatherbit error');
+						console.log(textStatus);
+						console.log(errorThrown);
+					}
+					}); //end of Weatherbit ajax
+			
+			} else {
+				
+				console.log('currentWeatherData',currentWeatherData);
+				
+				heatmapData = {
+					max: 20,
+					data: [{lat: 51, lng: 0, count: 15}]
+				};
+
+				heatmapLayer.setData(heatmapData);
+
+				heatmapLayer.addTo(mymap);
+				
+				
+			}
+			
+		}
+		
+		getCurrentWeather(randomMarkers.slice(0,2));
+		
+		
+
 		//mymap.removeControl(layersControl);
 		addOverlays(overlaysObj);
 		
@@ -1744,12 +1832,12 @@ function getGeonamesCities (isoA2) {
 
 function addOverlays (overlaysObj) {
 		
-	if (layersAdded == 8 && overlayProbs == 0) {
+	if (layersAdded == totalLayers && overlayProbs == 0) {
 		layersControl = L.control.layers(baseMaps, overlaysObj);
 		layersControl.addTo(mymap);
 		controlsOnAndOff.push(layersControl);
 		
-	} else if (layersAdded == 8 && overlayProbs > 0) {
+	} else if (layersAdded == totalLayers && overlayProbs > 0) {
 		layersControl = L.control.layers(baseMaps, overlaysObj);
 		layersControl.addTo(mymap);
 		controlsOnAndOff.push(layersControl);
@@ -1776,18 +1864,7 @@ function addOverlays (overlaysObj) {
 
 }
 
-function displayCountry(isoa3Code) {
-	overlaysCounter = 0;
-		
-	selectDropDown['value'] = isoa3Code;
-	document.getElementById('viewCountryText').innerHTML = 'Loading...';
-	
-	if (typeof capitalMarker == "object") {
-    capitalMarker.remove();
-  }
-	
-	let bounds;
-	let isoA2;
+function placeBorder(isoa3Code){
 	
 	$.ajax({
 		url: "libs/php/getPolygon.php",
@@ -1881,6 +1958,116 @@ function displayCountry(isoa3Code) {
 			},
 	});
 	
+}
+
+function displayCountry(isoa3Code) {
+	overlaysCounter = 0;
+		
+	selectDropDown['value'] = isoa3Code;
+	document.getElementById('viewCountryText').innerHTML = 'Loading...';
+	
+	if (typeof capitalMarker == "object") {
+    capitalMarker.remove();
+  }
+	
+	let bounds;
+	let isoA2;
+	
+	placeBorder(isoa3Code);
+	/*
+	$.ajax({
+		url: "libs/php/getPolygon.php",
+		type: "POST",
+		dataType: "json",
+		data: {
+			countryCode: isoa3Code
+		},
+		success: function (result) {
+						
+			let country = result.data;
+			let geojsonLayer = L.geoJson(country);
+			bounds = geojsonLayer.getBounds();
+			
+			if (!fijiUpdated) {
+				if (isoa3Code == 'FJI') {
+					bounds._southWest.lng += 360;
+					fijiUpdated = true;
+					console.log(bounds);
+				}
+			}
+			if (!russiaUpdated) {
+				if (isoa3Code == 'RUS') {
+					bounds._southWest.lng += 360;
+					russiaUpdated = true;
+					console.log(bounds);
+				}
+			}
+				
+			let northEast = bounds._northEast;
+			let southWest = bounds._southWest;
+			
+			fitBoundsArr = [];
+
+			let { lat, lng } = northEast;
+
+			fitBoundsArr.push([lat, lng]);
+
+			corner1 = L.latLng(lat, lng);
+			({ lat, lng } = southWest);
+
+			fitBoundsArr.push([lat, lng]);
+
+			corner2 = L.latLng(lat, lng);
+			viewportBounds = L.latLngBounds(corner1, corner2);
+			
+	    currentCountry = result.data["properties"].name;
+			
+      if (result.data["geometry"]["type"] == 'MultiPolygon') {
+        currentCountryPolygons = result.data["geometry"]["coordinates"];
+      } else {
+        currentCountryPolygons = [result.data["geometry"]["coordinates"]];
+      }
+			
+			selectedCountryLayer = L.geoJSON();
+
+			let isoA3;
+			let capital;
+			let currency;
+			
+      document.getElementById("countryModalTitle").innerHTML = currentCountry;
+			
+			mymap.flyToBounds(viewportBounds, {
+					duration: 1.5
+			});
+			
+			borderLines = L.geoJSON(country, {
+				style: function(feature) {
+						return {
+							color: "#ff0000",
+							fillOpacity: 0
+					}
+				}
+			});
+
+			borderLines.addTo(selectedCountryLayer);
+			selectedCountryLayer.addTo(mymap);
+			overlaysObj['Highlight'] = selectedCountryLayer;
+			layersAdded++;
+			layersOnAndOff.push(selectedCountryLayer);
+			layerNames.push('selectedCountryLayer');
+									
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+				layersAdded++;
+				problemLayers += 'polygon';
+				overlayProbs++;
+				console.log('get polygon error');
+				console.log(textStatus);
+				console.log(errorThrown);
+			},
+	});
+	*/
+	
 	$.ajax({
 		url: "libs/php/oneRestCountry.php",
 		type: "GET",
@@ -1949,8 +2136,10 @@ function displayCountry(isoa3Code) {
 				getGeonamesCities(isoA2);
 				console.log('get airports');
 				getGeonamesAirports(isoA2);
-				console.log('get news');
-				getNews(isoA2);
+				
+				//console.log('get news');
+				//getNews(isoA2);
+				
 				//console.log('translate');
 				//translateNews();
 				console.log('get webcams');
@@ -2049,13 +2238,17 @@ function countryBordersFunc(response) {
 //EVENT HANDLERS
 
 function switchCountry(layersOnAndOff, controlsOnAndOff){
+	
+	document.getElementById('accordion').innerHTML = "";
+	clearTimeout(timer);
+	
 	for (let s = 0; s < layersOnAndOff.length; s++) {
 		mymap.removeLayer(layersOnAndOff[s]);
 	}
 	for (let c = 0; c < controlsOnAndOff.length; c ++) {
 		mymap.removeControl(controlsOnAndOff[c]);
 	}
-	clearTimeout(timer);
+
 }
 
 selectDropDown.addEventListener("change", function (event) {
@@ -2107,6 +2300,33 @@ selectDropDown.addEventListener("change", function (event) {
     displayCountry(selectedCountry);
   }
 }, false)
+
+
+$('#weatherToggle').click(function (){
+	console.log('weather');
+	if (weatherOn == false) {
+		weatherOn = true;
+		for (let s = 0; s < layersOnAndOff.length; s++) {
+			if (layersOnAndOff[s] != selectedCountryLayer) {
+				mymap.removeLayer(layersOnAndOff[s]);
+			}
+		}
+		for (let c = 0; c < controlsOnAndOff.length; c ++) {
+			mymap.removeControl(controlsOnAndOff[c]);
+		}
+	} else {
+		for (let s = 0; s < layersOnAndOff.length; s++) {
+			if (layersOnAndOff[s] != selectedCountryLayer) {
+				layersOnAndOff[s].addTo(mymap);
+			}
+		}
+		for (let c = 0; c < controlsOnAndOff.length; c ++) {
+			controlsOnAndOff[c].addTo(mymap);
+		}
+
+		weatherOn = false;
+	}
+});
 
 	
 mymap.on('overlayadd', function(e) {

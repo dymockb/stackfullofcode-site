@@ -98,6 +98,10 @@ html, body {
 	display: none	
 } 
 
+#targetLink {
+	display: none
+}
+
 #closeFetchingData {
 	display: none
 }
@@ -129,11 +133,11 @@ html, body {
 	padding: 0px
 }
 
-#borderToggle {
+#weatherToggle {
 	padding-top: 1rem;
 	margin-top: 0.5rem;
-	margin-left: auto;
-	margin-right: auto;
+	margin-left: 1rem;
+	margin-right: 0.5rem;
 	height: 1.5rem;
 	width: 2.8rem
 }
@@ -152,10 +156,7 @@ html, body {
 	padding-top: 0.4rem;
 	display: none
 }
-#borderToggle {
-	margin-left: 1rem;
-	margin-right: 0.5rem
-}
+
 .leaflet-touch .leaflet-bar button {
 	height: 2.7rem;
 	width: 2.7rem
@@ -300,6 +301,10 @@ div>h2 {
 	width: 5rem !important;
 	height: 5rem !important;
 	font-size: 1.8rem;
+}
+
+.newsImage {
+	width: 100%
 }
 
 .leaflet-popup-content {

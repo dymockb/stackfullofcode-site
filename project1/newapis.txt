@@ -2,6 +2,8 @@ news headlines by country
 
 https://newsapi.org/v2/top-headlines?country=fr&apiKey=3071da859fae4c9e9d59c305f97d0977
 
+https://api.unsplash.com/search/photos?page=1&query=sweden&client_id=CCZ8dNx0pfilTC8MRoDtF3AZUBZg1tI49vWE36strI0
+
 landmarks around a point
 https://reverse.geocoder.ls.hereapi.com/6.2/reversegeocode.json
 ?apiKey=d2er4LmsADYxcap4AHZQbraGbqmIdToSaD00tL1tnQ8
@@ -12,8 +14,13 @@ https://www.worldweatheronline.com/developer/api/docs/weather-icons.aspx
 
 16 day forecast
 https://api.weatherbit.io/v2.0/forecast/daily?lat=51&lon=0&key=db7345f9de8c4d42b3478ec1ea7cf2f9
+
+https://api.weatherbit.io/v2.0/current?lat=51&lon=0&key=db7345f9de8c4d42b3478ec1ea7cf2f9
+
 https://www.weatherbit.io/api/codes
 
+
+https://api.weatherbit.io/v2.0/forecast/daily?lat=' . $_REQUEST['locationLat'] . '&lon=' . $_REQUEST['locationLng'] . '&key=db7345f9de8c4d42b3478ec1ea7cf2f9'
 
 https://www.pexels.com/api/
 
