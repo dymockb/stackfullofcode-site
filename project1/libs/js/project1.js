@@ -51,7 +51,7 @@ let landmarkMarker;
 let weatherOn = false;
 
 //userLocationMarker,
-let baseLayerName, mylat, mylng, capitalMarker, timer, zoomLocationTimer, recursiveLoadTimer, allRestCountries, myBounds, currentCountry, selectedCountry, currentCountryPolygons, layersControl, sliderControl, fijiUpdated, russiaUpdated, invisibleBorders, wikiLayer, wikiClusterMarkers, citiesLayer, cityCirclesLayer, touristLayer, webcamLayer, shopLayer, amenityClusterMarkers, userPopup, corner1, corner2, viewportBounds, userCircle, overlays, touristMarkers, shopMarkers, amenityMarkers, countryBorders
+let baseLayerName, mylat, mylng, capitalMarker, timer, zoomLocationTimer, recursiveLoadTimer, allRestCountries, myBounds, currentCountry, selectedCountry, currentCountryPolygons, layersControl, sliderControl, fijiUpdated, russiaUpdated, invisibleBorders, wikiLayer, wikiClusterMarkers, citiesLayer, weatherLayer, cityCirclesLayer, touristLayer, webcamLayer, shopLayer, amenityClusterMarkers, userPopup, corner1, corner2, viewportBounds, userCircle, overlays, touristMarkers, shopMarkers, amenityMarkers, countryBorders
 
 let loadingTimer;
 let loadingCount = 0
@@ -356,7 +356,7 @@ function addWeatherLayer(listOfCities) {
 					let popup;
 					let marker;
 					let weatherMarkers = []
-					
+										
 					for (let iweather = 0; iweather < result.data.features.length ; iweather ++) {
 
 						let weather = result.data.features[iweather];
@@ -1799,24 +1799,67 @@ function getGeonamesCities(isoA2) {
 				
 
 				let maxTemp = -100;				
-				for (let hm = 0; hm < currentWeatherData.length; hm ++){
-					
-					for (mt = 0; mt < currentWeatherData.length; mt++) {
+				for (mt = 0; mt < currentWeatherData.length; mt++) {
 						maxTemp = currentWeatherData[mt]['data']['temp'] > maxTemp ? currentWeatherData[mt]['data']['temp'] : maxTemp;
 					}
-				
+					
+				let weatherMarkers = []
+
+				for (let hm = 0; hm < currentWeatherData.length; hm ++){
+								
 					let point = {};
-					point['lat'] = currentWeatherData[hm]['data']['lat'];
-					point['lng'] = currentWeatherData[hm]['data']['lng'];
-					point['count'] = currentWeatherData[hm]['data']['temp'];
+	
+					let lat = currentWeatherData[hm]['data']['lat'];
+					let lng = currentWeatherData[hm]['data']['lng'];
+					let temp = currentWeatherData[hm]['data']['temp'];
+					
+					let	weatherMarker = L.divIcon({
+						className: 'weatherMarkerStyle ' + currentWeatherData[hm]['data'].icon,
+						html: temp,
+						iconSize: [40,40],
+						iconAnchor: [20,40]
+						//+ ' <img src="img/weatherIcons/' + weather.properties.icon + '.png"></img>'
+					})
+
+					//let marker = L.marker([lat, lng], {icon: weatherMarker, time: weather.properties.time, temp: weather.properties.temp});
+					let marker = L.marker([lat, lng], {icon: weatherMarker});
+					//.bindPopup(popup);			
+					//
+					weatherMarkers.push(marker);
+
+					point['lat'] = lat;
+					point['lng'] = lng;
+
+					heatmapData.max = maxTemp;
+
+					if (maxTemp < 15 ){
+						heatmapData.max = 15;
+						point['count'] = 15 - temp;
+					} else {
+						point['count'] = temp;						
+					}
+					
 					console.log(point);
+					
 					heatmapData.data.push(point);
+					
 					
 				}
 			
 				console.log('maxTemp', maxTemp);
+
+				weatherLayer = L.layerGroup(weatherMarkers);
+
+				//weatherLayer.addTo(mymap);
 				
-				if (maxTemp < 25) {
+				if (maxTemp < 15) {
+					console.log(maxTemp);
+					console.log('max temp less than 15');
+					heatmapColor = 'blue';
+					
+					console.log('hdata',heatmapData);
+					
+				} else if (maxTemp < 30) {
 					console.log(maxTemp);
 					console.log('max temp less than 25');	
 					heatmapColor = 'orange';							
@@ -1830,10 +1873,13 @@ function getGeonamesCities(isoA2) {
 					//heatmapData['data'] = updatedHeat;
 					//redrawHeatMap(heatmapData, heatmapColor);
 				}
-				
-				//heatmapLayer.setData(heatmapData);
+			
+			
+							//popup = L.popup({
+							//	className: 'wikiPopup'
+							//});
 
-				//heatmapLayer.addTo(mymap);			
+							//popup.setContent('weather');
 				
 			}
 			
@@ -2277,6 +2323,18 @@ $('#weatherToggle').click(function (){
 	console.log('weather');
 	if (weatherOn == false) {
 		weatherOn = true;
+		redrawHeatMap(heatmapData, heatmapColor);
+		weatherLayer.addTo(mymap);
+	} else {
+		weatherOn = false;
+		let undrawObj = {max: 20, data: []};
+		redrawHeatMap(undrawObj, heatmapColor);
+		mymap.removeLayer(weatherLayer);
+	}
+	
+	/*
+	if (weatherOn == false) {
+		weatherOn = true;
 		for (let s = 0; s < layersOnAndOff.length; s++) {
 			if (layersOnAndOff[s] != selectedCountryLayer) {
 				mymap.removeLayer(layersOnAndOff[s]);
@@ -2317,6 +2375,8 @@ $('#weatherToggle').click(function (){
 
 		weatherOn = false;
 	}
+	*/
+	
 });
 
 	
