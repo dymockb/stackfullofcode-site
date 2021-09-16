@@ -98,6 +98,14 @@ html, body {
 	display: none	
 } 
 
+#weatherBtn {
+	margin-left: 0.3rem;
+	margin-right: 0.3rem;
+	height: 100%;
+	width: 15%;
+	display: none	
+} 
+
 #targetLink {
 	display: none
 }
@@ -131,6 +139,10 @@ html, body {
 .buttonTxt {
 	margin-right: auto;
 	padding: 0px
+}
+
+.imgSlide {
+	height: 200px
 }
 
 #weatherToggle {
@@ -175,6 +187,12 @@ span.fa.fa-info-circle {
 
 span.fa.fa-rss-square {
     font-size: 1.8rem;
+    padding-top: 0.35rem;
+    color: #0291c3;
+}
+
+span.fa.fa-temperature-low {
+	  font-size: 1.8rem;
     padding-top: 0.35rem;
     color: #0291c3;
 }

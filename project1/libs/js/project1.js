@@ -63,7 +63,7 @@ let collapseList = collapseElementList.map(function (collapseEl) {
 });
 
 const selectDropDown = document.getElementById("selectCountries");
-const testE = document.getElementById("viewCountryBtn");
+//const testE = document.getElementById("viewCountryBtn");
 
 let l1 = L.tileLayer('https://{s}.tile.thunderforest.com/mobile-atlas/{z}/{x}/{y}.png?apikey={apikey}', {
 	attribution: '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>',
@@ -181,8 +181,7 @@ function onLocationFound(e) {
 function onLocationError(e) {
 	userFound = false;
   console.log(e.message);
-	console.log('cb', countryBorders);
-	
+
 	function recursiveRandom(countriesParam) {
 		let randCountry = countryBorders[Math.floor(Math.random()*countryBorders.length)];
 		console.log(randCountry);
@@ -190,9 +189,9 @@ function onLocationError(e) {
 		if (randCountry.name == 'Kosovo' || randCountry.name == 'N. Cyprus' || randCountry.name == 'Somaliland'){
 			recursiveRandom(countriesParam);
 		} else {
-			console.log('test',randCountry.A3code);
+
 			displayCountry(randCountry.A3code);
-			//addOverlays(overlaysObj);
+
 		};
 	}
 
@@ -202,7 +201,7 @@ function onLocationError(e) {
 
 function abortfunction (string) {
 	console.log(string);
-	document.getElementById("viewCountryText").innerHTML = 'Abort Func';
+	//document.getElementById("viewCountryText").innerHTML = 'Abort Func';
 	document.getElementById("dataError").click();
 	//throw new Error('API error - reload page');
 }
@@ -308,6 +307,9 @@ L.easyButton('fa-rss-square', function() {
 	
 }).addTo(mymap);
 
+L.easyButton('fa-temperature-low', function() {
+	document.getElementById('weatherBtn').click();
+}).addTo(mymap);
 
 //https://github.com/Hipo/university-domains-list-api
 //https://developer.flightstats.com/products
@@ -931,7 +933,7 @@ function getWebcams (isoA2code) {
 				});
 				
 			 webcamMarker.getPopup().on('click', function () {
-					document.getElementById('viewCountryText').innerHTML = 'popup clicked';
+					//document.getElementById('viewCountryText').innerHTML = 'popup clicked';
 					//previewCounter++;
 				});
 			
@@ -1125,7 +1127,7 @@ function getWikipedia (currentCountry, bounds) {
 				
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
-				document.getElementById("viewCountryText").innerHTML = "Sorry data didn't load please refresh the page";
+				//document.getElementById("viewCountryText").innerHTML = "Sorry data didn't load please refresh the page";
 				layersAdded++;
 				overlayprobs++;
 				problemLayers += 'Wikipedia';
@@ -1253,7 +1255,7 @@ function hereLandmarks(markerlist, landmarkIDs, landmarkTypes) {
 		
 		let { lat, lng } = markerlist[0].getLatLng();
 		
-		document.getElementById("viewCountryText").innerHTML = markerlist[0].options.icon.options.html;
+		//document.getElementById("viewCountryText").innerHTML = markerlist[0].options.icon.options.html;
 		
 		//console.log('landmark params', markerlist, landmarkIDs, landmarkTypes);
 		$.ajax({
@@ -1447,7 +1449,7 @@ function geonamesPoiFunc(markerlist) {
 		
 		let { lat, lng } = markerlist[0].getLatLng();
 		
-		document.getElementById("viewCountryText").innerHTML = markerlist[0].options.icon.options.html;
+		//document.getElementById("viewCountryText").innerHTML = markerlist[0].options.icon.options.html;
 		
 		$.ajax({
 		url: "libs/php/geonamesPOI.php",
@@ -1645,7 +1647,6 @@ function getGeonamesCities(isoA2) {
 		if (result.data.length == 0) {
 			abortfunction('geonamesSearchCities error');
 		}
-		console.log('cities', result.data);
 		
 		let citiesMarkers = [];
 		let citiesCircles = [];
@@ -1761,13 +1762,11 @@ function getGeonamesCities(isoA2) {
 		landmarkIDs = [];
 		landmarkTypes = [];
 
-		console.log('randomMarkers',randomMarkers);
 		//hereLandmarks(randomMarkers, landmarkIDs, landmarkTypes);
 		
 		let currentWeatherData = [];
 		
 		function getCurrentWeather(locations) {
-			console.log('cwd',currentWeatherData);
 			
 			if (locations.length > 0) {
 				
@@ -1782,8 +1781,7 @@ function getGeonamesCities(isoA2) {
 						locationLng: lng,
 					},
 					success: function(result) {
-						
-						console.log(result);
+
 						currentWeatherData.push(result);
 						getCurrentWeather(locations.slice(1));
 					
@@ -1796,9 +1794,6 @@ function getGeonamesCities(isoA2) {
 					}); //end of Weatherbit ajax
 			
 			} else {
-				
-				console.log('currentWeatherData',currentWeatherData);
-				
 
 				let maxTemp = -100;				
 				for (mt = 0; mt < currentWeatherData.length; mt++) {
@@ -1815,9 +1810,7 @@ function getGeonamesCities(isoA2) {
 					heatmapData.max = 45;
 					heatmapColor = 'red';	
 				}
-					
-				console.log('maxTemp', maxTemp);
-				
+									
 				let weatherMarkers = []
 
 				for (let hm = 0; hm < currentWeatherData.length; hm ++){
@@ -1851,9 +1844,7 @@ function getGeonamesCities(isoA2) {
 					} else {
 						point['count'] = temp;
 					}
-	
-					console.log(point);
-					
+						
 					heatmapData.data.push(point);
 					
 					
@@ -1926,7 +1917,7 @@ function addOverlays(overlaysObj) {
 		console.log('controls on and off', controlsOnAndOff);
 		console.log('layers on and off', layersOnAndOff);
 		
-		document.getElementById("viewCountryText").innerHTML = 'overlayprobs ' + overlayProbs;
+		//document.getElementById("viewCountryText").innerHTML = 'overlayprobs ' + overlayProbs;
 		document.getElementById("layerErrorText").innerHTML = problemLayers;
 		document.getElementById("dataError").click();
 		
@@ -2057,7 +2048,54 @@ function weatherChartRain(isoa3Code) {
 		success: function (result) {
 						
 			console.log('Rain chart (mm)',result)
-									
+				
+			let chartData = [];
+			let min = result.data[0].data;
+			
+			for (let c = 0; c < result.data.length; c++) {
+				chartData.push(result.data[c].data);
+				min = min < result.data[c].data ? min : result.data[c].data;
+			}
+			
+			let ctx = document.getElementById('rainChart').getContext('2d');
+			let myChart = new Chart(ctx, {
+					type: 'bar',
+					data: {
+							//labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],							
+							labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+							datasets: [{
+									label: 'Average Monthly Rainfall (mm)',
+									data: chartData,	
+									//data: [12, 19, 3, 5, 2, 3],
+									backgroundColor: [
+											//'rgba(255, 99, 132, 0.2)',
+											'rgba(54, 162, 235, 0.2)',
+											//'rgba(255, 206, 86, 0.2)',
+											//'rgba(75, 192, 192, 0.2)',
+											//'rgba(153, 102, 255, 0.2)',
+											//'rgba(255, 159, 64, 0.2)'
+									],
+									borderColor: [
+											//'rgba(255, 99, 132, 1)',
+											'rgba(54, 162, 235, 1)',
+											//'rgba(255, 206, 86, 1)',
+											//'rgba(75, 192, 192, 1)',
+											//'rgba(153, 102, 255, 1)',
+											//'rgba(255, 159, 64, 1)'
+									],
+									borderWidth: 1
+							}]
+					},
+					options: {
+							scales: {
+									y: {
+											//beginAtZero: true
+											min: 0
+									}
+							}
+					}
+			});
+				
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
 				layersAdded++;
@@ -2083,6 +2121,53 @@ function weatherChartCelcius(isoa3Code) {
 		success: function (result) {
 						
 			console.log('Celcius chart',result)
+			
+			let chartData = [];
+			let minTemp = 100;
+			
+			for (let c = 0; c < result.data.length; c++) {
+				chartData.push(result.data[c].data);
+				minTemp = minTemp < result.data[c].data ? minTemp : result.data[c].data;
+			}
+			
+			let ctx = document.getElementById('celciusChart').getContext('2d');
+			let myChart = new Chart(ctx, {
+					type: 'bar',
+					data: {
+							//labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],						
+							labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+							datasets: [{
+									label: 'Average Monthly Temperature (Celcius)',
+									data: chartData,	
+									//data: [12, 19, 3, 5, 2, 3],
+									backgroundColor: [
+											'rgba(255, 99, 132, 0.2)'
+											//'rgba(54, 162, 235, 0.2)',
+											//'rgba(255, 206, 86, 0.2)',
+											//'rgba(75, 192, 192, 0.2)',
+											//'rgba(153, 102, 255, 0.2)',
+											//'rgba(255, 159, 64, 0.2)'
+									],
+									borderColor: [
+											'rgba(255, 99, 132, 1)'
+											//'rgba(54, 162, 235, 1)',
+											//'rgba(255, 206, 86, 1)',
+											//'rgba(75, 192, 192, 1)',
+											//'rgba(153, 102, 255, 1)',
+											//'rgba(255, 159, 64, 1)'
+									],
+									borderWidth: 1
+							}]
+					},
+					options: {
+							scales: {
+									y: {
+											//beginAtZero: true
+											min: minTemp - 3
+									}
+							}
+					}
+			});
 									
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
@@ -2198,7 +2283,7 @@ function displayCountry(isoa3Code) {
 	overlaysCounter = 0;
 		
 	selectDropDown['value'] = isoa3Code;
-	document.getElementById('viewCountryText').innerHTML = 'Loading...';
+	//document.getElementById('viewCountryText').innerHTML = 'Loading...';
 	
 	if (typeof capitalMarker == "object") {
     capitalMarker.remove();
@@ -2238,7 +2323,7 @@ function displayCountry(isoa3Code) {
 	document.getElementById("progressBar").setAttribute('style', "width: 90%;");
 	document.getElementById("loadingText").innerHTML = '';
 	document.getElementById("progressBar").setAttribute('style', "width: 100%;");
-	document.getElementById("viewCountryText").innerHTML = 'delete';
+	//document.getElementById("viewCountryText").innerHTML = 'delete';
 	let progressTimer = setTimeout(function() {
 		document.getElementById("progressBar").setAttribute('style', "width: 0%; visibility: hidden");
 		clearTimeout(progressTimer);
@@ -2275,7 +2360,6 @@ function displayCountry(isoa3Code) {
 function countryBordersFunc(response) {
 	
 	countryBorders = response;
-	console.log('countryBorders',countryBorders);
 	
 	for (let i = 0; i < countryBorders.length; i++) {
 		let textValue = countryBorders[i].name;
