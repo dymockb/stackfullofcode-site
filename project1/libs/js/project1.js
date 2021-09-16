@@ -184,12 +184,14 @@ function onLocationError(e) {
 	console.log('cb', countryBorders);
 	
 	function recursiveRandom(countriesParam) {
-		let randCountry = countryBorders[Math.floor(Math.random()*countryBorders.length)];		
-		console.log('random country: ', randCountry.name, randCountry.code);
+		let randCountry = countryBorders[Math.floor(Math.random()*countryBorders.length)];
+		console.log(randCountry);
+		console.log('random country: ', randCountry.name, randCountry.A3code);
 		if (randCountry.name == 'Kosovo' || randCountry.name == 'N. Cyprus' || randCountry.name == 'Somaliland'){
 			recursiveRandom(countriesParam);
 		} else {
-			displayCountry(randCountry.code);
+			console.log('test',randCountry.A3code);
+			displayCountry(randCountry.A3code);
 			//addOverlays(overlaysObj);
 		};
 	}
@@ -1631,7 +1633,7 @@ function geonamesPoiFunc(markerlist) {
 }
 
 function getGeonamesCities(isoA2) {
-	console.log('testing');				
+
 	$.ajax({
 		url: "libs/php/geonamesSearchCities.php",
 		type: "POST",
@@ -1802,22 +1804,34 @@ function getGeonamesCities(isoA2) {
 				for (mt = 0; mt < currentWeatherData.length; mt++) {
 						maxTemp = currentWeatherData[mt]['data']['temp'] > maxTemp ? currentWeatherData[mt]['data']['temp'] : maxTemp;
 					}
+
+				if (maxTemp < 15 ){
+					heatmapData.max = 15;
+					heatmapColor = 'blue';
+				} else if (maxTemp < 30) {
+					heatmapData.max = 30;
+					heatmapColor = 'orange';
+				} else if (maxTemp < 45) {
+					heatmapData.max = 45;
+					heatmapColor = 'red';	
+				}
 					
+				console.log('maxTemp', maxTemp);
+				
 				let weatherMarkers = []
 
 				for (let hm = 0; hm < currentWeatherData.length; hm ++){
 								
-					let point = {};
-	
 					let lat = currentWeatherData[hm]['data']['lat'];
 					let lng = currentWeatherData[hm]['data']['lng'];
 					let temp = currentWeatherData[hm]['data']['temp'];
-					
+										
 					let	weatherMarker = L.divIcon({
-						className: 'weatherMarkerStyle ' + currentWeatherData[hm]['data'].icon,
-						html: temp,
-						iconSize: [40,40],
-						iconAnchor: [20,40]
+						//className: 'weatherMarkerStyle ' + currentWeatherData[hm]['data'].icon,
+						className: 'weatherMarkerStyle',
+						html: `<div>${temp}<sup>o</sup>C<img src="img/weatherIcons/${currentWeatherData[hm]['data']['icon']}.png" style="width: 50px; height: 50px"/></div>` ,
+						iconSize: [20,20],
+						iconAnchor: [10,55]
 						//+ ' <img src="img/weatherIcons/' + weather.properties.icon + '.png"></img>'
 					})
 
@@ -1827,18 +1841,17 @@ function getGeonamesCities(isoA2) {
 					//
 					weatherMarkers.push(marker);
 
+					let point = {};
+
 					point['lat'] = lat;
 					point['lng'] = lng;
 
-					heatmapData.max = maxTemp;
-
 					if (maxTemp < 15 ){
-						heatmapData.max = 15;
 						point['count'] = 15 - temp;
 					} else {
-						point['count'] = temp;						
+						point['count'] = temp;
 					}
-					
+	
 					console.log(point);
 					
 					heatmapData.data.push(point);
@@ -1846,42 +1859,26 @@ function getGeonamesCities(isoA2) {
 					
 				}
 			
-				console.log('maxTemp', maxTemp);
+
 
 				weatherLayer = L.layerGroup(weatherMarkers);
 
 				//weatherLayer.addTo(mymap);
 				
 				if (maxTemp < 15) {
-					console.log(maxTemp);
-					console.log('max temp less than 15');
 					heatmapColor = 'blue';
 					
 					console.log('hdata',heatmapData);
 					
 				} else if (maxTemp < 30) {
-					console.log(maxTemp);
-					console.log('max temp less than 25');	
 					heatmapColor = 'orange';							
-					//heatmapData['data'] = updatedHeat;
-					//redrawHeatMap(heatmapData, heatmapColor);
 					
 				} else if (maxTemp < 40) {
-					console.log(maxTemp);
-					console.log('max temp less than 35');
 					heatmapColor = 'red';							
-					//heatmapData['data'] = updatedHeat;
-					//redrawHeatMap(heatmapData, heatmapColor);
+	
 				}
 			
-			
-							//popup = L.popup({
-							//	className: 'wikiPopup'
-							//});
-
-							//popup.setContent('weather');
-				
-			}
+				}
 			
 		}
 		
@@ -2048,6 +2045,58 @@ function placeBorder(isoa3Code){
 	
 }
 
+function weatherChartRain(isoa3Code) {
+	
+		$.ajax({
+		url: "libs/php/weatherChartRain.php",
+		type: "POST",
+		dataType: "json",
+		data: {
+			countryCode: isoa3Code
+		},
+		success: function (result) {
+						
+			console.log('Rain chart (mm)',result)
+									
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+				layersAdded++;
+				problemLayers += 'Rain';
+				overlayProbs++;
+				console.log('get weather rain chart error');
+				console.log(textStatus);
+				console.log(errorThrown);
+			},
+	});
+	
+}
+
+function weatherChartCelcius(isoa3Code) {
+	
+		$.ajax({
+		url: "libs/php/weatherChartCelcius.php",
+		type: "POST",
+		dataType: "json",
+		data: {
+			countryCode: isoa3Code
+		},
+		success: function (result) {
+						
+			console.log('Celcius chart',result)
+									
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+				layersAdded++;
+				problemLayers += 'Celcius';
+				overlayProbs++;
+				console.log('get weather celcius chart error');
+				console.log(textStatus);
+				console.log(errorThrown);
+			},
+	});
+	
+}
+
 function countryBasics(isoa3Code){
 	
 		$.ajax({
@@ -2165,8 +2214,12 @@ function displayCountry(isoa3Code) {
 	}
 	
 	placeBorder(isoa3Code);
-	console.log('get cities');
+
 	getGeonamesCities(isoA2);
+	
+	weatherChartCelcius(isoa3Code);
+	
+	weatherChartRain(isoa3Code);
 	
   document.getElementById("progressBar").setAttribute('style', 'visibility: initial');
 	document.getElementById("loadingText").innerHTML = 'fetching exchange rate';
@@ -2320,7 +2373,6 @@ selectDropDown.addEventListener("change", function (event) {
 
 $('#weatherToggle').click(function (){
 	
-	console.log('weather');
 	if (weatherOn == false) {
 		weatherOn = true;
 		redrawHeatMap(heatmapData, heatmapColor);
