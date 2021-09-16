@@ -758,12 +758,11 @@ function getNews(isoA2code) {
 					text: titleText
 				}
 				];
-					
-				console.log('content',content);
 				
 				let translatedObj = {};
 				translatedObj['url'] = articlesToTranslate[0].url;
 				translatedObj['imgURL'] = articlesToTranslate[0].urlToImage;
+				translatedObj['source'] = articlesToTranslate[0].source.name;
 				recursiveContent(content);
 
 				} else {
@@ -788,7 +787,7 @@ function getNews(isoA2code) {
 
 						<div id="collapse${target}" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
 							<div class="card-body">
-							<div>${oneArt.url}</div>
+							<div>Source: <a href="${oneArt.url}" target="_blank">${oneArt.source}</a></div>
 							<div>${oneArt.description}</div>
 							<img src="${oneArt.imgURL}" class="newsImage"/>
 							</div>
@@ -798,27 +797,38 @@ function getNews(isoA2code) {
 							
 					}
 
-					for (let oneArt = 0; oneArt < translatedObjs.length; oneArt++) {
-						
-						let fields = ['title', 'description'];
-						
-						for (let f = 0; f < fields.length; f++) {
+					if (translatedObjs.length == 0) {
 
-							if (!translatedObjs[oneArt][fields[f]]) {
-									translatedObjs[oneArt][fields[f]] = 'NO DATA';
+						document.getElementById('newsModalTitle').innerHTML = 'No articles found for this country.'
+							
+					} else {
+						
+						if (translatedObjs[0].EN_source == false) {
+							document.getElementById('newsModalTitle').innerHTML = 'Latest News (translated)';
+						}
+						
+						for (let oneArt = 0; oneArt < translatedObjs.length; oneArt++) {
+							
+							let fields = ['title', 'description'];
+							
+							for (let f = 0; f < fields.length; f++) {
+
+								if (!translatedObjs[oneArt][fields[f]]) {
+										translatedObjs[oneArt][fields[f]] = '';
+									}
 								}
-							}
-						
-						createAccordianArticle(translatedObjs[oneArt], oneArt);
+							
+							createAccordianArticle(translatedObjs[oneArt], oneArt);
 
-					}					
+						}
+					}
 		
 				}
 		
 		}
 		
 		//console.log('slice',result.data.slice(0,3));
-		recursiveTranslate(result.data.slice(0,3));
+		recursiveTranslate(result.data.slice(0,5));
 				
 
 
@@ -2202,6 +2212,7 @@ function countryBasics(isoa3Code){
 			document.getElementById("currency").innerHTML = result.data.currencies[0].code;
 			currency = result.data.currencies[0].code;
 			document.getElementById("currencyName").innerHTML = result.data.currencies[0].name;
+			console.log('flag', result.data.flag);
 			document.getElementById("flagIMG").setAttribute("src", result.data.flag);
 			document.getElementById("capital").innerHTML = result.data.capital;
 			capital = result.data.capital;
@@ -2302,12 +2313,16 @@ function displayCountry(isoa3Code) {
 	}
 	
 	placeBorder(isoa3Code);
-
-	getGeonamesCities(isoA2);
+		
+	countryBasics(isoa3Code);
 	
-	weatherChartCelcius(isoa3Code);
+	getNews(isoA2);
 	
-	weatherChartRain(isoa3Code);
+	//getGeonamesCities(isoA2);
+	
+	//weatherChartCelcius(isoa3Code);
+	
+	//weatherChartRain(isoa3Code);
 	
   document.getElementById("progressBar").setAttribute('style', 'visibility: initial');
 	document.getElementById("loadingText").innerHTML = 'fetching exchange rate';
@@ -2382,9 +2397,8 @@ function countryBordersFunc(response) {
 
 function switchCountry(layersToChange, controlsToChange){
 	
-	rainChart.destroy();
-	celciusChart.destroy();
-
+	//rainChart.destroy();
+	//celciusChart.destroy();
 	
 	document.getElementById('accordion').innerHTML = "";
 	clearTimeout(timer);
