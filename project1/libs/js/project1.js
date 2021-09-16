@@ -51,7 +51,7 @@ let landmarkMarker;
 let weatherOn = false;
 
 //userLocationMarker,
-let baseLayerName, mylat, mylng, capitalMarker, timer, zoomLocationTimer, recursiveLoadTimer, allRestCountries, myBounds, currentCountry, selectedCountry, currentCountryPolygons, layersControl, sliderControl, fijiUpdated, russiaUpdated, invisibleBorders, wikiLayer, wikiClusterMarkers, citiesLayer, weatherLayer, cityCirclesLayer, touristLayer, webcamLayer, shopLayer, amenityClusterMarkers, userPopup, corner1, corner2, viewportBounds, userCircle, overlays, touristMarkers, shopMarkers, amenityMarkers, countryBorders
+let baseLayerName, mylat, mylng, capitalMarker, timer, zoomLocationTimer, recursiveLoadTimer, allRestCountries, myBounds, currentCountry, selectedCountry, currentCountryPolygons, layersControl, sliderControl, fijiUpdated, russiaUpdated, invisibleBorders, wikiLayer, wikiClusterMarkers, citiesLayer, weatherLayer, cityCirclesLayer, touristLayer, webcamLayer, shopLayer, amenityClusterMarkers, userPopup, corner1, corner2, viewportBounds, userCircle, overlays, touristMarkers, shopMarkers, amenityMarkers, countryBorders, rainChart, celciusChart
 
 let loadingTimer;
 let loadingCount = 0
@@ -1822,9 +1822,12 @@ function getGeonamesCities(isoA2) {
 					let	weatherMarker = L.divIcon({
 						//className: 'weatherMarkerStyle ' + currentWeatherData[hm]['data'].icon,
 						className: 'weatherMarkerStyle',
-						html: `<div>${temp}<sup>o</sup>C<img src="img/weatherIcons/${currentWeatherData[hm]['data']['icon']}.png" style="width: 50px; height: 50px"/></div>` ,
+						html: `<div>
+						<div style="position: absolute"><img src="img/weatherIcons/${currentWeatherData[hm]['data']['icon']}.png" style="width: 50px; height: 50px"/></div>
+						<div style="position: absolute; left: 1rem">${temp}<sup>o</sup>C</div>
+						</div>` ,
 						iconSize: [20,20],
-						iconAnchor: [10,55]
+						//iconAnchor: [10,55]
 						//+ ' <img src="img/weatherIcons/' + weather.properties.icon + '.png"></img>'
 					})
 
@@ -2058,7 +2061,7 @@ function weatherChartRain(isoa3Code) {
 			}
 			
 			let ctx = document.getElementById('rainChart').getContext('2d');
-			let myChart = new Chart(ctx, {
+			rainChart = new Chart(ctx, {
 					type: 'bar',
 					data: {
 							//labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],							
@@ -2131,7 +2134,7 @@ function weatherChartCelcius(isoa3Code) {
 			}
 			
 			let ctx = document.getElementById('celciusChart').getContext('2d');
-			let myChart = new Chart(ctx, {
+			celciusChart = new Chart(ctx, {
 					type: 'bar',
 					data: {
 							//labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],						
@@ -2378,6 +2381,10 @@ function countryBordersFunc(response) {
 //EVENT HANDLERS
 
 function switchCountry(layersToChange, controlsToChange){
+	
+	rainChart.destroy();
+	celciusChart.destroy();
+
 	
 	document.getElementById('accordion').innerHTML = "";
 	clearTimeout(timer);
