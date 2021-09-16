@@ -19,7 +19,7 @@
 //NEXT - list of layers to remove, call function with select dropdown / home button.  CORRECT text modal error when layers fail.
 
 let firstLoad = true;
-let totalLayers = 2;
+let totalLayers = 1;
 let displayCount = 0;
 const countriesList = [];
 const regions = [];
@@ -678,7 +678,7 @@ function getNews(isoA2code) {
 		},
 	success: function (result) {
 		console.log('news result',result);
-		
+				
 		let translatedObjs = []
 		
 		function recursiveTranslate(articlesToTranslate) {
@@ -761,20 +761,73 @@ function getNews(isoA2code) {
 				
 				let translatedObj = {};
 				translatedObj['url'] = articlesToTranslate[0].url;
-				translatedObj['imgURL'] = articlesToTranslate[0].urlToImage;
+				translatedObj['imgURL'] = articlesToTranslate[0].urlToImage == null ? '/img/marker-icon-2x-green.png' : articlesToTranslate[0].urlToImage;
 				translatedObj['source'] = articlesToTranslate[0].source.name;
 				recursiveContent(content);
 
 				} else {
 					
 						console.log('translatedObjs', translatedObjs)
-						
+		
 					function createAccordianArticle(oneArt, target) {
 			
 						let cardDiv = document.createElement('div');
 						
-//<button class="btn btn-link" data-toggle="collapse" data-target="#collapse${target}" aria-expanded="true" aria-controls="collapseOne">
-
+						let cardHeaderDiv = document.createElement('div');
+						let headerDiv = document.createElement('h5');
+						let buttonDiv = document.createElement('button');
+						
+						let cardBodyDiv = document.createElement('div');
+						let bodyDiv = document.createElement('div');
+						let sourceDiv = document.createElement('div');
+						let linkDiv = document.createElement('a');
+						let descDiv = document.createElement('div');
+						let imgDiv = document.createElement('img');
+						
+						cardHeaderDiv.setAttribute('class','card-header');
+						cardHeaderDiv.setAttribute('id','headingOne');
+						headerDiv.setAttribute('class','mb-0');
+						buttonDiv.setAttribute('class','accordion-button collapsed');
+						buttonDiv.setAttribute('data-toggle','collapse');
+						buttonDiv.setAttribute('data-target',`#collapse${target}`);
+						buttonDiv.setAttribute('aria-expanded','false');
+						buttonDiv.setAttribute('aria-controls','collapseOne');
+						buttonDiv.innerHTML = oneArt.title;
+						
+						cardBodyDiv.setAttribute('id',`collapse${target}`);
+						cardBodyDiv.setAttribute('class','collapse');
+						cardBodyDiv.setAttribute('aria-labelledby','headingOne');
+						cardBodyDiv.setAttribute('data-parent','#accordion');
+						
+						bodyDiv.setAttribute('class','card-body');
+						
+						sourceDiv.innerHTML = 'Source: '
+						
+						linkDiv.setAttribute('href', oneArt.url);
+						linkDiv.setAttribute('target', '_blank');
+						linkDiv.innerHTML = oneArt.source;
+						
+						descDiv.innerHTML = oneArt.description;
+						
+						imgDiv.setAttribute('src',oneArt.imgURL);
+						imgDiv.setAttribute('class','newsImage');
+						
+						headerDiv.appendChild(buttonDiv);
+						cardHeaderDiv.appendChild(headerDiv);
+						
+						descDiv.appendChild(imgDiv);
+						sourceDiv.appendChild(linkDiv);
+						cardBodyDiv.appendChild(bodyDiv);
+						cardBodyDiv.appendChild(sourceDiv);
+						cardBodyDiv.appendChild(descDiv);
+						
+						cardDiv.appendChild(cardHeaderDiv);
+						cardDiv.appendChild(cardBodyDiv);
+						
+						console.log('cardDiv',cardDiv);
+						//<button class="btn btn-link" data-toggle="collapse" data-target="#collapse${target}" aria-expanded="true" aria-controls="collapseOne">
+						
+						/*
 						cardDiv.innerHTML = 
 						`<div class="card-header" id="headingOne">
 							<h5 class="mb-0">
@@ -793,8 +846,10 @@ function getNews(isoA2code) {
 							</div>
 						</div>`;
 						
+
+						*/
 						document.getElementById('accordion').appendChild(cardDiv);
-							
+					
 					}
 
 					if (translatedObjs.length == 0) {
@@ -1824,18 +1879,51 @@ function getGeonamesCities(isoA2) {
 				let weatherMarkers = []
 
 				for (let hm = 0; hm < currentWeatherData.length; hm ++){
+					
+
 								
 					let lat = currentWeatherData[hm]['data']['lat'];
 					let lng = currentWeatherData[hm]['data']['lng'];
 					let temp = currentWeatherData[hm]['data']['temp'];
 										
+					let outerNode = document.createElement('div');
+					let imgDivNode = document.createElement('div');
+					imgDivNode.setAttribute('class','weatherIconNode');
+
+					let imgNode = document.createElement('img');
+					imgNode.setAttribute('src', `img/weatherIcons/${currentWeatherData[hm]['data']['icon']}.png`);
+					imgNode.setAttribute('class', 'weatherIconImgNode');
+
+					let textNode = document.createElement('div');
+
+					let supNode = document.createElement('sup');
+					supNode.innerHTML = 'o';
+					
+					let span1 = document.createElement('span');
+					let span2 = document.createElement('span');
+					let span3 = document.createElement('span');
+					
+					span1.innerHTML = temp;
+					
+					span2.appendChild(supNode);
+
+					span1.appendChild(span2);
+					
+					span3.innerHTML = 'C';
+					span1.appendChild(span3);
+					
+					textNode.setAttribute('class', 'weatherIconNode weatherTextNode');
+					textNode.appendChild(span1);	
+
+					imgDivNode.appendChild(imgNode);
+					outerNode.appendChild(imgDivNode);
+					outerNode.appendChild(textNode);
+					console.log('outerNode',outerNode);
+
 					let	weatherMarker = L.divIcon({
 						//className: 'weatherMarkerStyle ' + currentWeatherData[hm]['data'].icon,
 						className: 'weatherMarkerStyle',
-						html: `<div>
-						<div style="position: absolute"><img src="img/weatherIcons/${currentWeatherData[hm]['data']['icon']}.png" style="width: 50px; height: 50px"/></div>
-						<div style="position: absolute; left: 1rem">${temp}<sup>o</sup>C</div>
-						</div>` ,
+						html: outerNode,
 						iconSize: [20,20],
 						//iconAnchor: [10,55]
 						//+ ' <img src="img/weatherIcons/' + weather.properties.icon + '.png"></img>'
@@ -2314,11 +2402,12 @@ function displayCountry(isoa3Code) {
 	
 	placeBorder(isoa3Code);
 		
-	countryBasics(isoa3Code);
+	//countryBasics(isoa3Code);
 	
 	getNews(isoA2);
 	
 	//getGeonamesCities(isoA2);
+	//--> contains weatherWitCurrent
 	
 	//weatherChartCelcius(isoa3Code);
 	
