@@ -2407,7 +2407,29 @@ function getHolidays(isoA2code){
 		},
 		success: function (result) {
 						
-			console.log('hols',result.data)
+			console.log('hols',result.data.holidays)
+			
+			let holidays = result.data.holidays;
+			
+			let holidayDays = []
+			
+			
+			for (let h = 0; h < holidays.length; h++) {
+				let holidayObj = {}
+				
+				holidayObj['title'] = holidays[h].name;
+				let y = holidays[h].start.slice(0,4);
+				let m = holidays[h].start.slice(5,7);
+				let d = holidays[h].start.slice(8,10);
+				//console.log(y,m,d);
+				holidayObj['start'] = new Date(y, m, d) 
+				//holidays[h].start.splice(0,10);
+				
+				holidayDays.push(holidayObj);
+			}
+			
+			console.log(holidayDays);
+			
 			
 			var date = new Date();
 			var d = date.getDate();
@@ -2456,7 +2478,7 @@ function getHolidays(isoA2code){
 				},
 				editable: false, //was true
 				firstDay: 1, //  1(Monday) this can be changed to 0(Sunday) for the USA system
-				selectable: true, //was true
+				selectable: false, //was true
 				defaultView: 'month',
 
 				axisFormat: 'h:mm',
@@ -2492,7 +2514,7 @@ function getHolidays(isoA2code){
 				},
 				*/
 				
-				
+				//works when selectable is true
 				select: function(start, end, allDay) {
 					console.log('something');
 				},
@@ -2522,7 +2544,9 @@ function getHolidays(isoA2code){
 
 				},
 
-				events: [
+				events: holidayDays,
+				/*
+				[
 					{
 						title: 'All Day Event',
 						start: new Date(y, m, 1)
@@ -2568,6 +2592,7 @@ function getHolidays(isoA2code){
 						className: 'success'
 					}
 				],
+				*/
 			});
 				
 				
