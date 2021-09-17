@@ -348,6 +348,10 @@ td.fc-header-center {
 	display: none
 }
 
+#hideTableControl {
+	display: none
+}
+
 .leaflet-popup-content {
 	margin: 8px;
 }

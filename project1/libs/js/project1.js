@@ -2454,9 +2454,9 @@ function getHolidays(isoA2code){
 					center: 'agendaDay,agendaWeek,month',
 					right: 'prev,next today'
 				},
-				editable: false,
+				editable: false, //was true
 				firstDay: 1, //  1(Monday) this can be changed to 0(Sunday) for the USA system
-				selectable: true,
+				selectable: false, //was true
 				defaultView: 'month',
 
 				axisFormat: 'h:mm',
@@ -2472,7 +2472,8 @@ function getHolidays(isoA2code){
 									day: 'MMMM yyyy'                  // Tuesday, Sep 8, 2009
 							},
 				allDaySlot: false,
-				selectHelper: true,
+				selectHelper: false, //was true
+				/*
 				select: function(start, end, allDay) {
 					var title = prompt('Event Title:');
 					if (title) {
@@ -2488,6 +2489,7 @@ function getHolidays(isoA2code){
 					}
 					calendar.fullCalendar('unselect');
 				},
+				*/
 				droppable: false, // this allows things to be dropped onto the calendar !!!
 				drop: function(date, allDay) { // this function is called when something is dropped
 

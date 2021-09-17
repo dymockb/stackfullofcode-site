@@ -369,15 +369,12 @@ function Calendar(element, options, eventSources) {
 
 
 	function renderView(inc) {
-		console.log('renderView');
+
 		if (
 			!currentView.start || // never rendered before
 			inc || date < currentView.start || date >= currentView.end // or new date range
 		) {
-			console.log('one');
-			console.log('elemVis',elementVisible());
 			if (elementVisible()) {
-			console.log('two');
 				_renderView(inc);
 			}
 		} else {
@@ -389,7 +386,6 @@ function Calendar(element, options, eventSources) {
 	function _renderView(inc) { // assumes elementVisible
 		ignoreWindowResize++;
 		
-		console.log('currentView', currentView.start);
 		if (currentView.start) { // already been rendered?
 			trigger('viewDestroy', currentView, currentView, currentView.element);
 			unselect();
@@ -753,8 +749,9 @@ function Header(calendar, options) {
 	function render() {
 		tm = options.theme ? 'ui' : 'fc';
 		var sections = options.header;
+		/*
 		if (sections) {
-			element = $("<table class='fc-header' style='width:100%'/>")
+			element = $("<table id='test' class='fc-header' style='width:100%'/>")
 				.append(
 					$("<tr/>")
 						.append(renderSection('left'))
@@ -763,6 +760,28 @@ function Header(calendar, options) {
 				);
 			return element;
 		}
+		*/
+		//.append($("<tr/>").append(renderSection('left')))
+		
+		if (sections) {
+			let table = document.createElement('table');
+			table.setAttribute('class', 'fc-header');
+			table.setAttribute('style', 'width: 100%');
+			element = $(table)
+				.append($("<tr id='hideTableControl'/>")
+					.append(renderSection('left'))
+					.append(renderSection('center'))
+					.append(renderSection('right'))
+				)
+				.append(
+					$("<tr/>")
+						.append(renderSection('left'))
+						.append(renderSection('center'))
+						.append(renderSection('right'))
+				);
+			return element;
+		}
+		
 	}
 	
 	
@@ -781,6 +800,7 @@ function Header(calendar, options) {
 				}
 				var prevButton;
 				$.each(this.split(','), function(j, buttonName) {
+
 					if (buttonName == 'title') {
 						e.append("<span class='fc-header-title'><h2>&nbsp;</h2></span>");
 						if (prevButton) {
