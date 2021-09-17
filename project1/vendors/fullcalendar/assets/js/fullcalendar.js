@@ -776,6 +776,12 @@ function Header(calendar, options) {
 				.append(
 					$("<tr/>")
 						.append(renderSection('left'))
+						//.append(renderSection('center'))
+						//.append(renderSection('right'))
+				)
+				.append(
+					$("<tr/>")
+						//.append(renderSection('left'))
 						.append(renderSection('center'))
 						.append(renderSection('right'))
 				);
@@ -4764,6 +4770,8 @@ function View(element, calendar, viewName) {
 			.click(function(ev) {
 				if (!eventElement.hasClass('ui-draggable-dragging') &&
 					!eventElement.hasClass('ui-resizable-resizing')) {
+						console.log('event',event);
+						console.log('eventelem',eventElement);
 						return trigger('eventClick', this, event, ev);
 					}
 			})
