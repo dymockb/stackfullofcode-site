@@ -50,8 +50,10 @@ let landmarkMarker;
 
 let weatherOn = false;
 
+let calendarNum = 0;
+
 //userLocationMarker,
-let baseLayerName, mylat, mylng, capitalMarker, timer, zoomLocationTimer, recursiveLoadTimer, allRestCountries, myBounds, currentCountry, selectedCountry, currentCountryPolygons, layersControl, sliderControl, fijiUpdated, russiaUpdated, invisibleBorders, wikiLayer, wikiClusterMarkers, citiesLayer, weatherLayer, cityCirclesLayer, touristLayer, webcamLayer, shopLayer, amenityClusterMarkers, userPopup, corner1, corner2, viewportBounds, userCircle, overlays, touristMarkers, shopMarkers, amenityMarkers, countryBorders, rainChart, celciusChart
+let baseLayerName, mylat, mylng, capitalMarker, timer, zoomLocationTimer, recursiveLoadTimer, allRestCountries, myBounds, currentCountry, selectedCountry, currentCountryPolygons, layersControl, sliderControl, fijiUpdated, russiaUpdated, invisibleBorders, wikiLayer, wikiClusterMarkers, citiesLayer, weatherLayer, cityCirclesLayer, touristLayer, webcamLayer, shopLayer, amenityClusterMarkers, userPopup, corner1, corner2, viewportBounds, userCircle, overlays, touristMarkers, shopMarkers, amenityMarkers, countryBorders, rainChart, celciusChart, calendar
 
 let loadingTimer;
 let loadingCount = 0
@@ -2446,7 +2448,7 @@ function getHolidays(isoA2code){
 			/* initialize the calendar
 			-----------------------------------------------------------------*/
 
-			var calendar =  $('#calendar').fullCalendar({
+			calendar =  $(`#calendar${calendarNum}`).fullCalendar({
 				header: {
 					left: 'title',
 					center: 'agendaDay,agendaWeek,month',
@@ -2683,6 +2685,13 @@ function switchCountry(layersToChange, controlsToChange){
 	
 	//rainChart.destroy();
 	//celciusChart.destroy();
+	
+	calendarNum++;
+	document.getElementById('wrap').innerHTML = `
+							<div id='calendar${calendarNum}'></div>
+							<div style='clear:both'></div>`
+	
+	//calendar.destroy();
 	
 	document.getElementById('accordion').innerHTML = "";
 	clearTimeout(timer);

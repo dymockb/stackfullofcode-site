@@ -388,7 +388,8 @@ function Calendar(element, options, eventSources) {
 
 	function _renderView(inc) { // assumes elementVisible
 		ignoreWindowResize++;
-
+		
+		console.log('currentView', currentView.start);
 		if (currentView.start) { // already been rendered?
 			trigger('viewDestroy', currentView, currentView, currentView.element);
 			unselect();
