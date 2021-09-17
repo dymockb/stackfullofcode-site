@@ -311,6 +311,15 @@ L.easyButton('fa-temperature-low', function() {
 	document.getElementById('weatherBtn').click();
 }).addTo(mymap);
 
+L.easyButton('fa-info-circle', function() {
+	document.getElementById('holidayBtn').click();
+	let openCalendarTimer = setTimeout(function(){
+		document.getElementById('clickCalendar').click();
+		clearTimeout(openCalendarTimer);
+	},500);
+	
+}).addTo(mymap);
+
 //https://github.com/Hipo/university-domains-list-api
 //https://developer.flightstats.com/products
 //airports
@@ -700,6 +709,7 @@ function getNews(isoA2code) {
 						text: contentObj.text
 						},
 						success: function (result) {
+						console.log('transart', result.data);
 						
 						if (result.data.code == 200) {
 						
@@ -761,8 +771,9 @@ function getNews(isoA2code) {
 				
 				let translatedObj = {};
 				translatedObj['url'] = articlesToTranslate[0].url;
-				translatedObj['imgURL'] = articlesToTranslate[0].urlToImage == null ? '/img/marker-icon-2x-green.png' : articlesToTranslate[0].urlToImage;
+				translatedObj['imgURL'] = articlesToTranslate[0].urlToImage == null ? 'img/marker-icon-2x-green.png' : articlesToTranslate[0].urlToImage; // img URL to be updated on tsohost
 				translatedObj['source'] = articlesToTranslate[0].source.name;
+				
 				recursiveContent(content);
 
 				} else {
@@ -815,11 +826,13 @@ function getNews(isoA2code) {
 						headerDiv.appendChild(buttonDiv);
 						cardHeaderDiv.appendChild(headerDiv);
 						
-						descDiv.appendChild(imgDiv);
+						//descDiv.appendChild(imgDiv);
 						sourceDiv.appendChild(linkDiv);
+						bodyDiv.appendChild(sourceDiv);
+						bodyDiv.appendChild(descDiv);
+						bodyDiv.appendChild(imgDiv);
+						
 						cardBodyDiv.appendChild(bodyDiv);
-						cardBodyDiv.appendChild(sourceDiv);
-						cardBodyDiv.appendChild(descDiv);
 						
 						cardDiv.appendChild(cardHeaderDiv);
 						cardDiv.appendChild(cardBodyDiv);
@@ -2380,6 +2393,186 @@ function countryBasics(isoa3Code){
 
 }
 
+function getHolidays(isoA2code){
+	//https://api.getfestivo.com/v2/holidays?country=GB&year=2020&api_key=c38b1964c079cb2190283574dde8f0d7
+	
+	$.ajax({
+		url: "libs/php/getFestivo.php",
+		type: "POST",
+		dataType: "json",
+		data: {
+			countryCode: isoA2code
+		},
+		success: function (result) {
+						
+			console.log('hols',result.data)
+			
+			var date = new Date();
+			var d = date.getDate();
+			var m = date.getMonth();
+			var y = date.getFullYear();
+
+			/*  className colors
+
+			className: default(transparent), important(red), chill(pink), success(green), info(blue)
+
+			*/
+
+
+			/* initialize the external events
+			-----------------------------------------------------------------*/
+
+			$('#external-events div.external-event').each(function() {
+
+				// create an Event Object (http://arshaw.com/fullcalendar/docs/event_data/Event_Object/)
+				// it doesn't need to have a start or end
+				var eventObject = {
+					title: $.trim($(this).text()) // use the element's text as the event title
+				};
+
+				// store the Event Object in the DOM element so we can get to it later
+				$(this).data('eventObject', eventObject);
+
+				// make the event draggable using jQuery UI
+				$(this).draggable({
+					zIndex: 999,
+					revert: true,      // will cause the event to go back to its
+					revertDuration: 0  //  original position after the drag
+				});
+
+			});
+
+
+			/* initialize the calendar
+			-----------------------------------------------------------------*/
+
+			var calendar =  $('#calendar').fullCalendar({
+				header: {
+					left: 'title',
+					center: 'agendaDay,agendaWeek,month',
+					right: 'prev,next today'
+				},
+				editable: false,
+				firstDay: 1, //  1(Monday) this can be changed to 0(Sunday) for the USA system
+				selectable: true,
+				defaultView: 'month',
+
+				axisFormat: 'h:mm',
+				columnFormat: {
+									month: 'ddd',    // Mon
+									week: 'ddd d', // Mon 7
+									day: 'dddd M/d',  // Monday 9/7
+									agendaDay: 'dddd d'
+							},
+							titleFormat: {
+									month: 'MMMM yyyy', // September 2009
+									week: "MMMM yyyy", // September 2009
+									day: 'MMMM yyyy'                  // Tuesday, Sep 8, 2009
+							},
+				allDaySlot: false,
+				selectHelper: true,
+				select: function(start, end, allDay) {
+					var title = prompt('Event Title:');
+					if (title) {
+						calendar.fullCalendar('renderEvent',
+							{
+								title: title,
+								start: start,
+								end: end,
+								allDay: allDay
+							},
+							true // make the event "stick"
+						);
+					}
+					calendar.fullCalendar('unselect');
+				},
+				droppable: false, // this allows things to be dropped onto the calendar !!!
+				drop: function(date, allDay) { // this function is called when something is dropped
+
+					// retrieve the dropped element's stored Event Object
+					var originalEventObject = $(this).data('eventObject');
+
+					// we need to copy it, so that multiple events don't have a reference to the same object
+					var copiedEventObject = $.extend({}, originalEventObject);
+
+					// assign it the date that was reported
+					copiedEventObject.start = date;
+					copiedEventObject.allDay = allDay;
+
+					// render the event on the calendar
+					// the last `true` argument determines if the event "sticks" (http://arshaw.com/fullcalendar/docs/event_rendering/renderEvent/)
+					$('#calendar').fullCalendar('renderEvent', copiedEventObject, true);
+
+					// is the "remove after drop" checkbox checked?
+					if ($('#drop-remove').is(':checked')) {
+						// if so, remove the element from the "Draggable Events" list
+						$(this).remove();
+					}
+
+				},
+
+				events: [
+					{
+						title: 'All Day Event',
+						start: new Date(y, m, 1)
+					},
+					{
+						id: 999,
+						title: 'Repeating Event',
+						start: new Date(y, m, d-3, 16, 0),
+						allDay: false,
+						className: 'info'
+					},
+					{
+						id: 999,
+						title: 'Repeating Event',
+						start: new Date(y, m, d+4, 16, 0),
+						allDay: false,
+						className: 'info'
+					},
+					{
+						title: 'Meeting',
+						start: new Date(y, m, d, 10, 30),
+						allDay: false,
+						className: 'important'
+					},
+					{
+						title: 'Lunch',
+						start: new Date(y, m, d, 12, 0),
+						end: new Date(y, m, d, 14, 0),
+						allDay: false,
+						className: 'important'
+					},
+					{
+						title: 'Birthday Party',
+						start: new Date(y, m, d+1, 19, 0),
+						end: new Date(y, m, d+1, 22, 30),
+						allDay: false,
+					},
+					{
+						title: 'Click for Google',
+						start: new Date(y, m, 28),
+						end: new Date(y, m, 29),
+						url: 'http://google.com/',
+						className: 'success'
+					}
+				],
+			});
+				
+				
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+				//layersAdded++;// ONLY ADD LAYER IF LAYER ACTUALLY ADDED
+				problemLayers += 'Holidays';
+				overlayProbs++;
+				console.log('holidays error');
+				console.log(textStatus);
+				console.log(errorThrown);
+			},
+	});
+}
+
+
 function displayCountry(isoa3Code) {
 	addOverlays(overlaysObj);
 	overlaysCounter = 0;
@@ -2404,7 +2597,9 @@ function displayCountry(isoa3Code) {
 		
 	//countryBasics(isoa3Code);
 	
-	getNews(isoA2);
+	//getNews(isoA2);
+	
+	getHolidays(isoA2);
 	
 	//getGeonamesCities(isoA2);
 	//--> contains weatherWitCurrent
