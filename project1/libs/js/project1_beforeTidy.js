@@ -18,13 +18,22 @@
 
 //NEXT - list of layers to remove, call function with select dropdown / home button.  CORRECT text modal error when layers fail.
 
-let selectedCountryLayer;
-let dropdownList = [];
-//let previewCounter = 0;
-//let poiMarkers = [];
-
-
+let firstLoad = true;
 let totalLayers = 1;
+let displayCount = 0;
+const countriesList = [];
+const regions = [];
+let mapAdviceCount = 0;
+let toggleStatus = false
+let usedToggle = false
+let toggleBorders = document.getElementById('borderToggle');
+let selectedCountryLayer = L.geoJSON();
+let dropdownList = [];
+let cityNamesRemovedByUser = true;
+let userFound = true;
+let previewCounter = 0;
+let poiMarkers = [];
+
 let layersAdded = 0;
 let layerNames = [];
 let overlaysObj = {};
@@ -34,22 +43,29 @@ let problemLayers = "";
 let layersOnAndOff = [];
 let controlsOnAndOff = [];
 
+let landmarkList = [];
+let landmarkIDs = [];
+let landmarkTypes = [];
+let landmarkMarker;
 
 let weatherOn = false;
+
 let calendarNum = 0;
 
-let baseLayerName, capitalMarker, timer, currentCountry, selectedCountry, currentCountryPolygons, layersControl, invisibleBorders, wikiLayer, wikiClusterMarkers, citiesLayer, weatherLayer, cityCirclesLayer, touristLayer, webcamLayer, shopLayer, amenityClusterMarkers, userPopup, corner1, corner2, viewportBounds, userCircle, overlays, touristMarkers, shopMarkers, amenityMarkers, countryBorders, rainChart, celciusChart, calendar
+//userLocationMarker,
+let baseLayerName, mylat, mylng, capitalMarker, timer, zoomLocationTimer, recursiveLoadTimer, allRestCountries, myBounds, currentCountry, selectedCountry, currentCountryPolygons, layersControl, sliderControl, fijiUpdated, russiaUpdated, invisibleBorders, wikiLayer, wikiClusterMarkers, citiesLayer, weatherLayer, cityCirclesLayer, touristLayer, webcamLayer, shopLayer, amenityClusterMarkers, userPopup, corner1, corner2, viewportBounds, userCircle, overlays, touristMarkers, shopMarkers, amenityMarkers, countryBorders, rainChart, celciusChart, calendar
 
+let loadingTimer;
+let loadingCount = 0
+let stopLoadingCount = false
 
-// let sliderControl, fijiUpdated, russiaUpdated,
-
-//let collapseElementList = [].slice.call(document.querySelectorAll('.collapse'));
-//let collapseList = collapseElementList.map(function (collapseEl) {
-//  return new bootstrap.Collapse(collapseEl)
-//});
+let collapseElementList = [].slice.call(document.querySelectorAll('.collapse'));
+let collapseList = collapseElementList.map(function (collapseEl) {
+  return new bootstrap.Collapse(collapseEl)
+});
 
 const selectDropDown = document.getElementById("selectCountries");
-
+//const testE = document.getElementById("viewCountryBtn");
 
 let l1 = L.tileLayer('https://{s}.tile.thunderforest.com/mobile-atlas/{z}/{x}/{y}.png?apikey={apikey}', {
 	attribution: '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>',
@@ -127,6 +143,7 @@ heatmapLayer.setData(heatmapData);
 function redrawHeatMap(heatmapData, color) {
 	
 	heatmapLayer.addTo(mymap)
+	//mymap.removeLayer(heatmapLayer);
 	cfg['gradient'] = {'.1' : 'white', '.95': color};
 	heatmapLayer._heatmap.configure(cfg);  // call private method but do not changethe original code
 	heatmapLayer._reset();
@@ -137,8 +154,8 @@ function redrawHeatMap(heatmapData, color) {
 function onLocationFound(e) {
   let radius = e.accuracy;
   let {lat,lng} = e.latlng;
-  let mylat = lat;
-  let mylng = lng;
+  mylat = lat;
+  mylng = lng;
 	
 	$.ajax({
 		url: "libs/php/openCage.php",
@@ -154,6 +171,7 @@ function onLocationFound(e) {
 			
 			let userCountryBounds = result.data.results[0].bounds;
 			displayCountry(isoa3Code);
+			//addOverlays(overlaysObj);
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			console.log(textStatus);
@@ -163,6 +181,7 @@ function onLocationFound(e) {
 }
 
 function onLocationError(e) {
+	userFound = false;
   console.log(e.message);
 
 	function recursiveRandom(countriesParam) {
@@ -183,14 +202,17 @@ function onLocationError(e) {
 }
 
 function abortfunction (string) {
-	console.log('Abort Function - string passed: ',string);
+	console.log(string);
+	//document.getElementById("viewCountryText").innerHTML = 'Abort Func';
 	document.getElementById("dataError").click();
-	throw new Error('API error - reload page');
+	//throw new Error('API error - reload page');
 }
 
 L.easyButton('fa-home', function() {
-	//clearTimeout(timer);
-
+	clearTimeout(timer);
+	if (firstLoad == true) {
+		firstLoad = false;
+	}
 	navigator.geolocation.getCurrentPosition(
 		(position) => {
 			const {
@@ -211,7 +233,6 @@ L.easyButton('fa-home', function() {
 						if (countryBorders[i]["properties"].iso_a3 == result.data.results[0].components["ISO_3166-1_alpha-3"]) {
 							isoa3Code = countryBorders[i]["properties"]["iso_a3"];
 							let countryName = countryBorders[i]['properties']['name'];
-							console.log('dropdownList', dropdownList);
 							for (let icountry = 0; icountry < dropdownList.length; icountry++) {
 								if (dropdownList[icountry].includes(countryName)) {
 									selectedCountry = dropdownList[icountry];
@@ -222,6 +243,20 @@ L.easyButton('fa-home', function() {
 					
 					switchCountry(layersOnAndOff, controlsOnAndOff);
 					
+					/*
+					mymap.removeLayer(selectedCountryLayer);
+					//mymap.removeLayer(invisibleBorders);
+					mymap.removeLayer(wikiClusterMarkers);
+					mymap.removeLayer(citiesLayer);
+					mymap.removeLayer(cityCirclesLayer);
+					mymap.removeLayer(touristClusterMarkers);
+					mymap.removeLayer(shopClusterMarkers);
+					mymap.removeLayer(amenityClusterMarkers);
+					mymap.removeControl(layersControl);
+					//if (mymap.hasLayer(invisibleBorders)) {
+					//	document.getElementById('borderToggle').click();
+					//}
+					*/
 					document.getElementById('selectCountries').value = selectedCountry;
 					displayCountry(isoa3Code);
 					
@@ -232,7 +267,31 @@ L.easyButton('fa-home', function() {
 				},
 			});
 		}, (error) => {
+			/*
+			function handlePermission() {
+				
+				navigator.permissions.query({name:'geolocation'}).then(function(result) {
+					if (result.state == 'granted') {
+						report(result.state);
+					} else if (result.state == 'prompt') {
+						report(result.state);
+						navigator.geolocation.getCurrentPosition(revealPosition,positionDenied,geoSettings);
+					} else if (result.state == 'denied') {
+						report(result.state);
+					}
+					result.onchange = function() {
+						report(result.state);
+					}
+				});
+			}
 
+			function report(state) {
+				console.log('Permission ' + state);
+			}
+
+			handlePermission();
+			
+			*/
 			console.log(error);
 			
 			if (error.code == error.PERMISSION_DENIED) console.log("where are you");
@@ -262,6 +321,264 @@ L.easyButton('fa-calendar-day', function() {
 	},300);
 	
 }).addTo(mymap);
+
+//https://github.com/Hipo/university-domains-list-api
+//https://developer.flightstats.com/products
+//airports
+
+function addWeatherLayer(listOfCities) {
+	//console.log(listOfCities);
+	let counter = 0;
+	
+	let allWeatherMarkers = [];
+	
+	let checklat;
+	let checklng;
+	
+	function recursiveWeather(recursiveList, counter) {
+		
+		if (counter < 1) {
+			
+			let { lat, lng } = recursiveList[0].getLatLng();
+			
+			checklat = lat;
+			checklng = lng
+			
+			console.log('send to php', lat, lng);
+			
+			counter ++;
+			
+				$.ajax({
+				url: "libs/php/weatherbit16Day.php",
+				type: "POST",
+				dataType: "json",
+				data: {
+					locationLat: lat,
+					locationLng: lng,
+				},
+				success: function(result) {
+					console.log('weather', result.data);
+					//if (!result.data.current) {
+					//if (!result['status'].description == 'success') {
+					//	abortfunction('openWeather Error');
+					//}
+					//let weatherDescription = result.data.current.weather[0].description;
+					//document.getElementById("currentWeather").innerHTML = weatherDescription.charAt(0).toUpperCase() + weatherDescription.slice(1);	
+					let lat;
+					let lng;
+					let temp;
+					let weatherMarker;
+					let popup;
+					let marker;
+					let weatherMarkers = []
+										
+					for (let iweather = 0; iweather < result.data.features.length ; iweather ++) {
+
+						let weather = result.data.features[iweather];
+
+							lat = weather.geometry.coordinates[1];
+							lng = weather.geometry.coordinates[0];
+							
+							temp = weather.properties.temp;				
+							//popup = L.popup({
+							//	className: 'wikiPopup'
+							//});
+
+							//popup.setContent('weather');
+
+							weatherMarker = L.divIcon({
+								className: 'weatherMarkerStyle ' + weather.properties.icon,
+								html: weather.properties.temp + weather.properties.icon,
+								iconSize: [40,40],
+								iconAnchor: [20,40]
+								//+ ' <img src="img/weatherIcons/' + weather.properties.icon + '.png"></img>'
+							})
+							
+							marker = L.marker([lat, lng], {icon: weatherMarker, time: weather.properties.time, temp: weather.properties.temp});
+							//.bindPopup(popup);			
+							//
+							weatherMarkers.push(marker);
+
+						}
+			
+			
+//heatmapData = {
+//	max: 8,
+//	data: [{lat: checklat, lng: checklng, count: 8}]
+//};	
+			
+					allWeatherMarkers.push(weatherMarkers);
+					recursiveWeather(recursiveList.slice(1), counter);
+				
+
+	
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					console.log('weatherbit error');
+					console.log(textStatus);
+					console.log(errorThrown);
+				}
+				}); //end of Weatherbit ajax
+			
+			
+		} else {
+			
+				console.log('allWM',allWeatherMarkers);
+
+				let weatherMarkersLayerGroup = L.layerGroup();
+
+/*
+				let container = {};
+				
+							let {lat,lng} = allWeatherMarkers[a][t].getLatLng();
+						
+						console.log('a weather marker', allWeatherMarkers[a][t], lat, lng);
+
+						let addItems = {};
+						
+						addItems['lat'] = lat;
+						addItems['lng'] = lng;
+						addItems['count'] = allWeatherMarkers[a][t].options.temp;
+						
+						instance.push(addItems);
+					
+					
+					container['data'] = instance;
+					
+									heatlist.push(container);
+				
+				console.log('heatlist', heatlist);
+				console.log('container', container);
+					
+					//heatmapData = {
+//	max: 8,
+//	data: [{lat: checklat, lng: checklng, count: 8}]
+//};	
+					
+	*/				
+				for (let t = 0; t < 16 ; t ++) {
+
+					let cityWeatherTimeMarkers = L.layerGroup([], {time: allWeatherMarkers[0][t].options.time});
+				
+					cityWeatherTimeMarkers['options']['data'] = [];
+
+					for (let a = 0; a < allWeatherMarkers.length; a++) {
+						let {lat,lng} = allWeatherMarkers[a][t].getLatLng();
+						let instance = {}
+						instance['lat'] = lat;
+						instance['lng'] = lng;
+						instance['count'] = allWeatherMarkers[a][t].options.temp;
+						setMax = heatmapData['max'];
+						heatmapData['max'] = setMax <= allWeatherMarkers[a][t].options.temp ? allWeatherMarkers[a][t].options.temp : setMax;
+						cityWeatherTimeMarkers['options']['maxtemp'] = setMax <= allWeatherMarkers[a][t].options.temp ? allWeatherMarkers[a][t].options.temp : setMax;
+					
+						cityWeatherTimeMarkers['options']['data'].push(instance);
+						cityWeatherTimeMarkers.addLayer(allWeatherMarkers[a][t]);
+							
+						cityWeatherTimeMarkers.on('add', function (e) {
+							//console.log('hmdata',heatmapData);
+							//console.log('has heatmp', mymap.hasLayer(heatmapLayer));
+							//console.log('layer added', e.target.options);
+							let updatedHeat = e.target.options.data;
+							//console.log('updatedheat', updatedHeat);
+							if (e.target.options.maxtemp < 25) {
+								console.log('max temp less than 25');	
+								let color = 'orange';							
+								heatmapData['data'] = updatedHeat;
+								//redrawHeatMap(heatmapData, color);
+								
+							} else if (e.target.options.maxtemp < 35) {
+								console.log('max temp less than 35');
+								let color = 'red';							
+								heatmapData['data'] = updatedHeat;
+								//redrawHeatMap(heatmapData, color);
+							}
+
+						})
+						cityWeatherTimeMarkers.on('remove', function () {
+							console.log('layer removed');
+						})
+					
+					};
+					
+					weatherMarkersLayerGroup.addLayer(cityWeatherTimeMarkers);
+					
+					};
+
+				
+				
+									/*	
+				for (let a = 0; a < allWeatherMarkers.length; a++) {
+
+					for (let l = 0; l < allWeatherMarkers[a].length; l++) {
+							if (l==0) {
+								console.log('time', weatherMarkers0[l].options.time);
+							}
+							let cityWeatherMarkers = L.layerGroup([],{time: weatherMarkers0[l].options.time});
+							cityWeatherMarkers.addLayer(weatherMarkers0[l]);
+							cityWeatherMarkers.addLayer(weatherMarkers1[l]);
+							weatherMarkersLayerGroup.addLayer(cityWeatherMarkers);
+						}
+						
+				}
+					*/
+					
+					console.log('wm3',weatherMarkersLayerGroup);
+					//let allWeatherMarkers = weatherMarkers0.concat(weatherMarkers1);
+					//let weatherlayerGroup = weatherMarkersLayerGroup;
+					
+					//console.log('jsontest',jsontest);
+					//let testlayer = L.geoJson(jsontest);
+					//let weatherlayer = L.geoJson(result.data);
+					let sliderControl = L.control.sliderControl({
+						position: "topright", 
+						//layer: testlayer,
+						layer: weatherMarkersLayerGroup,
+						range: false,
+						follow: 1
+					});
+
+					//Make sure to add the slider to the map ;-)
+					mymap.addControl(sliderControl);
+					
+					//And initialize the slider
+					sliderControl.startSlider();	
+					
+					console.log('ll', checklat,checklng);
+					//let heat = L.heatLayer([
+						//[50.5, 30.5, 0.8], // lat, lng, intensity
+						//[50.6, 30.4, 0.5]
+					//	[checklat, checklng, 1]
+					//], {
+					//	radius: 20,
+					//	max: 1,
+					//	}).addTo(mymap);
+
+//let heatmapData = {
+//	max: 20
+//	data: [{lat: checklat, lng: checklng, count: 8}]
+//};					
+
+//heatmapData['data'] = [{lat: checklat, lng: checklng, count: 18}];
+				
+//heatmapLayer.setData(heatmapData);
+
+//heatmapLayer.addTo(mymap)
+					
+		}
+	}
+	
+	recursiveWeather(listOfCities, counter);
+		
+	//for (let c = 0; c < 2; c++) {
+	//	let { lat, lng } = listOfCities[c].getLatLng();	
+	//	console.log(lat, lng);	
+	//	if (c<2) {		
+	//	getRecursiveWeather(lat,lng);	
+	//	}
+	//}
+	
+}
 
 function getTimezone (lat,lng) {
 	
@@ -654,12 +971,12 @@ function getWebcams (isoA2code) {
 			}).bindPopup(webcamPopup);
 			
 			webcamMarker.on('mouseover', function (e) {
-				//previewCounter++;
+				previewCounter++;
         this.openPopup();
         });
 				
       webcamMarker.on('mouseout', function (e) {
-        //previewCounter = 0;
+        previewCounter = 0;
 				this.closePopup();
 				 //let webcamPreviewTimer = setTimeout(function(e){
 					// webcamMarker.closePopup();
@@ -742,7 +1059,6 @@ function getWikipedia (currentCountry, bounds) {
 			}
 			let listOfMarkers = [];
 			let listOfTitlesPlace = [];
-			console.log('use currentCountryPolygons');
 			let polygons = currentCountryPolygons;
 			let newPolygons = []
 			for (let p = 0; p < polygons.length; p++) {
@@ -882,7 +1198,7 @@ function getWikipedia (currentCountry, bounds) {
 					wikiClusterMarkers.addLayer(listOfMarkers[i]);
 				}
 				
-				//newPolygons = [];
+				newPolygons = [];
 				wikiClusterMarkers.addTo(mymap);
 				overlaysObj['Wikipedia Articles'] = wikiClusterMarkers;
 				layersAdded++;
@@ -1038,7 +1354,7 @@ function hereLandmarks(markerlist, landmarkIDs, landmarkTypes) {
 					landmarkTypes.push(result.data[lm].Location.LocationType);
 					
 					if (result.data[lm].Location.LocationType == 'park') {
-						let landmarkMarker = L.ExtraMarkers.icon({
+						landmarkMarker = L.ExtraMarkers.icon({
 							extraClasses: 'cursorClass',
 							icon: 'fa-tree',
 							prefix: 'fas',
@@ -1063,7 +1379,7 @@ function hereLandmarks(markerlist, landmarkIDs, landmarkTypes) {
 
 					} else if (result.data[lm].Location.LocationType == 'hospital') {
 
-						let landmarkMarker = L.ExtraMarkers.icon({
+						landmarkMarker = L.ExtraMarkers.icon({
 							extraClasses: 'cursorClass',
 							icon: 'fa-clinic-medical',
 							prefix: 'fas',
@@ -1088,7 +1404,7 @@ function hereLandmarks(markerlist, landmarkIDs, landmarkTypes) {
 					
 					} else if (result.data[lm].Location.LocationType == 'river') {
 						
-						let landmarkMarker = L.ExtraMarkers.icon({
+						landmarkMarker = L.ExtraMarkers.icon({
 							extraClasses: 'cursorClass',
 							icon: 'fa-water',
 							prefix: 'fas',
@@ -1113,7 +1429,7 @@ function hereLandmarks(markerlist, landmarkIDs, landmarkTypes) {
 						
 					} else if (result.data[lm].Location.LocationType == 'universityCollege') {
 						
-						let landmarkMarker = L.ExtraMarkers.icon({
+						landmarkMarker = L.ExtraMarkers.icon({
 							extraClasses: 'cursorClass',
 							icon: 'fa-university',
 							prefix: 'fas',
@@ -1206,6 +1522,197 @@ function hereLandmarks(markerlist, landmarkIDs, landmarkTypes) {
 	}
 }
 
+
+function geonamesPoiFunc(markerlist) {
+		
+	if (markerlist.length > 0) {
+		
+		let { lat, lng } = markerlist[0].getLatLng();
+		
+		//document.getElementById("viewCountryText").innerHTML = markerlist[0].options.icon.options.html;
+		
+		$.ajax({
+		url: "libs/php/geonamesPOI.php",
+		type: "GET",
+		dataType: "json",
+		data: {
+			poilat: lat,
+			poilng: lng
+		},
+			success: function (result) {
+																		
+				if (result.data.length != 0) {
+					for (let ipoi = 0; ipoi < result.data.poi.length; ipoi ++) {
+						let onePoi = result.data.poi[ipoi];
+						poiMarkers.push(onePoi);
+					}
+				}
+				geonamesPoiFunc(markerlist.slice(1));															
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+				//document.getElementById('closeFetchingData').click();
+				abortfunction('poi error');
+				console.log('POI error');
+				console.log(textStatus);
+				console.log(errorThrown);
+			},
+		}); // end of geonamesPOI ajax
+
+	} else {
+		
+		//keep at center ajax
+	
+		document.getElementById('closeFetchingData').click();
+	
+		touristMarkers = [];
+		shopMarkers = [];
+		amenityMarkers = [];
+		let amenityTypes = [];
+		let poiTypes = []
+		
+		let touristMarker = L.ExtraMarkers.icon({
+			extraClasses: 'cursorClass',
+			icon: 'fa-map',
+			markerColor: 'pink',
+			shape: 'square',
+			prefix: 'far',
+			shadowSize: [0, 0]
+		});
+																														
+		let shopMarker = L.ExtraMarkers.icon({
+			extraClasses: 'cursorClass',
+			icon: 'fa-shopping-bag',
+			markerColor: 'green',
+			iconColor: 'white',
+			shape: 'square',
+			prefix: 'fas',
+			shadowSize: [0, 0]
+		});
+		
+		let amenityMarker = L.ExtraMarkers.icon({
+			extraClasses: 'cursorClass',
+			icon: 'fa-star',
+			markerColor: 'orange',
+			iconColor: 'black',
+			shape: 'star',
+			prefix: 'fas',
+			shadowSize: [0, 0]
+		});
+		
+		for (let imarker = 0; imarker < poiMarkers.length; imarker ++) {
+			let oneMarker = poiMarkers[imarker];
+			if (!poiTypes.includes(oneMarker.typeClass)) {
+				poiTypes.push(oneMarker.typeClass);
+			};
+			if (oneMarker.name != "") {
+				if (oneMarker.typeClass == 'tourism') {
+					let poiPopup = L.popup({
+						className: 'wikiPopup'
+					});
+					poiPopup.setContent(oneMarker.name);
+					let poiMarker = L.marker([oneMarker.lat, oneMarker.lng], {icon: touristMarker}).bindPopup(poiPopup);
+					touristMarkers.push(poiMarker);																		
+				} else if (oneMarker.typeClass == 'shop') {
+					let poiPopup = L.popup({
+						className: 'wikiPopup'
+					});
+					poiPopup.setContent(oneMarker.name);
+					let poiMarker = L.marker([oneMarker.lat, oneMarker.lng], {icon: shopMarker}).bindPopup(poiPopup);
+					shopMarkers.push(poiMarker);
+				} else if (oneMarker.typeClass == 'amenity'){
+					let poiPopup = L.popup({
+						className: 'wikiPopup'
+					});
+					poiPopup.setContent(oneMarker.typeName);
+					let poiMarker = L.marker([oneMarker.lat, oneMarker.lng], {icon: amenityMarker}).bindPopup(poiPopup);
+					amenityMarkers.push(poiMarker);
+					if (!amenityTypes.includes(oneMarker.typeName)) {
+						amenityTypes.push(oneMarker.typeName);
+					}																	
+				}
+			} else {
+				if (oneMarker.typeClass == 'amenity'){
+					let poiPopup = L.popup({
+						className: 'wikiPopup'
+					});
+					poiPopup.setContent(oneMarker.typeName);
+					let poiMarker = L.marker([oneMarker.lat, oneMarker.lng], {icon: amenityMarker}).bindPopup(poiPopup);
+					amenityMarkers.push(poiMarker);
+					if (!amenityTypes.includes(oneMarker.typeName)) {
+						amenityTypes.push(oneMarker.typeName);
+					}																	
+				}
+			}		
+		}
+	
+	
+	amenityClusterMarkers = L.markerClusterGroup({
+		iconCreateFunction: function(cluster) {
+			let childCount = cluster.getChildCount();
+			let c = ' amenity-marker-cluster-';
+			if (childCount < 10) {
+				c += 'small';
+			} else if (childCount < 100) {
+				c += 'medium';
+			} else {
+				c += 'large';
+			}
+
+			return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'cursorClass marker-cluster' + c, iconSize: new L.Point(40, 40) });
+		},
+		showCoverageOnHover: false
+	});
+	
+	for (let i = 0; i < amenityMarkers.length; i++) {
+		amenityClusterMarkers.addLayer(amenityMarkers[i]);
+	}
+
+	touristClusterMarkers = L.markerClusterGroup({
+		iconCreateFunction: function(cluster) {
+			let childCount = cluster.getChildCount();
+			let c = ' tourist-marker-cluster-';
+			if (childCount < 10) {
+				c += 'small';
+			} else if (childCount < 100) {
+				c += 'medium';
+			} else {
+				c += 'large';
+			}
+
+			return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'cursorClass marker-cluster' + c, iconSize: new L.Point(40, 40) });
+		},
+		showCoverageOnHover: false
+	});
+	
+	for (let i = 0; i < touristMarkers.length; i++) {
+		touristClusterMarkers.addLayer(touristMarkers[i]);
+	}
+
+	shopClusterMarkers = L.markerClusterGroup({
+		iconCreateFunction: function(cluster) {
+			let childCount = cluster.getChildCount();
+			let c = ' shop-marker-cluster-';
+			if (childCount < 10) {
+				c += 'small';
+			} else if (childCount < 100) {
+				c += 'medium';
+			} else {
+				c += 'large';
+			}
+
+			return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'cursorClass marker-cluster' + c, iconSize: new L.Point(40, 40) });
+		},
+		showCoverageOnHover: false
+	});
+	
+	for (let i = 0; i < shopMarkers.length; i++) {
+		shopClusterMarkers.addLayer(shopMarkers[i]);
+	}
+	
+	//mymap.removeControl(layersControl);
+	//addOverlays();
+	}
+}
 
 function getGeonamesCities(isoA2) {
 
@@ -1564,20 +2071,20 @@ function placeBorder(isoa3Code){
 			let geojsonLayer = L.geoJson(country);
 			bounds = geojsonLayer.getBounds();
 			
-//			if (!fijiUpdated) {
+			if (!fijiUpdated) {
 				if (isoa3Code == 'FJI') {
 					bounds._southWest.lng += 360;
 					fijiUpdated = true;
 					console.log(bounds);
 				}
-//			}
-//			if (!russiaUpdated) {
+			}
+			if (!russiaUpdated) {
 				if (isoa3Code == 'RUS') {
 					bounds._southWest.lng += 360;
 					russiaUpdated = true;
 					console.log(bounds);
 				}
-//			}
+			}
 				
 			let northEast = bounds._northEast;
 			let southWest = bounds._southWest;
@@ -1597,10 +2104,8 @@ function placeBorder(isoa3Code){
 			viewportBounds = L.latLngBounds(corner1, corner2);
 			
 	    currentCountry = result.data["properties"].name;
-			console.log('place border func > current country: ', currentCountry);			
-      
-			console.log('set current country polygons');
-			if (result.data["geometry"]["type"] == 'MultiPolygon') {
+			
+      if (result.data["geometry"]["type"] == 'MultiPolygon') {
         currentCountryPolygons = result.data["geometry"]["coordinates"];
       } else {
         currentCountryPolygons = [result.data["geometry"]["coordinates"]];
@@ -1858,6 +2363,20 @@ function countryBasics(isoa3Code){
 				
 				//console.log('get timezone');
 				//getTimezone(lat, lng);
+				//console.log('get wiki');
+				//getWikipedia(currentCountry, bounds);
+				//console.log('get cities');
+				//getGeonamesCities(isoA2);
+				//console.log('get airports');
+				//getGeonamesAirports(isoA2);
+				
+				//console.log('get news');
+				//getNews(isoA2);
+				
+				//console.log('translate');
+				//translateNews();
+				console.log('get webcams');
+				getWebcams(isoA2);
 				
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
@@ -2138,26 +2657,11 @@ function displayCountry(isoa3Code) {
 	getHolidays(isoA2);
 	
 	//getGeonamesCities(isoA2);
-	//--> contains weatherBitCurrent
+	//--> contains weatherWitCurrent
 	
 	//weatherChartCelcius(isoa3Code);
 	
 	//weatherChartRain(isoa3Code);
-	
-	//console.log('get wiki');
-	//getWikipedia(currentCountry, bounds);
-	//console.log('get cities');
-	//getGeonamesCities(isoA2);
-	//console.log('get airports');
-	//getGeonamesAirports(isoA2);
-	
-	//console.log('get news');
-	//getNews(isoA2);
-	
-	//console.log('translate');
-	//translateNews();
-	console.log('get webcams');
-	getWebcams(isoA2);
 	
   document.getElementById("progressBar").setAttribute('style', 'visibility: initial');
 	document.getElementById("loadingText").innerHTML = 'fetching exchange rate';
@@ -2262,18 +2766,28 @@ function switchCountry(layersToChange, controlsToChange){
 }
 
 selectDropDown.addEventListener("change", function (event) {
-
-  selectedCountry = event.target.value;
-
-	layersAdded = 0;
-	layerNames = [];
-	overlaysObj = {};
-	
-	if (weatherOn == true) {
-		document.getElementById('weatherToggle').click();
-	}
-	
-	switchCountry(layersOnAndOff, controlsOnAndOff);
+  let completeFunction = true
+  let selectedCountry = event.target.value;
+	//console.log(selectedCountry);
+	if (selectedCountry == "") {
+    //document.getElementById('goToCountry').setAttribute('data-dismiss', "stop");
+    document.getElementById('selectCountryError').setAttribute('style', 'visibility: visible')
+    completeFunction = false
+  } else {
+    //if (document.getElementById('goToCountry').getAttribute('data-dismiss') == 'stop') {
+      //document.getElementById('goToCountry').setAttribute('data-dismiss', "modal");
+    //}
+  }
+  if (completeFunction == true) {
+		layersAdded = 0;
+		layerNames = [];
+		overlaysObj = {};
+		
+		if (weatherOn == true) {
+			document.getElementById('weatherToggle').click();
+		}
+		
+		switchCountry(layersOnAndOff, controlsOnAndOff);
 		//addOverlays(overlaysObj);
 		
 		/*
@@ -2304,7 +2818,7 @@ selectDropDown.addEventListener("change", function (event) {
     //displayCountry(isoa3Code);
     
 		displayCountry(selectedCountry);
-  
+  }
 }, false)
 
 
@@ -2468,7 +2982,7 @@ window.onload = (event) => {
 							console.log('country borders error');
 							console.log(textStatus);
 							console.log(errorThrown);
-							let recursiveLoadTimer = setTimeout(function () {
+							recursiveLoadTimer = setTimeout(function () {
 									recursiveLoad();
 									clearTimeout(recursiveLoadTimer);
 							}, 3000)
@@ -2483,350 +2997,6 @@ window.onload = (event) => {
 		});
 	};
 } //END OF WINDOW ON LOAD
-
-
-// UNUSED FUNCS
-
-function geonamesPoiFunc(markerlist) {
-		
-	if (markerlist.length > 0) {
-		
-		let { lat, lng } = markerlist[0].getLatLng();
-		
-		//document.getElementById("viewCountryText").innerHTML = markerlist[0].options.icon.options.html;
-		
-		$.ajax({
-		url: "libs/php/geonamesPOI.php",
-		type: "GET",
-		dataType: "json",
-		data: {
-			poilat: lat,
-			poilng: lng
-		},
-			success: function (result) {
-																		
-				if (result.data.length != 0) {
-					for (let ipoi = 0; ipoi < result.data.poi.length; ipoi ++) {
-						let onePoi = result.data.poi[ipoi];
-						poiMarkers.push(onePoi);
-					}
-				}
-				geonamesPoiFunc(markerlist.slice(1));															
-			},
-			error: function (jqXHR, textStatus, errorThrown) {
-				//document.getElementById('closeFetchingData').click();
-				abortfunction('poi error');
-				console.log('POI error');
-				console.log(textStatus);
-				console.log(errorThrown);
-			},
-		}); // end of geonamesPOI ajax
-
-	} else {
-		
-		//keep at center ajax
-	
-		document.getElementById('closeFetchingData').click();
-	
-		touristMarkers = [];
-		shopMarkers = [];
-		amenityMarkers = [];
-		let amenityTypes = [];
-		let poiTypes = []
-		
-		let touristMarker = L.ExtraMarkers.icon({
-			extraClasses: 'cursorClass',
-			icon: 'fa-map',
-			markerColor: 'pink',
-			shape: 'square',
-			prefix: 'far',
-			shadowSize: [0, 0]
-		});
-																														
-		let shopMarker = L.ExtraMarkers.icon({
-			extraClasses: 'cursorClass',
-			icon: 'fa-shopping-bag',
-			markerColor: 'green',
-			iconColor: 'white',
-			shape: 'square',
-			prefix: 'fas',
-			shadowSize: [0, 0]
-		});
-		
-		let amenityMarker = L.ExtraMarkers.icon({
-			extraClasses: 'cursorClass',
-			icon: 'fa-star',
-			markerColor: 'orange',
-			iconColor: 'black',
-			shape: 'star',
-			prefix: 'fas',
-			shadowSize: [0, 0]
-		});
-		
-		for (let imarker = 0; imarker < poiMarkers.length; imarker ++) {
-			let oneMarker = poiMarkers[imarker];
-			if (!poiTypes.includes(oneMarker.typeClass)) {
-				poiTypes.push(oneMarker.typeClass);
-			};
-			if (oneMarker.name != "") {
-				if (oneMarker.typeClass == 'tourism') {
-					let poiPopup = L.popup({
-						className: 'wikiPopup'
-					});
-					poiPopup.setContent(oneMarker.name);
-					let poiMarker = L.marker([oneMarker.lat, oneMarker.lng], {icon: touristMarker}).bindPopup(poiPopup);
-					touristMarkers.push(poiMarker);																		
-				} else if (oneMarker.typeClass == 'shop') {
-					let poiPopup = L.popup({
-						className: 'wikiPopup'
-					});
-					poiPopup.setContent(oneMarker.name);
-					let poiMarker = L.marker([oneMarker.lat, oneMarker.lng], {icon: shopMarker}).bindPopup(poiPopup);
-					shopMarkers.push(poiMarker);
-				} else if (oneMarker.typeClass == 'amenity'){
-					let poiPopup = L.popup({
-						className: 'wikiPopup'
-					});
-					poiPopup.setContent(oneMarker.typeName);
-					let poiMarker = L.marker([oneMarker.lat, oneMarker.lng], {icon: amenityMarker}).bindPopup(poiPopup);
-					amenityMarkers.push(poiMarker);
-					if (!amenityTypes.includes(oneMarker.typeName)) {
-						amenityTypes.push(oneMarker.typeName);
-					}																	
-				}
-			} else {
-				if (oneMarker.typeClass == 'amenity'){
-					let poiPopup = L.popup({
-						className: 'wikiPopup'
-					});
-					poiPopup.setContent(oneMarker.typeName);
-					let poiMarker = L.marker([oneMarker.lat, oneMarker.lng], {icon: amenityMarker}).bindPopup(poiPopup);
-					amenityMarkers.push(poiMarker);
-					if (!amenityTypes.includes(oneMarker.typeName)) {
-						amenityTypes.push(oneMarker.typeName);
-					}																	
-				}
-			}		
-		}
-	
-	
-	amenityClusterMarkers = L.markerClusterGroup({
-		iconCreateFunction: function(cluster) {
-			let childCount = cluster.getChildCount();
-			let c = ' amenity-marker-cluster-';
-			if (childCount < 10) {
-				c += 'small';
-			} else if (childCount < 100) {
-				c += 'medium';
-			} else {
-				c += 'large';
-			}
-
-			return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'cursorClass marker-cluster' + c, iconSize: new L.Point(40, 40) });
-		},
-		showCoverageOnHover: false
-	});
-	
-	for (let i = 0; i < amenityMarkers.length; i++) {
-		amenityClusterMarkers.addLayer(amenityMarkers[i]);
-	}
-
-	touristClusterMarkers = L.markerClusterGroup({
-		iconCreateFunction: function(cluster) {
-			let childCount = cluster.getChildCount();
-			let c = ' tourist-marker-cluster-';
-			if (childCount < 10) {
-				c += 'small';
-			} else if (childCount < 100) {
-				c += 'medium';
-			} else {
-				c += 'large';
-			}
-
-			return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'cursorClass marker-cluster' + c, iconSize: new L.Point(40, 40) });
-		},
-		showCoverageOnHover: false
-	});
-	
-	for (let i = 0; i < touristMarkers.length; i++) {
-		touristClusterMarkers.addLayer(touristMarkers[i]);
-	}
-
-	shopClusterMarkers = L.markerClusterGroup({
-		iconCreateFunction: function(cluster) {
-			let childCount = cluster.getChildCount();
-			let c = ' shop-marker-cluster-';
-			if (childCount < 10) {
-				c += 'small';
-			} else if (childCount < 100) {
-				c += 'medium';
-			} else {
-				c += 'large';
-			}
-
-			return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'cursorClass marker-cluster' + c, iconSize: new L.Point(40, 40) });
-		},
-		showCoverageOnHover: false
-	});
-	
-	for (let i = 0; i < shopMarkers.length; i++) {
-		shopClusterMarkers.addLayer(shopMarkers[i]);
-	}
-	
-	//mymap.removeControl(layersControl);
-	//addOverlays();
-	}
-}
-
-// weather forecast with heatmap
-function addWeatherLayer(listOfCities) {
-
-	let counter = 0;
-	
-	let allWeatherMarkers = [];
-	
-	let checklat;
-	let checklng;
-	
-	function recursiveWeather(recursiveList, counter) {
-		
-		if (counter < 1) {
-			
-			let { lat, lng } = recursiveList[0].getLatLng();
-			
-			checklat = lat;
-			checklng = lng
-			
-			console.log('send to php', lat, lng);
-			
-			counter ++;
-			
-				$.ajax({
-				url: "libs/php/weatherbit16Day.php",
-				type: "POST",
-				dataType: "json",
-				data: {
-					locationLat: lat,
-					locationLng: lng,
-				},
-				success: function(result) {
-					console.log('weather', result.data);
-
-					let weatherMarkers = []
-										
-					for (let iweather = 0; iweather < result.data.features.length ; iweather ++) {
-
-						let weather = result.data.features[iweather];
-
-						let lat = weather.geometry.coordinates[1];
-						let lng = weather.geometry.coordinates[0];
-						
-						let temp = weather.properties.temp;				
-
-						let weatherMarker = L.divIcon({
-							className: 'weatherMarkerStyle ' + weather.properties.icon,
-							html: weather.properties.temp + weather.properties.icon,
-							iconSize: [40,40],
-							iconAnchor: [20,40]
-						})
-						
-						let marker = L.marker([lat, lng], {icon: weatherMarker, time: weather.properties.time, temp: weather.properties.temp});
-
-						weatherMarkers.push(marker);
-
-						}
-					
-					allWeatherMarkers.push(weatherMarkers);
-					recursiveWeather(recursiveList.slice(1), counter);
-
-	
-				},
-				error: function(jqXHR, textStatus, errorThrown) {
-					console.log('weatherbit error');
-					console.log(textStatus);
-					console.log(errorThrown);
-				}
-				}); //end of Weatherbit ajax
-			
-			
-		} else {
-			
-				console.log('allWM',allWeatherMarkers);
-
-				let weatherMarkersLayerGroup = L.layerGroup();
-		
-				for (let t = 0; t < 16 ; t ++) {
-
-					let cityWeatherTimeMarkers = L.layerGroup([], {time: allWeatherMarkers[0][t].options.time});
-				
-					cityWeatherTimeMarkers['options']['data'] = [];
-
-					for (let a = 0; a < allWeatherMarkers.length; a++) {
-						let {lat,lng} = allWeatherMarkers[a][t].getLatLng();
-						let instance = {}
-						instance['lat'] = lat;
-						instance['lng'] = lng;
-						instance['count'] = allWeatherMarkers[a][t].options.temp;
-						setMax = heatmapData['max'];
-						heatmapData['max'] = setMax <= allWeatherMarkers[a][t].options.temp ? allWeatherMarkers[a][t].options.temp : setMax;
-						cityWeatherTimeMarkers['options']['maxtemp'] = setMax <= allWeatherMarkers[a][t].options.temp ? allWeatherMarkers[a][t].options.temp : setMax;
-					
-						cityWeatherTimeMarkers['options']['data'].push(instance);
-						cityWeatherTimeMarkers.addLayer(allWeatherMarkers[a][t]);
-							
-						cityWeatherTimeMarkers.on('add', function (e) {
-
-							let updatedHeat = e.target.options.data;
-
-							if (e.target.options.maxtemp < 25) {
-								console.log('max temp less than 25');	
-								let color = 'orange';							
-								heatmapData['data'] = updatedHeat;
-								
-							} else if (e.target.options.maxtemp < 35) {
-								console.log('max temp less than 35');
-								let color = 'red';							
-								heatmapData['data'] = updatedHeat;
-
-							}
-
-						})
-						cityWeatherTimeMarkers.on('remove', function () {
-							console.log('layer removed');
-						})
-					
-					};
-					
-					weatherMarkersLayerGroup.addLayer(cityWeatherTimeMarkers);
-					
-					};
-					
-					console.log('wm3',weatherMarkersLayerGroup);
-
-					let sliderControl = L.control.sliderControl({
-						position: "topright", 
-						layer: weatherMarkersLayerGroup,
-						range: false,
-						follow: 1
-					});
-
-					//Make sure to add the slider to the map ;-)
-					mymap.addControl(sliderControl);
-					
-					//And initialize the slider
-					sliderControl.startSlider();	
-					
-					console.log('ll', checklat,checklng);
-					
-		}
-	}
-
-	recursiveWeather(listOfCities, counter);
-	
-}
-
-
-
 
 /* 
 const bordersOn = document.getElementById("borderToggle");
