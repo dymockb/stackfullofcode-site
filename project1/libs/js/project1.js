@@ -2398,38 +2398,51 @@ function countryBasics(isoa3Code){
 function getHolidays(isoA2code){
 	//https://api.getfestivo.com/v2/holidays?country=GB&year=2020&api_key=c38b1964c079cb2190283574dde8f0d7
 	
+	let newDate = new Date();
+	let year = newDate.getFullYear();
+	console.log('year ',year);
+	
 	$.ajax({
-		url: "libs/php/getFestivo.php",
+		url: "libs/php/getHolidays.php",
 		type: "POST",
 		dataType: "json",
 		data: {
-			countryCode: isoA2code
+			countryCode: isoA2code,
+			currentYear: year
 		},
 		success: function (result) {
 						
-			console.log('hols',result.data.holidays)
+			console.log('hols',result.data)
 			
-			let holidays = result.data.holidays;
+			if (result.data.status != 404 ) {
+				
+			
+			let holidays = result.data;
 			
 			let holidayDays = []
 			
+			let displayYear;
 			
 			for (let h = 0; h < holidays.length; h++) {
 				let holidayObj = {}
 				
+
 				holidayObj['title'] = holidays[h].name;
-				let y = holidays[h].start.slice(0,4);
-				let m = holidays[h].start.slice(5,7);
-				let d = holidays[h].start.slice(8,10);
+				let y = holidays[h].date.slice(0,4);
+					if (h == 0) {
+						displayYear = y;
+					}
+				let m = holidays[h].date.slice(5,7);
+				//console.log(m, m-1);
+				let d = holidays[h].date	.slice(8,10);
 				//console.log(y,m,d);
-				holidayObj['start'] = new Date(y, m, d) 
+				holidayObj['start'] = new Date(y, m-1, d) 
 				//holidays[h].start.splice(0,10);
 				
 				holidayDays.push(holidayObj);
 			}
 			
 			console.log(holidayDays);
-			
 			
 			var date = new Date();
 			var d = date.getDate();
@@ -2594,7 +2607,13 @@ function getHolidays(isoA2code){
 				],
 				*/
 			});
+			
+			} else {
 				
+				console.log('no holidays found');
+				document.getElementById(`calendar${calendarNum}`).innerHTML = 'No holidays found';
+				
+			}			
 				
 		},
 		error: function (jqXHR, textStatus, errorThrown) {

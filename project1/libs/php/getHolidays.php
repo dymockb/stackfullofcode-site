@@ -6,20 +6,22 @@
 
 	$executionStartTime = microtime(true);
  
-	$url='https://api.getfestivo.com/v2/holidays?country=' . $_REQUEST['countryCode'] . '&year=2020&api_key=c38b1964c079cb2190283574dde8f0d7';
-
-	//$ch = curl_init();
-	//curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-	//curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-	//curl_setopt($ch, CURLOPT_URL,$url);
-
-	//$result=curl_exec($ch);
-
-	//curl_close($ch);
-
-	//$decode = json_decode($result,true);	
+	//$url='https://api.getfestivo.com/v2/holidays?country=' . $_REQUEST['countryCode'] . '&year=2020&api_key=c38b1964c079cb2190283574dde8f0d7';
 	
-	$decode = json_decode(file_get_contents('../../vendors/json/staticHolidays.json'),true);
+	$url='https://date.nager.at/api/v3/PublicHolidays/' . $_REQUEST['currentYear'] . '/' . $_REQUEST['countryCode'];
+
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_URL,$url);
+
+	$result=curl_exec($ch);
+
+	curl_close($ch);
+
+	$decode = json_decode($result,true);	
+	
+	//$decode = json_decode(file_get_contents('../../vendors/json/staticHolidays.json'),true);
 
 	/*
 	$webcams = [];

@@ -881,8 +881,12 @@ function Header(calendar, options) {
 										) +
 								"</span>"
 								)
-								.click(function() {
+								.click(function(event) {
+									console.log('one', event);
+									console.log('Title year', $('.fc-header-title')[0].children[0].innerHTML);
 									if (!button.hasClass(tm + '-state-disabled')) {
+										console.log('two');
+										console.log('Title year', $('.fc-header-title')[0].children[0].innerHTML);
 										buttonClick();
 									}
 								})
