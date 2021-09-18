@@ -29,7 +29,7 @@
 //let poiMarkers = [];
 
 
-let totalLayers = 1;
+let totalLayers = 8; //border, capitalmarker, webcams, airportClusterMarkers, citiesLayer, cityCirclesLayer, landmarkClusterMarkers
 let layersAdded = 0;
 let layerNames = [];
 let overlaysObj = {};
@@ -46,6 +46,7 @@ let calendarNum = 0;
 let baseLayerName, capitalMarker, timer, currentCountry, selectedCountry, currentCountryPolygons, countryBorders, setMax, heatmapColor;
 
 let selectedCountryLayer, wikiClusterMarkers, citiesLayer, cityCirclesLayer, weatherLayer, touristLayer, webcamLayer, shopLayer
+//layers defined within functions: capitalMarker
 
 let rainChart, celciusChart, calendar
 
@@ -253,12 +254,1067 @@ function onLocationError(e) {
 
 }
 
+function addOverlays(overlaysObj) {
+	console.log('adding overlays');
+	
+	if (layersAdded == totalLayers && overlayProbs == 0) {
+		let layersControl = L.control.layers(baseMaps, overlaysObj);
+		layersControl.addTo(mymap);
+		controlsOnAndOff.push(layersControl);
+		
+	} else if (layersAdded == totalLayers && overlayProbs > 0) {
+		let layersControl = L.control.layers(baseMaps, overlaysObj);
+		layersControl.addTo(mymap);
+		controlsOnAndOff.push(layersControl);
+		
+		console.log('controls on and off', controlsOnAndOff);
+		console.log('layers on and off', layersOnAndOff);
+		
+		document.getElementById("layerErrorText").innerHTML = problemLayers;
+		document.getElementById("dataError").click();
+		
+	} else if (overlaysCounter < 6 ){
+		
+		overlaysCounter++;
+		
+		let overlayAgain = setTimeout(function () {
+			
+			addOverlays(overlaysObj);
+			clearTimeout(overlayAgain);
+		},1500);
+		
+	} else {
+		
+		console.log('ERROR layers on and off', layersOnAndOff);
+		abortfunction('overlay error');
+		
+	}
+
+}
+
+function countryBordersFunc(response) {
+	
+	countryBorders = response;
+	
+	for (let i = 0; i < countryBorders.length; i++) {
+		let textValue = countryBorders[i].name;
+		let node = document.createElement("option");
+		node.innerHTML = textValue;
+		//node.setAttribute("value", textValue);
+		node.setAttribute("value", countryBorders[i].A3code);		
+		//dropdownList.push(textValue);
+		document.getElementById("selectCountries").appendChild(node);
+	}	
+	
+	mymap.locate().on("locationfound", onLocationFound).on("locationerror", onLocationError);			
+
+} // end of countryBordersFunc
+
+function switchCountry(layersToChange, controlsToChange){
+	
+	//rainChart.destroy();
+	//celciusChart.destroy();
+	
+	calendarNum++;
+	document.getElementById('wrap').innerHTML = `
+							<div id='calendar${calendarNum}'></div>
+							<div style='clear:both'></div>`
+	
+	//calendar.destroy();
+	
+	document.getElementById('accordion').innerHTML = "";
+	clearTimeout(timer);
+	
+	for (let s = 0; s < layersToChange.length; s++) {
+		mymap.removeLayer(layersOnAndOff[s]);
+	}
+	for (let c = 0; c < controlsToChange.length; c ++) {
+		mymap.removeControl(controlsToChange[c]);
+	}
+	
+	layersOnAndOff = [];
+	controlsOnAndOff = [];
+	heatmapData.data = [];
+	
+}
+
 function abortfunction (string) {
 	console.log('Abort Function - string passed: ',string);
 	document.getElementById("dataError").click();
 	throw new Error('API error - reload page');
 }
 
+function placeBorder(isoa3Code){ // add 2 layers: selectedCountryLayer, wikiClusterMarkers
+	
+	$.ajax({
+		url: "libs/php/getPolygon.php",
+		type: "POST",
+		dataType: "json",
+		data: {
+			countryCode: isoa3Code
+		},
+		success: function (result) {
+						
+			let country = result.data;
+			let geojsonLayer = L.geoJson(country);
+			bounds = geojsonLayer.getBounds();
+			
+//			if (!fijiUpdated) {
+				if (isoa3Code == 'FJI') {
+					bounds._southWest.lng += 360;
+					fijiUpdated = true;
+					console.log(bounds);
+				}
+//			}
+//			if (!russiaUpdated) {
+				if (isoa3Code == 'RUS') {
+					bounds._southWest.lng += 360;
+					russiaUpdated = true;
+					console.log(bounds);
+				}
+//			}
+				
+			let northEast = bounds._northEast;
+			let southWest = bounds._southWest;
+			
+			fitBoundsArr = [];
+
+			let { lat, lng } = northEast;
+
+			fitBoundsArr.push([lat, lng]);
+
+			let corner1 = L.latLng(lat, lng);
+			({ lat, lng } = southWest);
+
+			fitBoundsArr.push([lat, lng]);
+
+			let corner2 = L.latLng(lat, lng);
+			let viewportBounds = L.latLngBounds(corner1, corner2);
+			
+	    currentCountry = result.data["properties"].name;
+			console.log('place border func > current country: ', currentCountry);			
+      
+			console.log('set current country polygons');
+			if (result.data["geometry"]["type"] == 'MultiPolygon') {
+        currentCountryPolygons = result.data["geometry"]["coordinates"];
+      } else {
+        currentCountryPolygons = [result.data["geometry"]["coordinates"]];
+      }
+			
+			selectedCountryLayer = L.geoJSON();
+
+			let isoA3;
+			let capital;
+			let currency;
+			
+      document.getElementById("countryModalTitle").innerHTML = currentCountry;
+			
+			mymap.flyToBounds(viewportBounds, {
+					duration: 1.5
+			});
+			
+			borderLines = L.geoJSON(country, {
+				style: function(feature) {
+						return {
+							color: "#ff0000",
+							fillOpacity: 0
+					}
+				}
+			});
+
+			borderLines.addTo(selectedCountryLayer);
+			selectedCountryLayer.addTo(mymap);
+			overlaysObj['Highlight'] = selectedCountryLayer;
+			layersAdded++;
+			layersOnAndOff.push(selectedCountryLayer);
+			layerNames.push('selectedCountryLayer');
+			
+			getWikipedia(currentCountry, bounds);
+									
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+				layersAdded++;
+				problemLayers += 'selectedCountryLayer';
+				overlayProbs++;
+				console.log('selectedCountryLayer error');
+				console.log(textStatus);
+				console.log(errorThrown);
+			},
+	});
+	
+}
+
+function countryBasics(isoa3Code){ // add 1 layer: capitalMarker; 3x ajax: view country data, worldbank capital, getTimezone (for clock)	
+		$.ajax({
+		url: "libs/php/oneRestCountry.php",
+		type: "GET",
+		dataType: "json",
+		data: {
+			countryCode: isoa3Code
+		},
+		success: function (result) {
+
+			let textValue = result.data.nativeName;
+			document.getElementById("nativeName").innerHTML = 'Native name: ' + textValue;
+			document.getElementById("population").innerHTML = parseInt(result.data.population).toLocaleString('en-US');
+			document.getElementById("currency").innerHTML = result.data.currencies[0].code;
+			currency = result.data.currencies[0].code;
+			document.getElementById("currencyName").innerHTML = result.data.currencies[0].name;
+			console.log('flag', result.data.flag);
+			document.getElementById("flagIMG").setAttribute("src", result.data.flag);
+			document.getElementById("capital").innerHTML = result.data.capital;
+			capital = result.data.capital;
+
+			isoA2 = result.data.alpha2Code;
+			
+		$.ajax({
+			url: "libs/php/worldBankCapital.php",
+			type: "POST",
+			dataType: "json",
+			data: {
+				isoA3: isoa3Code
+			},
+			success: function(result) {
+								
+				lat = result.data[1][0].latitude; // W. Sahara ESH problem
+				lng = result.data[1][0].longitude;
+				let capitalPopup = L.popup({autoPan: false, autoClose: false, closeOnClick: false});
+				let node = document.createElement("button");
+				node.innerHTML = capital;
+				node.setAttribute("type", "button");
+				node.setAttribute("class", "badge rounded-pill bg-secondary");
+				node.setAttribute("data-toggle", "modal");
+				node.setAttribute("style", "font-size: 1rem");
+				node.setAttribute("data-target", "#viewCountryModal");
+				capitalPopup.setContent(node);
+				
+				capitalMarkerIcon = L.divIcon({
+					className: 'capitalMarkerIcon'
+				});
+				
+				capitalMarker = L.marker([lat, lng], {
+					icon: capitalMarkerIcon
+				}).bindPopup(capitalPopup);
+				
+				capitalMarker.getPopup().on('remove', function () {
+					mymap.removeLayer(capitalMarker);
+				});
+				
+				capitalMarker.addTo(mymap).openPopup();
+				layersAdded++;
+				layersOnAndOff.push(capitalMarker);
+				overlaysObj['Capital'] = capitalMarker;
+				layerNames.push('capitalMarker');
+				
+				//console.log('get timezone');
+				getTimezone(lat, lng);
+				
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				layersAdded++;
+				problemLayers += 'capitalMarker';
+				overlayProbs++;
+				console.log('worldBank capital error')
+				console.log(textStatus);
+				console.log(errorThrown);
+			}
+			}); //end of World Bank Capital ajax
+			
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			console.log('one rest country error');
+			console.log(textStatus);
+			console.log(errorThrown);
+		},
+	}); //end of One Rest Country ajax
+
+}
+
+function getWebcams (isoA2code) { // add 1 layer: webcams
+	
+		$.ajax({
+		url: "libs/php/windyWebcams.php",
+		type: "POST",
+		dataType: "json",
+		data: {
+			countryCode: isoA2code
+		},
+		success: function (result) {
+		
+		let webcamMarkers = [];
+		for (let r = 0; r < result.data.length; r ++) {
+				
+			let lat = result.data[r].lat;
+			let lng = result.data[r].lng;
+			let webcamPopup = L.popup({autoPan: false, autoClose: false, closeOnClick: false});
+			let node = document.createElement("button");
+			node.setAttribute("type", "button");
+			node.setAttribute("data-toggle", "modal");
+			node.setAttribute("style", "font-size: 1rem");
+			node.setAttribute("data-target", "#webcamModal");
+			let previewNode = document.createElement('img');
+			previewNode.setAttribute("class", "webcamPreview");
+			previewNode.setAttribute('src', result.data[r].thumbnail);
+			node.appendChild(previewNode);
+			
+			webcamPopup.setContent(node);
+			
+			webcamMarkerIcon = L.divIcon({
+				className: 'cursorClass fas fa-video'
+			});
+			
+			webcamMarker = L.marker([lat, lng], {
+				icon: webcamMarkerIcon,
+				className: 'cursorClass'
+			}).bindPopup(webcamPopup);
+			
+			webcamMarker.on('mouseover', function (e) {
+        this.openPopup();
+        });
+				
+      webcamMarker.on('mouseout', function (e) {
+				this.closePopup();
+       });
+			 
+			webcamMarker.on('click', function (e) {
+				document.getElementById('webcamTitle').innerHTML = result.data[r].title;
+				document.getElementById('embedWebcam').setAttribute('src', result.data[r].embed);
+				document.getElementById('webcamBtn').click();
+			
+       });
+			
+			webcamMarkers.push(webcamMarker);
+
+		}
+		
+			webcamLayer = L.layerGroup(webcamMarkers);
+		
+			webcamLayer.addTo(mymap);
+			overlaysObj['Webcams'] = webcamLayer;
+			layersAdded++;
+			layersOnAndOff.push(webcamLayer);
+			layerNames.push('webcamLayer');
+		
+	},
+	error: function (jqXHR, textStatus, errorThrown) {
+		layersAdded++;
+		problemLayers += 'webcamLayer';
+		overlayProbs++;
+		console.log('webcam layer error');
+		console.log(textStatus);
+		console.log(errorThrown);
+	}
+	}); 
+}
+
+function getGeonamesAirports (isoA2) { // add 1 layer: airportClusterMarkers
+										
+	$.ajax({
+		url: "libs/php/geonamesAirports.php",
+		type: "POST",
+		dataType: "json",
+		data: {
+			country: isoA2
+		},
+	success: function (result) {
+		
+		if (!result.data.geonames) {
+			abortfunction('airports error');
+		}
+		
+		let airportMarkers = [];
+
+		let airportMarker = L.ExtraMarkers.icon({
+			extraClasses: 'cursorClass',
+			icon: 'fa-plane-departure',
+			markerColor: 'cyan',
+			iconColor: 'white',
+			shape: 'square',
+			prefix: 'fas',
+			//shadowSize: [40, 0]
+		});
+		
+		for (let iairport = 0; iairport < result.data.geonames.length ; iairport ++) {
+
+			let airport = result.data.geonames[iairport];
+			
+			let tooltip = L.tooltip({
+				className: 'wikiPopup',
+				sticky: true
+			});
+
+			tooltip.setContent(airport.name);
+
+			let marker = L.marker([airport.lat, airport.lng], {icon: airportMarker}).bindTooltip(tooltip);			
+			
+			airportMarkers.push(marker);
+
+		}
+
+		airportClusterMarkers = L.markerClusterGroup({
+			iconCreateFunction: function(cluster) {
+				let childCount = cluster.getChildCount();
+				let c = ' airport-marker-cluster-';
+				if (childCount < 10) {
+					c += 'small';
+				} else if (childCount < 100) {
+					c += 'medium';
+				} else {
+					c += 'large';
+				}
+					
+				return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'cursorClass marker-cluster' + c, iconSize: new L.Point(40, 40) });
+			},
+			showCoverageOnHover: false
+		});
+
+		for (let i = 0; i < airportMarkers.length; i++) {
+			airportClusterMarkers.addLayer(airportMarkers[i]);
+		}
+			
+		airportClusterMarkers.addTo(mymap);
+		overlaysObj['Airports'] = airportClusterMarkers;
+		layersAdded++;
+		layersOnAndOff.push(airportClusterMarkers);
+		layerNames.push('airportClusterMarkers');
+
+	},
+	error: function (jqXHR, textStatus, errorThrown) {
+		layersAdded++;
+		overlayProbs++;
+		problemLayers += 'Airports'
+		console.log('airports error');
+		console.log(textStatus);
+		console.log(errorThrown);
+	}
+	}); 	
+}
+
+function getGeonamesCities(isoA2) { // 2 layers added: cityCirclesLayer (and Cities Layer), (weatherLayer created but controlled by toggle)
+
+	$.ajax({
+		url: "libs/php/geonamesSearchCities.php",
+		type: "POST",
+		dataType: "json",
+		data: {
+			country: isoA2
+		},
+	success: function (result) {
+		if (result.data.length == 0) {
+			abortfunction('geonamesSearchCities error');
+		}
+		
+		let citiesMarkers = [];
+		let citiesCircles = [];
+			
+		for (let icity = 0; icity < result.data.length; icity++) {
+			let city = result.data[icity];
+
+			let cityTooltip = L.tooltip({
+				className: 'wikiPopup',
+				sticky: true
+			});
+			
+			/*
+			let cityMarker = L.ExtraMarkers.icon({
+				icon: 'fa-number',
+				markerColor: 'green',
+				shape: 'square',
+				//prefix: 'fas',
+				number: 'A',
+				//innerHTML: '<span>what is this</span>',
+				shadowSize: [0, 0]
+			});
+			
+			*/
+
+			cityMarker = L.divIcon({
+				className: 'cityMarkerStyle cursorClass badge rounded-pill bg-secondary-cm',
+				html: city.name
+			});
+		
+			let radius;
+			let cityCircle;
+			if (city.population) {
+				cityTooltip.setContent(city.name + ' - Population: ' + parseInt(city.population).toLocaleString('en-US'));
+				radius = city.population/100 > 20000 ? 20000 : city.population/100;	
+				cityCircle = L.circle([city.lat, city.lng], radius, {color: '#b30a08', className: 'cursorClass'}).bindTooltip(cityTooltip);
+			} else {
+				cityTooltip.setContent(city.name + ' - Population unknown'	);
+				radius = 200;							
+				cityCircle = L.circle([city.lat, city.lng], radius, {color: '#b30a08', className: 'cursorClass'}).bindTooltip(cityTooltip);
+			}
+
+			let marker = L.marker([city.lat, city.lng], {icon: cityMarker}).bindTooltip(cityTooltip);
+			citiesMarkers.push(marker);
+			citiesCircles.push(cityCircle);
+		
+		} // end of result.data loop
+					
+		citiesLayer = L.layerGroup(citiesMarkers);
+		cityCirclesLayer = L.layerGroup(citiesCircles);
+		
+		//citiesLayer is added / removed by cityCirclesLayer (don't include layersOnAndOff)
+		citiesLayer.addTo(mymap);
+		layersAdded++;
+		layerNames.push('citiesLayer');
+		
+		cityCirclesLayer.addTo(mymap);
+		overlaysObj['Cities'] = cityCirclesLayer;
+		layersAdded++;
+		layersOnAndOff.push(cityCirclesLayer);
+		layerNames.push('cityCirclesLayer');
+		
+		mymap.on('zoomend', function() {
+			//zoomCount++;
+			if (mymap.hasLayer(cityCirclesLayer)) {
+				if (mymap.hasLayer(citiesLayer)) {
+					if (mymap.getZoom() >= 7 ) {
+						if (baseLayerName != 'Watercolour') {
+							mymap.removeLayer(citiesLayer);
+						}
+					}
+				} else {
+					if (mymap.getZoom() <=6) {
+								citiesLayer.addTo(mymap);
+					}
+				}
+			}																
+		});
+		
+		let slicedCitiesMarkers = [...citiesMarkers];
+		
+		function getRandom(arr, size) {
+			let copy = arr.slice(0), rand = [];
+			//for (let i = 0; i < size && i < copy.length; i++) {
+			for (let i = 0; i < size; i++) {
+				let index = Math.floor(Math.random() * copy.length);
+				rand.push(copy.splice(index, 1)[0]);
+			}
+			return rand;
+		}
+		
+		let maxCities = slicedCitiesMarkers.length < 20 ? slicedCitiesMarkers.length : 20;
+		
+		let randomMarkers;
+		
+		if (maxCities < 20) {
+			randomMarkers = slicedCitiesMarkers;
+		} else {
+			randomMarkers = getRandom(slicedCitiesMarkers, maxCities);
+		}
+				
+		landmarkList = [];
+		landmarkIDs = [];
+		landmarkTypes = [];
+
+		//hereLandmarks(randomMarkers, landmarkIDs, landmarkTypes);
+		hereLandmarks(randomMarkers);
+		
+		let currentWeatherData = [];
+		
+		function getCurrentWeather(locations) {
+			
+			if (locations.length > 0) {
+				
+				let {lat, lng} = locations[0].getLatLng();
+				
+				$.ajax({
+					url: "libs/php/weatherbitCurrent.php",
+					type: "POST",
+					dataType: "json",
+					data: {
+						locationLat: lat,
+						locationLng: lng,
+					},
+					success: function(result) {
+
+						currentWeatherData.push(result);
+						getCurrentWeather(locations.slice(1));
+					
+					},
+					error: function(jqXHR, textStatus, errorThrown) {
+						console.log('weatherbit error');
+						console.log(textStatus);
+						console.log(errorThrown);
+					}
+					}); //end of Weatherbit ajax
+			
+			} else {
+
+				let maxTemp = -100;				
+				for (mt = 0; mt < currentWeatherData.length; mt++) {
+						maxTemp = currentWeatherData[mt]['data']['temp'] > maxTemp ? currentWeatherData[mt]['data']['temp'] : maxTemp;
+					}
+
+				if (maxTemp < 15 ){
+					heatmapData.max = 15;
+					heatmapColor = 'blue';
+				} else if (maxTemp < 30) {
+					heatmapData.max = 30;
+					heatmapColor = 'orange';
+				} else if (maxTemp < 45) {
+					heatmapData.max = 45;
+					heatmapColor = 'red';	
+				}
+									
+				let weatherMarkers = []
+
+				for (let hm = 0; hm < currentWeatherData.length; hm ++){
+								
+					let lat = currentWeatherData[hm]['data']['lat'];
+					let lng = currentWeatherData[hm]['data']['lng'];
+					let temp = currentWeatherData[hm]['data']['temp'];
+										
+					let outerNode = document.createElement('div');
+					let imgDivNode = document.createElement('div');
+					imgDivNode.setAttribute('class','weatherIconNode');
+
+					let imgNode = document.createElement('img');
+					imgNode.setAttribute('src', `img/weatherIcons/${currentWeatherData[hm]['data']['icon']}.png`);
+					imgNode.setAttribute('class', 'weatherIconImgNode');
+
+					let textNode = document.createElement('div');
+
+					let supNode = document.createElement('sup');
+					supNode.innerHTML = 'o';
+					
+					let span1 = document.createElement('span');
+					let span2 = document.createElement('span');
+					let span3 = document.createElement('span');
+					
+					span1.innerHTML = temp;
+					
+					span2.appendChild(supNode);
+
+					span1.appendChild(span2);
+					
+					span3.innerHTML = 'C';
+					span1.appendChild(span3);
+					
+					textNode.setAttribute('class', 'weatherIconNode weatherTextNode');
+					textNode.appendChild(span1);	
+
+					imgDivNode.appendChild(imgNode);
+					outerNode.appendChild(imgDivNode);
+					outerNode.appendChild(textNode);
+
+					let	weatherMarker = L.divIcon({
+						className: 'weatherMarkerStyle',
+						html: outerNode,
+						iconSize: [20,20]
+					})
+
+					let marker = L.marker([lat, lng], {icon: weatherMarker});
+					
+					weatherMarkers.push(marker);
+
+					let point = {};
+
+					point['lat'] = lat;
+					point['lng'] = lng;
+
+					if (maxTemp < 15 ){
+						point['count'] = 15 - temp;
+					} else {
+						point['count'] = temp;
+					}
+						
+					heatmapData.data.push(point);
+					
+				}
+			
+
+
+				weatherLayer = L.layerGroup(weatherMarkers);
+
+				//not added here - controlled by toggle
+				//weatherLayer.addTo(mymap);
+				
+				/*
+				if (maxTemp < 15) {
+					heatmapColor = 'blue';
+					
+				} else if (maxTemp < 30) {
+					heatmapColor = 'orange';							
+					
+				} else if (maxTemp < 40) {
+					heatmapColor = 'red';							
+	
+				}
+			
+				*/
+				
+				}
+			
+		}
+		
+		getCurrentWeather(randomMarkers.slice(0,2));		
+
+	},
+	error: function (jqXHR, textStatus, errorThrown) {
+		console.log('geonames search error');
+		console.log(textStatus);
+		console.log(errorThrown);
+	}
+	}); 	//end of geonames cities
+} // end of getGeonames cities functions
+
+function hereLandmarks(markerlist) { // called inside getGeonamesCities. 1 layer added: landmarkClusterMarkers
+
+	if (markerlist.length > 10) {
+		
+		let { lat, lng } = markerlist[0].getLatLng();
+		
+		$.ajax({
+		url: "libs/php/hereLandmarks.php",
+		type: "POST",
+		dataType: "json",
+		data: {
+			markerLat: lat,
+			markerLng: lng,
+			//lmIDs: landmarkIDs
+		},
+			success: function (result) {
+				console.log('landmarks result', result);
+				for (let lm = 0; lm < result.data.length; lm++) {
+					landmarkIDs.push(result.data[lm].Location.Name);
+					landmarkTypes.push(result.data[lm].Location.LocationType);
+					
+					if (result.data[lm].Location.LocationType == 'park') {
+						let landmarkMarker = L.ExtraMarkers.icon({
+							extraClasses: 'cursorClass',
+							icon: 'fa-tree',
+							prefix: 'fas',
+							markerColor: 'green',
+							iconColor: 'white',
+							shape: 'square',
+							shadowSize: [40, 0],
+							test: 'idiot'
+						});
+
+						let tooltip = L.tooltip({
+							className: 'wikiPopup',
+							sticky: true
+						});
+						
+						tooltip.setContent(result.data[lm].Location.Name);
+
+						let marker = L.marker([result.data[lm].Location.DisplayPosition.Latitude, result.data[lm].Location.DisplayPosition.Longitude], 
+						{icon: landmarkMarker}).bindTooltip(tooltip);
+
+						landmarkList.push(marker);
+
+					} else if (result.data[lm].Location.LocationType == 'hospital') {
+
+						let landmarkMarker = L.ExtraMarkers.icon({
+							extraClasses: 'cursorClass',
+							icon: 'fa-clinic-medical',
+							prefix: 'fas',
+							markerColor: 'red',
+							iconColor: 'white',
+							shape: 'square',
+							shadowSize: [40, 0],
+							test: 'idiot'
+						});						
+						
+						let tooltip = L.tooltip({
+							className: 'wikiPopup',
+							sticky: true
+						});
+						
+						tooltip.setContent(result.data[lm].Location.Name);
+
+						let marker = L.marker([result.data[lm].Location.DisplayPosition.Latitude, result.data[lm].Location.DisplayPosition.Longitude], 
+						{icon: landmarkMarker}).bindTooltip(tooltip);
+
+						landmarkList.push(marker);
+					
+					} else if (result.data[lm].Location.LocationType == 'river') {
+						
+						let landmarkMarker = L.ExtraMarkers.icon({
+							extraClasses: 'cursorClass',
+							icon: 'fa-water',
+							prefix: 'fas',
+							markerColor: 'blue',
+							iconColor: 'white',
+							shape: 'square',
+							shadowSize: [40, 0],
+							test: 'idiot'
+						});	
+						
+						let tooltip = L.tooltip({
+							className: 'wikiPopup',
+							sticky: true
+						});
+						
+						tooltip.setContent(result.data[lm].Location.Name);
+
+						let marker = L.marker([result.data[lm].Location.DisplayPosition.Latitude, result.data[lm].Location.DisplayPosition.Longitude], 
+						{icon: landmarkMarker}).bindTooltip(tooltip);
+
+						landmarkList.push(marker);
+						
+					} else if (result.data[lm].Location.LocationType == 'universityCollege') {
+						
+						let landmarkMarker = L.ExtraMarkers.icon({
+							extraClasses: 'cursorClass',
+							icon: 'fa-university',
+							prefix: 'fas',
+							markerColor: 'purple',
+							iconColor: 'white',
+							shape: 'square',
+							shadowSize: [40, 0],
+							test: 'idiot'
+						});							
+
+						let tooltip = L.tooltip({
+							className: 'wikiPopup',
+							sticky: true
+						});
+						
+						tooltip.setContent(result.data[lm].Location.Name);
+
+						let marker = L.marker([result.data[lm].Location.DisplayPosition.Latitude, result.data[lm].Location.DisplayPosition.Longitude], 
+						{icon: landmarkMarker}).bindTooltip(tooltip);
+
+						landmarkList.push(marker);
+					
+					} else {
+						console.log("NOTHING!!!");
+					}
+					
+				}	
+			
+					
+				hereLandmarks(markerlist.slice(1), landmarkIDs, landmarkTypes);
+				
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+				layersAdded++;
+				overlayProbs++;
+				problemLayers += 'Landmarks';
+				console.log('landmarks error');
+				console.log(textStatus);
+				console.log(errorThrown);
+			},
+		}); // end of hereLandmarks ajax
+
+	} else {
+				
+		landmarkClusterMarkers = L.markerClusterGroup({
+		iconCreateFunction: function(cluster) {
+			let childCount = cluster.getChildCount();
+			let c = ' landmark-marker-cluster-';
+			if (childCount < 10) {
+				c += 'small';
+			} else if (childCount < 100) {
+				c += 'medium';
+			} else {
+				c += 'large';
+			}
+
+			return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'cursorClass marker-cluster' + c, iconSize: new L.Point(40, 40) });
+		},
+		showCoverageOnHover: false
+	});
+	
+	for (let i = 0; i < landmarkList.length; i++) {
+		landmarkClusterMarkers.addLayer(landmarkList[i]);
+	}
+	
+	landmarkClusterMarkers.addTo(mymap);
+	overlaysObj['Landmarks'] = landmarkClusterMarkers;
+	layersAdded++;
+	layersOnAndOff.push(landmarkClusterMarkers);
+	layerNames.push('landmarkClusterMarkers');
+
+	}
+}
+
+function getWikipedia (currentCountry, bounds) { // called inside place border add 1 layer: wikiClusterMarkers; 2 x Ajax 
+	
+		$.ajax({
+		url: "libs/php/geonamesWiki.php",
+		type: "POST",
+		dataType: "json",
+		data: {
+			country: encodeURI(currentCountry),
+			maxRows: '25'
+		},
+		success: function(result) {
+			
+			if (!result.data.geonames) {
+				abortfunction('geonamesWiki Error');
+			}
+			let listOfMarkers = [];
+			let listOfTitlesPlace = [];
+			console.log('use currentCountryPolygons');
+			let polygons = currentCountryPolygons;
+			let newPolygons = []
+			for (let p = 0; p < polygons.length; p++) {
+				let polygonToEdit = polygons[p][0]
+				let updatePolygon = [];
+				for (let u = 0; u < polygonToEdit.length; u++) {
+					let newPoint = []
+					newPoint.push(polygonToEdit[u][1]);
+					newPoint.push(polygonToEdit[u][0]);
+					updatePolygon.push(newPoint);
+				}
+				newPolygons.push(updatePolygon);
+			}
+			for (let oneArt = 0; oneArt < result.data.geonames.length; oneArt++) {
+				let placeArticle = result.data.geonames[oneArt];
+				let wikiurl = 'http://' + `${placeArticle.wikipediaUrl}`;
+				let placeTooltip = L.tooltip({
+					className: 'wikiPopup',
+					sticky: true,
+					url: placeArticle.wikipediaUrl
+				});
+
+				placeTooltip.setContent(`<span>${placeArticle.title}</br>(Double click to view article)</span>`);
+																	
+				let wikiMarker = L.ExtraMarkers.icon({
+					extraClasses: 'cursorClass',
+					icon: 'fa-wikipedia-w',
+					markerColor: 'blue',
+					iconColor: 'white',
+					shape: 'square',
+					prefix: 'fab',
+					shadowSize: [0, 0]
+				});
+																	
+				let marker = L.marker([placeArticle.lat, placeArticle.lng], {icon: wikiMarker}).bindTooltip(placeTooltip);
+				
+				marker.on('dblclick', function(e) {
+					
+					document.getElementById('targetLink').setAttribute('href', 'http://' + e.target._tooltip.options.url);
+					document.getElementById('targetLink').click();
+				})
+				
+				for (let n = 0; n < newPolygons.length; n++) {
+					let onePolygon = L.polygon(newPolygons[n]);
+					if (onePolygon.contains(marker.getLatLng())) {
+						listOfMarkers.push(marker);
+						listOfTitlesPlace.push(placeArticle.title);
+					}
+				}
+			}
+			
+		$.ajax({
+			url: "libs/php/geonamesWikibbox.php",
+			type: "POST",
+			dataType: "json",
+			data: {
+				north: bounds['_northEast'].lat,
+				south: bounds['_southWest'].lat,
+				east: bounds['_northEast'].lng,
+				west: bounds['_southWest'].lng
+			},
+			success: function(result) {
+				
+				if (!result.data.geonames) {
+						abortfunction('geonamesWikibbox Error');
+					}
+			
+				let listOfTitlesbbox = []
+
+				for (let oneArt = 0; oneArt < result.data.geonames.length; oneArt++) {
+					let article = result.data.geonames[oneArt];
+					let wikiurl = `http://${article.wikipediaUrl}`;
+					let tooltip = L.tooltip({
+						className: 'wikiPopup',
+						sticky: true,
+						url: article.wikipediaUrl
+					});
+
+					tooltip.setContent(`<span>${article.title}</br>(Double click to view article)</span>`);
+					
+					let wikiMarker = L.ExtraMarkers.icon({
+						extraClasses: 'cursorClass',
+						icon: 'fa-wikipedia-w',
+						markerColor: 'blue',
+						iconColor: 'white',
+						shape: 'square',
+						prefix: 'fab',
+						shadowSize: [0, 0]
+					});
+					
+					let marker = L.marker([article.lat, article.lng], {icon: wikiMarker}).bindTooltip(tooltip);
+					
+					marker.on('dblclick', function(e) {
+						
+						document.getElementById('targetLink').setAttribute('href', 'http://' + e.target._tooltip.options.url);
+						document.getElementById('targetLink').click();
+					})
+					
+					for (let n = 0; n < newPolygons.length; n++) {
+						let onePolygon = L.polygon(newPolygons[n]);
+						if (onePolygon.contains(marker.getLatLng())) {
+							if (!listOfTitlesPlace.includes(article.title)) {
+								if (!listOfTitlesbbox.includes(article.title)) {
+									listOfMarkers.push(marker);
+									listOfTitlesbbox.push(article.title);
+								} 
+							} 
+						} 
+					} 
+				} // end of result.data.geonames loop
+				
+				wikiClusterMarkers = L.markerClusterGroup({
+					iconCreateFunction: function(cluster) {
+						let childCount = cluster.getChildCount();
+						let c = ' wiki-marker-cluster-';
+						if (childCount < 10) {
+							c += 'small';
+						} else if (childCount < 100) {
+							c += 'medium';
+						} else {
+							c += 'large';
+						}
+
+						return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'cursorClass marker-cluster' + c, iconSize: new L.Point(40, 40) });
+					},
+					showCoverageOnHover: false
+				});
+
+				for (let i = 0; i < listOfMarkers.length; i++) {
+					wikiClusterMarkers.addLayer(listOfMarkers[i]);
+				}
+				
+				//newPolygons = [];
+				wikiClusterMarkers.addTo(mymap);
+				overlaysObj['Wikipedia Articles'] = wikiClusterMarkers;
+				layersAdded++;
+				layersOnAndOff.push(wikiClusterMarkers);
+				layerNames.push('wikiClusterMarkers');
+				
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				layersAdded++;
+				overlayprobs++;
+				problemLayers += 'Wikipedia';
+				console.log('geonamesWikibbox error');
+				console.log(textStatus);
+				console.log(errorThrown);
+			}
+		}); //end of geonamesWikibbox
+	},
+	error: function(jqXHR, textStatus, errorThrown) {
+		layersAdded++;
+		overlayprobs++;
+		problemLayers += 'Wikipedia';
+		console.log('geonamesWikierror');
+		console.log(textStatus);
+		console.log(errorThrown);
+	}
+	}); //end of geonamesWiki ajax
+	
+}
+
+
+
+//background functions:
 function getTimezone (lat,lng) {
 	
 		$.ajax({
@@ -538,922 +1594,6 @@ function getNews(isoA2code) {
 	
 }
 
-function getWebcams (isoA2code) {
-	
-		$.ajax({
-		url: "libs/php/windyWebcams.php",
-		type: "POST",
-		dataType: "json",
-		data: {
-			countryCode: isoA2code
-		},
-		success: function (result) {
-		
-		let webcamMarkers = [];
-		for (let r = 0; r < result.data.length; r ++) {
-				
-			let lat = result.data[r].lat;
-			let lng = result.data[r].lng;
-			let webcamPopup = L.popup({autoPan: false, autoClose: false, closeOnClick: false});
-			let node = document.createElement("button");
-			node.setAttribute("type", "button");
-			node.setAttribute("data-toggle", "modal");
-			node.setAttribute("style", "font-size: 1rem");
-			node.setAttribute("data-target", "#webcamModal");
-			let previewNode = document.createElement('img');
-			previewNode.setAttribute("class", "webcamPreview");
-			previewNode.setAttribute('src', result.data[r].thumbnail);
-			node.appendChild(previewNode);
-			
-			webcamPopup.setContent(node);
-			
-			webcamMarkerIcon = L.divIcon({
-				//html: '<div><i class="fas fa-video"></i></div>',
-				className: 'cursorClass fas fa-video'
-				//className: 'capitalMarkerIcon'
-			});
-			
-			webcamMarker = L.marker([lat, lng], {
-				icon: webcamMarkerIcon,
-				className: 'cursorClass'
-			}).bindPopup(webcamPopup);
-			
-			webcamMarker.on('mouseover', function (e) {
-				//previewCounter++;
-        this.openPopup();
-        });
-				
-      webcamMarker.on('mouseout', function (e) {
-				this.closePopup();
-       });
-			 
-			webcamMarker.on('click', function (e) {
-				document.getElementById('webcamTitle').innerHTML = 'Webcam: ' + result.data[r].title;
-				document.getElementById('embedWebcam').setAttribute('src', result.data[r].embed);
-				document.getElementById('webcamBtn').click();
-			
-       });
-			
-			webcamMarkers.push(webcamMarker);
-
-		}
-		
-			webcamLayer = L.layerGroup(webcamMarkers);
-		
-			webcamLayer.addTo(mymap);
-			overlaysObj['Webcams'] = webcamLayer;
-			layersAdded++;
-			layersOnAndOff.push(webcamLayer);
-			layerNames.push('webcamLayer');
-		
-	},
-	error: function (jqXHR, textStatus, errorThrown) {
-		console.log('webcam error');
-		console.log(textStatus);
-		console.log(errorThrown);
-	}
-	}); 
-}
-
-function getWikipedia (currentCountry, bounds) {
-	
-		$.ajax({
-		url: "libs/php/geonamesWiki.php",
-		type: "POST",
-		dataType: "json",
-		data: {
-			country: encodeURI(currentCountry),
-			maxRows: '25'
-		},
-		success: function(result) {
-			
-			if (!result.data.geonames) {
-				abortfunction('geonamesWiki Error');
-			}
-			let listOfMarkers = [];
-			let listOfTitlesPlace = [];
-			console.log('use currentCountryPolygons');
-			let polygons = currentCountryPolygons;
-			let newPolygons = []
-			for (let p = 0; p < polygons.length; p++) {
-				let polygonToEdit = polygons[p][0]
-				let updatePolygon = [];
-				for (let u = 0; u < polygonToEdit.length; u++) {
-					let newPoint = []
-					newPoint.push(polygonToEdit[u][1]);
-					newPoint.push(polygonToEdit[u][0]);
-					updatePolygon.push(newPoint);
-				}
-				newPolygons.push(updatePolygon);
-			}
-			for (let oneArt = 0; oneArt < result.data.geonames.length; oneArt++) {
-				let placeArticle = result.data.geonames[oneArt];
-				let wikiurl = 'http://' + `${placeArticle.wikipediaUrl}`;
-				let placeTooltip = L.tooltip({
-					className: 'wikiPopup',
-					sticky: true,
-					url: placeArticle.wikipediaUrl
-				});
-
-				placeTooltip.setContent(`<span>${placeArticle.title}</br>(Double click to view article)</span>`);
-																	
-				let wikiMarker = L.ExtraMarkers.icon({
-					extraClasses: 'cursorClass',
-					icon: 'fa-wikipedia-w',
-					markerColor: 'blue',
-					iconColor: 'white',
-					shape: 'square',
-					prefix: 'fab',
-					shadowSize: [0, 0]
-				});
-																	
-				let marker = L.marker([placeArticle.lat, placeArticle.lng], {icon: wikiMarker}).bindTooltip(placeTooltip);
-				
-				marker.on('dblclick', function(e) {
-					
-					document.getElementById('targetLink').setAttribute('href', 'http://' + e.target._tooltip.options.url);
-					document.getElementById('targetLink').click();
-				})
-				
-				for (let n = 0; n < newPolygons.length; n++) {
-					let onePolygon = L.polygon(newPolygons[n]);
-					if (onePolygon.contains(marker.getLatLng())) {
-						listOfMarkers.push(marker);
-						listOfTitlesPlace.push(placeArticle.title);
-					}
-				}
-			}
-			
-		$.ajax({
-			url: "libs/php/geonamesWikibbox.php",
-			type: "POST",
-			dataType: "json",
-			data: {
-				north: bounds['_northEast'].lat,
-				south: bounds['_southWest'].lat,
-				east: bounds['_northEast'].lng,
-				west: bounds['_southWest'].lng
-			},
-			success: function(result) {
-				
-				if (!result.data.geonames) {
-						abortfunction('geonamesWikibbox Error');
-					}
-			
-				let listOfTitlesbbox = []
-
-				for (let oneArt = 0; oneArt < result.data.geonames.length; oneArt++) {
-					let article = result.data.geonames[oneArt];
-					let wikiurl = `http://${article.wikipediaUrl}`;
-					let tooltip = L.tooltip({
-						className: 'wikiPopup',
-						sticky: true,
-						url: article.wikipediaUrl
-					});
-
-					tooltip.setContent(`<span>${article.title}</br>(Double click to view article)</span>`);
-					
-					let wikiMarker = L.ExtraMarkers.icon({
-						extraClasses: 'cursorClass',
-						icon: 'fa-wikipedia-w',
-						markerColor: 'blue',
-						iconColor: 'white',
-						shape: 'square',
-						prefix: 'fab',
-						shadowSize: [0, 0]
-					});
-					
-					let marker = L.marker([article.lat, article.lng], {icon: wikiMarker}).bindTooltip(tooltip);
-					
-					marker.on('dblclick', function(e) {
-						
-						document.getElementById('targetLink').setAttribute('href', 'http://' + e.target._tooltip.options.url);
-						document.getElementById('targetLink').click();
-					})
-					
-					for (let n = 0; n < newPolygons.length; n++) {
-						let onePolygon = L.polygon(newPolygons[n]);
-						if (onePolygon.contains(marker.getLatLng())) {
-							if (!listOfTitlesPlace.includes(article.title)) {
-								if (!listOfTitlesbbox.includes(article.title)) {
-									listOfMarkers.push(marker);
-									listOfTitlesbbox.push(article.title);
-								} 
-							} 
-						} 
-					} 
-				} // end of result.data.geonames loop
-				
-				wikiClusterMarkers = L.markerClusterGroup({
-					iconCreateFunction: function(cluster) {
-						let childCount = cluster.getChildCount();
-						let c = ' wiki-marker-cluster-';
-						if (childCount < 10) {
-							c += 'small';
-						} else if (childCount < 100) {
-							c += 'medium';
-						} else {
-							c += 'large';
-						}
-
-						return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'cursorClass marker-cluster' + c, iconSize: new L.Point(40, 40) });
-					},
-					showCoverageOnHover: false
-				});
-
-				for (let i = 0; i < listOfMarkers.length; i++) {
-					wikiClusterMarkers.addLayer(listOfMarkers[i]);
-				}
-				
-				//newPolygons = [];
-				wikiClusterMarkers.addTo(mymap);
-				overlaysObj['Wikipedia Articles'] = wikiClusterMarkers;
-				layersAdded++;
-				layersOnAndOff.push(wikiClusterMarkers);
-				layerNames.push('wikiClusterMarkers');
-				
-			},
-			error: function(jqXHR, textStatus, errorThrown) {
-				layersAdded++;
-				overlayprobs++;
-				problemLayers += 'Wikipedia';
-				console.log('geonamesWikibbox error');
-				console.log(textStatus);
-				console.log(errorThrown);
-			}
-		}); //end of geonamesWikibbox
-	},
-	error: function(jqXHR, textStatus, errorThrown) {
-		layersAdded++;
-		overlayprobs++;
-		problemLayers += 'Wikipedia';
-		console.log('geonamesWikierror');
-		console.log(textStatus);
-		console.log(errorThrown);
-	}
-	}); //end of geonamesWiki ajax
-	
-}
-
-function getGeonamesAirports (isoA2) {
-										
-	$.ajax({
-		url: "libs/php/geonamesAirports.php",
-		type: "POST",
-		dataType: "json",
-		data: {
-			country: isoA2
-		},
-	success: function (result) {
-		
-		if (!result.data.geonames) {
-			abortfunction('airports error');
-		}
-		
-		let airportMarkers = [];
-
-		let airportMarker = L.ExtraMarkers.icon({
-			extraClasses: 'cursorClass',
-			icon: 'fa-plane-departure',
-			markerColor: 'cyan',
-			iconColor: 'white',
-			shape: 'square',
-			prefix: 'fas',
-			//shadowSize: [40, 0]
-		});
-		
-		for (let iairport = 0; iairport < result.data.geonames.length ; iairport ++) {
-
-			let airport = result.data.geonames[iairport];
-			
-			let tooltip = L.tooltip({
-				className: 'wikiPopup',
-				sticky: true
-			});
-
-			tooltip.setContent(airport.name);
-
-			let marker = L.marker([airport.lat, airport.lng], {icon: airportMarker}).bindTooltip(tooltip);			
-			
-			airportMarkers.push(marker);
-
-		}
-
-		airportClusterMarkers = L.markerClusterGroup({
-			iconCreateFunction: function(cluster) {
-				let childCount = cluster.getChildCount();
-				let c = ' airport-marker-cluster-';
-				if (childCount < 10) {
-					c += 'small';
-				} else if (childCount < 100) {
-					c += 'medium';
-				} else {
-					c += 'large';
-				}
-					
-				return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'cursorClass marker-cluster' + c, iconSize: new L.Point(40, 40) });
-			},
-			showCoverageOnHover: false
-		});
-
-		for (let i = 0; i < airportMarkers.length; i++) {
-			airportClusterMarkers.addLayer(airportMarkers[i]);
-		}
-			
-		airportClusterMarkers.addTo(mymap);
-		overlaysObj['Airports'] = airportClusterMarkers;
-		layersAdded++;
-		layersOnAndOff.push(airportClusterMarkers);
-		layerNames.push('airportClusterMarkers');
-
-	},
-	error: function (jqXHR, textStatus, errorThrown) {
-		layersAdded++;
-		overlayProbs++;
-		problemLayers += 'Airports'
-		console.log('airports error');
-		console.log(textStatus);
-		console.log(errorThrown);
-	}
-	}); 	
-}
-
-function hereLandmarks(markerlist, landmarkIDs, landmarkTypes) {
- 
-	if (markerlist.length > 10) {
-		
-		let { lat, lng } = markerlist[0].getLatLng();
-		
-		$.ajax({
-		url: "libs/php/hereLandmarks.php",
-		type: "POST",
-		dataType: "json",
-		data: {
-			markerLat: lat,
-			markerLng: lng,
-			//lmIDs: landmarkIDs
-		},
-			success: function (result) {
-				console.log('landmarks result', result);
-				for (let lm = 0; lm < result.data.length; lm++) {
-					landmarkIDs.push(result.data[lm].Location.Name);
-					landmarkTypes.push(result.data[lm].Location.LocationType);
-					
-					if (result.data[lm].Location.LocationType == 'park') {
-						let landmarkMarker = L.ExtraMarkers.icon({
-							extraClasses: 'cursorClass',
-							icon: 'fa-tree',
-							prefix: 'fas',
-							markerColor: 'green',
-							iconColor: 'white',
-							shape: 'square',
-							shadowSize: [40, 0],
-							test: 'idiot'
-						});
-
-						let tooltip = L.tooltip({
-							className: 'wikiPopup',
-							sticky: true
-						});
-						
-						tooltip.setContent(result.data[lm].Location.Name);
-
-						let marker = L.marker([result.data[lm].Location.DisplayPosition.Latitude, result.data[lm].Location.DisplayPosition.Longitude], 
-						{icon: landmarkMarker}).bindTooltip(tooltip);
-
-						landmarkList.push(marker);
-
-					} else if (result.data[lm].Location.LocationType == 'hospital') {
-
-						let landmarkMarker = L.ExtraMarkers.icon({
-							extraClasses: 'cursorClass',
-							icon: 'fa-clinic-medical',
-							prefix: 'fas',
-							markerColor: 'red',
-							iconColor: 'white',
-							shape: 'square',
-							shadowSize: [40, 0],
-							test: 'idiot'
-						});						
-						
-						let tooltip = L.tooltip({
-							className: 'wikiPopup',
-							sticky: true
-						});
-						
-						tooltip.setContent(result.data[lm].Location.Name);
-
-						let marker = L.marker([result.data[lm].Location.DisplayPosition.Latitude, result.data[lm].Location.DisplayPosition.Longitude], 
-						{icon: landmarkMarker}).bindTooltip(tooltip);
-
-						landmarkList.push(marker);
-					
-					} else if (result.data[lm].Location.LocationType == 'river') {
-						
-						let landmarkMarker = L.ExtraMarkers.icon({
-							extraClasses: 'cursorClass',
-							icon: 'fa-water',
-							prefix: 'fas',
-							markerColor: 'blue',
-							iconColor: 'white',
-							shape: 'square',
-							shadowSize: [40, 0],
-							test: 'idiot'
-						});	
-						
-						let tooltip = L.tooltip({
-							className: 'wikiPopup',
-							sticky: true
-						});
-						
-						tooltip.setContent(result.data[lm].Location.Name);
-
-						let marker = L.marker([result.data[lm].Location.DisplayPosition.Latitude, result.data[lm].Location.DisplayPosition.Longitude], 
-						{icon: landmarkMarker}).bindTooltip(tooltip);
-
-						landmarkList.push(marker);
-						
-					} else if (result.data[lm].Location.LocationType == 'universityCollege') {
-						
-						let landmarkMarker = L.ExtraMarkers.icon({
-							extraClasses: 'cursorClass',
-							icon: 'fa-university',
-							prefix: 'fas',
-							markerColor: 'purple',
-							iconColor: 'white',
-							shape: 'square',
-							shadowSize: [40, 0],
-							test: 'idiot'
-						});							
-
-						let tooltip = L.tooltip({
-							className: 'wikiPopup',
-							sticky: true
-						});
-						
-						tooltip.setContent(result.data[lm].Location.Name);
-
-						let marker = L.marker([result.data[lm].Location.DisplayPosition.Latitude, result.data[lm].Location.DisplayPosition.Longitude], 
-						{icon: landmarkMarker}).bindTooltip(tooltip);
-
-						landmarkList.push(marker);
-					
-					} else {
-						console.log("NOTHING!!!");
-					}
-					
-				}	
-			
-					
-				hereLandmarks(markerlist.slice(1), landmarkIDs, landmarkTypes);
-				
-			},
-			error: function (jqXHR, textStatus, errorThrown) {
-				layersAdded++;
-				overlayProbs++;
-				problemLayers += 'Landmarks';
-				console.log('landmarks error');
-				console.log(textStatus);
-				console.log(errorThrown);
-			},
-		}); // end of hereLandmarks ajax
-
-	} else {
-				
-		landmarkClusterMarkers = L.markerClusterGroup({
-		iconCreateFunction: function(cluster) {
-			let childCount = cluster.getChildCount();
-			let c = ' landmark-marker-cluster-';
-			if (childCount < 10) {
-				c += 'small';
-			} else if (childCount < 100) {
-				c += 'medium';
-			} else {
-				c += 'large';
-			}
-
-			return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'cursorClass marker-cluster' + c, iconSize: new L.Point(40, 40) });
-		},
-		showCoverageOnHover: false
-	});
-	
-	for (let i = 0; i < landmarkList.length; i++) {
-		landmarkClusterMarkers.addLayer(landmarkList[i]);
-	}
-	
-	landmarkClusterMarkers.addTo(mymap);
-	overlaysObj['Landmarks'] = landmarkClusterMarkers;
-	layersAdded++;
-	layersOnAndOff.push(landmarkClusterMarkers);
-	layerNames.push('landmarkClusterMarkers');
-
-	}
-}
-
-function getGeonamesCities(isoA2) {
-
-	$.ajax({
-		url: "libs/php/geonamesSearchCities.php",
-		type: "POST",
-		dataType: "json",
-		data: {
-			country: isoA2
-		},
-	success: function (result) {
-		if (result.data.length == 0) {
-			abortfunction('geonamesSearchCities error');
-		}
-		
-		let citiesMarkers = [];
-		let citiesCircles = [];
-			
-		for (let icity = 0; icity < result.data.length; icity++) {
-			let city = result.data[icity];
-
-			let cityTooltip = L.tooltip({
-				className: 'wikiPopup',
-				sticky: true
-			});
-			
-			/*
-			let cityMarker = L.ExtraMarkers.icon({
-				icon: 'fa-number',
-				markerColor: 'green',
-				shape: 'square',
-				//prefix: 'fas',
-				number: 'A',
-				//innerHTML: '<span>what is this</span>',
-				shadowSize: [0, 0]
-			});
-			
-			*/
-
-			cityMarker = L.divIcon({
-				className: 'cityMarkerStyle cursorClass badge rounded-pill bg-secondary-cm',
-				html: city.name
-			});
-		
-			let radius;
-			let cityCircle;
-			if (city.population) {
-				cityTooltip.setContent(city.name + ' - Population: ' + parseInt(city.population).toLocaleString('en-US'));
-				radius = city.population/100 > 20000 ? 20000 : city.population/100;	
-				cityCircle = L.circle([city.lat, city.lng], radius, {color: '#b30a08', className: 'cursorClass'}).bindTooltip(cityTooltip);
-			} else {
-				cityTooltip.setContent(city.name + ' - Population unknown'	);
-				radius = 200;							
-				cityCircle = L.circle([city.lat, city.lng], radius, {color: '#b30a08', className: 'cursorClass'}).bindTooltip(cityTooltip);
-			}
-
-			let marker = L.marker([city.lat, city.lng], {icon: cityMarker}).bindTooltip(cityTooltip);
-			citiesMarkers.push(marker);
-			citiesCircles.push(cityCircle);
-		
-		} // end of result.data loop
-					
-		citiesLayer = L.layerGroup(citiesMarkers);
-		cityCirclesLayer = L.layerGroup(citiesCircles);
-		
-		//citiesLayer is added / removed by cityCirclesLayer
-		citiesLayer.addTo(mymap);
-		//layersAdded++;
-		//layerNames.push('citiesLayer');
-		
-		cityCirclesLayer.addTo(mymap);
-		overlaysObj['Cities'] = cityCirclesLayer;
-		layersAdded++;
-		layersOnAndOff.push(cityCirclesLayer);
-		layerNames.push('cityCirclesLayer');
-		
-		mymap.on('zoomend', function() {
-			//zoomCount++;
-			if (mymap.hasLayer(cityCirclesLayer)) {
-				if (mymap.hasLayer(citiesLayer)) {
-					if (mymap.getZoom() >= 7 ) {
-						if (baseLayerName != 'Watercolour') {
-							mymap.removeLayer(citiesLayer);
-						}
-					}
-				} else {
-					if (mymap.getZoom() <=6) {
-								citiesLayer.addTo(mymap);
-					}
-				}
-			}																
-		});
-		
-		let slicedCitiesMarkers = [...citiesMarkers];
-		
-		function getRandom(arr, size) {
-			let copy = arr.slice(0), rand = [];
-			//for (let i = 0; i < size && i < copy.length; i++) {
-			for (let i = 0; i < size; i++) {
-				let index = Math.floor(Math.random() * copy.length);
-				rand.push(copy.splice(index, 1)[0]);
-			}
-			return rand;
-		}
-		
-		let maxCities = slicedCitiesMarkers.length < 20 ? slicedCitiesMarkers.length : 20;
-		
-		let randomMarkers;
-		
-		if (maxCities < 20) {
-			randomMarkers = slicedCitiesMarkers;
-		} else {
-			randomMarkers = getRandom(slicedCitiesMarkers, maxCities);
-		}
-				
-		landmarkList = [];
-		landmarkIDs = [];
-		landmarkTypes = [];
-
-		//hereLandmarks(randomMarkers, landmarkIDs, landmarkTypes);
-		
-		let currentWeatherData = [];
-		
-		function getCurrentWeather(locations) {
-			
-			if (locations.length > 0) {
-				
-				let {lat, lng} = locations[0].getLatLng();
-				
-				$.ajax({
-					url: "libs/php/weatherbitCurrent.php",
-					type: "POST",
-					dataType: "json",
-					data: {
-						locationLat: lat,
-						locationLng: lng,
-					},
-					success: function(result) {
-
-						currentWeatherData.push(result);
-						getCurrentWeather(locations.slice(1));
-					
-					},
-					error: function(jqXHR, textStatus, errorThrown) {
-						console.log('weatherbit error');
-						console.log(textStatus);
-						console.log(errorThrown);
-					}
-					}); //end of Weatherbit ajax
-			
-			} else {
-
-				let maxTemp = -100;				
-				for (mt = 0; mt < currentWeatherData.length; mt++) {
-						maxTemp = currentWeatherData[mt]['data']['temp'] > maxTemp ? currentWeatherData[mt]['data']['temp'] : maxTemp;
-					}
-
-				if (maxTemp < 15 ){
-					heatmapData.max = 15;
-					heatmapColor = 'blue';
-				} else if (maxTemp < 30) {
-					heatmapData.max = 30;
-					heatmapColor = 'orange';
-				} else if (maxTemp < 45) {
-					heatmapData.max = 45;
-					heatmapColor = 'red';	
-				}
-									
-				let weatherMarkers = []
-
-				for (let hm = 0; hm < currentWeatherData.length; hm ++){
-								
-					let lat = currentWeatherData[hm]['data']['lat'];
-					let lng = currentWeatherData[hm]['data']['lng'];
-					let temp = currentWeatherData[hm]['data']['temp'];
-										
-					let outerNode = document.createElement('div');
-					let imgDivNode = document.createElement('div');
-					imgDivNode.setAttribute('class','weatherIconNode');
-
-					let imgNode = document.createElement('img');
-					imgNode.setAttribute('src', `img/weatherIcons/${currentWeatherData[hm]['data']['icon']}.png`);
-					imgNode.setAttribute('class', 'weatherIconImgNode');
-
-					let textNode = document.createElement('div');
-
-					let supNode = document.createElement('sup');
-					supNode.innerHTML = 'o';
-					
-					let span1 = document.createElement('span');
-					let span2 = document.createElement('span');
-					let span3 = document.createElement('span');
-					
-					span1.innerHTML = temp;
-					
-					span2.appendChild(supNode);
-
-					span1.appendChild(span2);
-					
-					span3.innerHTML = 'C';
-					span1.appendChild(span3);
-					
-					textNode.setAttribute('class', 'weatherIconNode weatherTextNode');
-					textNode.appendChild(span1);	
-
-					imgDivNode.appendChild(imgNode);
-					outerNode.appendChild(imgDivNode);
-					outerNode.appendChild(textNode);
-					console.log('outerNode',outerNode);
-
-					let	weatherMarker = L.divIcon({
-						className: 'weatherMarkerStyle',
-						html: outerNode,
-						iconSize: [20,20]
-					})
-
-					let marker = L.marker([lat, lng], {icon: weatherMarker});
-					
-					weatherMarkers.push(marker);
-
-					let point = {};
-
-					point['lat'] = lat;
-					point['lng'] = lng;
-
-					if (maxTemp < 15 ){
-						point['count'] = 15 - temp;
-					} else {
-						point['count'] = temp;
-					}
-						
-					heatmapData.data.push(point);
-					
-				}
-			
-
-
-				weatherLayer = L.layerGroup(weatherMarkers);
-
-				//weatherLayer.addTo(mymap);
-				
-				if (maxTemp < 15) {
-					heatmapColor = 'blue';
-					
-					console.log('hdata',heatmapData);
-					
-				} else if (maxTemp < 30) {
-					heatmapColor = 'orange';							
-					
-				} else if (maxTemp < 40) {
-					heatmapColor = 'red';							
-	
-				}
-			
-				}
-			
-		}
-		
-		getCurrentWeather(randomMarkers.slice(0,2));		
-
-	},
-	error: function (jqXHR, textStatus, errorThrown) {
-		console.log('geonames search error');
-		console.log(textStatus);
-		console.log(errorThrown);
-	}
-	}); 	//end of geonames cities
-} // end of getGeonames cities functions
-
-function addOverlays(overlaysObj) {
-	console.log('adding overlays');
-	
-	if (layersAdded == totalLayers && overlayProbs == 0) {
-		let layersControl = L.control.layers(baseMaps, overlaysObj);
-		layersControl.addTo(mymap);
-		controlsOnAndOff.push(layersControl);
-		
-	} else if (layersAdded == totalLayers && overlayProbs > 0) {
-		let layersControl = L.control.layers(baseMaps, overlaysObj);
-		layersControl.addTo(mymap);
-		controlsOnAndOff.push(layersControl);
-		
-		console.log('controls on and off', controlsOnAndOff);
-		console.log('layers on and off', layersOnAndOff);
-		
-		document.getElementById("layerErrorText").innerHTML = problemLayers;
-		document.getElementById("dataError").click();
-		
-	} else if (overlaysCounter < 6 ){
-		
-		overlaysCounter++;
-		
-		let overlayAgain = setTimeout(function () {
-			
-			addOverlays(overlaysObj);
-			clearTimeout(overlayAgain);
-		},1500);
-		
-	} else {
-		
-		console.log('ERROR layers on and off', layersOnAndOff);
-		abortfunction('overlay error');
-		
-	}
-
-}
-
-function placeBorder(isoa3Code){
-	
-	$.ajax({
-		url: "libs/php/getPolygon.php",
-		type: "POST",
-		dataType: "json",
-		data: {
-			countryCode: isoa3Code
-		},
-		success: function (result) {
-						
-			let country = result.data;
-			let geojsonLayer = L.geoJson(country);
-			bounds = geojsonLayer.getBounds();
-			
-//			if (!fijiUpdated) {
-				if (isoa3Code == 'FJI') {
-					bounds._southWest.lng += 360;
-					fijiUpdated = true;
-					console.log(bounds);
-				}
-//			}
-//			if (!russiaUpdated) {
-				if (isoa3Code == 'RUS') {
-					bounds._southWest.lng += 360;
-					russiaUpdated = true;
-					console.log(bounds);
-				}
-//			}
-				
-			let northEast = bounds._northEast;
-			let southWest = bounds._southWest;
-			
-			fitBoundsArr = [];
-
-			let { lat, lng } = northEast;
-
-			fitBoundsArr.push([lat, lng]);
-
-			let corner1 = L.latLng(lat, lng);
-			({ lat, lng } = southWest);
-
-			fitBoundsArr.push([lat, lng]);
-
-			let corner2 = L.latLng(lat, lng);
-			let viewportBounds = L.latLngBounds(corner1, corner2);
-			
-	    currentCountry = result.data["properties"].name;
-			console.log('place border func > current country: ', currentCountry);			
-      
-			console.log('set current country polygons');
-			if (result.data["geometry"]["type"] == 'MultiPolygon') {
-        currentCountryPolygons = result.data["geometry"]["coordinates"];
-      } else {
-        currentCountryPolygons = [result.data["geometry"]["coordinates"]];
-      }
-			
-			selectedCountryLayer = L.geoJSON();
-
-			let isoA3;
-			let capital;
-			let currency;
-			
-      document.getElementById("countryModalTitle").innerHTML = currentCountry;
-			
-			mymap.flyToBounds(viewportBounds, {
-					duration: 1.5
-			});
-			
-			borderLines = L.geoJSON(country, {
-				style: function(feature) {
-						return {
-							color: "#ff0000",
-							fillOpacity: 0
-					}
-				}
-			});
-
-			borderLines.addTo(selectedCountryLayer);
-			selectedCountryLayer.addTo(mymap);
-			overlaysObj['Highlight'] = selectedCountryLayer;
-			layersAdded++;
-			layersOnAndOff.push(selectedCountryLayer);
-			layerNames.push('selectedCountryLayer');
-									
-		},
-		error: function (jqXHR, textStatus, errorThrown) {
-				layersAdded++;
-				problemLayers += 'polygon';
-				overlayProbs++;
-				console.log('get polygon error');
-				console.log(textStatus);
-				console.log(errorThrown);
-			},
-	});
-	
-}
-
 function weatherChartRain(isoa3Code) {
 	
 		$.ajax({
@@ -1598,89 +1738,6 @@ function weatherChartCelcius(isoa3Code) {
 			},
 	});
 	
-}
-
-function countryBasics(isoa3Code){
-	
-		$.ajax({
-		url: "libs/php/oneRestCountry.php",
-		type: "GET",
-		dataType: "json",
-		data: {
-			countryCode: isoa3Code
-		},
-		success: function (result) {
-
-			let textValue = result.data.nativeName;
-			document.getElementById("nativeName").innerHTML = 'Native name: ' + textValue;
-			document.getElementById("population").innerHTML = parseInt(result.data.population).toLocaleString('en-US');
-			document.getElementById("currency").innerHTML = result.data.currencies[0].code;
-			currency = result.data.currencies[0].code;
-			document.getElementById("currencyName").innerHTML = result.data.currencies[0].name;
-			console.log('flag', result.data.flag);
-			document.getElementById("flagIMG").setAttribute("src", result.data.flag);
-			document.getElementById("capital").innerHTML = result.data.capital;
-			capital = result.data.capital;
-
-			isoA2 = result.data.alpha2Code;
-			
-		$.ajax({
-			url: "libs/php/worldBankCapital.php",
-			type: "POST",
-			dataType: "json",
-			data: {
-				isoA3: isoa3Code
-			},
-			success: function(result) {
-								
-				lat = result.data[1][0].latitude; // W. Sahara ESH problem
-				lng = result.data[1][0].longitude;
-				let capitalPopup = L.popup({autoPan: false, autoClose: false, closeOnClick: false});
-				let node = document.createElement("button");
-				node.innerHTML = capital;
-				node.setAttribute("type", "button");
-				node.setAttribute("class", "badge rounded-pill bg-secondary");
-				node.setAttribute("data-toggle", "modal");
-				node.setAttribute("style", "font-size: 1rem");
-				node.setAttribute("data-target", "#viewCountryModal");
-				capitalPopup.setContent(node);
-				
-				capitalMarkerIcon = L.divIcon({
-					className: 'capitalMarkerIcon'
-				});
-				
-				capitalMarker = L.marker([lat, lng], {
-					icon: capitalMarkerIcon
-				}).bindPopup(capitalPopup);
-				
-				capitalMarker.getPopup().on('remove', function () {
-					mymap.removeLayer(capitalMarker);
-				});
-				
-				//capitalMarker.addTo(mymap).openPopup();
-				//layersAdded++;
-				//layersOnAndOff.push(capitalMarker);
-				//overlaysObj['Capital'] = capitalMarker;
-				//layerNames.push('capitalMarker');
-				
-				//console.log('get timezone');
-				//getTimezone(lat, lng);
-				
-			},
-			error: function(jqXHR, textStatus, errorThrown) {
-				console.log(textStatus);
-				console.log(errorThrown);
-			}
-			}); //end of World Bank Capital ajax
-			
-		},
-		error: function (jqXHR, textStatus, errorThrown) {
-			console.log('one rest country error');
-			console.log(textStatus);
-			console.log(errorThrown);
-		},
-	}); //end of One Rest Country ajax
-
 }
 
 function getHolidays(isoA2code){
@@ -1923,37 +1980,20 @@ function displayCountry(isoa3Code) {
 	 }
 	}
 	
-	placeBorder(isoa3Code);
-		
-	//countryBasics(isoa3Code);
-	
-	//getNews(isoA2);
-	
+	//Add layers:
+	placeBorder(isoa3Code);		
+	countryBasics(isoa3Code);
+	getWebcams(isoA2);
+	getGeonamesAirports(isoA2);
+	getGeonamesCities(isoA2);
+
+
+	//Background data
 	getHolidays(isoA2);
+	weatherChartCelcius(isoa3Code);
+	weatherChartRain(isoa3Code);
+	getNews(isoA2);
 	
-	//getGeonamesCities(isoA2);
-	//--> contains weatherBitCurrent
-	//--> also calls Here Landmarks inside
-	
-	//weatherChartCelcius(isoa3Code);
-	
-	//weatherChartRain(isoa3Code);
-	
-	//console.log('get wiki');
-	//getWikipedia(currentCountry, bounds);
-	//console.log('get cities');
-	//getGeonamesCities(isoA2);
-	//console.log('get airports');
-	//getGeonamesAirports(isoA2);
-	
-	//console.log('get news');
-	//getNews(isoA2);
-	
-	//console.log('translate');
-	//translateNews();
-	
-	//console.log('get webcams');
-	//getWebcams(isoA2);
 	
   document.getElementById("progressBar").setAttribute('style', 'visibility: initial');
 	document.getElementById("loadingText").innerHTML = 'fetching exchange rate';
@@ -2006,52 +2046,6 @@ function displayCountry(isoa3Code) {
 
 } // end of DISPLAY COUNTRY 
 
-function countryBordersFunc(response) {
-	
-	countryBorders = response;
-	
-	for (let i = 0; i < countryBorders.length; i++) {
-		let textValue = countryBorders[i].name;
-		let node = document.createElement("option");
-		node.innerHTML = textValue;
-		//node.setAttribute("value", textValue);
-		node.setAttribute("value", countryBorders[i].A3code);		
-		//dropdownList.push(textValue);
-		document.getElementById("selectCountries").appendChild(node);
-	}	
-	
-	mymap.locate().on("locationfound", onLocationFound).on("locationerror", onLocationError);			
-
-} // end of countryBordersFunc
-
-function switchCountry(layersToChange, controlsToChange){
-	
-	//rainChart.destroy();
-	//celciusChart.destroy();
-	
-	calendarNum++;
-	document.getElementById('wrap').innerHTML = `
-							<div id='calendar${calendarNum}'></div>
-							<div style='clear:both'></div>`
-	
-	//calendar.destroy();
-	
-	document.getElementById('accordion').innerHTML = "";
-	clearTimeout(timer);
-	
-	for (let s = 0; s < layersToChange.length; s++) {
-		mymap.removeLayer(layersOnAndOff[s]);
-	}
-	for (let c = 0; c < controlsToChange.length; c ++) {
-		mymap.removeControl(controlsToChange[c]);
-	}
-	
-	layersOnAndOff = [];
-	controlsOnAndOff = [];
-	heatmapData.data = [];
-	
-}
-
 //EVENT HANDLERS
 
 selectDropDown.addEventListener("change", function (event) {
@@ -2074,12 +2068,21 @@ selectDropDown.addEventListener("change", function (event) {
 
 $('#weatherToggle').click(function (){
 	
+	console.log('layersOnAndOff', layersOnAndOff);
+	
 	if (weatherOn == false) {
+		for (let i = 0; i < layersOnAndOff.length; i ++) {
+				mymap.removeLayer(layersOnAndOff[i]);
+		}
+		
 		weatherOn = true;
 		redrawHeatMap(heatmapData, heatmapColor);
 		weatherLayer.addTo(mymap);
 	} else {
 		weatherOn = false;
+		for (let i = 0; i < layersOnAndOff.length; i ++) {
+			layersOnAndOff[i].addTo(mymap);
+		}		
 		let undrawObj = {max: 20, data: []};
 		redrawHeatMap(undrawObj, heatmapColor);
 		mymap.removeLayer(weatherLayer);

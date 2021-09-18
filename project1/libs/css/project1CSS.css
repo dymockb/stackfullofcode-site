@@ -221,6 +221,10 @@ span.fa.fa-calendar-day {
     color: #0291c3;
 }
 
+.fa-video{
+	filter:drop-shadow(1px -1px 1px #015f80);
+}
+
 .leaflet-touch .leaflet-bar button {
 	height: 2.7rem;
 	width: 2.7rem
