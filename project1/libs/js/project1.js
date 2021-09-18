@@ -18,6 +18,8 @@
 
 //NEXT - list of layers to remove, call function with select dropdown / home button.  CORRECT text modal error when layers fail.
 
+//check going to russia, fiji and w. sahara
+
 let selectedCountryLayer;
 let dropdownList = [];
 //let previewCounter = 0;
@@ -38,10 +40,12 @@ let controlsOnAndOff = [];
 let weatherOn = false;
 let calendarNum = 0;
 
-let baseLayerName, capitalMarker, timer, currentCountry, selectedCountry, currentCountryPolygons, layersControl, invisibleBorders, wikiLayer, wikiClusterMarkers, citiesLayer, weatherLayer, cityCirclesLayer, touristLayer, webcamLayer, shopLayer, amenityClusterMarkers, userPopup, corner1, corner2, viewportBounds, userCircle, overlays, touristMarkers, shopMarkers, amenityMarkers, countryBorders, rainChart, celciusChart, calendar
+let baseLayerName, capitalMarker, timer, currentCountry, selectedCountry, currentCountryPolygons, corner1, corner2, viewportBounds
+
+let wikiClusterMarkers, citiesLayer, weatherLayer, cityCirclesLayer, touristLayer, webcamLayer, shopLayer, amenityClusterMarkers, touristMarkers, shopMarkers, amenityMarkers, countryBorders, rainChart, celciusChart, calendar
 
 
-// let sliderControl, fijiUpdated, russiaUpdated,
+// let sliderControl, fijiUpdated, russiaUpdated, layersControl,
 
 //let collapseElementList = [].slice.call(document.querySelectorAll('.collapse'));
 //let collapseList = collapseElementList.map(function (collapseEl) {
@@ -1511,22 +1515,18 @@ function addOverlays(overlaysObj) {
 	
 	
 	if (layersAdded == totalLayers && overlayProbs == 0) {
-		layersControl = L.control.layers(baseMaps, overlaysObj);
+		let layersControl = L.control.layers(baseMaps, overlaysObj);
 		layersControl.addTo(mymap);
 		controlsOnAndOff.push(layersControl);
-		
-		console.log('controls on and off', controlsOnAndOff);
-		console.log('layers on and off', layersOnAndOff);
 		
 	} else if (layersAdded == totalLayers && overlayProbs > 0) {
-		layersControl = L.control.layers(baseMaps, overlaysObj);
+		let layersControl = L.control.layers(baseMaps, overlaysObj);
 		layersControl.addTo(mymap);
 		controlsOnAndOff.push(layersControl);
 		
 		console.log('controls on and off', controlsOnAndOff);
 		console.log('layers on and off', layersOnAndOff);
 		
-		//document.getElementById("viewCountryText").innerHTML = 'overlayprobs ' + overlayProbs;
 		document.getElementById("layerErrorText").innerHTML = problemLayers;
 		document.getElementById("dataError").click();
 		
@@ -1881,7 +1881,6 @@ function getHolidays(isoA2code){
 	
 	let newDate = new Date();
 	let year = newDate.getFullYear();
-	console.log('year ',year);
 	
 	$.ajax({
 		url: "libs/php/getHolidays.php",
@@ -1893,8 +1892,6 @@ function getHolidays(isoA2code){
 		},
 		success: function (result) {
 						
-			console.log('hols',result.data)
-			
 			if (result.data.status != 404 ) {
 				
 			
@@ -1914,16 +1911,12 @@ function getHolidays(isoA2code){
 						displayYear = y;
 					}
 				let m = holidays[h].date.slice(5,7);
-				//console.log(m, m-1);
 				let d = holidays[h].date	.slice(8,10);
-				//console.log(y,m,d);
+	
 				holidayObj['start'] = new Date(y, m-1, d) 
-				//holidays[h].start.splice(0,10);
-				
 				holidayDays.push(holidayObj);
+
 			}
-			
-			console.log(holidayDays);
 			
 			var date = new Date();
 			var d = date.getDate();
@@ -1931,14 +1924,10 @@ function getHolidays(isoA2code){
 			var y = date.getFullYear();
 
 			/*  className colors
-
 			className: default(transparent), important(red), chill(pink), success(green), info(blue)
-
 			*/
 
-
 			/* initialize the external events
-			-----------------------------------------------------------------*/
 
 			$('#external-events div.external-event').each(function() {
 
@@ -1959,8 +1948,8 @@ function getHolidays(isoA2code){
 				});
 
 			});
-
-
+			*/
+			
 			/* initialize the calendar
 			-----------------------------------------------------------------*/
 
@@ -2156,8 +2145,9 @@ function displayCountry(isoa3Code) {
 	
 	//console.log('translate');
 	//translateNews();
-	console.log('get webcams');
-	getWebcams(isoA2);
+	
+	//console.log('get webcams');
+	//getWebcams(isoA2);
 	
   document.getElementById("progressBar").setAttribute('style', 'visibility: initial');
 	document.getElementById("loadingText").innerHTML = 'fetching exchange rate';
@@ -2244,9 +2234,6 @@ function switchCountry(layersToChange, controlsToChange){
 	
 	document.getElementById('accordion').innerHTML = "";
 	clearTimeout(timer);
-	
-	console.log('loao', layersToChange);
-	console.log('coao', controlsToChange);
 	
 	for (let s = 0; s < layersToChange.length; s++) {
 		mymap.removeLayer(layersOnAndOff[s]);
