@@ -179,12 +179,13 @@ html .fc,
 /*
 	Our default prev/next buttons use HTML entities like &lsaquo; &rsaquo; &laquo; &raquo;
 	and we'll try to make them look good cross-browser.
+line-height: 23px;
 */
 
 .fc-text-arrow {
 	margin: 0 .4em;
 	font-size: 2em;
-	line-height: 23px;
+	line-height: 0.7em;
 	vertical-align: baseline; /* for IE7 */
 	}
 
