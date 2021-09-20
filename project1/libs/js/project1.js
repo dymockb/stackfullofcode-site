@@ -325,6 +325,9 @@ function switchCountry(layersToChange, controlsToChange){
 	//rainChart.destroy();
 	//celciusChart.destroy();
 	
+	document.getElementById('weatherDataLoading').innerHTML = 'Loading...';
+	document.getElementById('weatherToggle').setAttribute('style', 'display: none');
+	
 	calendarNum++;
 	document.getElementById('wrap').innerHTML = `
 							<div id='calendar${calendarNum}'></div>
@@ -341,6 +344,11 @@ function switchCountry(layersToChange, controlsToChange){
 	for (let c = 0; c < controlsToChange.length; c ++) {
 		mymap.removeControl(controlsToChange[c]);
 	}
+	
+	layersAdded = 0;
+	layerNames = [];
+	overlaysObj = {};
+	overlayProbs = 0;
 	
 	layersOnAndOff = [];
 	controlsOnAndOff = [];
@@ -2184,10 +2192,6 @@ function displayCountry(isoa3Code) {
 selectDropDown.addEventListener("change", function (event) {
 
   selectedCountry = event.target.value;
-
-	layersAdded = 0;
-	layerNames = [];
-	overlaysObj = {};
 	
 	if (weatherOn == true) {
 		document.getElementById('weatherToggle').click();
