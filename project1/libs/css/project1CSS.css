@@ -39,7 +39,18 @@ html, body {
 #viewCountryBtn {
 	height: 100%;
 	border: none;
-	text-align: left
+	text-align: left;
+	padding-left: 0px;
+	font-size: 1.3rem;
+}
+
+#weatherToggle {
+	display: none
+}
+
+#weatherDataLoading {
+	padding-left: 0.2rem;
+	font-size: 1rem;
 }
 
 #infoSym {
@@ -151,6 +162,9 @@ html, body {
 
 .imgSlide {
 	height: 260px;
+	background-color: gray;
+	display: flex;
+	align-items: center
 }
 
 .weatherIconNode {
@@ -308,8 +322,11 @@ div>h2 {
 	background: #e5e5e5;
 */
 #flagIMG {
-	width: 100%;
+	width: 80%;
 	background-color: white;
+	margin-left: auto;
+	margin-right: auto;
+	height: min-content !important;
 }
 
 /*
@@ -335,6 +352,11 @@ img.d-block.w-100 {
 
 .newImagesOnly {
 	background-color: gray
+}
+
+div#carouselExampleControls {
+    border: black;
+    border-style: double;
 }
 
 #nativeName {
@@ -381,7 +403,7 @@ img.d-block.w-100 {
 	color: red;
 	width: 5rem !important;
 	height: 5rem !important;
-	font-size: 1.8rem;
+	font-size: 1.4rem;
 }
 
 .newsImage {

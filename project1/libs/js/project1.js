@@ -29,7 +29,7 @@
 //let poiMarkers = [];
 
 
-let totalLayers = 3; //border, capitalmarker, webcams, airportClusterMarkers, citiesLayer, cityCirclesLayer, landmarkClusterMarkers
+let totalLayers = 5; //border, capitalmarker, webcams, airportClusterMarkers, citiesLayer, cityCirclesLayer, landmarkClusterMarkers
 let layersAdded = 0;
 let layerNames = [];
 let overlaysObj = {};
@@ -68,6 +68,15 @@ let l2 = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{
 	ext: 'jpg'
 });
 
+let l3 = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/terrain/{z}/{x}/{y}.{ext}', {
+	attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a>',
+	// &mdash; Map data &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors
+	subdomains: 'abcd',
+	minZoom: 1,
+	maxZoom: 16,
+	ext: 'jpg'
+});
+
 let mymap = L.map("mapid", {
 	worldCopyJump: true,
 	zoomControl: false,
@@ -79,7 +88,8 @@ let mymap = L.map("mapid", {
 
 let baseMaps = {
 	"Atlas": l1,
-	"Watercolour": l2
+	"Watercolour": l2,
+	"Terrain": l3
 }
 
 new L.Control.Zoom({
@@ -281,7 +291,7 @@ function addOverlays(overlaysObj) {
 			
 			addOverlays(overlaysObj);
 			clearTimeout(overlayAgain);
-		},1500);
+		},2000);
 		
 	} else {
 		
@@ -795,7 +805,7 @@ function getGeonamesAirports (isoA2) { // add 1 layer: airportClusterMarkers
 	}); 	
 }
 
-function getGeonamesCities(isoA2) { // 2 layers added: cityCirclesLayer (and Cities Layer), (weatherLayer created but controlled by toggle)
+function getGeonamesCities(isoA2) { // 3 layers added: cityCirclesLayer (and Cities Layer), landmarkClusterMarkers; (weatherLayer created but controlled by toggle)
 
 	$.ajax({
 		url: "libs/php/geonamesSearchCities.php",
@@ -946,6 +956,11 @@ function getGeonamesCities(isoA2) { // 2 layers added: cityCirclesLayer (and Cit
 					}); //end of Weatherbit ajax
 			
 			} else {
+				
+				document.getElementById('weatherDataLoading').innerHTML = "";
+				document.getElementById('weatherToggle').setAttribute('style', 'display: inherit');
+				//document.getElementById('viewCountryBtn').setAttribute('style', 'display: inherit');
+				console.log('weather done');
 
 				let maxTemp = -100;				
 				for (mt = 0; mt < currentWeatherData.length; mt++) {
@@ -1054,7 +1069,8 @@ function getGeonamesCities(isoA2) { // 2 layers added: cityCirclesLayer (and Cit
 			
 		}
 		
-		getCurrentWeather(randomMarkers.slice(0,2));		
+		getCurrentWeather(randomMarkers.slice(0,12));	
+		//getCurrentWeather(randomMarkers);			
 
 	},
 	error: function (jqXHR, textStatus, errorThrown) {
@@ -1389,7 +1405,7 @@ function getWikipedia (currentCountry, bounds) { // called inside place border a
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				layersAdded++;
-				overlayprobs++;
+				overlayProbs++;
 				problemLayers += 'Wikipedia';
 				console.log('geonamesWikibbox error');
 				console.log(textStatus);
@@ -1399,7 +1415,7 @@ function getWikipedia (currentCountry, bounds) { // called inside place border a
 	},
 	error: function(jqXHR, textStatus, errorThrown) {
 		layersAdded++;
-		overlayprobs++;
+		overlayProbs++;
 		problemLayers += 'Wikipedia';
 		console.log('geonamesWikierror');
 		console.log(textStatus);
@@ -2058,25 +2074,7 @@ function getHolidays(isoA2code){
 	});
 }
 
-function displayCountry(isoa3Code) {
-	addOverlays(overlaysObj);
-	overlaysCounter = 0;
-		
-	selectDropDown['value'] = isoa3Code;
-	
-	if (typeof capitalMarker == "object") {
-    capitalMarker.remove();
-  }
-	
-	let bounds;
-	let isoA2;
-	
-	for (let io = 0; io < countryBorders.length; io++){
-	 if (countryBorders[io].A3code == isoa3Code) {
-		 isoA2 = countryBorders[io].A2code;
-	 }
-	}
-	
+function resetSlideShow(){
 	document.getElementById('carouselSlides').innerHTML = "";
 	
 	let flagNode = document.createElement('div');
@@ -2092,12 +2090,35 @@ function displayCountry(isoa3Code) {
 	
 	document.getElementById('carouselSlides').appendChild(flagNode);	
 	
+}
+
+function displayCountry(isoa3Code) {
+	addOverlays(overlaysObj);
+	overlaysCounter = 0;
+	resetSlideShow
+	overlayProbs = 0;
+	
+	selectDropDown['value'] = isoa3Code;
+	
+	if (typeof capitalMarker == "object") {
+    capitalMarker.remove();
+  }
+	
+	let bounds;
+	let isoA2;
+	
+	for (let io = 0; io < countryBorders.length; io++){
+	 if (countryBorders[io].A3code == isoa3Code) {
+		 isoA2 = countryBorders[io].A2code;
+	 }
+	}
+	
 	//Add layers:
 	placeBorder(isoa3Code);	//2 layers	
-	countryBasics(isoa3Code); //1 layer
+	//countryBasics(isoa3Code); //1 layer
 	//getWebcams(isoA2);
 	//getGeonamesAirports(isoA2);
-	//getGeonamesCities(isoA2);
+	getGeonamesCities(isoA2); //3 layers (cities and cityCirles), also weatherlayer but controlled by toggle
 
 
 	//Background data
