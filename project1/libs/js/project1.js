@@ -29,7 +29,7 @@
 //let poiMarkers = [];
 
 
-let totalLayers = 8; //border, capitalmarker, webcams, airportClusterMarkers, citiesLayer, cityCirclesLayer, landmarkClusterMarkers
+let totalLayers = 3; //border, capitalmarker, webcams, airportClusterMarkers, citiesLayer, cityCirclesLayer, landmarkClusterMarkers
 let layersAdded = 0;
 let layerNames = [];
 let overlaysObj = {};
@@ -45,7 +45,7 @@ let calendarNum = 0;
 
 let baseLayerName, capitalMarker, timer, currentCountry, selectedCountry, currentCountryPolygons, countryBorders, setMax, heatmapColor;
 
-let selectedCountryLayer, wikiClusterMarkers, citiesLayer, cityCirclesLayer, weatherLayer, touristLayer, webcamLayer, shopLayer
+let selectedCountryLayer, wikiClusterMarkers, webcamClusterMarkers, citiesLayer, cityCirclesLayer, weatherLayer, touristLayer, webcamLayer, shopLayer
 //layers defined within functions: capitalMarker
 
 let rainChart, celciusChart, calendar
@@ -453,7 +453,7 @@ function countryBasics(isoa3Code){ // add 1 layer: capitalMarker; 3x ajax: view 
 			countryCode: isoa3Code
 		},
 		success: function (result) {
-
+			console.log('cb',result.data);
 			let textValue = result.data.nativeName;
 			document.getElementById("nativeName").innerHTML = 'Native name: ' + textValue;
 			document.getElementById("population").innerHTML = parseInt(result.data.population).toLocaleString('en-US');
@@ -475,7 +475,7 @@ function countryBasics(isoa3Code){ // add 1 layer: capitalMarker; 3x ajax: view 
 				isoA3: isoa3Code
 			},
 			success: function(result) {
-								
+				console.log('wb', result.data);	
 				lat = result.data[1][0].latitude; // W. Sahara ESH problem
 				lng = result.data[1][0].longitude;
 				let capitalPopup = L.popup({autoPan: false, autoClose: false, closeOnClick: false});
@@ -509,6 +509,10 @@ function countryBasics(isoa3Code){ // add 1 layer: capitalMarker; 3x ajax: view 
 				//console.log('get timezone');
 				getTimezone(lat, lng);
 				
+				console.log('name', result.data[1][0].name);
+				let countryName = result.data[1][0].name;
+				unsplashImages(countryName);
+				
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				layersAdded++;
@@ -530,6 +534,59 @@ function countryBasics(isoa3Code){ // add 1 layer: capitalMarker; 3x ajax: view 
 
 }
 
+function unsplashImages(countryName) {
+	
+	console.log('countryN', countryName);
+	$.ajax({
+	url: "libs/php/unsplashImages.php",
+	type: "POST",
+	dataType: "json",
+	data: {
+		qString: countryName
+	},
+	success: function(result) {
+		console.log(result);
+
+		for (let i = 0; i < result.data.length; i ++) {
+			
+			let testNode = document.createElement('div');
+			testNode.setAttribute('class', 'carousel-item');
+			let innerNode = document.createElement('div');
+			innerNode.setAttribute('class', 'imgSlide newImagesOnly');
+			let imgNode = document.createElement('img');
+			imgNode.setAttribute('class', 'd-block w-100');
+			imgNode.setAttribute('src', result.data[i].img);
+
+			//imgNode.setAttribute('src', 'https://images.unsplash.com/photo-1486299267070-83823f5448dd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA4MDh8MHwxfHNlYXJjaHwxfHx1bml0ZWQlMjBraW5nZG9tfGVufDB8fHx8MTYzMjE0NDI4NQ&ixlib=rb-1.2.1&q=80&w=400');
+	
+			imgNode.setAttribute('alt', 'testImg');
+			innerNode.appendChild(imgNode);
+			testNode.appendChild(innerNode);
+			
+			document.getElementById('carouselSlides').appendChild(testNode);
+		
+		}
+		
+	},
+	error: function(jqXHR, textStatus, errorThrown) {
+
+		console.log('unsplash images error')
+		console.log(textStatus);
+		console.log(errorThrown);
+	}
+	}); //end of unsplash Images ajax
+	
+	/*
+	`<div class="carousel-item">
+						<div class="imgSlide">
+							<img class="d-block w-100" src="https://images.unsplash.com/photo-1486299267070-83823f5448dd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA4MDh8MHwxfHNlYXJjaHwxfHx1bml0ZWQlMjBraW5nZG9tfGVufDB8fHx8MTYzMjE0NDI4NQ&ixlib=rb-1.2.1&q=80&w=400" alt="First slide">
+						</div>
+					</div>`
+	*/	
+
+
+}
+
 function getWebcams (isoA2code) { // add 1 layer: webcams
 	
 		$.ajax({
@@ -546,7 +603,11 @@ function getWebcams (isoA2code) { // add 1 layer: webcams
 				
 			let lat = result.data[r].lat;
 			let lng = result.data[r].lng;
-			let webcamPopup = L.popup({autoPan: false, autoClose: false, closeOnClick: false});
+			//let webcamPopup = L.popup({autoPan: false, autoClose: false, closeOnClick: false});
+			let webcamTooltip = L.tooltip({
+				className: 'wikiPopup',
+				sticky: true
+				});
 			let node = document.createElement("button");
 			node.setAttribute("type", "button");
 			node.setAttribute("data-toggle", "modal");
@@ -557,23 +618,46 @@ function getWebcams (isoA2code) { // add 1 layer: webcams
 			previewNode.setAttribute('src', result.data[r].thumbnail);
 			node.appendChild(previewNode);
 			
-			webcamPopup.setContent(node);
+			webcamTooltip.setContent(node);
+			//webcamPopup.setContent(node);
 			
-			webcamMarkerIcon = L.divIcon({
-				className: 'cursorClass fas fa-video'
+			//webcamMarkerIcon = L.divIcon({	className: 'cursorClass fas fa-video'});
+			
+			let webcamMarkerIcon = L.ExtraMarkers.icon({
+			extraClasses: 'cursorClass',
+			icon: 'fa-video',
+			markerColor: 'cyan',
+			iconColor: 'white',
+			shape: 'square',
+			prefix: 'fas',
+			//shadowUrl: ''
+			//shadowSize: [40, 0]
 			});
 			
+			let tooltip = L.tooltip({
+				className: 'wikiPopup cursorClass',
+				sticky: true
+			});
+
+			//tooltip.setContent(airport.name);
+
+			//let marker = L.marker([airport.lat, airport.lng], {icon: airportMarker}).bindTooltip(tooltip);			
+			
+			
 			webcamMarker = L.marker([lat, lng], {
-				icon: webcamMarkerIcon,
-				className: 'cursorClass'
-			}).bindPopup(webcamPopup);
+					icon: webcamMarkerIcon,
+					className: 'cursorClass',
+				
+			//		shadowSize: [40, 0]
+			//}).bindPopup(webcamPopup);
+			}).bindTooltip(webcamTooltip);
 			
 			webcamMarker.on('mouseover', function (e) {
-        this.openPopup();
+        //this.openPopup();
         });
 				
       webcamMarker.on('mouseout', function (e) {
-				this.closePopup();
+				//this.closePopup();
        });
 			 
 			webcamMarker.on('click', function (e) {
@@ -586,11 +670,33 @@ function getWebcams (isoA2code) { // add 1 layer: webcams
 			webcamMarkers.push(webcamMarker);
 
 		}
+
+		webcamClusterMarkers = L.markerClusterGroup({
+			iconCreateFunction: function(cluster) {
+				let childCount = cluster.getChildCount();
+				let c = ' airport-marker-cluster-';
+				if (childCount < 10) {
+					c += 'small';
+				} else if (childCount < 100) {
+					c += 'medium';
+				} else {
+					c += 'large';
+				}
+					
+				return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'cursorClass marker-cluster' + c, iconSize: new L.Point(40, 40) });
+			},
+			showCoverageOnHover: false
+		});
+
+		for (let i = 0; i < webcamMarkers.length; i++) {
+			webcamClusterMarkers.addLayer(webcamMarkers[i]);
+		}
 		
-			webcamLayer = L.layerGroup(webcamMarkers);
-		
-			webcamLayer.addTo(mymap);
-			overlaysObj['Webcams'] = webcamLayer;
+			//webcamLayer = L.layerGroup(webcamMarkers);
+			//webcamLayer.addTo(mymap);		
+			webcamClusterMarkers.addTo(mymap);
+			//overlaysObj['Webcams'] = webcamLayer;
+			overlaysObj['Webcams'] = webcamClusterMarkers;
 			layersAdded++;
 			layersOnAndOff.push(webcamLayer);
 			layerNames.push('webcamLayer');
@@ -630,8 +736,7 @@ function getGeonamesAirports (isoA2) { // add 1 layer: airportClusterMarkers
 			markerColor: 'cyan',
 			iconColor: 'white',
 			shape: 'square',
-			prefix: 'fas',
-			//shadowSize: [40, 0]
+			prefix: 'fas'
 		});
 		
 		for (let iairport = 0; iairport < result.data.geonames.length ; iairport ++) {
@@ -988,9 +1093,7 @@ function hereLandmarks(markerlist) { // called inside getGeonamesCities. 1 layer
 							prefix: 'fas',
 							markerColor: 'green',
 							iconColor: 'white',
-							shape: 'square',
-							shadowSize: [40, 0],
-							test: 'idiot'
+							shape: 'square'
 						});
 
 						let tooltip = L.tooltip({
@@ -1013,9 +1116,7 @@ function hereLandmarks(markerlist) { // called inside getGeonamesCities. 1 layer
 							prefix: 'fas',
 							markerColor: 'red',
 							iconColor: 'white',
-							shape: 'square',
-							shadowSize: [40, 0],
-							test: 'idiot'
+							shape: 'square'
 						});						
 						
 						let tooltip = L.tooltip({
@@ -1038,9 +1139,7 @@ function hereLandmarks(markerlist) { // called inside getGeonamesCities. 1 layer
 							prefix: 'fas',
 							markerColor: 'blue',
 							iconColor: 'white',
-							shape: 'square',
-							shadowSize: [40, 0],
-							test: 'idiot'
+							shape: 'square'
 						});	
 						
 						let tooltip = L.tooltip({
@@ -1063,9 +1162,7 @@ function hereLandmarks(markerlist) { // called inside getGeonamesCities. 1 layer
 							prefix: 'fas',
 							markerColor: 'purple',
 							iconColor: 'white',
-							shape: 'square',
-							shadowSize: [40, 0],
-							test: 'idiot'
+							shape: 'square'
 						});							
 
 						let tooltip = L.tooltip({
@@ -1181,7 +1278,7 @@ function getWikipedia (currentCountry, bounds) { // called inside place border a
 					iconColor: 'white',
 					shape: 'square',
 					prefix: 'fab',
-					shadowSize: [0, 0]
+					//shadowSize: [40, 0]
 				});
 																	
 				let marker = L.marker([placeArticle.lat, placeArticle.lng], {icon: wikiMarker}).bindTooltip(placeTooltip);
@@ -1237,7 +1334,7 @@ function getWikipedia (currentCountry, bounds) { // called inside place border a
 						iconColor: 'white',
 						shape: 'square',
 						prefix: 'fab',
-						shadowSize: [0, 0]
+						//shadowSize: [40, 0]
 					});
 					
 					let marker = L.marker([article.lat, article.lng], {icon: wikiMarker}).bindTooltip(tooltip);
@@ -1980,19 +2077,34 @@ function displayCountry(isoa3Code) {
 	 }
 	}
 	
+	document.getElementById('carouselSlides').innerHTML = "";
+	
+	let flagNode = document.createElement('div');
+	flagNode.setAttribute('class', 'carousel-item active');
+	let innerNode = document.createElement('div');
+	innerNode.setAttribute('class', 'imgSlide');
+	let flagImgNode = document.createElement('img');
+	flagImgNode.setAttribute('class', 'd-block h-100');
+	flagImgNode.setAttribute('id', 'flagIMG');
+	flagImgNode.setAttribute('alt', 'first slide');
+	innerNode.appendChild(flagImgNode);
+	flagNode.appendChild(innerNode);
+	
+	document.getElementById('carouselSlides').appendChild(flagNode);	
+	
 	//Add layers:
-	placeBorder(isoa3Code);		
-	countryBasics(isoa3Code);
-	getWebcams(isoA2);
-	getGeonamesAirports(isoA2);
-	getGeonamesCities(isoA2);
+	placeBorder(isoa3Code);	//2 layers	
+	countryBasics(isoa3Code); //1 layer
+	//getWebcams(isoA2);
+	//getGeonamesAirports(isoA2);
+	//getGeonamesCities(isoA2);
 
 
 	//Background data
-	getHolidays(isoA2);
-	weatherChartCelcius(isoa3Code);
-	weatherChartRain(isoa3Code);
-	getNews(isoA2);
+	//getHolidays(isoA2);
+	//weatherChartCelcius(isoa3Code);
+	//weatherChartRain(isoa3Code);
+	//getNews(isoA2);
 	
 	
   document.getElementById("progressBar").setAttribute('style', 'visibility: initial');
