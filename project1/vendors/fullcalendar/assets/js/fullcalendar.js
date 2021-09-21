@@ -886,8 +886,13 @@ function Header(calendar, options) {
 									console.log('Title year', $('.fc-header-title')[0].children[0].innerHTML);
 									if (!button.hasClass(tm + '-state-disabled')) {
 										console.log('two');
-										console.log('Title year', $('.fc-header-title')[0].children[0].innerHTML);
+										console.log('Title year', $('.fc-header-title')[0].children[0].innerHTML);				
 										buttonClick();
+										let buttonPop = setTimeout(function(){
+											//$('[data-bs-toggle="popover"]').popover();
+											$('[data-bs-toggle="tooltip"]').tooltip();
+											clearTimeout(buttonPop);
+										},250);
 									}
 								})
 								.mousedown(function() {
@@ -5447,7 +5452,10 @@ function DayEventRenderer() {
 				"</span>";
 		}
 		html +=
-			`<button type="button" class="btn btn-secondary" title="" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="left" data-bs-content="TEST" data-bs-original-title="Popover Title">${htmlEscape(event.title || '')}</button>` +
+			`<button type="button" class="btn btn-secondary" data-bs-toggle="tooltip" data-bs-placement="bottom" title="${htmlEscape(event.title || '')} ${event.localName}"><i class="fas fa-calendar-day"></i></button>` +
+			
+			//`<button type="button" class="btn btn-secondary" title="" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="left" data-bs-content="Local name: ${event.localName}" data-bs-original-title="${htmlEscape(event.title || '')}"><i class="fas fa-calendar-day"></i></button>` +
+			
 			//"<span class='fc-event-title HI-THERE'>" +
 			//htmlEscape(event.title || '') +
 			//"</span>" +

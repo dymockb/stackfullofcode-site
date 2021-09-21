@@ -131,9 +131,9 @@ L.easyButton('fa-temperature-low', function() {
 L.easyButton('fa-calendar-day', function() {
 	document.getElementById('holidayBtn').click();
 	let openCalendarTimer = setTimeout(function(){
-	document.getElementById('clickCalendar').click();
-	console.log('test',$('[data-bs-toggle="popover"]').popover());
-		
+		document.getElementById('clickCalendar').click();
+		//$('[data-bs-toggle="popover"]').popover();
+		$('[data-bs-toggle="tooltip"]').tooltip();
   //var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
   //var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
   //  return new bootstrap.Popover(popoverTriggerEl)
@@ -626,7 +626,7 @@ function getWebcams (isoA2code) { // add 1 layer: webcams
 			let node = document.createElement("button");
 			node.setAttribute("type", "button");
 			node.setAttribute("data-toggle", "modal");
-			node.setAttribute("style", "font-size: 1rem");
+			//node.setAttribute("style", "font-size: 1rem");
 			node.setAttribute("data-target", "#webcamModal");
 			let previewNode = document.createElement('img');
 			previewNode.setAttribute("class", "webcamPreview");
@@ -1917,7 +1917,7 @@ function getHolidays(isoA2code){
 			currentYear: year
 		},
 		success: function (result) {
-						
+			console.log('holidays', result.data);			
 			if (result.data.status != 404 ) {
 				
 			
@@ -1939,7 +1939,8 @@ function getHolidays(isoA2code){
 				let m = holidays[h].date.slice(5,7);
 				let d = holidays[h].date	.slice(8,10);
 	
-				holidayObj['start'] = new Date(y, m-1, d) 
+				holidayObj['start'] = new Date(y, m-1, d);
+				holidayObj['localName'] = holidays[h].localName == holidays[h].name ? '' : `(${holidays[h].localName})`;
 				holidayDays.push(holidayObj);
 
 			}

@@ -235,6 +235,12 @@ span.fa.fa-calendar-day {
     color: #0291c3;
 }
 
+button.btn.btn-secondary {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
 /*
 
 .fa-video{
@@ -378,7 +384,11 @@ div#carouselExampleControls {
 }
 
 #embedWebcam {
-	width: 100%;
+	display: block;
+	margin-left: auto;
+	height: 250px;
+	margin-right: auto;
+	/* width: 100%; */
 }
 
 .webcamPreview {
@@ -457,6 +467,10 @@ span.fc-event-title {
 .userPopup, .wikiPopup {
 	background-color: white;
 	border-radius: 10px;
+}
+
+.webcamPreview {
+padding: 0.4rem 0.1rem;
 }
 
 #preloader {
