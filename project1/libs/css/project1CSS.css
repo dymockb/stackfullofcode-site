@@ -420,8 +420,9 @@ td.fc-header-center {
 	display: none
 }
 
+/*	hyphens: auto;		*/
 span.fc-event-title {
-	overflow-wrap: break-word
+	overflow-wrap: break-word;
 }
 
 .fc-header-right {

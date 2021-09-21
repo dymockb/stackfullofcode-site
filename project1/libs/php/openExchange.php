@@ -24,6 +24,7 @@
 	$output['status']['description'] = "success";
 	$output['status']['returnedIn'] = intval((microtime(true) - $executionStartTime) * 1000) . " ms";
 	$output['data'] = $decode;
+	$output['symbol'] = $_REQUEST['symbol'];
 	
 	header('Content-Type: application/json; charset=UTF-8');
 

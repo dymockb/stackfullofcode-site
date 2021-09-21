@@ -219,7 +219,7 @@ function onLocationError(e) {
 		let randCountry = countryBorders[Math.floor(Math.random()*countryBorders.length)];
 		console.log(randCountry);
 		console.log('random country: ', randCountry.name, randCountry.A3code);
-		if (randCountry.name == 'Kosovo' || randCountry.name == 'N. Cyprus' || randCountry.name == 'Somaliland'){
+		if (randCountry.name == 'Kosovo' || randCountry.name == 'N. Cyprus' || randCountry.name == 'Somaliland' || randCountry.A3code == 'ESH'){
 			recursiveRandom(countriesParam);
 		} else {
 
@@ -256,7 +256,7 @@ function addOverlays(overlaysObj) {
 		
 	} else if 
 	*/
-	(overlaysCounter < 6 ){
+	(overlaysCounter < 8 ){
 		
 		overlaysCounter++;
 		
@@ -281,13 +281,15 @@ function countryBordersFunc(response) {
 	countryBorders = response;
 	
 	for (let i = 0; i < countryBorders.length; i++) {
-		let textValue = countryBorders[i].name;
-		let node = document.createElement("option");
-		node.innerHTML = textValue;
-		//node.setAttribute("value", textValue);
-		node.setAttribute("value", countryBorders[i].A3code);		
-		//dropdownList.push(textValue);
-		document.getElementById("selectCountries").appendChild(node);
+		if (countryBorders[i].A3code != 'ESH'){
+			let textValue = countryBorders[i].name;
+			let node = document.createElement("option");
+			node.innerHTML = textValue;
+			//node.setAttribute("value", textValue);
+			node.setAttribute("value", countryBorders[i].A3code);		
+			//dropdownList.push(textValue);
+			document.getElementById("selectCountries").appendChild(node);
+		}
 	}	
 	
 	mymap.locate().on("locationfound", onLocationFound).on("locationerror", onLocationError);			
@@ -298,6 +300,7 @@ function switchCountry(layersToChange, controlsToChange){
 	
 	document.getElementById('weatherDataLoading').innerHTML = 'Loading...';
 	document.getElementById('weatherToggle').setAttribute('style', 'display: none');
+	document.getElementById('wrap').innerHTML = "";
 	
 	calendarNum++;
 	
@@ -328,6 +331,7 @@ function switchCountry(layersToChange, controlsToChange){
 	layerNames = [];
 	overlaysObj = {};
 	overlayProbs = 0;
+	overlaysCounter = 0;
 	
 	layersOnAndOff = [];
 	controlsOnAndOff = [];
@@ -462,6 +466,8 @@ function countryBasics(isoa3Code){ // add 1 layer: capitalMarker; 3x ajax: view 
 			capital = result.data.capital;
 
 			isoA2 = result.data.alpha2Code;
+			console.log('curr',currency)
+			getXR(currency);
 			
 		$.ajax({
 			url: "libs/php/worldBankCapital.php",
@@ -1359,7 +1365,7 @@ function getWikipedia (currentCountry, bounds) { // called inside place border a
 				west: bounds['_southWest'].lng
 			},
 			success: function(result) {
-							
+				console.log('bbox result', result.data);
 				let listOfTitlesbbox = []
 
 				for (let oneArt = 0; oneArt < result.data.geonames.length; oneArt++) {
@@ -2105,6 +2111,36 @@ function getHolidays(isoA2code){
 	});
 }
 
+function getXR(currency){
+	console.log('start');
+	$.ajax({
+		url: "libs/php/openExchange.php",
+		type: "POST",
+		dataType: "json",
+		data: {
+			symbol: currency
+		},
+		success: function (result) {
+			console.log('exchange rate result', result);
+			if (!result.data.rates) {
+				abortfunction('exchange rate Error');
+			}
+			for (let [key, value] of Object.entries(result.data.rates)){
+				if (key == currency) {
+					document.getElementById("exchangeRate").innerHTML = value.toFixed(2) + ' ' + currency + ' = 1 USD';
+				};
+			};	
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			// error code
+			console.log('OpenExchange error');
+			console.log(textStatus);
+			console.log(errorThrown);
+		}
+	}); // end of OpenExchange ajax			
+  
+}
+
 function resetSlideShow(){
 	document.getElementById('carouselSlides').innerHTML = "";
 	
@@ -2126,7 +2162,6 @@ function resetSlideShow(){
 
 function displayCountry(isoa3Code) {
 	addOverlays(overlaysObj);
-	overlaysCounter = 0;
 	resetSlideShow();
 	 if (charts > 0) {
 		rainChart.destroy();
@@ -2160,36 +2195,9 @@ function displayCountry(isoa3Code) {
 
 	//Background data
 	getHolidays(isoA2);
-	//weatherChartCelcius(isoa3Code);
-	//weatherChartRain(isoa3Code);
+	weatherChartCelcius(isoa3Code);
+	weatherChartRain(isoa3Code);
 	//getNews(isoA2);
-	
-	
-	/*  ONLY RETURN CORRECT CURRENCY
-	$.ajax({
-		url: "libs/php/openExchange.php",
-		type: "POST",
-		dataType: "json",
-		data: {},
-		success: function (result) {
-			console.log('exchange rate result', result);
-			if (!result.data.rates) {
-				abortfunction('exchange rate Error');
-			}
-			for (let [key, value] of Object.entries(result.data.rates)){
-				if (key == currency) {
-					document.getElementById("exchangeRate").innerHTML = value.toFixed(2) + ' ' + currency + ' = 1 USD';
-				};
-			};	
-		},
-		error: function (jqXHR, textStatus, errorThrown) {
-			// error code
-			console.log('OpenExchange error');
-			console.log(textStatus);
-			console.log(errorThrown);
-		}
-	}); // end of OpenExchange ajax			
-  */
 
 } // end of DISPLAY COUNTRY 
 
