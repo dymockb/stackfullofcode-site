@@ -29,7 +29,10 @@
 //let poiMarkers = [];
 
 
-let totalLayers = 5; //border, capitalmarker, webcams, airportClusterMarkers, citiesLayer, cityCirclesLayer, landmarkClusterMarkers
+let totalLayers = 7; 
+//	*						*												*				*					*							*									*
+//border, wikipedia, capitalmarker, webcams, airports, citiesLayer, cityCirclesLayer, landmarkClusterMarkers
+
 let layersAdded = 0;
 let layerNames = [];
 let overlaysObj = {};
@@ -38,6 +41,9 @@ let overlayProbs = 0;
 let problemLayers = "";
 let layersOnAndOff = [];
 let controlsOnAndOff = [];
+let charts = 0;
+let userISOa3;
+let locationPermission = true;
 
 let dropdownList = [];
 let weatherOn = false;
@@ -97,55 +103,14 @@ new L.Control.Zoom({
 }).addTo(mymap);
 
 L.easyButton('fa-home', function() {
-	//clearTimeout(timer);
 
-	navigator.geolocation.getCurrentPosition(
-		(position) => {
-			const {
-				latitude,
-				longitude
-			} = position.coords;
-			$.ajax({
-				url: "libs/php/openCage.php",
-				type: "POST",
-				dataType: "json",
-				data: {
-					lat: latitude,
-					lng: longitude,
-				},
-				success: function(result) {
-					let isoa3Code;
-					for (let i = 0; i < countryBorders.length; i++) {
-						if (countryBorders[i]["properties"].iso_a3 == result.data.results[0].components["ISO_3166-1_alpha-3"]) {
-							isoa3Code = countryBorders[i]["properties"]["iso_a3"];
-							let countryName = countryBorders[i]['properties']['name'];
-							console.log('dropdownList', dropdownList);
-							for (let icountry = 0; icountry < dropdownList.length; icountry++) {
-								if (dropdownList[icountry].includes(countryName)) {
-									selectedCountry = dropdownList[icountry];
-								}
-							}
-						}
-					}
-					
-					switchCountry(layersOnAndOff, controlsOnAndOff);
-					
-					document.getElementById('selectCountries').value = selectedCountry;
-					displayCountry(isoa3Code);
-					
-				},
-				error: function(jqXHR, textStatus, errorThrown) {
-					console.log(textStatus);
-					console.log(errorThrown);
-				},
-			});
-		}, (error) => {
-
-			console.log(error);
-			
-			if (error.code == error.PERMISSION_DENIED) console.log("where are you");
-			document.getElementById('needLocation').click();
-		});
+	if (locationPermission == true) {
+		switchCountry(layersOnAndOff, controlsOnAndOff);
+		displayCountry(userISOa3);
+	} else {
+		document.getElementById('needLocation').click();					
+	}
+	
 }).addTo(mymap);
 
 L.easyButton('fa-info-circle', function() {
@@ -232,10 +197,11 @@ function onLocationFound(e) {
 		},
 		success: function(result) {
 			
-			let isoa3Code = result.data.results[0].components["ISO_3166-1_alpha-3"];
+			userISOa3 = result.data.results[0].components["ISO_3166-1_alpha-3"];
+			
 			
 			let userCountryBounds = result.data.results[0].bounds;
-			displayCountry(isoa3Code);
+			displayCountry(userISOa3);
 		},
 		error: function(jqXHR, textStatus, errorThrown) {
 			console.log(textStatus);
@@ -246,6 +212,7 @@ function onLocationFound(e) {
 
 function onLocationError(e) {
   console.log(e.message);
+	locationPermission = false;
 
 	function recursiveRandom(countriesParam) {
 		let randCountry = countryBorders[Math.floor(Math.random()*countryBorders.length)];
@@ -267,12 +234,15 @@ function onLocationError(e) {
 function addOverlays(overlaysObj) {
 	console.log('adding overlays');
 	
-	if (layersAdded == totalLayers && overlayProbs == 0) {
+	//if (layersAdded == totalLayers && overlayProbs == 0) {
+	if (layersAdded == totalLayers) {
 		let layersControl = L.control.layers(baseMaps, overlaysObj);
 		layersControl.addTo(mymap);
 		controlsOnAndOff.push(layersControl);
 		
-	} else if (layersAdded == totalLayers && overlayProbs > 0) {
+	} else if 
+	/*
+	(layersAdded == totalLayers && overlayProbs > 0) {
 		let layersControl = L.control.layers(baseMaps, overlaysObj);
 		layersControl.addTo(mymap);
 		controlsOnAndOff.push(layersControl);
@@ -283,7 +253,9 @@ function addOverlays(overlaysObj) {
 		document.getElementById("layerErrorText").innerHTML = problemLayers;
 		document.getElementById("dataError").click();
 		
-	} else if (overlaysCounter < 6 ){
+	} else if 
+	*/
+	(overlaysCounter < 6 ){
 		
 		overlaysCounter++;
 		
@@ -295,8 +267,9 @@ function addOverlays(overlaysObj) {
 		
 	} else {
 		
-		console.log('ERROR layers on and off', layersOnAndOff);
-		abortfunction('overlay error');
+		document.getElementById("layerErrorText").innerHTML = problemLayers;
+		document.getElementById("dataError").click();
+		throw new Error('API error - reload page');
 		
 	}
 
@@ -322,20 +295,25 @@ function countryBordersFunc(response) {
 
 function switchCountry(layersToChange, controlsToChange){
 	
-	//rainChart.destroy();
-	//celciusChart.destroy();
-	
 	document.getElementById('weatherDataLoading').innerHTML = 'Loading...';
 	document.getElementById('weatherToggle').setAttribute('style', 'display: none');
 	
 	calendarNum++;
-	document.getElementById('wrap').innerHTML = `
-							<div id='calendar${calendarNum}'></div>
-							<div style='clear:both'></div>`
 	
-	//calendar.destroy();
+	let calendarDiv = document.createElement('div');
+	let calendarSibling = document.createElement('div');
+	calendarDiv.setAttribute('id', `calendar${calendarNum}`);
+	calendarDiv.setAttribute('style', 'clear:both');
+	
+	document.getElementById('wrap').appendChild(calendarDiv);
+	document.getElementById('wrap').appendChild(calendarSibling);
+	
+	//document.getElementById('wrap').innerHTML = `
+	//						<div id='calendar${calendarNum}'></div>
+	//						<div style='clear:both'></div>`
 	
 	document.getElementById('accordion').innerHTML = "";
+	
 	clearTimeout(timer);
 	
 	for (let s = 0; s < layersToChange.length; s++) {
@@ -356,11 +334,11 @@ function switchCountry(layersToChange, controlsToChange){
 	
 }
 
-function abortfunction (string) {
-	console.log('Abort Function - string passed: ',string);
-	document.getElementById("dataError").click();
-	throw new Error('API error - reload page');
-}
+//function abortfunction (string) {
+//	console.log('Abort Function - string passed: ',string);
+//	document.getElementById("dataError").click();
+//	throw new Error('API error - reload page');
+//}
 
 function placeBorder(isoa3Code){ // add 2 layers: selectedCountryLayer, wikiClusterMarkers
 	
@@ -442,7 +420,7 @@ function placeBorder(isoa3Code){ // add 2 layers: selectedCountryLayer, wikiClus
 
 			borderLines.addTo(selectedCountryLayer);
 			selectedCountryLayer.addTo(mymap);
-			overlaysObj['Highlight'] = selectedCountryLayer;
+			overlaysObj['Border'] = selectedCountryLayer;
 			layersAdded++;
 			layersOnAndOff.push(selectedCountryLayer);
 			layerNames.push('selectedCountryLayer');
@@ -451,12 +429,11 @@ function placeBorder(isoa3Code){ // add 2 layers: selectedCountryLayer, wikiClus
 									
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
-				layersAdded++;
-				problemLayers += 'selectedCountryLayer';
-				overlayProbs++;
-				console.log('selectedCountryLayer error');
-				console.log(textStatus);
-				console.log(errorThrown);
+			layersAdded++;
+			overlayProbs++;
+			console.log('selectedCountryLayer error');
+			console.log(textStatus);
+			console.log(errorThrown);
 			},
 	});
 	
@@ -615,7 +592,10 @@ function getWebcams (isoA2code) { // add 1 layer: webcams
 			countryCode: isoA2code
 		},
 		success: function (result) {
+			
+		console.log('webcams', result.data);
 		
+		if (result.data.length > 0) {
 		let webcamMarkers = [];
 		for (let r = 0; r < result.data.length; r ++) {
 				
@@ -644,7 +624,7 @@ function getWebcams (isoA2code) { // add 1 layer: webcams
 			let webcamMarkerIcon = L.ExtraMarkers.icon({
 			extraClasses: 'cursorClass',
 			icon: 'fa-video',
-			markerColor: 'cyan',
+			markerColor: 'green-light',
 			iconColor: 'white',
 			shape: 'square',
 			prefix: 'fas',
@@ -692,7 +672,7 @@ function getWebcams (isoA2code) { // add 1 layer: webcams
 		webcamClusterMarkers = L.markerClusterGroup({
 			iconCreateFunction: function(cluster) {
 				let childCount = cluster.getChildCount();
-				let c = ' airport-marker-cluster-';
+				let c = ' webcam-marker-cluster-';
 				if (childCount < 10) {
 					c += 'small';
 				} else if (childCount < 100) {
@@ -716,13 +696,17 @@ function getWebcams (isoA2code) { // add 1 layer: webcams
 			//overlaysObj['Webcams'] = webcamLayer;
 			overlaysObj['Webcams'] = webcamClusterMarkers;
 			layersAdded++;
-			layersOnAndOff.push(webcamLayer);
-			layerNames.push('webcamLayer');
-		
+			layersOnAndOff.push(webcamClusterMarkers);
+		} else {
+			overlaysObj['Webcams (no data)'] = L.layerGroup();
+			layersAdded++;
+		}
 	},
 	error: function (jqXHR, textStatus, errorThrown) {
+		let errorLayer = L.layerGroup;
+		overlaysObj['Webcams (no data)'] = errorLayer;
+		layersOnAndOff.push(errorLayer);
 		layersAdded++;
-		problemLayers += 'webcamLayer';
 		overlayProbs++;
 		console.log('webcam layer error');
 		console.log(textStatus);
@@ -741,11 +725,7 @@ function getGeonamesAirports (isoA2) { // add 1 layer: airportClusterMarkers
 			country: isoA2
 		},
 	success: function (result) {
-		
-		if (!result.data.geonames) {
-			abortfunction('airports error');
-		}
-		
+				
 		let airportMarkers = [];
 
 		let airportMarker = L.ExtraMarkers.icon({
@@ -805,7 +785,9 @@ function getGeonamesAirports (isoA2) { // add 1 layer: airportClusterMarkers
 	error: function (jqXHR, textStatus, errorThrown) {
 		layersAdded++;
 		overlayProbs++;
-		problemLayers += 'Airports'
+		let errorLayer = L.layerGroup;
+		overlaysObj['Airports (no data)'] = errorLayer;
+		layersOnAndOff.push(errorLayer);
 		console.log('airports error');
 		console.log(textStatus);
 		console.log(errorThrown);
@@ -823,9 +805,6 @@ function getGeonamesCities(isoA2) { // 3 layers added: cityCirclesLayer (and Cit
 			country: isoA2
 		},
 	success: function (result) {
-		if (result.data.length == 0) {
-			abortfunction('geonamesSearchCities error');
-		}
 		
 		let citiesMarkers = [];
 		let citiesCircles = [];
@@ -880,13 +859,11 @@ function getGeonamesCities(isoA2) { // 3 layers added: cityCirclesLayer (and Cit
 		//citiesLayer is added / removed by cityCirclesLayer (don't include layersOnAndOff)
 		citiesLayer.addTo(mymap);
 		layersAdded++;
-		layerNames.push('citiesLayer');
 		
 		cityCirclesLayer.addTo(mymap);
 		overlaysObj['Cities'] = cityCirclesLayer;
 		layersAdded++;
 		layersOnAndOff.push(cityCirclesLayer);
-		layerNames.push('cityCirclesLayer');
 		
 		mymap.on('zoomend', function() {
 			//zoomCount++;
@@ -939,6 +916,10 @@ function getGeonamesCities(isoA2) { // 3 layers added: cityCirclesLayer (and Cit
 		function getCurrentWeather(locations) {
 			
 			if (locations.length > 0) {
+				
+				console.log(increment);
+				document.getElementById("progressBar").setAttribute('style', 'visibility: initial');
+				document.getElementById("progressBar").setAttribute('style', "width: 10%;");
 				
 				let {lat, lng} = locations[0].getLatLng();
 				
@@ -1077,7 +1058,9 @@ function getGeonamesCities(isoA2) { // 3 layers added: cityCirclesLayer (and Cit
 			
 		}
 		
-		getCurrentWeather(randomMarkers.slice(0,12));	
+		let markersToGet = 12;
+		let increment = 100 / markersToGet; 
+		getCurrentWeather(randomMarkers.slice(0,markersToGet));	
 		//getCurrentWeather(randomMarkers);			
 
 	},
@@ -1105,6 +1088,7 @@ function hereLandmarks(markerlist) { // called inside getGeonamesCities. 1 layer
 			//lmIDs: landmarkIDs
 		},
 			success: function (result) {
+				
 				console.log('landmarks result', result);
 				for (let lm = 0; lm < result.data.length; lm++) {
 					landmarkIDs.push(result.data[lm].Location.Name);
@@ -1213,8 +1197,9 @@ function hereLandmarks(markerlist) { // called inside getGeonamesCities. 1 layer
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
 				layersAdded++;
-				overlayProbs++;
-				problemLayers += 'Landmarks';
+				let errorLayer = L.layerGroup();
+				overlaysObj['Landmarks (no data)'] = errorLayer;
+				layersOnAndOff.push(errorLayer);
 				console.log('landmarks error');
 				console.log(textStatus);
 				console.log(errorThrown);
@@ -1265,9 +1250,6 @@ function getWikipedia (currentCountry, bounds) { // called inside place border a
 		},
 		success: function(result) {
 			
-			if (!result.data.geonames) {
-				abortfunction('geonamesWiki Error');
-			}
 			let listOfMarkers = [];
 			let listOfTitlesPlace = [];
 			console.log('use currentCountryPolygons');
@@ -1333,11 +1315,7 @@ function getWikipedia (currentCountry, bounds) { // called inside place border a
 				west: bounds['_southWest'].lng
 			},
 			success: function(result) {
-				
-				if (!result.data.geonames) {
-						abortfunction('geonamesWikibbox Error');
-					}
-			
+							
 				let listOfTitlesbbox = []
 
 				for (let oneArt = 0; oneArt < result.data.geonames.length; oneArt++) {
@@ -1414,7 +1392,9 @@ function getWikipedia (currentCountry, bounds) { // called inside place border a
 			error: function(jqXHR, textStatus, errorThrown) {
 				layersAdded++;
 				overlayProbs++;
-				problemLayers += 'Wikipedia';
+				let errorLayer = L.layerGroup();
+				overlaysObj['Wikipedia (no data)'] = errorLayer;
+				layersOnAndOff.push(errorLayer);
 				console.log('geonamesWikibbox error');
 				console.log(textStatus);
 				console.log(errorThrown);
@@ -1424,7 +1404,9 @@ function getWikipedia (currentCountry, bounds) { // called inside place border a
 	error: function(jqXHR, textStatus, errorThrown) {
 		layersAdded++;
 		overlayProbs++;
-		problemLayers += 'Wikipedia';
+		let errorLayer = L.layerGroup();
+		overlaysObj['Wikipedia (no data)'] = errorLayer;
+		layersOnAndOff.push(errorLayer);
 		console.log('geonamesWikierror');
 		console.log(textStatus);
 		console.log(errorThrown);
@@ -1448,9 +1430,6 @@ function getTimezone (lat,lng) {
 		},
 		success: function(result) {
 			
-			if (!result.data.timezoneId) {
-				abortfunction('timeZone Error');
-			}
 			document.getElementById('timezone').innerHTML = result.data.timezoneId;
 			document.getElementById('localTime').innerHTML = result.data.time.slice(-5);
 			
@@ -1774,7 +1753,7 @@ function weatherChartRain(isoa3Code) {
 							}
 					}
 			});
-				
+			charts++;	
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
 				layersAdded++;
@@ -1847,7 +1826,7 @@ function weatherChartCelcius(isoa3Code) {
 							}
 					}
 			});
-									
+			charts++;					
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
 				layersAdded++;
@@ -2100,11 +2079,17 @@ function resetSlideShow(){
 	
 }
 
+
 function displayCountry(isoa3Code) {
 	addOverlays(overlaysObj);
 	overlaysCounter = 0;
-	resetSlideShow
-	overlayProbs = 0;
+	resetSlideShow();
+	 if (charts > 0) {
+		rainChart.destroy();
+		celciusChart.destroy(); 
+	 }
+	
+	verlayProbs = 0;
 	
 	selectDropDown['value'] = isoa3Code;
 	
@@ -2124,8 +2109,8 @@ function displayCountry(isoa3Code) {
 	//Add layers:
 	placeBorder(isoa3Code);	//2 layers	
 	//countryBasics(isoa3Code); //1 layer
-	//getWebcams(isoA2);
-	//getGeonamesAirports(isoA2);
+	getWebcams(isoA2);  // 1 layer
+	getGeonamesAirports(isoA2); // 1 layer
 	getGeonamesCities(isoA2); //3 layers (cities and cityCirles), also weatherlayer but controlled by toggle
 
 

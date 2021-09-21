@@ -1,3 +1,24 @@
+.webcam-marker-cluster-small {
+	background-color: #55a129;
+	}
+.webcam-marker-cluster-small div {
+	background-color: white;
+	}
+
+.webcam-marker-cluster-medium {
+	background-color: #55a129;
+	}
+.webcam-marker-cluster-medium div {
+	background-color: white;
+	}
+
+.webcam-marker-cluster-large {
+	background-color: #55a129;
+	}
+.webcam-marker-cluster-large div {
+	background-color: white;
+	}
+
 .tt-marker-cluster-small {
 	background-color: #a23337;
 	}
