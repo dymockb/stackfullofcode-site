@@ -1630,7 +1630,7 @@ function getNews(isoA2code) {
 				
 				let translatedObj = {};
 				translatedObj['url'] = articlesToTranslate[0].url;
-				translatedObj['imgURL'] = articlesToTranslate[0].urlToImage == null ? 'img/marker-icon-2x-green.png' : articlesToTranslate[0].urlToImage; // img URL to be updated on tsohost
+				translatedObj['imgURL'] = articlesToTranslate[0].urlToImage == null ? 'img/noImage.png' : articlesToTranslate[0].urlToImage; // img URL to be updated on tsohost
 				translatedObj['source'] = articlesToTranslate[0].source.name;
 				
 				recursiveContent(content);
@@ -1680,6 +1680,9 @@ function getNews(isoA2code) {
 						descDiv.innerHTML = oneArt.description;
 						
 						imgDiv.setAttribute('src',oneArt.imgURL);
+						if (oneArt.imgURL.includes('noImage')){
+							imgDiv.setAttribute('style', 'display: none');
+						}
 						imgDiv.setAttribute('class','newsImage');
 						
 						headerDiv.appendChild(buttonDiv);
