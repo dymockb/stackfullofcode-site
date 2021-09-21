@@ -264,7 +264,7 @@ function addOverlays(overlaysObj) {
 			
 			addOverlays(overlaysObj);
 			clearTimeout(overlayAgain);
-		},2000);
+		},1000);
 		
 	} else {
 		
@@ -1480,7 +1480,7 @@ function getTimezone (lat,lng) {
 		},
 		success: function(result) {
 			
-			document.getElementById('timezone').innerHTML = result.data.timezoneId;
+			//document.getElementById('timezone').innerHTML = result.data.timezoneId;
 			document.getElementById('localTime').innerHTML = result.data.time.slice(-5);
 			
 			let timeString = result.data.time.slice(-5);
@@ -2122,14 +2122,9 @@ function getXR(currency){
 		},
 		success: function (result) {
 			console.log('exchange rate result', result);
-			if (!result.data.rates) {
-				abortfunction('exchange rate Error');
-			}
-			for (let [key, value] of Object.entries(result.data.rates)){
-				if (key == currency) {
-					document.getElementById("exchangeRate").innerHTML = value.toFixed(2) + ' ' + currency + ' = 1 USD';
-				};
-			};	
+
+			document.getElementById("exchangeRate").innerHTML = result.data[1].toFixed(2) + ' ' + currency + ' = 1 USD';
+	
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
 			// error code
@@ -2197,7 +2192,7 @@ function displayCountry(isoa3Code) {
 	getHolidays(isoA2);
 	weatherChartCelcius(isoa3Code);
 	weatherChartRain(isoa3Code);
-	//getNews(isoA2);
+	getNews(isoA2);
 
 } // end of DISPLAY COUNTRY 
 
