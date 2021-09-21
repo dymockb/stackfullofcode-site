@@ -131,7 +131,16 @@ L.easyButton('fa-temperature-low', function() {
 L.easyButton('fa-calendar-day', function() {
 	document.getElementById('holidayBtn').click();
 	let openCalendarTimer = setTimeout(function(){
-		document.getElementById('clickCalendar').click();
+	document.getElementById('clickCalendar').click();
+	console.log('test',$('[data-bs-toggle="popover"]').popover());
+		
+  //var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+  //var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+  //  return new bootstrap.Popover(popoverTriggerEl)
+  //})
+	//console.log('ppl',popoverList);
+	
+		
 		clearTimeout(openCalendarTimer);
 	},300);
 	
@@ -2193,9 +2202,9 @@ function displayCountry(isoa3Code) {
 
 	//Background data
 	getHolidays(isoA2);
-	weatherChartCelcius(isoa3Code);
-	weatherChartRain(isoa3Code);
-	getNews(isoA2);
+	//weatherChartCelcius(isoa3Code);
+	//weatherChartRain(isoa3Code);
+	//getNews(isoA2);
 
 } // end of DISPLAY COUNTRY 
 
