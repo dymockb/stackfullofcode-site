@@ -29,9 +29,10 @@
 //let poiMarkers = [];
 
 
-let totalLayers = 7; 
-//	*						*												*				*					*							*									*
+let totalLayers = 8; 
+//	*						*						*						*				*					*							*									*
 //border, wikipedia, capitalmarker, webcams, airports, citiesLayer, cityCirclesLayer, landmarkClusterMarkers
+//(weather layer controlled by toggle)
 
 let layersAdded = 0;
 let layerNames = [];
@@ -511,8 +512,9 @@ function countryBasics(isoa3Code){ // add 1 layer: capitalMarker; 3x ajax: view 
 			},
 			error: function(jqXHR, textStatus, errorThrown) {
 				layersAdded++;
-				problemLayers += 'capitalMarker';
-				overlayProbs++;
+				let errorLayer = L.layerGroup();
+				overlaysObj['Capital (no data)'] = errorLayer;
+				layersOnAndOff.push(errorLayer);
 				console.log('worldBank capital error')
 				console.log(textStatus);
 				console.log(errorThrown);
@@ -919,7 +921,8 @@ function getGeonamesCities(isoA2) { // 3 layers added: cityCirclesLayer (and Cit
 				
 				console.log(increment);
 				document.getElementById("progressBar").setAttribute('style', 'visibility: initial');
-				document.getElementById("progressBar").setAttribute('style', "width: 10%;");
+				document.getElementById("progressBar").setAttribute('style', `width: ${progressWidth}%;`);
+				progressWidth += increment;
 				
 				let {lat, lng} = locations[0].getLatLng();
 				
@@ -945,6 +948,13 @@ function getGeonamesCities(isoA2) { // 3 layers added: cityCirclesLayer (and Cit
 					}); //end of Weatherbit ajax
 			
 			} else {
+				
+				document.getElementById("progressBar").setAttribute('style', "width: 100%;");
+
+				let progressTimer = setTimeout(function() {
+					document.getElementById("progressBar").setAttribute('style', "width: 0%; visibility: hidden");
+					clearTimeout(progressTimer);
+					}, 1500);
 				
 				document.getElementById('weatherDataLoading').innerHTML = "";
 				document.getElementById('weatherToggle').setAttribute('style', 'display: inherit');
@@ -1060,6 +1070,7 @@ function getGeonamesCities(isoA2) { // 3 layers added: cityCirclesLayer (and Cit
 		
 		let markersToGet = 12;
 		let increment = 100 / markersToGet; 
+		let progressWidth = 100 / markersToGet; 
 		getCurrentWeather(randomMarkers.slice(0,markersToGet));	
 		//getCurrentWeather(randomMarkers);			
 
@@ -1192,22 +1203,55 @@ function hereLandmarks(markerlist) { // called inside getGeonamesCities. 1 layer
 				}	
 			
 					
-				hereLandmarks(markerlist.slice(1), landmarkIDs, landmarkTypes);
+				hereLandmarks(markerlist.slice(1));
 				
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
+
+				if (landmarkList.length > 0) {
+					console.log('landmarks error');
+					landmarkClusterMarkers = L.markerClusterGroup({
+					iconCreateFunction: function(cluster) {
+						let childCount = cluster.getChildCount();
+						let c = ' landmark-marker-cluster-';
+						if (childCount < 10) {
+							c += 'small';
+						} else if (childCount < 100) {
+							c += 'medium';
+						} else {
+							c += 'large';
+						}
+
+						return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'cursorClass marker-cluster' + c, iconSize: new L.Point(40, 40) });
+					},
+					showCoverageOnHover: false
+				});
+				
+				for (let i = 0; i < landmarkList.length; i++) {
+					landmarkClusterMarkers.addLayer(landmarkList[i]);
+				}
+				
+				landmarkClusterMarkers.addTo(mymap);
+				overlaysObj['Landmarks'] = landmarkClusterMarkers;
 				layersAdded++;
-				let errorLayer = L.layerGroup();
-				overlaysObj['Landmarks (no data)'] = errorLayer;
-				layersOnAndOff.push(errorLayer);
-				console.log('landmarks error');
-				console.log(textStatus);
-				console.log(errorThrown);
+				layersOnAndOff.push(landmarkClusterMarkers);
+				layerNames.push('landmarkClusterMarkers');
+					
+				} else {
+					console.log('landmarks error - no data');
+					layersAdded++;
+					let errorLayer = L.layerGroup();
+					overlaysObj['Landmarks (no data)'] = errorLayer;
+					layersOnAndOff.push(errorLayer);
+
+					console.log(textStatus);
+					console.log(errorThrown);
+				}
 			},
 		}); // end of hereLandmarks ajax
 
 	} else {
-				
+		
 		landmarkClusterMarkers = L.markerClusterGroup({
 		iconCreateFunction: function(cluster) {
 			let childCount = cluster.getChildCount();
@@ -2108,41 +2152,18 @@ function displayCountry(isoa3Code) {
 	
 	//Add layers:
 	placeBorder(isoa3Code);	//2 layers	
-	//countryBasics(isoa3Code); //1 layer
+	countryBasics(isoa3Code); //1 layer
 	getWebcams(isoA2);  // 1 layer
 	getGeonamesAirports(isoA2); // 1 layer
 	getGeonamesCities(isoA2); //3 layers (cities and cityCirles), also weatherlayer but controlled by toggle
 
 
 	//Background data
-	//getHolidays(isoA2);
+	getHolidays(isoA2);
 	//weatherChartCelcius(isoa3Code);
 	//weatherChartRain(isoa3Code);
 	//getNews(isoA2);
 	
-	
-  document.getElementById("progressBar").setAttribute('style', 'visibility: initial');
-	document.getElementById("loadingText").innerHTML = 'fetching exchange rate';
-  document.getElementById("progressBar").setAttribute('style', "width: 10%;");
-	document.getElementById("loadingText").innerHTML = 'fetching capital city';
-	document.getElementById("progressBar").setAttribute('style', "width: 15%;");
-	document.getElementById("loadingText").innerHTML = 'fetching weather data';
-	document.getElementById("progressBar").setAttribute('style', "width: 30%;");
-	document.getElementById("loadingText").innerHTML = 'fetching time data';					          
-	document.getElementById("progressBar").setAttribute('style', "width: 50%;");	
-	document.getElementById("loadingText").innerHTML = 'fetching wikipedia data';
-	document.getElementById("progressBar").setAttribute('style', "width: 60%;");
-	document.getElementById("loadingText").innerHTML = 'fetching cities data';
-	document.getElementById("progressBar").setAttribute('style', "width: 75%;");
-	document.getElementById("loadingText").innerHTML = 'fetching points of interest';
-	document.getElementById("progressBar").setAttribute('style', "width: 90%;");
-	document.getElementById("loadingText").innerHTML = '';
-	document.getElementById("progressBar").setAttribute('style', "width: 100%;");
-
-	let progressTimer = setTimeout(function() {
-		document.getElementById("progressBar").setAttribute('style', "width: 0%; visibility: hidden");
-		clearTimeout(progressTimer);
-		}, 1500);
 	
 	/*  ONLY RETURN CORRECT CURRENCY
 	$.ajax({
@@ -2194,7 +2215,10 @@ $('#weatherToggle').click(function (){
 	
 	if (weatherOn == false) {
 		for (let i = 0; i < layersOnAndOff.length; i ++) {
-				mymap.removeLayer(layersOnAndOff[i]);
+			if (layersOnAndOff[i] != selectedCountryLayer) {
+				mymap.removeLayer(layersOnAndOff[i]);				
+			}
+
 		}
 		
 		weatherOn = true;
@@ -2203,7 +2227,9 @@ $('#weatherToggle').click(function (){
 	} else {
 		weatherOn = false;
 		for (let i = 0; i < layersOnAndOff.length; i ++) {
-			layersOnAndOff[i].addTo(mymap);
+			if (layersOnAndOff[i] != selectedCountryLayer){
+				layersOnAndOff[i].addTo(mymap);
+			}
 		}		
 		let undrawObj = {max: 20, data: []};
 		redrawHeatMap(undrawObj, heatmapColor);
