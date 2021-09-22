@@ -6,7 +6,9 @@
 
 	$executionStartTime = microtime(true);
 
-	$url='https://restcountries.eu/rest/v2/alpha/' . $_REQUEST['countryCode'];
+	$url='https://api.countrylayer.com/v2/alpha/' . $_REQUEST['countryCode'] . '?access_key=681324862586f7c89eaa89720fe97423';
+	//$url='https://restcountries.eu/rest/v2/alpha/gb';
+	//$url='https://restcountries.eu/rest/v2/alpha/co';
 
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
@@ -24,7 +26,7 @@
 	$output['status']['description'] = "success";
 	$output['status']['returnedIn'] = intval((microtime(true) - $executionStartTime) * 1000) . " ms";
 	$output['data'] = $decode;
-	$output['cCode'] = $_REQUEST['countryCode'];
+	$output['countryCode'] = $_REQUEST['countryCode'];
 	
 	header('Content-Type: application/json; charset=UTF-8');
 

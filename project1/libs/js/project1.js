@@ -905,6 +905,7 @@ function getGeonamesCities(isoA2) { // 3 layers added: cityCirclesLayer (and Cit
 				
 				let {lat, lng} = locations[0].getLatLng();
 				
+				console.log('pos for weather: ', lat, lng);
 				$.ajax({
 					//url: "libs/php/weatherbitCurrent.php",
 					url: "libs/php/openWeather.php",
@@ -917,7 +918,11 @@ function getGeonamesCities(isoA2) { // 3 layers added: cityCirclesLayer (and Cit
 					success: function(result) {
 						
 						currentWeatherData.push(result);
-						getCurrentWeather(locations.slice(1));
+						let weatherTimeout = setTimeout(function(){
+							getCurrentWeather(locations.slice(1));
+							clearTimeout(weatherTimeout);
+						},100)
+
 					
 					},
 					error: function(jqXHR, textStatus, errorThrown) {
@@ -1447,7 +1452,7 @@ function countryBasics(isoa3Code){ // add 1 layer: capitalMarker; 3x ajax: view 
 		type: "GET",
 		dataType: "json",
 		data: {
-			countryCode: isoa3Code
+			countryCode: isoa3Code.toLowerCase()
 		},
 		success: function (result) {
 			console.log('Rest Countries result',result.data);
