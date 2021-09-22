@@ -242,7 +242,6 @@ function onLocationError(e) {
 }
 
 function addOverlays(overlaysObj) {
-	console.log('adding overlays');
 	
 	//if (layersAdded == totalLayers && overlayProbs == 0) {
 	if (layersAdded == totalLayers) {
@@ -401,10 +400,8 @@ function placeBorder(isoa3Code){ // add 2 layers: selectedCountryLayer, wikiClus
 			let corner2 = L.latLng(lat, lng);
 			let viewportBounds = L.latLngBounds(corner1, corner2);
 			
-	    //currentCountry = result.data["properties"].name;
-			console.log('place border func > current country: ', currentCountry);			
-      
-			console.log('set current country polygons');
+	    //currentCountry = result.data["properties"].name;		
+
 			if (result.data["geometry"]["type"] == 'MultiPolygon') {
         currentCountryPolygons = result.data["geometry"]["coordinates"];
       } else {
@@ -462,7 +459,7 @@ function worldBankInfo(isoa3Code){ //add 1 layer: capital marker, also get unspl
 				isoA3: isoa3Code
 			},
 			success: function(result) {
-				console.log('wb', result.data);
+				console.log('world bank result:', result.data);
 				let capital = result.data[1][0].capitalCity;
 				lat = result.data[1][0].latitude; // W. Sahara ESH problem
 				lng = result.data[1][0].longitude;
@@ -516,7 +513,6 @@ function worldBankInfo(isoa3Code){ //add 1 layer: capital marker, also get unspl
 
 function unsplashImages(countryName) { //called inside country Basics
 	
-	console.log('countryN', countryName);
 	$.ajax({
 	url: "libs/php/unsplashImages.php",
 	type: "POST",
@@ -525,7 +521,7 @@ function unsplashImages(countryName) { //called inside country Basics
 		qString: countryName
 	},
 	success: function(result) {
-		console.log(result);
+		console.log('images result:',result);
 
 		for (let i = 0; i < result.data.length; i ++) {
 			
@@ -903,7 +899,6 @@ function getGeonamesCities(isoA2) { // 3 layers added: cityCirclesLayer (and Cit
 			
 			if (locations.length > 0) {
 				
-				console.log(increment);
 				document.getElementById("progressBar").setAttribute('style', 'visibility: initial');
 				document.getElementById("progressBar").setAttribute('style', `width: ${progressWidth}%;`);
 				progressWidth += increment;
@@ -911,7 +906,8 @@ function getGeonamesCities(isoA2) { // 3 layers added: cityCirclesLayer (and Cit
 				let {lat, lng} = locations[0].getLatLng();
 				
 				$.ajax({
-					url: "libs/php/weatherbitCurrent.php",
+					//url: "libs/php/weatherbitCurrent.php",
+					url: "libs/php/openWeather.php",
 					type: "POST",
 					dataType: "json",
 					data: {
@@ -919,7 +915,7 @@ function getGeonamesCities(isoA2) { // 3 layers added: cityCirclesLayer (and Cit
 						locationLng: lng,
 					},
 					success: function(result) {
-
+						
 						currentWeatherData.push(result);
 						getCurrentWeather(locations.slice(1));
 					
@@ -943,7 +939,6 @@ function getGeonamesCities(isoA2) { // 3 layers added: cityCirclesLayer (and Cit
 				document.getElementById('weatherDataLoading').innerHTML = "";
 				document.getElementById('weatherToggle').setAttribute('style', 'display: inherit');
 				//document.getElementById('viewCountryBtn').setAttribute('style', 'display: inherit');
-				console.log('weather done');
 
 				let maxTemp = -100;				
 				for (mt = 0; mt < currentWeatherData.length; mt++) {
@@ -1084,7 +1079,6 @@ function hereLandmarks(markerlist) { // called inside getGeonamesCities. 1 layer
 		},
 			success: function (result) {
 				
-				console.log('landmarks result', result);
 				for (let lm = 0; lm < result.data.length; lm++) {
 					landmarkIDs.push(result.data[lm].Location.Name);
 					landmarkTypes.push(result.data[lm].Location.LocationType);
@@ -1280,7 +1274,7 @@ function getWikipedia (currentCountry, bounds) { // called inside place border a
 			
 			let listOfMarkers = [];
 			let listOfTitlesPlace = [];
-			console.log('use currentCountryPolygons');
+
 			let polygons = currentCountryPolygons;
 			let newPolygons = []
 			for (let p = 0; p < polygons.length; p++) {
@@ -1456,20 +1450,18 @@ function countryBasics(isoa3Code){ // add 1 layer: capitalMarker; 3x ajax: view 
 			countryCode: isoa3Code
 		},
 		success: function (result) {
-			console.log('cb',result.data);
+			console.log('Rest Countries result',result.data);
 			let nativeName = result.data.nativeName;
 			document.getElementById("nativeName").innerHTML = nativeName == currentCountry ? '' : 'Native name: ' + nativeName;
 			document.getElementById("population").innerHTML = parseInt(result.data.population).toLocaleString('en-US');
 			document.getElementById("currency").innerHTML = result.data.currencies[0].code;
 			currency = result.data.currencies[0].code;
 			document.getElementById("currencyName").innerHTML = result.data.currencies[0].name;
-			console.log('flag', result.data.flag);
 			document.getElementById("flagIMG").setAttribute("src", result.data.flag);
 			document.getElementById("capital").innerHTML = result.data.capital;
 			//capital = result.data.capital;
 
 			isoA2 = result.data.alpha2Code;
-			console.log('curr',currency)
 			getXR(currency);
 			
 		},
@@ -1582,7 +1574,6 @@ function getNews(isoA2code) {
 						text: contentObj.text
 						},
 						success: function (result) {
-						console.log('transart', result.data);
 						
 						if (result.data.code == 200) {
 						
@@ -1597,11 +1588,11 @@ function getNews(isoA2code) {
 								translatedObj['EN_source'] = contentObj.text == result.data.translated_text ? true : false;							
 							
 						} else {
-							console.log('what???')
+							//console.log('what???')
 						}
 						
 						} else {
-							console.log('translate error code', result.data.code);
+							//console.log('translate error code', result.data.code);
 						}
 						
 						//translations.push(result);
@@ -1650,8 +1641,6 @@ function getNews(isoA2code) {
 				recursiveContent(content);
 
 				} else {
-					
-						console.log('translatedObjs', translatedObjs)
 		
 					function createAccordianArticle(oneArt, target) {
 			
@@ -1712,9 +1701,7 @@ function getNews(isoA2code) {
 						
 						cardDiv.appendChild(cardHeaderDiv);
 						cardDiv.appendChild(cardBodyDiv);
-						
-						console.log('cardDiv',cardDiv);
-
+					
 						document.getElementById('accordion').appendChild(cardDiv);
 					
 					}
@@ -1773,9 +1760,7 @@ function weatherChartRain(isoa3Code) {
 			countryCode: isoa3Code
 		},
 		success: function (result) {
-						
-			console.log('Rain chart (mm)',result)
-				
+									
 			let chartData = [];
 			let min = result.data[0].data;
 			
@@ -2132,7 +2117,7 @@ function getHolidays(isoA2code){
 }
 
 function getXR(currency){
-	console.log('start');
+
 	$.ajax({
 		url: "libs/php/openExchange.php",
 		type: "POST",
@@ -2236,9 +2221,7 @@ selectDropDown.addEventListener("change", function (event) {
 }, false)
 
 $('#weatherToggle').click(function (){
-	
-	console.log('layersOnAndOff', layersOnAndOff);
-	
+		
 	if (weatherOn == false) {
 		for (let i = 0; i < layersOnAndOff.length; i ++) {
 			if (layersOnAndOff[i] != selectedCountryLayer) {
