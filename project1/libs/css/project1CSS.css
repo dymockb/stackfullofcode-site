@@ -327,6 +327,19 @@ div>h2 {
 	padding: 1rem;
 	background: #e5e5e5;
 */
+
+
+#flagIMG {
+	width: 6rem;
+	padding-left: 0.3rem;
+}
+
+.modal-title {
+	margin-right: auto;
+	padding-left: 1rem;
+}
+
+/*
 #flagIMG {
 	width: 80%;
 	background-color: white;
@@ -335,7 +348,6 @@ div>h2 {
 	height: min-content !important;
 }
 
-/*
 span.carousel-control-next-icon {
     background: gray;
 }
@@ -344,10 +356,6 @@ span.carousel-control-prev-icon {
     background: gray;
 }
 
-*/
-#flagContainer {
-	background-color: white
-}
 
 img.d-block.w-100 {
     height: 100%;
@@ -356,8 +364,15 @@ img.d-block.w-100 {
     width: auto !important;
 }
 
+*/
+#flagContainer {
+	background-color: white
+}
+
+
+
 .newImagesOnly {
-	background-color: gray
+	background-color: white
 }
 
 div#carouselExampleControls {

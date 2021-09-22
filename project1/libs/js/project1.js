@@ -401,7 +401,7 @@ function placeBorder(isoa3Code){ // add 2 layers: selectedCountryLayer, wikiClus
 			let corner2 = L.latLng(lat, lng);
 			let viewportBounds = L.latLngBounds(corner1, corner2);
 			
-	    currentCountry = result.data["properties"].name;
+	    //currentCountry = result.data["properties"].name;
 			console.log('place border func > current country: ', currentCountry);			
       
 			console.log('set current country polygons');
@@ -453,32 +453,8 @@ function placeBorder(isoa3Code){ // add 2 layers: selectedCountryLayer, wikiClus
 	
 }
 
-function countryBasics(isoa3Code){ // add 1 layer: capitalMarker; 3x ajax: view country data, worldbank capital, getTimezone (for clock)	
-		$.ajax({
-		url: "libs/php/oneRestCountry.php",
-		type: "GET",
-		dataType: "json",
-		data: {
-			countryCode: isoa3Code
-		},
-		success: function (result) {
-			console.log('cb',result.data);
-			let textValue = result.data.nativeName;
-			document.getElementById("nativeName").innerHTML = 'Native name: ' + textValue;
-			document.getElementById("population").innerHTML = parseInt(result.data.population).toLocaleString('en-US');
-			document.getElementById("currency").innerHTML = result.data.currencies[0].code;
-			currency = result.data.currencies[0].code;
-			document.getElementById("currencyName").innerHTML = result.data.currencies[0].name;
-			console.log('flag', result.data.flag);
-			document.getElementById("flagIMG").setAttribute("src", result.data.flag);
-			document.getElementById("capital").innerHTML = result.data.capital;
-			capital = result.data.capital;
-
-			isoA2 = result.data.alpha2Code;
-			console.log('curr',currency)
-			getXR(currency);
-			
-		$.ajax({
+function worldBankInfo(isoa3Code){ //add 1 layer: capital marker, also get unsplash images
+			$.ajax({
 			url: "libs/php/worldBankCapital.php",
 			type: "POST",
 			dataType: "json",
@@ -486,7 +462,8 @@ function countryBasics(isoa3Code){ // add 1 layer: capitalMarker; 3x ajax: view 
 				isoA3: isoa3Code
 			},
 			success: function(result) {
-				console.log('wb', result.data);	
+				console.log('wb', result.data);
+				let capital = result.data[1][0].capitalCity;
 				lat = result.data[1][0].latitude; // W. Sahara ESH problem
 				lng = result.data[1][0].longitude;
 				let capitalPopup = L.popup({autoPan: false, autoClose: false, closeOnClick: false});
@@ -497,6 +474,7 @@ function countryBasics(isoa3Code){ // add 1 layer: capitalMarker; 3x ajax: view 
 				node.setAttribute("data-toggle", "modal");
 				node.setAttribute("style", "font-size: 1rem");
 				node.setAttribute("data-target", "#viewCountryModal");
+				
 				capitalPopup.setContent(node);
 				
 				capitalMarkerIcon = L.divIcon({
@@ -520,7 +498,6 @@ function countryBasics(isoa3Code){ // add 1 layer: capitalMarker; 3x ajax: view 
 				//console.log('get timezone');
 				getTimezone(lat, lng);
 				
-				console.log('name', result.data[1][0].name);
 				let countryName = result.data[1][0].name;
 				unsplashImages(countryName);
 				
@@ -535,18 +512,9 @@ function countryBasics(isoa3Code){ // add 1 layer: capitalMarker; 3x ajax: view 
 				console.log(errorThrown);
 			}
 			}); //end of World Bank Capital ajax
-			
-		},
-		error: function (jqXHR, textStatus, errorThrown) {
-			console.log('one rest country error');
-			console.log(textStatus);
-			console.log(errorThrown);
-		},
-	}); //end of One Rest Country ajax
-
 }
 
-function unsplashImages(countryName) {
+function unsplashImages(countryName) { //called inside country Basics
 	
 	console.log('countryN', countryName);
 	$.ajax({
@@ -561,21 +529,22 @@ function unsplashImages(countryName) {
 
 		for (let i = 0; i < result.data.length; i ++) {
 			
-			let testNode = document.createElement('div');
-			testNode.setAttribute('class', 'carousel-item');
+			let activeImage = i == 0 ? 'active' : '';
+			//let activeImage = '';
+			let carouselNode = document.createElement('div');
+			carouselNode.setAttribute('class', `carousel-item ${activeImage}`);
 			let innerNode = document.createElement('div');
 			innerNode.setAttribute('class', 'imgSlide newImagesOnly');
 			let imgNode = document.createElement('img');
 			imgNode.setAttribute('class', 'd-block w-100');
 			imgNode.setAttribute('src', result.data[i].img);
-
-			//imgNode.setAttribute('src', 'https://images.unsplash.com/photo-1486299267070-83823f5448dd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA4MDh8MHwxfHNlYXJjaHwxfHx1bml0ZWQlMjBraW5nZG9tfGVufDB8fHx8MTYzMjE0NDI4NQ&ixlib=rb-1.2.1&q=80&w=400');
+			//imgNode.setAttribute('src','https://images.unsplash.com/photo-1486299267070-83823f5448dd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwyNjA4MDh8MHwxfHNlYXJjaHwxfHx1bml0ZWQlMjBraW5nZG9tfGVufDB8fHx8MTYzMjE0NDI4NQ&ixlib=rb-1.2.1&q=80&w=400');
 	
-			imgNode.setAttribute('alt', 'testImg');
+			imgNode.setAttribute('alt', 'countryImg');
 			innerNode.appendChild(imgNode);
-			testNode.appendChild(innerNode);
+			carouselNode.appendChild(innerNode);
 			
-			document.getElementById('carouselSlides').appendChild(testNode);
+			document.getElementById('carouselSlides').appendChild(carouselNode);
 		
 		}
 		
@@ -1477,6 +1446,42 @@ function getWikipedia (currentCountry, bounds) { // called inside place border a
 
 
 //background functions:
+
+function countryBasics(isoa3Code){ // add 1 layer: capitalMarker; 3x ajax: view country data, worldbank capital, getTimezone (for clock), unsplash images	
+		$.ajax({
+		url: "libs/php/oneRestCountry.php",
+		type: "GET",
+		dataType: "json",
+		data: {
+			countryCode: isoa3Code
+		},
+		success: function (result) {
+			console.log('cb',result.data);
+			let nativeName = result.data.nativeName;
+			document.getElementById("nativeName").innerHTML = nativeName == currentCountry ? '' : 'Native name: ' + nativeName;
+			document.getElementById("population").innerHTML = parseInt(result.data.population).toLocaleString('en-US');
+			document.getElementById("currency").innerHTML = result.data.currencies[0].code;
+			currency = result.data.currencies[0].code;
+			document.getElementById("currencyName").innerHTML = result.data.currencies[0].name;
+			console.log('flag', result.data.flag);
+			document.getElementById("flagIMG").setAttribute("src", result.data.flag);
+			document.getElementById("capital").innerHTML = result.data.capital;
+			//capital = result.data.capital;
+
+			isoA2 = result.data.alpha2Code;
+			console.log('curr',currency)
+			getXR(currency);
+			
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+			console.log('one rest country error');
+			console.log(textStatus);
+			console.log(errorThrown);
+		},
+	}); //end of One Rest Country ajax
+
+}
+
 function getTimezone (lat,lng) {
 	
 		$.ajax({
@@ -1545,7 +1550,7 @@ function getTimezone (lat,lng) {
 } 
 
 function getNews(isoA2code) {
-	
+	document.getElementById('newsModalTitle').innerHTML = 'Loading news...'
 	$.ajax({
 		url: "libs/php/newsAPI.php",
 		type: "GET",
@@ -1722,6 +1727,8 @@ function getNews(isoA2code) {
 						
 						if (translatedObjs[0].EN_source == false) {
 							document.getElementById('newsModalTitle').innerHTML = 'Latest News (translated)';
+						} else if (translatedObjs[0].EN_source == true){
+							document.getElementById('newsModalTitle').innerHTML = 'Latest News';
 						}
 						
 						for (let oneArt = 0; oneArt < translatedObjs.length; oneArt++) {
@@ -2151,6 +2158,9 @@ function getXR(currency){
 
 function resetSlideShow(){
 	document.getElementById('carouselSlides').innerHTML = "";
+
+	/*
+	
 	
 	let flagNode = document.createElement('div');
 	flagNode.setAttribute('class', 'carousel-item active');
@@ -2164,7 +2174,7 @@ function resetSlideShow(){
 	flagNode.appendChild(innerNode);
 	
 	document.getElementById('carouselSlides').appendChild(flagNode);	
-	
+	*/
 }
 
 
@@ -2176,36 +2186,36 @@ function displayCountry(isoa3Code) {
 		celciusChart.destroy(); 
 	 }
 	
-	verlayProbs = 0;
-	
 	selectDropDown['value'] = isoa3Code;
 	
-	if (typeof capitalMarker == "object") {
-    capitalMarker.remove();
-  }
+	//if (typeof capitalMarker == "object") {
+  //  capitalMarker.remove();
+  //}
 	
-	let bounds;
+	//let bounds;
 	let isoA2;
 	
 	for (let io = 0; io < countryBorders.length; io++){
 	 if (countryBorders[io].A3code == isoa3Code) {
+		 currentCountry = countryBorders[io].name;
 		 isoA2 = countryBorders[io].A2code;
 	 }
 	}
 	
 	//Add layers:
+	worldBankInfo(isoa3Code); //1 layer
 	placeBorder(isoa3Code);	//2 layers	
-	countryBasics(isoa3Code); //1 layer
 	getWebcams(isoA2);  // 1 layer
 	getGeonamesAirports(isoA2); // 1 layer
 	getGeonamesCities(isoA2); //3 layers (cities and cityCirles), also weatherlayer but controlled by toggle
 
 
 	//Background data
+	countryBasics(isoa3Code);
 	getHolidays(isoA2);
-	//weatherChartCelcius(isoa3Code);
-	//weatherChartRain(isoa3Code);
-	//getNews(isoA2);
+	weatherChartCelcius(isoa3Code);
+	weatherChartRain(isoa3Code);
+	getNews(isoA2);
 
 } // end of DISPLAY COUNTRY 
 
