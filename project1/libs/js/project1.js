@@ -49,6 +49,7 @@ let locationPermission = true;
 let dropdownList = [];
 let weatherOn = false;
 let calendarNum = 0;
+let flagA2;
 
 let baseLayerName, capitalMarker, timer, currentCountry, selectedCountry, currentCountryPolygons, countryBorders, setMax, heatmapColor;
 
@@ -450,65 +451,67 @@ function placeBorder(isoa3Code){ // add 2 layers: selectedCountryLayer, wikiClus
 	
 }
 
-function worldBankInfo(isoa3Code){ //add 1 layer: capital marker, also get unsplash images
-			$.ajax({
-			url: "libs/php/worldBankCapital.php",
-			type: "POST",
-			dataType: "json",
-			data: {
-				isoA3: isoa3Code
-			},
-			success: function(result) {
-				console.log('world bank result:', result.data);
-				let capital = result.data[1][0].capitalCity;
-				lat = result.data[1][0].latitude; // W. Sahara ESH problem
-				lng = result.data[1][0].longitude;
-				let capitalPopup = L.popup({autoPan: false, autoClose: false, closeOnClick: false});
-				let node = document.createElement("button");
-				node.innerHTML = capital;
-				node.setAttribute("type", "button");
-				node.setAttribute("class", "badge rounded-pill bg-secondary");
-				node.setAttribute("data-toggle", "modal");
-				node.setAttribute("style", "font-size: 1rem");
-				node.setAttribute("data-target", "#viewCountryModal");
-				
-				capitalPopup.setContent(node);
-				
-				capitalMarkerIcon = L.divIcon({
-					className: 'capitalMarkerIcon'
-				});
-				
-				capitalMarker = L.marker([lat, lng], {
-					icon: capitalMarkerIcon
-				}).bindPopup(capitalPopup);
-				
-				capitalMarker.getPopup().on('remove', function () {
-					mymap.removeLayer(capitalMarker);
-				});
-				
-				capitalMarker.addTo(mymap).openPopup();
-				layersAdded++;
-				layersOnAndOff.push(capitalMarker);
-				overlaysObj['Capital'] = capitalMarker;
-				layerNames.push('capitalMarker');
-				
-				//console.log('get timezone');
-				getTimezone(lat, lng);
-				
-				let countryName = result.data[1][0].name;
-				unsplashImages(countryName);
-				
-			},
-			error: function(jqXHR, textStatus, errorThrown) {
-				layersAdded++;
-				let errorLayer = L.layerGroup();
-				overlaysObj['Capital (no data)'] = errorLayer;
-				layersOnAndOff.push(errorLayer);
-				console.log('worldBank capital error')
-				console.log(textStatus);
-				console.log(errorThrown);
-			}
-			}); //end of World Bank Capital ajax
+function worldBankInfo(isoa3Code){ //add 1 layer: capital marker, also get unsplash images & timezone
+	$.ajax({
+	url: "libs/php/worldBankCapital.php",
+	type: "POST",
+	dataType: "json",
+	data: {
+		isoA3: isoa3Code
+	},
+	success: function(result) {
+		console.log('world bank result:', result.data);
+		let capital = result.data[1][0].capitalCity;
+		lat = result.data[1][0].latitude;
+		lng = result.data[1][0].longitude;
+		let capitalPopup = L.popup({autoPan: false, autoClose: false, closeOnClick: false});
+		let node = document.createElement("button");
+		node.innerHTML = capital;
+		node.setAttribute("type", "button");
+		node.setAttribute("class", "badge rounded-pill bg-secondary");
+		node.setAttribute("data-toggle", "modal");
+		node.setAttribute("style", "font-size: 1rem");
+		node.setAttribute("data-target", "#viewCountryModal");
+		
+		capitalPopup.setContent(node);
+		
+		capitalMarkerIcon = L.divIcon({
+			className: 'capitalMarkerIcon'
+		});
+		
+		capitalMarker = L.marker([lat, lng], {
+			icon: capitalMarkerIcon
+		}).bindPopup(capitalPopup);
+		
+		capitalMarker.getPopup().on('remove', function () {
+			mymap.removeLayer(capitalMarker);
+		});
+		
+		capitalMarker.addTo(mymap).openPopup();
+		layersAdded++;
+		layersOnAndOff.push(capitalMarker);
+		overlaysObj['Capital'] = capitalMarker;
+		layerNames.push('capitalMarker');
+		
+		document.getElementById("capital").innerHTML = result.data[1][0].capitalCity;
+		
+		//console.log('get timezone');
+		getTimezone(lat, lng);
+		
+		let countryName = result.data[1][0].name;
+		unsplashImages(countryName);
+		
+	},
+	error: function(jqXHR, textStatus, errorThrown) {
+		layersAdded++;
+		let errorLayer = L.layerGroup();
+		overlaysObj['Capital (no data)'] = errorLayer;
+		layersOnAndOff.push(errorLayer);
+		console.log('worldBank capital error')
+		console.log(textStatus);
+		console.log(errorThrown);
+	}
+	}); //end of World Bank Capital ajax
 }
 
 function unsplashImages(countryName) { //called inside country Basics
@@ -1446,32 +1449,34 @@ function getWikipedia (currentCountry, bounds) { // called inside place border a
 
 //background functions:
 
-function countryBasics(isoa3Code){ // add 1 layer: capitalMarker; 3x ajax: view country data, worldbank capital, getTimezone (for clock), unsplash images	
+function countryBasics(isoA2){ // add 1 layer: capitalMarker; call getXR
 		$.ajax({
-		url: "libs/php/oneRestCountry.php",
+		url: "libs/php/geonamesCountryInfo.php",
 		type: "GET",
 		dataType: "json",
 		data: {
-			countryCode: isoa3Code.toLowerCase()
+			//countryCode: isoa3Code.toLowerCase()
+			countryCode: isoA2
 		},
 		success: function (result) {
-			console.log('Rest Countries result',result.data);
-			let nativeName = result.data.nativeName;
-			document.getElementById("nativeName").innerHTML = nativeName == currentCountry ? '' : 'Native name: ' + nativeName;
-			document.getElementById("population").innerHTML = parseInt(result.data.population).toLocaleString('en-US');
-			document.getElementById("currency").innerHTML = result.data.currencies[0].code;
-			currency = result.data.currencies[0].code;
-			document.getElementById("currencyName").innerHTML = result.data.currencies[0].name;
-			document.getElementById("flagIMG").setAttribute("src", result.data.flag);
-			document.getElementById("capital").innerHTML = result.data.capital;
-			//capital = result.data.capital;
+			console.log('geonames CountryInfo result',result.data);
+			//let nativeName = result.data.nativeName;
+			//document.getElementById("nativeName").innerHTML = nativeName == currentCountry ? '' : 'Native name: ' + nativeName;
+			document.getElementById("population").innerHTML = parseInt(result.data.geonames[0].population).toLocaleString('en-US');
+			document.getElementById("currency").innerHTML = result.data.geonames[0].currencyCode;
+			let currency = result.data.geonames[0].currencyCode;
+			//document.getElementById("currencyName").innerHTML = result.data.currencies[0].name;
+			//document.getElementById("flagIMG").setAttribute("src", result.data.flag);
+			//document.getElementById("capital").innerHTML = result.data.capital;
+			capital = result.data.geonames[0].capital;
+			document.getElementById('flagIMG').setAttribute('src', `https://www.countryflags.io/${flagA2}/flat/64.png`);
 
-			isoA2 = result.data.alpha2Code;
+			//isoA2 = result.data.alpha2Code;
 			getXR(currency);
 			
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
-			console.log('one rest country error');
+			console.log('geonames CountryInfo error');
 			console.log(textStatus);
 			console.log(errorThrown);
 		},
@@ -2133,7 +2138,28 @@ function getXR(currency){
 		success: function (result) {
 			console.log('exchange rate result', result);
 
+			let currency = result.symbol;
 			document.getElementById("exchangeRate").innerHTML = result.data[1].toFixed(2) + ' ' + currency + ' = 1 USD';
+						
+				$.ajax({
+					url: "libs/php/xrSymbols.php",
+					type: "POST",
+					dataType: "json",
+					data: {
+						symbol: currency
+					},
+					success: function (result) {
+						console.log('xr symbols result', result);
+						document.getElementById("currencyName").innerHTML = result.data[1].length > 0 ? result.data[1] : '';
+
+					},
+					error: function (jqXHR, textStatus, errorThrown) {
+						// error code
+						console.log('OpenExchange error');
+						console.log(textStatus);
+						console.log(errorThrown);
+					}
+					}); // end of OpenExchange ajax	
 	
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
@@ -2148,23 +2174,6 @@ function getXR(currency){
 
 function resetSlideShow(){
 	document.getElementById('carouselSlides').innerHTML = "";
-
-	/*
-	
-	
-	let flagNode = document.createElement('div');
-	flagNode.setAttribute('class', 'carousel-item active');
-	let innerNode = document.createElement('div');
-	innerNode.setAttribute('class', 'imgSlide');
-	let flagImgNode = document.createElement('img');
-	flagImgNode.setAttribute('class', 'd-block h-100');
-	flagImgNode.setAttribute('id', 'flagIMG');
-	flagImgNode.setAttribute('alt', 'first slide');
-	innerNode.appendChild(flagImgNode);
-	flagNode.appendChild(innerNode);
-	
-	document.getElementById('carouselSlides').appendChild(flagNode);	
-	*/
 }
 
 
@@ -2189,11 +2198,12 @@ function displayCountry(isoa3Code) {
 	 if (countryBorders[io].A3code == isoa3Code) {
 		 currentCountry = countryBorders[io].name;
 		 isoA2 = countryBorders[io].A2code;
+		 flagA2 = countryBorders[io].A2code;
 	 }
 	}
 	
 	//Add layers:
-	worldBankInfo(isoa3Code); //1 layer
+	worldBankInfo(isoa3Code); //1 layer, also unsplash images and timezone
 	placeBorder(isoa3Code);	//2 layers	
 	getWebcams(isoA2);  // 1 layer
 	getGeonamesAirports(isoA2); // 1 layer
@@ -2201,7 +2211,7 @@ function displayCountry(isoa3Code) {
 
 
 	//Background data
-	countryBasics(isoa3Code);
+	countryBasics(isoA2);
 	getHolidays(isoA2);
 	weatherChartCelcius(isoa3Code);
 	weatherChartRain(isoa3Code);
