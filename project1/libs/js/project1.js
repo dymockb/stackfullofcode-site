@@ -413,7 +413,6 @@ function placeBorder(isoa3Code){ // add 2 layers: selectedCountryLayer, wikiClus
 			
       document.getElementById("countryModalTitle").innerHTML = currentCountry;
 			
-			console.log('2', isoa3Code);
 			$.ajax({
 				url: "libs/php/freedomHouse.php",
 				type: "POST",
@@ -431,23 +430,28 @@ function placeBorder(isoa3Code){ // add 2 layers: selectedCountryLayer, wikiClus
 					let countryColor;
 					let freedomText;
 					let freedomClass;
+					let freedomURL;
 					
-					if (result.data.Status == 'F') {
+					if (result.data.status == 'F') {
 						countryColor = '#04bb04';
 						freedomText = 'Free';
 						freedomClass = 'free';
-					} else if (result.data.Status == 'NF') {
+						freedomURL = result.data.url;
+					} else if (result.data.status == 'NF') {
 						countryColor = 'red';
 						freedomText = 'Not Free'
 						freedomClass = 'notFree';
-					}	else if (result.data.Status == 'PF') {
+						freedomURL = result.data.url;
+					}	else if (result.data.status == 'PF') {
 						countryColor = 'orange';
 						freedomText = 'Partly Free'
 						freedomClass = 'partlyFree';
+						freedomURL = result.data.url;
 					} else {
 						countryColor = 'grey';
 						freedomText = 'No freedom data';
 						freedomClass = 'nofreedomData'
+						freedomURL = result.data.url;
 					}
 					
 					borderLines = L.geoJSON(country, {
@@ -459,7 +463,11 @@ function placeBorder(isoa3Code){ // add 2 layers: selectedCountryLayer, wikiClus
 						}
 					});
 					
-					document.getElementById('freedomInfoNode').setAttribute('class', `fas fa-info-circle ${freedomClass}`);
+					document.getElementById('freedomInfoNode').setAttribute('class', `${freedomClass}`);
+					document.getElementById('freedomInfoIcon').setAttribute('class', `fas fa-info-circle ${freedomClass}`);
+					
+					let webLink = freedomURL == 'root' ? '' : freedomURL;					
+					document.getElementById('freedomInfoNode').setAttribute('href', `https://freedomhouse.org${webLink}`);
 	
 					document.getElementById('countryFreedom').innerHTML = freedomText;
 					document.getElementById('countryFreedom').setAttribute('class', `modal-title ${freedomClass}`);
@@ -505,6 +513,7 @@ function worldBankInfo(isoa3Code){ //add 1 layer: capital marker, also get unspl
 	},
 	success: function(result) {
 		console.log('world bank result:', result.data);
+		if (result.data.length > 1) {
 		let capital = result.data[1][0].capitalCity;
 		lat = result.data[1][0].latitude;
 		lng = result.data[1][0].longitude;
@@ -537,13 +546,24 @@ function worldBankInfo(isoa3Code){ //add 1 layer: capital marker, also get unspl
 		overlaysObj['Capital'] = capitalMarker;
 		layerNames.push('capitalMarker');
 		
-		document.getElementById("capital").innerHTML = result.data[1][0].capitalCity;
+		//document.getElementById("capital").innerHTML = result.data[1][0].capitalCity;
 		
 		//console.log('get timezone');
 		getTimezone(lat, lng);
-		
 		let countryName = result.data[1][0].name;
+	
 		unsplashImages(countryName);
+		
+		} else {
+			layersAdded++;
+			let errorLayer = L.layerGroup();
+			overlaysObj['Capital (no data)'] = errorLayer;
+			layersOnAndOff.push(errorLayer);
+			console.log('worldBank capital error')
+			
+			unsplashImages(currentCountry);
+		}
+
 		
 	},
 	error: function(jqXHR, textStatus, errorThrown) {
@@ -1506,8 +1526,47 @@ function countryBasics(isoA2){ // add 1 layer: capitalMarker; call getXR
 			document.getElementById("currency").innerHTML = result.data.geonames[0].currencyCode;
 			document.getElementById("population").innerHTML = parseInt(result.data.geonames[0].population).toLocaleString('en-US');
 			document.getElementById("currency").innerHTML = result.data.geonames[0].currencyCode;
+			document.getElementById("capital").innerHTML = result.data.geonames[0].capital;
+
+			//let countryName = result.data.geonames[0].countryName;
 
 			
+			/*
+			lat = result.data[1][0].latitude;
+			lng = result.data[1][0].longitude;
+			let capitalPopup = L.popup({autoPan: false, autoClose: false, closeOnClick: false});
+			let node = document.createElement("button");
+			node.innerHTML = capital;
+			node.setAttribute("type", "button");
+			node.setAttribute("class", "badge rounded-pill bg-secondary");
+			node.setAttribute("data-toggle", "modal");
+			node.setAttribute("style", "font-size: 1rem");
+			node.setAttribute("data-target", "#viewCountryModal");
+			
+			capitalPopup.setContent(node);
+			
+			capitalMarkerIcon = L.divIcon({
+				className: 'capitalMarkerIcon'
+			});
+			
+			capitalMarker = L.marker([lat, lng], {
+				icon: capitalMarkerIcon
+			}).bindPopup(capitalPopup);
+			
+			capitalMarker.getPopup().on('remove', function () {
+				mymap.removeLayer(capitalMarker);
+			});
+			
+			capitalMarker.addTo(mymap).openPopup();
+			layersAdded++;
+			layersOnAndOff.push(capitalMarker);
+			overlaysObj['Capital'] = capitalMarker;
+			layerNames.push('capitalMarker');
+
+			//console.log('get timezone');
+			getTimezone(lat, lng);
+			*/
+
 			let currency = result.data.geonames[0].currencyCode;					
 			
 			$.ajax({
@@ -2267,6 +2326,7 @@ function displayCountry(isoa3Code) {
 	//Add layers:
 	
 	worldBankInfo(isoa3Code); //1 layer, also unsplash images and timezone
+	
 	placeBorder(isoa3Code);	//2 layers	
 	getWebcams(isoA2);  // 1 layer
 	getGeonamesAirports(isoA2); // 1 layer

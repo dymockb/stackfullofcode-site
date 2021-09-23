@@ -337,6 +337,12 @@ div>h2 {
 	margin-right: auto;
 	padding: 1rem;
 	background: #e5e5e5;
+	
+
+i.fas.fa-info-circle {
+	padding-left: 0.3rem;
+	font-size: 1.2rem;
+}
 */
 
 
@@ -365,7 +371,8 @@ div>h2 {
 	color: gray
 }
 
-i#freedomInfoNode {
+a#freedomInfoNode {
+	color: currentColor;
 	font-size: 1.4rem;
 	margin-left: 0.3rem
 }
