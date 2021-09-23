@@ -29,7 +29,7 @@
 //let poiMarkers = [];
 
 
-let totalLayers = 8; 
+let totalLayers = 3; 
 //	*						*						*						*				*					*							*									*
 //border, wikipedia, capitalmarker, webcams, airports, citiesLayer, cityCirclesLayer, landmarkClusterMarkers
 //(weather layer controlled by toggle)
@@ -367,7 +367,7 @@ function placeBorder(isoa3Code){ // add 2 layers: selectedCountryLayer, wikiClus
 						
 			let country = result.data;
 			let geojsonLayer = L.geoJson(country);
-			bounds = geojsonLayer.getBounds();
+			let bounds = geojsonLayer.getBounds();
 			
 //			if (!fijiUpdated) {
 				if (isoa3Code == 'FJI') {
@@ -410,35 +410,79 @@ function placeBorder(isoa3Code){ // add 2 layers: selectedCountryLayer, wikiClus
       }
 			
 			selectedCountryLayer = L.geoJSON();
-
-			let isoA3;
-			let capital;
-			let currency;
 			
       document.getElementById("countryModalTitle").innerHTML = currentCountry;
 			
-			mymap.flyToBounds(viewportBounds, {
-					duration: 1.5
-			});
+			console.log('2', isoa3Code);
+			$.ajax({
+				url: "libs/php/freedomHouse.php",
+				type: "POST",
+				dataType: "json",
+				data: {
+					countryCode: isoa3Code
+				},
+				success: function(result) {
+					console.log('freedom result:',result);
 			
-			borderLines = L.geoJSON(country, {
-				style: function(feature) {
-						return {
-							color: "#ff0000",
-							fillOpacity: 0
+					mymap.flyToBounds(viewportBounds, {
+							duration: 1.5
+					});
+					
+					let countryColor;
+					let freedomText;
+					let freedomClass;
+					
+					if (result.data.Status == 'F') {
+						countryColor = '#04bb04';
+						freedomText = 'Free';
+						freedomClass = 'free';
+					} else if (result.data.Status == 'NF') {
+						countryColor = 'red';
+						freedomText = 'Not Free'
+						freedomClass = 'notFree';
+					}	else if (result.data.Status == 'PF') {
+						countryColor = 'orange';
+						freedomText = 'Partly Free'
+						freedomClass = 'partlyFree';
+					} else {
+						countryColor = 'grey';
+						freedomText = 'No freedom data';
+						freedomClass = 'nofreedomData'
 					}
-				}
-			});
+					
+					borderLines = L.geoJSON(country, {
+						style: function(feature) {
+								return {
+									color: countryColor,
+									fillOpacity: 0
+							}
+						}
+					});
+					
+					document.getElementById('freedomInfoNode').setAttribute('class', `fas fa-info-circle ${freedomClass}`);
+	
+					document.getElementById('countryFreedom').innerHTML = freedomText;
+					document.getElementById('countryFreedom').setAttribute('class', `modal-title ${freedomClass}`);
+					//document.getElementById('countryFreedom').appendChild(infoNode);
 
-			borderLines.addTo(selectedCountryLayer);
-			selectedCountryLayer.addTo(mymap);
-			overlaysObj['Border'] = selectedCountryLayer;
-			layersAdded++;
-			layersOnAndOff.push(selectedCountryLayer);
-			layerNames.push('selectedCountryLayer');
-			
-			getWikipedia(currentCountry, bounds);
-									
+					borderLines.addTo(selectedCountryLayer);
+					selectedCountryLayer.addTo(mymap);
+					overlaysObj['Border'] = selectedCountryLayer;
+					layersAdded++;
+					layersOnAndOff.push(selectedCountryLayer);
+					layerNames.push('selectedCountryLayer');
+					
+					getWikipedia(currentCountry, bounds);									
+					
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+
+					console.log('freedom house error')
+					console.log(textStatus);
+					console.log(errorThrown);
+				}
+				}); //end of freedomHouse ajax
+
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
 			layersAdded++;
@@ -514,7 +558,7 @@ function worldBankInfo(isoa3Code){ //add 1 layer: capital marker, also get unspl
 	}); //end of World Bank Capital ajax
 }
 
-function unsplashImages(countryName) { //called inside country Basics
+function unsplashImages(countryName) { //
 	
 	$.ajax({
 	url: "libs/php/unsplashImages.php",
@@ -908,7 +952,6 @@ function getGeonamesCities(isoA2) { // 3 layers added: cityCirclesLayer (and Cit
 				
 				let {lat, lng} = locations[0].getLatLng();
 				
-				console.log('pos for weather: ', lat, lng);
 				$.ajax({
 					//url: "libs/php/weatherbitCurrent.php",
 					url: "libs/php/openWeather.php",
@@ -1455,32 +1498,50 @@ function countryBasics(isoA2){ // add 1 layer: capitalMarker; call getXR
 		type: "GET",
 		dataType: "json",
 		data: {
-			//countryCode: isoa3Code.toLowerCase()
 			countryCode: isoA2
 		},
 		success: function (result) {
 			console.log('geonames CountryInfo result',result.data);
-			//let nativeName = result.data.nativeName;
-			//document.getElementById("nativeName").innerHTML = nativeName == currentCountry ? '' : 'Native name: ' + nativeName;
 			document.getElementById("population").innerHTML = parseInt(result.data.geonames[0].population).toLocaleString('en-US');
 			document.getElementById("currency").innerHTML = result.data.geonames[0].currencyCode;
-			let currency = result.data.geonames[0].currencyCode;
-			//document.getElementById("currencyName").innerHTML = result.data.currencies[0].name;
-			//document.getElementById("flagIMG").setAttribute("src", result.data.flag);
-			//document.getElementById("capital").innerHTML = result.data.capital;
-			capital = result.data.geonames[0].capital;
-			document.getElementById('flagIMG').setAttribute('src', `https://www.countryflags.io/${flagA2}/flat/64.png`);
+			document.getElementById("population").innerHTML = parseInt(result.data.geonames[0].population).toLocaleString('en-US');
+			document.getElementById("currency").innerHTML = result.data.geonames[0].currencyCode;
 
-			//isoA2 = result.data.alpha2Code;
-			getXR(currency);
 			
+			let currency = result.data.geonames[0].currencyCode;					
+			
+			$.ajax({
+				url: "libs/php/oneRestCountry.php",
+				type: "GET",
+				dataType: "json",
+				data: {
+					countryCode: isoA2
+				},
+				success: function (result) {
+					console.log('restcountries result',result.data);			
+					let nativeName = result.data[0];
+					//.name.nativeName.official
+					let currencyName = result.data[0].currencies[currency].name;						
+					document.getElementById("currencyName").innerHTML = currencyName.length > 0 ? currencyName : '';
+					document.getElementById('flagIMG').setAttribute('src', `https://www.countryflags.io/${flagA2}/flat/64.png`);
+					
+					getXR(currency);
+					
+					
+				},
+				error: function (jqXHR, textStatus, errorThrown) {
+					console.log('geonames CountryInfo error');
+					console.log(textStatus);
+					console.log(errorThrown);
+				},
+			}); //end of One Rest Country ajax
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
 			console.log('geonames CountryInfo error');
 			console.log(textStatus);
 			console.log(errorThrown);
 		},
-	}); //end of One Rest Country ajax
+	}); //end of geonames ajax
 
 }
 
@@ -2140,7 +2201,8 @@ function getXR(currency){
 
 			let currency = result.symbol;
 			document.getElementById("exchangeRate").innerHTML = result.data[1].toFixed(2) + ' ' + currency + ' = 1 USD';
-						
+				
+				/*				
 				$.ajax({
 					url: "libs/php/xrSymbols.php",
 					type: "POST",
@@ -2159,8 +2221,8 @@ function getXR(currency){
 						console.log(textStatus);
 						console.log(errorThrown);
 					}
-					}); // end of OpenExchange ajax	
-	
+					}); // end of xrSymbols ajax	
+					*/
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
 			// error code
@@ -2203,19 +2265,20 @@ function displayCountry(isoa3Code) {
 	}
 	
 	//Add layers:
+	
 	worldBankInfo(isoa3Code); //1 layer, also unsplash images and timezone
 	placeBorder(isoa3Code);	//2 layers	
-	getWebcams(isoA2);  // 1 layer
-	getGeonamesAirports(isoA2); // 1 layer
-	getGeonamesCities(isoA2); //3 layers (cities and cityCirles), also weatherlayer but controlled by toggle
+	//getWebcams(isoA2);  // 1 layer
+	//getGeonamesAirports(isoA2); // 1 layer
+	//getGeonamesCities(isoA2); //3 layers (cities and cityCirles), also weatherlayer but controlled by toggle
 
 
 	//Background data
 	countryBasics(isoA2);
-	getHolidays(isoA2);
-	weatherChartCelcius(isoa3Code);
-	weatherChartRain(isoa3Code);
-	getNews(isoA2);
+	//getHolidays(isoA2);
+	//weatherChartCelcius(isoa3Code);
+	//weatherChartRain(isoa3Code);
+	//getNews(isoA2);
 
 } // end of DISPLAY COUNTRY 
 

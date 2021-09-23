@@ -6,9 +6,9 @@
 
 	$executionStartTime = microtime(true);
 
-	$url='https://api.countrylayer.com/v2/alpha/' . $_REQUEST['countryCode'] . '?access_key=681324862586f7c89eaa89720fe97423';
+	//$url='https://api.countrylayer.com/v2/alpha/' . $_REQUEST['countryCode'] . '?access_key=681324862586f7c89eaa89720fe97423';
 	//$url='https://restcountries.eu/rest/v2/alpha/gb';
-	//$url='https://restcountries.eu/rest/v2/alpha/co';
+	$url='https://restcountries.com/v3/alpha/'. $_REQUEST['countryCode'];
 
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);

@@ -150,6 +150,15 @@ html, body {
 	position:relative;
 }
 
+button.close {
+	display: block;
+	margin-left: auto;
+}
+
+.modal-header {
+	justify-content: flex-start;
+}
+
 .centerButtonTxt {
 	margin-left: auto;
 	margin-right: auto
@@ -237,10 +246,12 @@ span.fa.fa-calendar-day {
 
 button.btn.btn-secondary {
 	display: block;
-	margin-left: auto;
-	margin-right: auto;
+	margin-left: 0.5rem;
 }
 
+h6#countryFreedom {
+    padding-left: 0px;
+}
 /*
 
 .fa-video{
@@ -335,8 +346,42 @@ div>h2 {
 }
 
 .modal-title {
-	margin-right: auto;
-	padding-left: 1rem;
+	padding-left: 0.5rem;
+}
+
+.free {
+	color: green;
+}
+
+.notFree {
+	color: red;
+}
+
+.partlyFree {
+	color: orange;
+}
+
+.nofreedomData {
+	color: gray
+}
+
+i#freedomInfoNode {
+	font-size: 1.4rem;
+	margin-left: 0.3rem
+}
+
+a#freedomInfoNode :link {
+  color: currentColor;
+}
+
+/* visited link */
+a#freedomInfoNode :visited {
+  color: currentColor;
+}
+
+/* mouse over link */
+a#freedomInfoNode :hover {
+  color: currentColor;
 }
 
 /*

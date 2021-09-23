@@ -36,6 +36,7 @@
 
 		$one = null;
 		$one['img'] = $item['urls']['small'];
+		$one['description'] = $item['description'];
 		
 		//$echostring = $echostring . '<img src=' . $item['urls']['thumb'] . '/>';
 
