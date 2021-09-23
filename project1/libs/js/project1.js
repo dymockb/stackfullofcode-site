@@ -29,7 +29,7 @@
 //let poiMarkers = [];
 
 
-let totalLayers = 3; 
+let totalLayers = 8; 
 //	*						*						*						*				*					*							*									*
 //border, wikipedia, capitalmarker, webcams, airports, citiesLayer, cityCirclesLayer, landmarkClusterMarkers
 //(weather layer controlled by toggle)
@@ -2268,17 +2268,17 @@ function displayCountry(isoa3Code) {
 	
 	worldBankInfo(isoa3Code); //1 layer, also unsplash images and timezone
 	placeBorder(isoa3Code);	//2 layers	
-	//getWebcams(isoA2);  // 1 layer
-	//getGeonamesAirports(isoA2); // 1 layer
-	//getGeonamesCities(isoA2); //3 layers (cities and cityCirles), also weatherlayer but controlled by toggle
+	getWebcams(isoA2);  // 1 layer
+	getGeonamesAirports(isoA2); // 1 layer
+	getGeonamesCities(isoA2); //3 layers (cities and cityCirles), also weatherlayer but controlled by toggle
 
 
 	//Background data
 	countryBasics(isoA2);
-	//getHolidays(isoA2);
-	//weatherChartCelcius(isoa3Code);
-	//weatherChartRain(isoa3Code);
-	//getNews(isoA2);
+	getHolidays(isoA2);
+	weatherChartCelcius(isoa3Code);
+	weatherChartRain(isoa3Code);
+	getNews(isoA2);
 
 } // end of DISPLAY COUNTRY 
 
