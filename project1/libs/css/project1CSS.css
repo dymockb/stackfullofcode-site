@@ -23,6 +23,31 @@ html, body {
 	margin: 0
 }
 
+div#progressBar {
+	position: absolute;
+	z-index: 1000;
+	height: 0.55rem;
+}
+
+div#what {
+    position: absolute;
+    z-index: 2000;
+    display: flex;
+    justify-content: center;
+		padding-top: 1rem;
+}
+
+select#floatSelect2 {
+    width: fit-content;
+    display: inline;
+}
+
+.form-switch {
+    padding-left: 2.5em;
+    display: inline;
+    width: fit-content;
+}
+
 #floatDiv {
 	position: absolute;
 	z-index: 1000;
