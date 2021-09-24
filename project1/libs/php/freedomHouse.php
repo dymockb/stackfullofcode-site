@@ -6,14 +6,13 @@
 
 	$executionStartTime = microtime(true);
 
-	//$freedomData = json_decode(file_get_contents('../../vendors/json/freedomHouse.json'),true);
-	$freedomData = json_decode(file_get_contents('../../vendors/json/jsonFreedom.json'),true);
+	$freedomData = json_decode(file_get_contents('../../vendors/json/freedomHouse.json'),true);
 
 	$freedomStatus;
 
     foreach ($freedomData as $feature) {
 
-        if ($feature["code"] == $_REQUEST['countryCode']) {
+        if ($feature["Code"] == $_REQUEST['countryCode']) {
 
             $freedomStatus = $feature;
 

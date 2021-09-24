@@ -22,6 +22,23 @@ html, body {
 .row {
 	margin: 0
 }
+
+#floatDiv {
+	position: absolute;
+	z-index: 1000;
+	display: flex;
+	justify-content: center;
+	/* margin-left: auto; */
+	/* margin-right: auto; 
+	width: min-content;
+	height: min-content;*/
+	top: 1rem;
+}
+
+select#floatSelect {
+    width: fit-content;
+}
+
 #topMenu {
 	background-color: white;
 	padding-top: 0.5rem;
@@ -201,9 +218,8 @@ button.close {
 #mapid {
 	z-index: 0
 }
-.form-switch {
-	padding: 0px;
-}
+
+
 .form-check-label {
 	padding-top: 0.5rem
 }
@@ -337,12 +353,6 @@ div>h2 {
 	margin-right: auto;
 	padding: 1rem;
 	background: #e5e5e5;
-	
-
-i.fas.fa-info-circle {
-	padding-left: 0.3rem;
-	font-size: 1.2rem;
-}
 */
 
 
@@ -371,8 +381,7 @@ i.fas.fa-info-circle {
 	color: gray
 }
 
-a#freedomInfoNode {
-	color: currentColor;
+i#freedomInfoNode {
 	font-size: 1.4rem;
 	margin-left: 0.3rem
 }

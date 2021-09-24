@@ -34,6 +34,7 @@ let totalLayers = 8;
 //border, wikipedia, capitalmarker, webcams, airports, citiesLayer, cityCirclesLayer, landmarkClusterMarkers
 //(weather layer controlled by toggle)
 
+let selectDropDown;
 let layersAdded = 0;
 let layerNames = [];
 let overlaysObj = {};
@@ -58,7 +59,7 @@ let selectedCountryLayer, wikiClusterMarkers, webcamClusterMarkers, citiesLayer,
 
 let rainChart, celciusChart, calendar
 
-const selectDropDown = document.getElementById("selectCountries");
+//const selectDropDown = document.getElementById("selectCountries");
 
 let l1 = L.tileLayer('https://{s}.tile.thunderforest.com/mobile-atlas/{z}/{x}/{y}.png?apikey={apikey}', {
 	attribution: '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>',
@@ -146,6 +147,7 @@ L.easyButton('fa-calendar-day', function() {
 	},300);
 	
 }).addTo(mymap);
+
 
 let cfg = {
   // radius should be small ONLY if scaleRadius is true (or small radius is intended)
@@ -297,7 +299,8 @@ function countryBordersFunc(response) {
 			//node.setAttribute("value", textValue);
 			node.setAttribute("value", countryBorders[i].A3code);		
 			//dropdownList.push(textValue);
-			document.getElementById("selectCountries").appendChild(node);
+			//document.getElementById("selectCountries").appendChild(node);
+			document.getElementById("floatSelect").appendChild(node);
 		}
 	}	
 	
@@ -413,6 +416,7 @@ function placeBorder(isoa3Code){ // add 2 layers: selectedCountryLayer, wikiClus
 			
       document.getElementById("countryModalTitle").innerHTML = currentCountry;
 			
+			console.log('2', isoa3Code);
 			$.ajax({
 				url: "libs/php/freedomHouse.php",
 				type: "POST",
@@ -430,28 +434,23 @@ function placeBorder(isoa3Code){ // add 2 layers: selectedCountryLayer, wikiClus
 					let countryColor;
 					let freedomText;
 					let freedomClass;
-					let freedomURL;
 					
-					if (result.data.status == 'F') {
+					if (result.data.Status == 'F') {
 						countryColor = '#04bb04';
 						freedomText = 'Free';
 						freedomClass = 'free';
-						freedomURL = result.data.url;
-					} else if (result.data.status == 'NF') {
+					} else if (result.data.Status == 'NF') {
 						countryColor = 'red';
 						freedomText = 'Not Free'
 						freedomClass = 'notFree';
-						freedomURL = result.data.url;
-					}	else if (result.data.status == 'PF') {
+					}	else if (result.data.Status == 'PF') {
 						countryColor = 'orange';
 						freedomText = 'Partly Free'
 						freedomClass = 'partlyFree';
-						freedomURL = result.data.url;
 					} else {
 						countryColor = 'grey';
 						freedomText = 'No freedom data';
 						freedomClass = 'nofreedomData'
-						freedomURL = result.data.url;
 					}
 					
 					borderLines = L.geoJSON(country, {
@@ -463,11 +462,7 @@ function placeBorder(isoa3Code){ // add 2 layers: selectedCountryLayer, wikiClus
 						}
 					});
 					
-					document.getElementById('freedomInfoNode').setAttribute('class', `${freedomClass}`);
-					document.getElementById('freedomInfoIcon').setAttribute('class', `fas fa-info-circle ${freedomClass}`);
-					
-					let webLink = freedomURL == 'root' ? '' : freedomURL;					
-					document.getElementById('freedomInfoNode').setAttribute('href', `https://freedomhouse.org${webLink}`);
+					document.getElementById('freedomInfoNode').setAttribute('class', `fas fa-info-circle ${freedomClass}`);
 	
 					document.getElementById('countryFreedom').innerHTML = freedomText;
 					document.getElementById('countryFreedom').setAttribute('class', `modal-title ${freedomClass}`);
@@ -513,7 +508,6 @@ function worldBankInfo(isoa3Code){ //add 1 layer: capital marker, also get unspl
 	},
 	success: function(result) {
 		console.log('world bank result:', result.data);
-		if (result.data.length > 1) {
 		let capital = result.data[1][0].capitalCity;
 		lat = result.data[1][0].latitude;
 		lng = result.data[1][0].longitude;
@@ -546,24 +540,13 @@ function worldBankInfo(isoa3Code){ //add 1 layer: capital marker, also get unspl
 		overlaysObj['Capital'] = capitalMarker;
 		layerNames.push('capitalMarker');
 		
-		//document.getElementById("capital").innerHTML = result.data[1][0].capitalCity;
+		document.getElementById("capital").innerHTML = result.data[1][0].capitalCity;
 		
 		//console.log('get timezone');
 		getTimezone(lat, lng);
-		let countryName = result.data[1][0].name;
-	
-		unsplashImages(countryName);
 		
-		} else {
-			layersAdded++;
-			let errorLayer = L.layerGroup();
-			overlaysObj['Capital (no data)'] = errorLayer;
-			layersOnAndOff.push(errorLayer);
-			console.log('worldBank capital error')
-			
-			unsplashImages(currentCountry);
-		}
-
+		let countryName = result.data[1][0].name;
+		unsplashImages(countryName);
 		
 	},
 	error: function(jqXHR, textStatus, errorThrown) {
@@ -1526,47 +1509,8 @@ function countryBasics(isoA2){ // add 1 layer: capitalMarker; call getXR
 			document.getElementById("currency").innerHTML = result.data.geonames[0].currencyCode;
 			document.getElementById("population").innerHTML = parseInt(result.data.geonames[0].population).toLocaleString('en-US');
 			document.getElementById("currency").innerHTML = result.data.geonames[0].currencyCode;
-			document.getElementById("capital").innerHTML = result.data.geonames[0].capital;
-
-			//let countryName = result.data.geonames[0].countryName;
 
 			
-			/*
-			lat = result.data[1][0].latitude;
-			lng = result.data[1][0].longitude;
-			let capitalPopup = L.popup({autoPan: false, autoClose: false, closeOnClick: false});
-			let node = document.createElement("button");
-			node.innerHTML = capital;
-			node.setAttribute("type", "button");
-			node.setAttribute("class", "badge rounded-pill bg-secondary");
-			node.setAttribute("data-toggle", "modal");
-			node.setAttribute("style", "font-size: 1rem");
-			node.setAttribute("data-target", "#viewCountryModal");
-			
-			capitalPopup.setContent(node);
-			
-			capitalMarkerIcon = L.divIcon({
-				className: 'capitalMarkerIcon'
-			});
-			
-			capitalMarker = L.marker([lat, lng], {
-				icon: capitalMarkerIcon
-			}).bindPopup(capitalPopup);
-			
-			capitalMarker.getPopup().on('remove', function () {
-				mymap.removeLayer(capitalMarker);
-			});
-			
-			capitalMarker.addTo(mymap).openPopup();
-			layersAdded++;
-			layersOnAndOff.push(capitalMarker);
-			overlaysObj['Capital'] = capitalMarker;
-			layerNames.push('capitalMarker');
-
-			//console.log('get timezone');
-			getTimezone(lat, lng);
-			*/
-
 			let currency = result.data.geonames[0].currencyCode;					
 			
 			$.ajax({
@@ -2326,7 +2270,6 @@ function displayCountry(isoa3Code) {
 	//Add layers:
 	
 	worldBankInfo(isoa3Code); //1 layer, also unsplash images and timezone
-	
 	placeBorder(isoa3Code);	//2 layers	
 	getWebcams(isoA2);  // 1 layer
 	getGeonamesAirports(isoA2); // 1 layer
@@ -2343,20 +2286,6 @@ function displayCountry(isoa3Code) {
 } // end of DISPLAY COUNTRY 
 
 //EVENT HANDLERS
-
-selectDropDown.addEventListener("change", function (event) {
-
-  selectedCountry = event.target.value;
-	
-	if (weatherOn == true) {
-		document.getElementById('weatherToggle').click();
-	}
-	
-	switchCountry(layersOnAndOff, controlsOnAndOff);
-		  
-	displayCountry(selectedCountry);
-  
-}, false)
 
 $('#weatherToggle').click(function (){
 		
@@ -2451,7 +2380,70 @@ window.onload = (event) => {
 			console.log("Window loaded", event);
 		
 			$(document).ready(function () {
+				
+				L.easyButton('form-check form-switch', function() {
+	
+				}).addTo(mymap);
+				
+				let floatDiv = document.createElement('div');
+				floatDiv.setAttribute('id', 'floatDiv');
+
+				let floatSelect = document.createElement('select');
+				floatSelect.setAttribute('id', 'floatSelect');
+				floatSelect.setAttribute('class', 'form-select');
+				floatSelect.setAttribute('name', 'country');
+
+				let floatOptions = document.createElement('option');
+				floatOptions.innerHTML = 'Select a country';
+				//floatOptions.setAttribute('disabled');
+				//floatOptions.setAttribute('selected');
+				floatOptions.setAttribute('value', '');
+				
+				floatSelect.appendChild(floatOptions);	
+				
+				let formSwitch = document.createElement('div');
+				formSwitch.setAttribute('class', 'form-check form-switch');
+				formSwitch.setAttribute('style', 'display: flex; align-items: center');
+				
+				let inputSwitch = document.createElement('input');
+				inputSwitch.setAttribute('class', 'form-check-input cursorClass');
+				inputSwitch.setAttribute('id', 'weatherToggle22');
+				inputSwitch.setAttribute('type', 'checkbox');
+				
+				formSwitch.appendChild(inputSwitch);
+				
+				let weatherLoad = document.createElement('div');
+				let weatherLoadText = document.createElement('span');
+				weatherLoadText.innerHTML = 'Loading...';
+				let weatherLoadIcon = document.createElement('i');
+				weatherLoadIcon.setAttribute('class', 'fas fa-cloud-sun');
+				weatherLoad.appendChild(weatherLoadText);
+				weatherLoad.appendChild(weatherLoadIcon);
+
+				//<span id="weatherDataLoading">Loading...</span><i class="fas fa-cloud-sun"></i>
 								
+				floatDiv.appendChild(floatSelect);				
+				floatDiv.appendChild(formSwitch);
+				floatDiv.appendChild(weatherLoad);
+
+				document.getElementById('mapid').appendChild(floatDiv);
+				
+				selectDropDown = document.getElementById("floatSelect");
+				
+				selectDropDown.addEventListener("change", function (event) {
+
+					selectedCountry = event.target.value;
+					
+					if (weatherOn == true) {
+						document.getElementById('weatherToggle').click();
+					}
+					
+					switchCountry(layersOnAndOff, controlsOnAndOff);
+							
+					displayCountry(selectedCountry);
+					
+				}, false)
+				
 				function recursiveLoad () {
 					console.log('load attempt'); 
 					 
