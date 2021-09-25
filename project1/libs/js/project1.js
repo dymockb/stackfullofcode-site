@@ -29,7 +29,7 @@
 //let poiMarkers = [];
 
 
-let totalLayers = 1; 
+let totalLayers = 2; 
 //	*						*						*						*				*					*							*									*
 //border, wikipedia, capitalmarker, webcams, airports, citiesLayer, cityCirclesLayer, landmarkClusterMarkers
 //(weather layer controlled by toggle)
@@ -646,7 +646,10 @@ function unsplashImages(countryName) { //
 }
 
 function getWebcams (isoA2code) { // add 1 layer: webcams
-	
+
+		mymap.createPane('webcamPopupPane');
+		mymap.getPane('webcamPopupPane').style.zIndex = 1000;
+		
 		$.ajax({
 		url: "libs/php/windyWebcams.php",
 		type: "POST",
@@ -665,22 +668,48 @@ function getWebcams (isoA2code) { // add 1 layer: webcams
 			let lat = result.data[r].lat;
 			let lng = result.data[r].lng;
 			//let webcamPopup = L.popup({autoPan: false, autoClose: false, closeOnClick: false});
+			let webcamPopup = L.popup({
+				autoPan: true, 
+				autoClose: false,
+				className: 'wikiPopup',
+					pane: 'webcamPopupPane'
+				});
 			let webcamTooltip = L.tooltip({
 				className: 'wikiPopup',
-				sticky: true
+				sticky: true,
+				direction: 'top'
 				});
-			let node = document.createElement("button");
-			node.setAttribute("type", "button");
-			node.setAttribute("data-toggle", "modal");
+			let node = document.createElement("div");
+			//let node = document.createElement("button");
+			//node.setAttribute("type", "button");
+			//node.setAttribute("data-toggle", "modal");
 			//node.setAttribute("style", "font-size: 1rem");
-			node.setAttribute("data-target", "#webcamModal");
+			//node.setAttribute("data-target", "#webcamModal");
 			let previewNode = document.createElement('img');
 			previewNode.setAttribute("class", "webcamPreview");
 			previewNode.setAttribute('src', result.data[r].thumbnail);
+			
+			let webcamTitleNode = document.createElement('p');
+			webcamTitleNode.setAttribute('class', 'webcamPopupPara');
+			webcamTitleNode.innerHTML = result.data[r].title;
+
+			node.appendChild(webcamTitleNode);
 			node.appendChild(previewNode);
 			
 			webcamTooltip.setContent(node);
-			//webcamPopup.setContent(node);
+			
+			let popupWebcamDiv = document.createElement('div');
+			
+			let popupWebcam = document.createElement('iframe');
+			popupWebcam.setAttribute('src', result.data[r].embed);
+			
+			let popupWebcamTitle = document.createElement('p');
+			popupWebcamTitle.setAttribute('class', 'webcamPopupPara');
+			popupWebcamTitle.innerHTML = result.data[r].title;
+			
+			popupWebcamDiv.appendChild(popupWebcamTitle)
+			popupWebcamDiv.appendChild(popupWebcam);
+			webcamPopup.setContent(popupWebcamDiv);
 			
 			//webcamMarkerIcon = L.divIcon({	className: 'cursorClass fas fa-video'});
 			
@@ -711,7 +740,7 @@ function getWebcams (isoA2code) { // add 1 layer: webcams
 				
 			//		shadowSize: [40, 0]
 			//}).bindPopup(webcamPopup);
-			}).bindTooltip(webcamTooltip);
+			}).bindTooltip(webcamTooltip).bindPopup(webcamPopup);
 			
 			webcamMarker.on('mouseover', function (e) {
         //this.openPopup();
@@ -721,13 +750,19 @@ function getWebcams (isoA2code) { // add 1 layer: webcams
 				//this.closePopup();
        });
 			 
+		
+		webcamMarker.on('click', function (e) {
+			this.closeTooltip();
+		 });
+
+			/*
 			webcamMarker.on('click', function (e) {
 				document.getElementById('webcamTitle').innerHTML = result.data[r].title;
 				document.getElementById('embedWebcam').setAttribute('src', result.data[r].embed);
 				document.getElementById('webcamBtn').click();
 			
        });
-			
+			*/
 			webcamMarkers.push(webcamMarker);
 
 		}
@@ -1968,6 +2003,9 @@ function getNews(isoA2code) {
 				}
 		
 		}
+		
+		
+		
 
 		
 		let countOfArticles = 5;
@@ -2434,7 +2472,7 @@ function displayCountry(isoa3Code) {
 	placeBorder(isoa3Code);	//2 layers		
 	
 	//worldBankInfo(isoa3Code); //1 layer, also unsplash images and timezone
-	//getWebcams(isoA2);  // 1 layer
+	getWebcams(isoA2);  // 1 layer
 	//getGeonamesAirports(isoA2); // 1 layer
 	//getGeonamesCities(isoA2); //3 layers (cities and cityCirles), also weatherlayer but controlled by toggle
 

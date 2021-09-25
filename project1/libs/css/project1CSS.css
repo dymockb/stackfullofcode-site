@@ -538,6 +538,10 @@ div#carouselExampleControls {
 	width: 200px
 }
 
+.webcamPopupPara {
+	margin: 0px !important;
+}
+
 #weatherIcon {
 	height: 40px;
 }
