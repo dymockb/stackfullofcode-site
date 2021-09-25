@@ -29,7 +29,7 @@
 //let poiMarkers = [];
 
 
-let totalLayers = 8; 
+let totalLayers = 1; 
 //	*						*						*						*				*					*							*									*
 //border, wikipedia, capitalmarker, webcams, airports, citiesLayer, cityCirclesLayer, landmarkClusterMarkers
 //(weather layer controlled by toggle)
@@ -334,7 +334,8 @@ function switchCountry(layersToChange, controlsToChange){
 	//						<div id='calendar${calendarNum}'></div>
 	//						<div style='clear:both'></div>`
 	
-	document.getElementById('accordion').innerHTML = "";
+	//document.getElementById('accordion').innerHTML = "";
+	document.getElementById('newsDiv').innerHTML = "";
 	
 	clearTimeout(timer);
 	
@@ -443,7 +444,7 @@ function placeBorder(isoa3Code){ // add 2 layers: selectedCountryLayer, wikiClus
 			layerNames.push('selectedCountryLayer');
 
       document.getElementById("countryModalTitle").innerHTML = currentCountry;			
-			getWikipedia(currentCountry, bounds);	
+			//getWikipedia(currentCountry, bounds);	
 			
 			/*
 			console.log('2', isoa3Code);
@@ -1701,6 +1702,9 @@ function getNews(isoA2code) {
 		function recursiveTranslate(articlesToTranslate) {
 			
 			if (articlesToTranslate.length > 0) {
+				
+				document.getElementById('newsProgressBar').setAttribute('style', `width: ${newsProgressIncrement}%`);			
+				newsProgressIncrement += newsIncrement
 							
 				function recursiveContent(content) {
 					
@@ -1720,22 +1724,20 @@ function getNews(isoA2code) {
 						
 						if (result.data.code == 200) {
 						
-						if (contentObj.type == 'description') {
+							if (contentObj.type == 'description') {
 
-								translatedObj['description'] = result.data.translated_text 
-								translatedObj['EN_source'] = contentObj.text == result.data.translated_text ? true : false;							
-							
-						} else if (contentObj.type == 'title') {
-							
-								translatedObj['title'] = result.data.translated_text 
-								translatedObj['EN_source'] = contentObj.text == result.data.translated_text ? true : false;							
-							
-						} else {
-							//console.log('what???')
-						}
+									translatedObj['description'] = result.data.translated_text 
+									translatedObj['EN_source'] = contentObj.text == result.data.translated_text ? true : false;							
+								
+							} else if (contentObj.type == 'title') {
+								
+									translatedObj['title'] = result.data.translated_text 
+									translatedObj['EN_source'] = contentObj.text == result.data.translated_text ? true : false;							
+								
+							}
 						
 						} else {
-							//console.log('translate error code', result.data.code);
+							console.log('translate error code', result.data.code);
 						}
 						
 						//translations.push(result);
@@ -1784,9 +1786,93 @@ function getNews(isoA2code) {
 				recursiveContent(content);
 
 				} else {
+					
+					//let newsProgressTimer = setTimeout(function() {
+						document.getElementById('newsProgressBar').setAttribute('style', "width: 100%; display: none !important");
+						//document.getElementById('newsProgressBar').setAttribute('display', 'none');
+					//	clearTimeout(newsProgressTimer);
+					//}, 1000);
 		
 					function createAccordianArticle(oneArt, target) {
-			
+						
+						let cardDiv = document.createElement('div');
+						
+						//let cardHeaderDiv = document.createElement('div');
+						//let headerDiv = document.createElement('h5');
+						//let buttonDiv = document.createElement('button');
+						
+						//let cardBodyDiv = document.createElement('div');
+						let bodyDiv = document.createElement('div');
+						let sourceDiv = document.createElement('div');
+						let linkDiv = document.createElement('a');
+						let descDiv = document.createElement('div');
+						let imgDiv = document.createElement('img');
+						let extLinkIcon = document.createElement('i');
+						
+						descDiv.setAttribute('class', 'news-description');
+						extLinkIcon.setAttribute('class', 'fas fa-external-link-alt');
+							
+						linkDiv.appendChild(extLinkIcon);
+
+						
+						//cardHeaderDiv.setAttribute('class','card-header');
+						//cardHeaderDiv.setAttribute('id','headingOne');
+						//headerDiv.setAttribute('class','mb-0');
+						
+						//buttonDiv.setAttribute('class','accordion-button collapsed');
+						//buttonDiv.setAttribute('data-toggle','collapse');
+						//buttonDiv.setAttribute('data-target',`#collapse${target}`);
+						//buttonDiv.setAttribute('aria-expanded','false');
+						//buttonDiv.setAttribute('aria-controls','collapseOne');
+						
+						let titleDiv = document.createElement('div');
+						titleDiv.innerHTML = oneArt.title;
+
+						titleDiv.appendChild(linkDiv);						
+						//cardBodyDiv.setAttribute('id',`collapse${target}`);
+						//cardBodyDiv.setAttribute('class','collapse');
+						//cardBodyDiv.setAttribute('aria-labelledby','headingOne');
+						//cardBodyDiv.setAttribute('data-parent','#accordion');
+						
+						//bodyDiv.setAttribute('class','card-body');
+						
+						//sourceDiv.innerHTML = 'Source: '
+						
+						linkDiv.setAttribute('href', oneArt.url);
+						linkDiv.setAttribute('target', '_blank');
+						//linkDiv.innerHTML = oneArt.source;
+						
+						descDiv.innerHTML = oneArt.description;
+						
+						imgDiv.setAttribute('src',oneArt.imgURL);
+						if (oneArt.imgURL.includes('noImage')){
+							imgDiv.setAttribute('style', 'display: none');
+						}
+						imgDiv.setAttribute('class','newsImage');
+						
+						let hzRw = document.createElement('hr');
+						//headerDiv.appendChild(buttonDiv);
+						//cardHeaderDiv.appendChild(headerDiv);
+						
+						//descDiv.appendChild(imgDiv);
+						//sourceDiv.appendChild(linkDiv);
+						
+						bodyDiv.appendChild(imgDiv);
+						bodyDiv.appendChild(titleDiv);
+						//bodyDiv.appendChild(linkDiv);						
+						//bodyDiv.appendChild(sourceDiv);
+						bodyDiv.appendChild(descDiv);
+						bodyDiv.appendChild(hzRw);
+						
+						//cardBodyDiv.appendChild(bodyDiv);
+						
+						//cardDiv.appendChild(cardHeaderDiv);
+						//cardDiv.appendChild(sourceDiv);
+						//cardDiv.appendChild(bodyDiv);
+					
+						document.getElementById('newsDiv').appendChild(bodyDiv);
+						
+						/*
 						let cardDiv = document.createElement('div');
 						
 						let cardHeaderDiv = document.createElement('div');
@@ -1803,6 +1889,7 @@ function getNews(isoA2code) {
 						cardHeaderDiv.setAttribute('class','card-header');
 						cardHeaderDiv.setAttribute('id','headingOne');
 						headerDiv.setAttribute('class','mb-0');
+						
 						buttonDiv.setAttribute('class','accordion-button collapsed');
 						buttonDiv.setAttribute('data-toggle','collapse');
 						buttonDiv.setAttribute('data-target',`#collapse${target}`);
@@ -1846,7 +1933,8 @@ function getNews(isoA2code) {
 						cardDiv.appendChild(cardBodyDiv);
 					
 						document.getElementById('accordion').appendChild(cardDiv);
-					
+						*/
+						
 					}
 
 					if (translatedObjs.length == 0) {
@@ -1880,8 +1968,13 @@ function getNews(isoA2code) {
 				}
 		
 		}
+
 		
-		recursiveTranslate(result.data.slice(0,5));
+		let countOfArticles = 5;
+		let newsProgressIncrement = 100/countOfArticles;
+		let newsIncrement = 100/countOfArticles;
+		
+		recursiveTranslate(result.data.slice(0,countOfArticles));
 		
 	},
 	error: function (jqXHR, textStatus, errorThrown) {
@@ -2339,18 +2432,19 @@ function displayCountry(isoa3Code) {
 	//Add layers:
 
 	placeBorder(isoa3Code);	//2 layers		
-	worldBankInfo(isoa3Code); //1 layer, also unsplash images and timezone
-	getWebcams(isoA2);  // 1 layer
-	getGeonamesAirports(isoA2); // 1 layer
-	getGeonamesCities(isoA2); //3 layers (cities and cityCirles), also weatherlayer but controlled by toggle
+	
+	//worldBankInfo(isoa3Code); //1 layer, also unsplash images and timezone
+	//getWebcams(isoA2);  // 1 layer
+	//getGeonamesAirports(isoA2); // 1 layer
+	//getGeonamesCities(isoA2); //3 layers (cities and cityCirles), also weatherlayer but controlled by toggle
 
 
 	//Background data
 	
-	countryBasics(isoA2);
-	getHolidays(isoA2);
-	weatherChartCelcius(isoa3Code);
-	weatherChartRain(isoa3Code);
+	//countryBasics(isoA2);
+	//getHolidays(isoA2);
+	//weatherChartCelcius(isoa3Code);
+	//weatherChartRain(isoa3Code);
 	getNews(isoA2);
 
 } // end of DISPLAY COUNTRY 

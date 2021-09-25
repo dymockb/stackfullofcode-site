@@ -318,6 +318,23 @@ button.btn.btn-secondary {
 h6#countryFreedom {
     padding-left: 0px;
 }
+
+.modal-body {
+max-height: 70vh;
+overflow-y: auto;
+}
+
+#newsProgressBar {
+ height: 1rem;
+}
+
+.news-description {
+	font-style: italic
+}
+
+a {
+ padding-left: 0.5rem;
+}
 /*
 
 .fa-video{
