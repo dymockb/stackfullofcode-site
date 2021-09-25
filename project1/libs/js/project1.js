@@ -2337,15 +2337,16 @@ function displayCountry(isoa3Code) {
 	}
 	
 	//Add layers:
-	
+
+	placeBorder(isoa3Code);	//2 layers		
 	worldBankInfo(isoa3Code); //1 layer, also unsplash images and timezone
-	placeBorder(isoa3Code);	//2 layers	
 	getWebcams(isoA2);  // 1 layer
 	getGeonamesAirports(isoA2); // 1 layer
 	getGeonamesCities(isoA2); //3 layers (cities and cityCirles), also weatherlayer but controlled by toggle
 
 
 	//Background data
+	
 	countryBasics(isoA2);
 	getHolidays(isoA2);
 	weatherChartCelcius(isoa3Code);

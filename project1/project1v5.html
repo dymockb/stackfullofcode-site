@@ -392,7 +392,7 @@
 
 
 
-			
+		<!--	
 		<div id="what">
 		<div class="row w-100">
 		<select class="form-select" id="floatSelect">
@@ -420,8 +420,42 @@
 		</div>
 		
 		
+		</div>
+		-->
+	
+	<div class="h-100 flex-grow-1" id="mapid">
+	<div id="navPane" class="leaflet-pane leaflet-overlay-pane">
+			<div id="what">
+		<div class="row w-100">
+		<select class="form-select" id="floatSelect">
+		<option disabled selected value="">Select a country</option>
+		</select>
+
+		</div>
+
+		<div id="progressDiv" class="row w-100">
+			<div aria-valuemax="100" aria-valuemin="0" aria-valuenow="85" class="progress-bar progress-bar-striped progress-bar-animated bg-success col-12 d-flex" id="progressBar" role="progressbar" style="width: 0%;">
+			</div>
+					
+
+		</div>
+		
+		<div class="row w-100">
+
+
+		<div class="form-check form-switch">
+		<span id="weatherDataLoading">Loading...</span>
+		<i id="weatherToggleIcon" class="fas fa-cloud-sun"></i>		
+		<input id="weatherToggle" class="form-check-input cursorClass" type="checkbox">
+
+		</div>
+		</div>
+		
+		
+		</div>
+	
 	</div>
-	<div class="h-100 flex-grow-1" id="mapid"></div>
+	</div>
 <!--
 
 <div class="row h-100 justify-content-center flex-grow-1" id="mapid"></div>	
