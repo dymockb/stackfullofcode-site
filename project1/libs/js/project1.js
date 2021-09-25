@@ -29,7 +29,7 @@
 //let poiMarkers = [];
 
 
-let totalLayers = 1; 
+let totalLayers = 8; 
 //	*						*						*						*				*					*							*									*
 //border, wikipedia, capitalmarker, webcams, airports, citiesLayer, cityCirclesLayer, landmarkClusterMarkers
 //(weather layer controlled by toggle)
@@ -59,7 +59,7 @@ let selectedCountryLayer, wikiClusterMarkers, webcamClusterMarkers, citiesLayer,
 
 let rainChart, celciusChart, calendar
 
-selectDropDown = document.getElementById("floatSelect2");
+selectDropDown = document.getElementById("floatSelect");
 
 let l1 = L.tileLayer('https://{s}.tile.thunderforest.com/mobile-atlas/{z}/{x}/{y}.png?apikey={apikey}', {
 	attribution: '&copy; <a href="http://www.thunderforest.com/">Thunderforest</a>',
@@ -108,6 +108,11 @@ new L.Control.Zoom({
 L.easyButton('fa-home', function() {
 
 	if (locationPermission == true) {
+		
+		if (weatherOn == true) {
+		document.getElementById('weatherToggle').click();
+		}
+		
 		switchCountry(layersOnAndOff, controlsOnAndOff);
 		displayCountry(userISOa3);
 	} else {
@@ -300,7 +305,7 @@ function countryBordersFunc(response) {
 			node.setAttribute("value", countryBorders[i].A3code);		
 			//dropdownList.push(textValue);
 			//document.getElementById("selectCountries").appendChild(node);
-			document.getElementById("floatSelect2").appendChild(node);
+			document.getElementById("floatSelect").appendChild(node);
 		}
 	}	
 	
@@ -310,7 +315,7 @@ function countryBordersFunc(response) {
 
 function switchCountry(layersToChange, controlsToChange){
 	
-	/*
+	
 	document.getElementById('weatherDataLoading').innerHTML = 'Loading...';
 	document.getElementById('weatherToggle').setAttribute('style', 'display: none');
 	document.getElementById('wrap').innerHTML = "";
@@ -332,7 +337,7 @@ function switchCountry(layersToChange, controlsToChange){
 	document.getElementById('accordion').innerHTML = "";
 	
 	clearTimeout(timer);
-	*/
+	
 	for (let s = 0; s < layersToChange.length; s++) {
 		mymap.removeLayer(layersOnAndOff[s]);
 	}
@@ -438,7 +443,7 @@ function placeBorder(isoa3Code){ // add 2 layers: selectedCountryLayer, wikiClus
 			layerNames.push('selectedCountryLayer');
 
       document.getElementById("countryModalTitle").innerHTML = currentCountry;			
-			//getWikipedia(currentCountry, bounds);	
+			getWikipedia(currentCountry, bounds);	
 			
 			/*
 			console.log('2', isoa3Code);
@@ -1041,7 +1046,7 @@ function getGeonamesCities(isoA2) { // 3 layers added: cityCirclesLayer (and Cit
 								
 					let lat = currentWeatherData[hm]['data']['lat'];
 					let lng = currentWeatherData[hm]['data']['lng'];
-					let temp = currentWeatherData[hm]['data']['temp'];
+					let temp = Math.floor(currentWeatherData[hm]['data']['temp']);
 										
 					let outerNode = document.createElement('div');
 					let imgDivNode = document.createElement('div');
@@ -2294,19 +2299,19 @@ function displayCountry(isoa3Code) {
 	
 	//Add layers:
 	
-	//worldBankInfo(isoa3Code); //1 layer, also unsplash images and timezone
+	worldBankInfo(isoa3Code); //1 layer, also unsplash images and timezone
 	placeBorder(isoa3Code);	//2 layers	
-	//getWebcams(isoA2);  // 1 layer
-	//getGeonamesAirports(isoA2); // 1 layer
-	//getGeonamesCities(isoA2); //3 layers (cities and cityCirles), also weatherlayer but controlled by toggle
+	getWebcams(isoA2);  // 1 layer
+	getGeonamesAirports(isoA2); // 1 layer
+	getGeonamesCities(isoA2); //3 layers (cities and cityCirles), also weatherlayer but controlled by toggle
 
 
 	//Background data
-	//countryBasics(isoA2);
-	//getHolidays(isoA2);
-	//weatherChartCelcius(isoa3Code);
-	//weatherChartRain(isoa3Code);
-	//getNews(isoA2);
+	countryBasics(isoA2);
+	getHolidays(isoA2);
+	weatherChartCelcius(isoa3Code);
+	weatherChartRain(isoa3Code);
+	getNews(isoA2);
 
 } // end of DISPLAY COUNTRY 
 

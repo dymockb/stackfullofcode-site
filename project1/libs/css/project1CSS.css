@@ -23,18 +23,34 @@ html, body {
 	margin: 0
 }
 
+.row.w-100 {
+	justify-content: center
+}
+
+#progressDiv {
+	justify-content: left;
+	height: 0.8rem
+}
+/*
 div#progressBar {
 	position: absolute;
 	z-index: 1000;
 	height: 0.55rem;
 }
+*/
 
 div#what {
-    position: absolute;
-    z-index: 2000;
-    display: flex;
-    justify-content: center;
-		padding-top: 1rem;
+	position: absolute;
+	z-index: 2;
+	/* display: flex; */
+	justify-content: center;
+	padding-top: 0.8rem;
+	width: fit-content;
+	/* display: block; */
+	/* margin-left: auto; */
+	/* margin-right: auto; */
+	margin-left: 50%;
+	transform: translate(-50%);
 }
 
 select#floatSelect2 {
@@ -43,8 +59,6 @@ select#floatSelect2 {
 }
 
 .form-switch {
-    padding-left: 2.5em;
-    display: inline;
     width: fit-content;
 }
 
@@ -84,10 +98,6 @@ select#floatSelect {
 	text-align: left;
 	padding-left: 0px;
 	font-size: 1.3rem;
-}
-
-#weatherToggle {
-	display: none
 }
 
 #weatherDataLoading {
@@ -188,10 +198,6 @@ select#floatSelect {
 	width: 25%
 }
 
-#fetching, #progressBar {
-	position:relative;
-}
-
 button.close {
 	display: block;
 	margin-left: auto;
@@ -232,12 +238,25 @@ button.close {
 }
 
 #weatherToggle {
+	height: 1.5rem;
+	width: 3rem;
+	display: none;
+}
+
+#weatherToggle {
+	/* display: none
 	padding-top: 1rem;
 	margin-top: 0.5rem;
 	margin-left: 1rem;
 	margin-right: 0.5rem;
-	height: 1.5rem;
-	width: 2.8rem
+	*/
+}
+
+#weatherToggleIcon {
+	font-size: 1.8rem;
+	padding-left: 0.5rem;
+	color: #5a5959
+	
 }
 
 #mapid {
