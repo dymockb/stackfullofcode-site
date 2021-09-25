@@ -377,7 +377,7 @@ function placeBorder(isoa3Code){ // add 2 layers: selectedCountryLayer, wikiClus
 						
 			let country = result.data;
 			let geojsonLayer = L.geoJson(country);
-			let bounds = geojsonLayer.getBounds();
+			let bounds = geojsonLayer.getBounds().pad(0.1);
 			
 //			if (!fijiUpdated) {
 				if (isoa3Code == 'FJI') {
@@ -1013,15 +1013,16 @@ function getGeonamesCities(isoA2) { // 3 layers added: cityCirclesLayer (and Cit
 			
 			} else {
 				
-				document.getElementById("progressBar").setAttribute('style', "width: 100%;");
+				//document.getElementById("progressBar").setAttribute('style', "width: 100%;");
 
 				let progressTimer = setTimeout(function() {
 					document.getElementById("progressBar").setAttribute('style', "width: 0%; visibility: hidden");
+					document.getElementById('weatherDataLoading').innerHTML = "";
+					document.getElementById('weatherToggle').setAttribute('style', 'display: inherit');
 					clearTimeout(progressTimer);
-					}, 1500);
+					}, 1000);
 				
-				document.getElementById('weatherDataLoading').innerHTML = "";
-				document.getElementById('weatherToggle').setAttribute('style', 'display: inherit');
+
 				//document.getElementById('viewCountryBtn').setAttribute('style', 'display: inherit');
 
 				let maxTemp = -100;				
@@ -1314,6 +1315,43 @@ function hereLandmarks(markerlist) { // called inside getGeonamesCities. 1 layer
 
 	} else {
 		
+					if (landmarkList.length > 0) {
+					landmarkClusterMarkers = L.markerClusterGroup({
+					iconCreateFunction: function(cluster) {
+						let childCount = cluster.getChildCount();
+						let c = ' landmark-marker-cluster-';
+						if (childCount < 10) {
+							c += 'small';
+						} else if (childCount < 100) {
+							c += 'medium';
+						} else {
+							c += 'large';
+						}
+
+						return new L.DivIcon({ html: '<div><span>' + childCount + '</span></div>', className: 'cursorClass marker-cluster' + c, iconSize: new L.Point(40, 40) });
+					},
+					showCoverageOnHover: false
+				});
+				
+				for (let i = 0; i < landmarkList.length; i++) {
+					landmarkClusterMarkers.addLayer(landmarkList[i]);
+				}
+				
+				landmarkClusterMarkers.addTo(mymap);
+				overlaysObj['Landmarks'] = landmarkClusterMarkers;
+				layersAdded++;
+				layersOnAndOff.push(landmarkClusterMarkers);
+				layerNames.push('landmarkClusterMarkers');
+					
+				} else {
+					console.log('landmarks - no data');
+					layersAdded++;
+					let errorLayer = L.layerGroup();
+					overlaysObj['Landmarks (no data)'] = errorLayer;
+					layersOnAndOff.push(errorLayer);
+				}
+		
+		/* old contents of else
 		landmarkClusterMarkers = L.markerClusterGroup({
 		iconCreateFunction: function(cluster) {
 			let childCount = cluster.getChildCount();
@@ -1340,8 +1378,9 @@ function hereLandmarks(markerlist) { // called inside getGeonamesCities. 1 layer
 	layersAdded++;
 	layersOnAndOff.push(landmarkClusterMarkers);
 	layerNames.push('landmarkClusterMarkers');
-
+*/
 	}
+	
 }
 
 function getWikipedia (currentCountry, bounds) { // called inside place border add 1 layer: wikiClusterMarkers; 2 x Ajax 
