@@ -68,7 +68,7 @@
 				</div>
 				<div class="modal-body">
 					<div class="form-group">
-					Some data did not load (<span id="layerErrorText"></span>). Please reload the page to try again.
+					Some data did not load. Please refresh the page to try again.
 					</div>
 					<div class="modal-footer">
 						<button class="btn btn-secondary" data-dismiss="modal" type="button">Close</button> <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
@@ -156,10 +156,11 @@
 					<img id="flagIMG"><h5 class="modal-title" id="countryModalTitle"></h5>
 					<!--
 					<h5 class="modal-title" id="countryFreedom">TEST</h5>
-					-->
 					<a href="https://freedomhouse.org/" target="_blank">
 						<i id="freedomInfoNode" class="fas fa-info-circle"></i>
 					</a>
+					-->
+
 					<button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
 				</div>
 				<div class="modal-body">
@@ -482,16 +483,18 @@
 
 		</div>
 		
+		
 		<div class="row w-100">
-
-
+		<p id="weatherDataLoading">Weather data loading...</p>
+		<!--
 		<div class="form-check form-switch">
-		<p id="weatherDataLoading">Loading...</p>
+
 		<i id="weatherToggleIcon" class="fas fa-cloud-sun"></i>		
 		<input id="weatherToggle" class="form-check-input cursorClass" type="checkbox">
 
 		</div>
 		</div>
+		-->
 		
 		
 		</div>

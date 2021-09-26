@@ -54,7 +54,7 @@ let flagA2;
 
 let baseLayerName, capitalMarker, timer, currentCountry, selectedCountry, currentCountryPolygons, countryBorders, setMax, heatmapColor;
 
-let selectedCountryLayer, wikiClusterMarkers, webcamClusterMarkers, citiesLayer, cityCirclesLayer, weatherLayer, touristLayer, webcamLayer, shopLayer
+let selectedCountryLayer, wikiClusterMarkers, webcamClusterMarkers, citiesLayer, cityCirclesLayer, weatherLayer, touristLayer, webcamLayer, shopLayer, weatherEasyButton
 //layers defined within functions: capitalMarker
 
 let rainChart, celciusChart, calendar
@@ -160,6 +160,42 @@ L.easyButton('fa-calendar-day', function() {
 	
 }).addTo(mymap);
 
+/*
+L.easyButton('fa-cloud-sun', function(e) {
+	//document.getElementById('weatherBtn').click();
+
+	console.log(e._currentState);
+	if (weatherOn == false) {
+		e._currentState.icon.firstChild.setAttribute('style', 'color: #ffd68b');
+		for (let i = 0; i < layersOnAndOff.length; i ++) {
+			if (layersOnAndOff[i] != selectedCountryLayer) {
+				mymap.removeLayer(layersOnAndOff[i]);				
+			}
+
+		}
+		//#0291c3
+		weatherOn = true;
+		//document.getElementById('weatherToggleIcon').setAttribute('style', 'color: #ffcd72');
+		//this.setAttribute('style', 'color: #ffcd72');
+		redrawHeatMap(heatmapData, heatmapColor);
+		weatherLayer.addTo(mymap);
+	} else {
+		weatherOn = false;
+		e._currentState.icon.firstChild.setAttribute('style', 'color: #0291c3');
+		for (let i = 0; i < layersOnAndOff.length; i ++) {
+			if (layersOnAndOff[i] != selectedCountryLayer){
+				layersOnAndOff[i].addTo(mymap);
+			}
+		}		
+		let undrawObj = {max: 20, data: []};
+		//this.setAttribute('style', 'color: #5a5959'); //#5a5959
+		//document.getElementById('weatherToggleIcon').setAttribute('style', 'color: #5a5959'); //#5a5959
+		redrawHeatMap(undrawObj, heatmapColor);
+		mymap.removeLayer(weatherLayer);
+	}
+	
+}).addTo(mymap);
+*/
 
 let cfg = {
   // radius should be small ONLY if scaleRadius is true (or small radius is intended)
@@ -279,7 +315,7 @@ function addOverlays(overlaysObj) {
 		
 	} else if 
 	*/
-	(overlaysCounter < 8 ){
+	(overlaysCounter < 30 ){
 		
 		overlaysCounter++;
 		
@@ -287,7 +323,7 @@ function addOverlays(overlaysObj) {
 			
 			addOverlays(overlaysObj);
 			clearTimeout(overlayAgain);
-		},1000);
+		},1500);
 		
 	} else {
 		
@@ -324,7 +360,7 @@ function switchCountry(layersToChange, controlsToChange){
 	
 	
 	document.getElementById('weatherDataLoading').setAttribute('style', 'display: inline');
-	document.getElementById('weatherToggle').setAttribute('style', 'display: none');
+	//document.getElementById('weatherToggle').setAttribute('style', 'display: none');
 	document.getElementById('wrap').innerHTML = "";
 	
 	calendarNum++;
@@ -1068,7 +1104,7 @@ function getGeonamesCities(isoA2) { // 3 layers added: cityCirclesLayer (and Cit
 				let progressTimer = setTimeout(function() {
 					document.getElementById("progressBar").setAttribute('style', "width: 0%; visibility: hidden");
 					document.getElementById('weatherDataLoading').setAttribute('style', 'display: none');
-					document.getElementById('weatherToggle').setAttribute('style', 'display: inherit');
+					//document.getElementById('weatherToggle').setAttribute('style', 'display: inherit');
 					clearTimeout(progressTimer);
 					}, 1000);
 				
@@ -1160,6 +1196,47 @@ function getGeonamesCities(isoA2) { // 3 layers added: cityCirclesLayer (and Cit
 
 
 				weatherLayer = L.layerGroup(weatherMarkers);
+				
+				
+				weatherEasyButton = L.easyButton('fa-cloud-sun', function(e) {
+					//document.getElementById('weatherBtn').click();
+
+					console.log(e._currentState);
+					if (weatherOn == false) {
+						e._currentState.icon.firstChild.setAttribute('style', 'color: #ffd68b');
+						for (let i = 0; i < layersOnAndOff.length; i ++) {
+							if (layersOnAndOff[i] != selectedCountryLayer) {
+								mymap.removeLayer(layersOnAndOff[i]);				
+							}
+
+						}
+						//#0291c3
+						weatherOn = true;
+						//document.getElementById('weatherToggleIcon').setAttribute('style', 'color: #ffcd72');
+						//this.setAttribute('style', 'color: #ffcd72');
+						redrawHeatMap(heatmapData, heatmapColor);
+						weatherLayer.addTo(mymap);
+					} else {
+						weatherOn = false;
+						e._currentState.icon.firstChild.setAttribute('style', 'color: #0291c3');
+						for (let i = 0; i < layersOnAndOff.length; i ++) {
+							if (layersOnAndOff[i] != selectedCountryLayer){
+								layersOnAndOff[i].addTo(mymap);
+							}
+						}		
+						let undrawObj = {max: 20, data: []};
+						//this.setAttribute('style', 'color: #5a5959'); //#5a5959
+						//document.getElementById('weatherToggleIcon').setAttribute('style', 'color: #5a5959'); //#5a5959
+						redrawHeatMap(undrawObj, heatmapColor);
+						mymap.removeLayer(weatherLayer);
+					}
+					
+				});
+				
+				weatherEasyButton.addTo(mymap);
+				
+				controlsOnAndOff.push(weatherEasyButton);
+				
 
 				//not added here - controlled by toggle
 				//weatherLayer.addTo(mymap);
@@ -1182,7 +1259,7 @@ function getGeonamesCities(isoA2) { // 3 layers added: cityCirclesLayer (and Cit
 			
 		}
 		
-		let markersToGet = 12;
+		let markersToGet = 15;
 		let increment = 100 / markersToGet; 
 		let progressWidth = 100 / markersToGet; 
 		getCurrentWeather(randomMarkers.slice(0,markersToGet));	
@@ -1858,12 +1935,15 @@ function getNews(isoA2code) {
 						let descDiv = document.createElement('div');
 						let imgDiv = document.createElement('img');
 						let extLinkIcon = document.createElement('i');
+						let imgWrap = document.createElement('a');
 						
 						descDiv.setAttribute('class', 'news-description');
 						extLinkIcon.setAttribute('class', 'fas fa-external-link-alt');
 							
 						linkDiv.appendChild(extLinkIcon);
 
+						imgWrap.setAttribute('href', oneArt.url);
+						imgWrap.setAttribute('target', '_blank');
 						
 						//cardHeaderDiv.setAttribute('class','card-header');
 						//cardHeaderDiv.setAttribute('id','headingOne');
@@ -1878,7 +1958,7 @@ function getNews(isoA2code) {
 						let titleDiv = document.createElement('div');
 						titleDiv.innerHTML = oneArt.title;
 
-						titleDiv.appendChild(linkDiv);						
+					
 						//cardBodyDiv.setAttribute('id',`collapse${target}`);
 						//cardBodyDiv.setAttribute('class','collapse');
 						//cardBodyDiv.setAttribute('aria-labelledby','headingOne');
@@ -1894,12 +1974,15 @@ function getNews(isoA2code) {
 						//linkDiv.innerHTML = oneArt.source;
 						
 						descDiv.innerHTML = oneArt.description;
+						descDiv.appendChild(linkDiv);	
 						
 						imgDiv.setAttribute('src',oneArt.imgURL);
 						if (oneArt.imgURL.includes('noImage')){
 							imgDiv.setAttribute('style', 'display: none');
 						}
 						imgDiv.setAttribute('class','newsImage');
+						
+						imgWrap.appendChild(imgDiv);
 						
 						let hzRw = document.createElement('hr');
 						//headerDiv.appendChild(buttonDiv);
@@ -1908,7 +1991,7 @@ function getNews(isoA2code) {
 						//descDiv.appendChild(imgDiv);
 						//sourceDiv.appendChild(linkDiv);
 						
-						bodyDiv.appendChild(imgDiv);
+						bodyDiv.appendChild(imgWrap);
 						bodyDiv.appendChild(titleDiv);
 						//bodyDiv.appendChild(linkDiv);						
 						//bodyDiv.appendChild(sourceDiv);
@@ -2250,10 +2333,7 @@ function getHolidays(isoA2code){
 			
 			for (let r = 0; r < holidays.length; r++) {
 				let holidayTableBodyRow = document.createElement('tr');
-				if(r == 0) {
-					//let testDate = new Date(holidays[r].date).toDateString().slice(4);
-					console.log('testDate',new Date(holidays[r].date).toDateString().slice(4));
-				}
+
 				//let dateData = [holidays[r].date, holidays[r].name, holidays[r].localName];
 				let dateData = [new Date(holidays[r].date).toDateString().slice(4), holidays[r].name];
 				//let dateData = [holidays[r].date, holidays[r].name];

@@ -270,6 +270,10 @@ button.close {
 	
 }
 
+h5#countryModalTitle {
+    padding-left: 0.5rem;
+}
+
 .form-check-label {
 	padding-top: 0.5rem
 }
@@ -291,6 +295,12 @@ span.fa.fa-home {
 
 span.fa.fa-info-circle {
     font-size: 1.8rem;
+    padding-top: 0.35rem;
+    color: #0291c3;
+}
+
+span.fa.fa-cloud-sun {
+    font-size: 1.5rem;
     padding-top: 0.35rem;
     color: #0291c3;
 }
