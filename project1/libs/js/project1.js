@@ -29,7 +29,7 @@
 //let poiMarkers = [];
 
 
-let totalLayers = 1; 
+let totalLayers = 8; 
 //	*						*						*						*				*					*							*									*
 //border, wikipedia, capitalmarker, webcams, airports, citiesLayer, cityCirclesLayer, landmarkClusterMarkers
 //(weather layer controlled by toggle)
@@ -137,6 +137,7 @@ L.easyButton('fa-temperature-low', function() {
 
 L.easyButton('fa-calendar-day', function() {
 	document.getElementById('holidayBtn').click();
+	$('[data-bs-toggle="tooltip"]').tooltip();
 	let openCalendarTimer = setTimeout(function(){
 
 		//these 2 used
@@ -322,7 +323,7 @@ function countryBordersFunc(response) {
 function switchCountry(layersToChange, controlsToChange){
 	
 	
-	document.getElementById('weatherDataLoading').innerHTML = 'Loading...';
+	document.getElementById('weatherDataLoading').setAttribute('style', 'display: inline');
 	document.getElementById('weatherToggle').setAttribute('style', 'display: none');
 	document.getElementById('wrap').innerHTML = "";
 	
@@ -330,6 +331,7 @@ function switchCountry(layersToChange, controlsToChange){
 	
 	document.getElementById('listView').checked = true;
 	document.getElementById('holidaysError').innerHTML = '';
+	document.getElementById('listOfHolidays').innerHTML = '';
 	document.getElementById('listOfHolidays').setAttribute('style', 'display: block');
 	document.getElementById('calendarFieldset').setAttribute('style', 'display: block');
 	let calendarDiv = document.createElement('div');
@@ -454,7 +456,7 @@ function placeBorder(isoa3Code){ // add 2 layers: selectedCountryLayer, wikiClus
 			layerNames.push('selectedCountryLayer');
 
       document.getElementById("countryModalTitle").innerHTML = currentCountry;			
-			//getWikipedia(currentCountry, bounds);	
+			getWikipedia(currentCountry, bounds);	
 			
 			/*
 			console.log('2', isoa3Code);
@@ -1065,7 +1067,7 @@ function getGeonamesCities(isoA2) { // 3 layers added: cityCirclesLayer (and Cit
 
 				let progressTimer = setTimeout(function() {
 					document.getElementById("progressBar").setAttribute('style', "width: 0%; visibility: hidden");
-					document.getElementById('weatherDataLoading').innerHTML = "";
+					document.getElementById('weatherDataLoading').setAttribute('style', 'display: none');
 					document.getElementById('weatherToggle').setAttribute('style', 'display: inherit');
 					clearTimeout(progressTimer);
 					}, 1000);
@@ -1888,6 +1890,7 @@ function getNews(isoA2code) {
 						
 						linkDiv.setAttribute('href', oneArt.url);
 						linkDiv.setAttribute('target', '_blank');
+						linkDiv.setAttribute('class', 'newsLink')
 						//linkDiv.innerHTML = oneArt.source;
 						
 						descDiv.innerHTML = oneArt.description;
@@ -2247,8 +2250,13 @@ function getHolidays(isoA2code){
 			
 			for (let r = 0; r < holidays.length; r++) {
 				let holidayTableBodyRow = document.createElement('tr');
+				if(r == 0) {
+					//let testDate = new Date(holidays[r].date).toDateString().slice(4);
+					console.log('testDate',new Date(holidays[r].date).toDateString().slice(4));
+				}
 				//let dateData = [holidays[r].date, holidays[r].name, holidays[r].localName];
-				let dateData = [holidays[r].date, holidays[r].name];
+				let dateData = [new Date(holidays[r].date).toDateString().slice(4), holidays[r].name];
+				//let dateData = [holidays[r].date, holidays[r].name];
 				for (let d = 0; d < dateData.length; d++){
 					if (d == 0) {
 						let dateHeading = document.createElement('th');
@@ -2257,7 +2265,16 @@ function getHolidays(isoA2code){
 						holidayTableBodyRow.appendChild(dateHeading);
 					} else {
 						let dateText = document.createElement('td');
-						dateText.innerHTML = dateData[d]
+						dateText.innerHTML = dateData[d];
+						if (holidays[r].name != holidays[r].localName) {
+							let localNameInfo = document.createElement('i');
+							localNameInfo.setAttribute('class', 'fa fa-info-circle');
+							localNameInfo.setAttribute('data-bs-toggle','tooltip');
+							localNameInfo.setAttribute('data-bs-placement','bottom');
+							localNameInfo.setAttribute('data-bs-original-title', 'Local name: ' + holidays[r].localName);
+							localNameInfo.setAttribute('type','button');
+							dateText.appendChild(localNameInfo);							
+						}
 						holidayTableBodyRow.appendChild(dateText);
 					}
 				}
@@ -2556,19 +2573,19 @@ function displayCountry(isoa3Code) {
 
 	placeBorder(isoa3Code);	//2 layers		
 	
-	//worldBankInfo(isoa3Code); //1 layer, also unsplash images and timezone
-	//getWebcams(isoA2);  // 1 layer
-	//getGeonamesAirports(isoA2); // 1 layer
-	//getGeonamesCities(isoA2); //3 layers (cities and cityCirles), also weatherlayer but controlled by toggle
+	worldBankInfo(isoa3Code); //1 layer, also unsplash images and timezone
+	getWebcams(isoA2);  // 1 layer
+	getGeonamesAirports(isoA2); // 1 layer
+	getGeonamesCities(isoA2); //3 layers (cities and cityCirles), also weatherlayer but controlled by toggle
 
 
 	//Background data
 	
-	//countryBasics(isoA2);
+	countryBasics(isoA2);
 	getHolidays(isoA2);
-	//weatherChartCelcius(isoa3Code);
-	//weatherChartRain(isoa3Code);
-	//getNews(isoA2);
+	weatherChartCelcius(isoa3Code);
+	weatherChartRain(isoa3Code);
+	getNews(isoA2);
 
 } // end of DISPLAY COUNTRY 
 
@@ -2599,11 +2616,12 @@ $('#calendarView').click(function(event){
 });
 
 $('#listView').click(function(event){
-		console.log('this',this);
-		console.log('this.value',this.value);	
-		console.log('event',event)
+		//console.log('this',this);
+		//console.log('this.value',this.value);	
+		//console.log('event',event)
 		document.getElementById(`calendar${calendarNum}`).setAttribute('style', 'display: none');
 		document.getElementById('listOfHolidays').setAttribute('style', 'display: block');
+		$('[data-bs-toggle="tooltip"]').tooltip();
 });
 
 $('#weatherToggle').click(function (){
@@ -2615,8 +2633,9 @@ $('#weatherToggle').click(function (){
 			}
 
 		}
-		
+		//#0291c3
 		weatherOn = true;
+		document.getElementById('weatherToggleIcon').setAttribute('style', 'color: #ffcd72');
 		redrawHeatMap(heatmapData, heatmapColor);
 		weatherLayer.addTo(mymap);
 	} else {
@@ -2627,6 +2646,7 @@ $('#weatherToggle').click(function (){
 			}
 		}		
 		let undrawObj = {max: 20, data: []};
+		document.getElementById('weatherToggleIcon').setAttribute('style', 'color: #5a5959'); //#5a5959
 		redrawHeatMap(undrawObj, heatmapColor);
 		mymap.removeLayer(weatherLayer);
 	}

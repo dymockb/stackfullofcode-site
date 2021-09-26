@@ -39,6 +39,11 @@ div#progressBar {
 }
 */
 
+p#weatherDataLoading {
+	background-color: #08080821;
+	padding: 0.2rem;
+}
+
 div#navItems {
 	/* position: absolute; */
 	/* display: flex; */
@@ -100,8 +105,8 @@ select#floatSelect {
 }
 
 #weatherDataLoading {
-	padding-left: 0.2rem;
 	font-size: 1rem;
+	display: inline;
 }
 
 #infoSym {
@@ -330,7 +335,7 @@ overflow-y: auto;
 	font-style: italic
 }
 
-a {
+.newsLink {
  padding-left: 0.5rem;
 }
 
@@ -340,6 +345,10 @@ div[id^=calendar] {
 
 div#holidaysError {
     padding-left: 0.5rem;
+}
+
+i.fa.fa-info-circle {
+ margin-left: 0.5rem;
 }
 
 td.fc-header-left {
@@ -450,9 +459,6 @@ div>h2 {
 	padding-left: 0.3rem;
 }
 
-.modal-title {
-	padding-left: 0.5rem;
-}
 
 .free {
 	color: green;
