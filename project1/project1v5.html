@@ -153,7 +153,10 @@
 		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<img id="flagIMG"><h5 class="modal-title" id="countryModalTitle"></h5><h5 class="modal-title" id="countryFreedom">TEST</h5>
+					<img id="flagIMG"><h5 class="modal-title" id="countryModalTitle"></h5>
+					<!--
+					<h5 class="modal-title" id="countryFreedom">TEST</h5>
+					-->
 					<a href="https://freedomhouse.org/" target="_blank">
 						<i id="freedomInfoNode" class="fas fa-info-circle"></i>
 					</a>
@@ -325,16 +328,48 @@
 		<div class="modal-dialog modal-dialog-centered" role="document">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="weatherTitle">National Holidays</h5><button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
+					<h5 class="modal-title" id="weatherTitle">National Holidays</h5>					
+					<fieldset id="calendarFieldset" class="form-group">
+      <div class="form-check">
+        <label class="form-check-label">
+          <input type="radio" class="form-check-input" name="optionsRadios" id="listView" value="listView" checked="">
+          List view
+        </label>
+      </div>
+
+      <div class="form-check">
+        <label class="form-check-label">
+          <input type="radio" class="form-check-input" name="optionsRadios" id="calendarView" value="calendarView">
+          Calendar view
+        </label>
+      </div>
+
+			
+			</fieldset>
+			
+					<button aria-label="Close" class="close" data-dismiss="modal" type="button"><span aria-hidden="true">&times;</span></button>
 				</div>
 				<div class="modal-body">
-					<div class="form-group">
-					
+			
+						<div id="calendarError"></div>
+						
+						<div id="listOfHolidays">
+						TEST
+						</div>
+
 						<div id='wrap'>
 							<div id='calendar0'></div>
 							<div style='clear:both'></div>
 						</div>
+						
+
+						<!--
+						
+					<div class="form-group">
 					</div>
+
+						-->
+					
 					
 					<div class="modal-footer">
 						<button class="btn btn-secondary" data-dismiss="modal" type="button">Close</button>
@@ -431,9 +466,9 @@
 		</div>
 		-->
 	
-	<div class="h-100 flex-grow-1" id="mapid">
+	<div id="mapid" class="h-100 flex-grow-1">
 	<div id="navPane" class="leaflet-pane leaflet-overlay-pane">
-			<div id="what">
+			<div id="navItems">
 		<div class="row w-100">
 		<select class="form-select" id="floatSelect">
 		<option disabled selected value="">Select a country</option>

@@ -29,7 +29,7 @@
 //let poiMarkers = [];
 
 
-let totalLayers = 2; 
+let totalLayers = 1; 
 //	*						*						*						*				*					*							*									*
 //border, wikipedia, capitalmarker, webcams, airports, citiesLayer, cityCirclesLayer, landmarkClusterMarkers
 //(weather layer controlled by toggle)
@@ -138,10 +138,16 @@ L.easyButton('fa-temperature-low', function() {
 L.easyButton('fa-calendar-day', function() {
 	document.getElementById('holidayBtn').click();
 	let openCalendarTimer = setTimeout(function(){
-		document.getElementById('clickCalendar').click();
+
+		//these 2 used
+		//document.getElementById('clickCalendar').click();
+		//$('[data-bs-toggle="tooltip"]').tooltip();	
+		
 		//$('[data-bs-toggle="popover"]').popover();
-		$('[data-bs-toggle="tooltip"]').tooltip();
-  //var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+
+  
+	
+	//var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
   //var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
   //  return new bootstrap.Popover(popoverTriggerEl)
   //})
@@ -322,6 +328,8 @@ function switchCountry(layersToChange, controlsToChange){
 	
 	calendarNum++;
 	
+	document.getElementById('listView').checked = true;
+	document.getElementById('calendarFieldset').setAttribute('style', 'display: block');
 	let calendarDiv = document.createElement('div');
 	let calendarSibling = document.createElement('div');
 	calendarDiv.setAttribute('id', `calendar${calendarNum}`);
@@ -648,7 +656,7 @@ function unsplashImages(countryName) { //
 function getWebcams (isoA2code) { // add 1 layer: webcams
 
 		mymap.createPane('webcamPopupPane');
-		mymap.getPane('webcamPopupPane').style.zIndex = 1000;
+		mymap.getPane('webcamPopupPane').style.zIndex = 600;
 		
 		$.ajax({
 		url: "libs/php/windyWebcams.php",
@@ -672,14 +680,15 @@ function getWebcams (isoA2code) { // add 1 layer: webcams
 				autoPan: true, 
 				autoClose: false,
 				className: 'wikiPopup',
-					pane: 'webcamPopupPane'
+				pane: 'webcamPopupPane'
 				});
 			let webcamTooltip = L.tooltip({
-				className: 'wikiPopup',
+				className: 'webcamTooltip',
 				sticky: true,
 				direction: 'top'
 				});
 			let node = document.createElement("div");
+			node.setAttribute('class', 'tooltipContainer');
 			//let node = document.createElement("button");
 			//node.setAttribute("type", "button");
 			//node.setAttribute("data-toggle", "modal");
@@ -689,8 +698,9 @@ function getWebcams (isoA2code) { // add 1 layer: webcams
 			previewNode.setAttribute("class", "webcamPreview");
 			previewNode.setAttribute('src', result.data[r].thumbnail);
 			
-			let webcamTitleNode = document.createElement('p');
-			webcamTitleNode.setAttribute('class', 'webcamPopupPara');
+			let webcamTitleNode = document.createElement('div');
+			webcamTitleNode.setAttribute('class', 'webcamTooltipPara');
+			//webcamTitleNode.setAttribute('style', 'overflow-wrap: normal; width: 200px')
 			webcamTitleNode.innerHTML = result.data[r].title;
 
 			node.appendChild(webcamTitleNode);
@@ -1665,6 +1675,7 @@ function getTimezone (lat,lng) {
 		},
 		success: function(result) {
 			
+			console.log('timezone result', result.data);
 			//document.getElementById('timezone').innerHTML = result.data.timezoneId;
 			document.getElementById('localTime').innerHTML = result.data.time.slice(-5);
 			
@@ -2203,7 +2214,7 @@ function getHolidays(isoA2code){
 						displayYear = y;
 					}
 				let m = holidays[h].date.slice(5,7);
-				let d = holidays[h].date	.slice(8,10);
+				let d = holidays[h].date.slice(8,10);
 	
 				holidayObj['start'] = new Date(y, m-1, d);
 				holidayObj['localName'] = holidays[h].localName == holidays[h].name ? '' : `(${holidays[h].localName})`;
@@ -2211,10 +2222,13 @@ function getHolidays(isoA2code){
 
 			}
 			
-			var date = new Date();
-			var d = date.getDate();
-			var m = date.getMonth();
-			var y = date.getFullYear();
+					
+			
+			
+			//var date = new Date();
+			//var d = date.getDate();
+			//var m = date.getMonth();
+			//var y = date.getFullYear();
 
 			/*  className colors
 			className: default(transparent), important(red), chill(pink), success(green), info(blue)
@@ -2294,8 +2308,10 @@ function getHolidays(isoA2code){
 				select: function(start, end, allDay) {
 					console.log('something');
 				},
-				
+				events: holidayDays,				
 				droppable: false, // this allows things to be dropped onto the calendar !!!
+				
+				/*
 				drop: function(date, allDay) { // this function is called when something is dropped
 
 					// retrieve the dropped element's stored Event Object
@@ -2317,10 +2333,9 @@ function getHolidays(isoA2code){
 						// if so, remove the element from the "Draggable Events" list
 						$(this).remove();
 					}
-
 				},
+				*/
 
-				events: holidayDays,
 				/*
 				[
 					{
@@ -2374,7 +2389,9 @@ function getHolidays(isoA2code){
 			} else {
 				
 				console.log('no holidays found');
-				document.getElementById(`calendar${calendarNum}`).innerHTML = 'No holidays found';
+				//document.getElementById(`calendar${calendarNum}`).innerHTML = 'No holidays found';
+				document.getElementById('calendarFieldset').setAttribute('style', 'display: none');
+				document.getElementById('calendarError').innerHTML = 'No holidays found';
 				
 			}			
 				
@@ -2472,7 +2489,7 @@ function displayCountry(isoa3Code) {
 	placeBorder(isoa3Code);	//2 layers		
 	
 	//worldBankInfo(isoa3Code); //1 layer, also unsplash images and timezone
-	getWebcams(isoA2);  // 1 layer
+	//getWebcams(isoA2);  // 1 layer
 	//getGeonamesAirports(isoA2); // 1 layer
 	//getGeonamesCities(isoA2); //3 layers (cities and cityCirles), also weatherlayer but controlled by toggle
 
@@ -2480,10 +2497,10 @@ function displayCountry(isoa3Code) {
 	//Background data
 	
 	//countryBasics(isoA2);
-	//getHolidays(isoA2);
+	getHolidays(isoA2);
 	//weatherChartCelcius(isoa3Code);
 	//weatherChartRain(isoa3Code);
-	getNews(isoA2);
+	//getNews(isoA2);
 
 } // end of DISPLAY COUNTRY 
 
@@ -2502,6 +2519,24 @@ selectDropDown.addEventListener("change", function (event) {
 	displayCountry(selectedCountry);
 	
 }, false)
+
+$('#calendarView').click(function(event){
+		//console.log('this',this);
+		//console.log('this.value',this.value);	
+		//console.log('event',event);
+		document.getElementById('listOfHolidays').setAttribute('style', 'display: none');
+		document.getElementById(`calendar${calendarNum}`).setAttribute('style', 'display: block');
+		document.getElementById('clickCalendar').click();
+		$('[data-bs-toggle="tooltip"]').tooltip();
+});
+
+$('#listView').click(function(event){
+		console.log('this',this);
+		console.log('this.value',this.value);	
+		console.log('event',event)
+		document.getElementById(`calendar${calendarNum}`).setAttribute('style', 'display: none');
+		document.getElementById('listOfHolidays').setAttribute('style', 'display: block');
+});
 
 $('#weatherToggle').click(function (){
 		

@@ -39,7 +39,7 @@ div#progressBar {
 }
 */
 
-div#what {
+div#navItems {
 	/* position: absolute; */
 	/* display: flex; */
 	justify-content: center;
@@ -265,11 +265,6 @@ button.close {
 	
 }
 
-#mapid {
-	z-index: 0
-}
-
-
 .form-check-label {
 	padding-top: 0.5rem
 }
@@ -279,6 +274,9 @@ button.close {
 	display: none
 }
 
+fieldset.form-group {
+  margin-left: 1rem;
+}
 
 span.fa.fa-home {
 	font-size: 1.6rem;
@@ -334,6 +332,26 @@ overflow-y: auto;
 
 a {
  padding-left: 0.5rem;
+}
+
+div[id^=calendar] {
+  display: none;
+}
+
+td.fc-header-left {
+    padding: 0px;
+}
+
+td.fc-header-right {
+    padding: 0px;
+}
+
+.fc-header .fc-button {
+	margin-bottom: 0.3rem
+}
+
+.fc-header-title h2 {
+	font-size: 25px
 }
 /*
 
@@ -540,6 +558,14 @@ div#carouselExampleControls {
 
 .webcamPopupPara {
 	margin: 0px !important;
+	width: 300px;
+	overflow-wrap: normal;
+}
+
+.webcamTooltipPara  {
+	margin: 0px !important;
+	width: 200px;
+	overflow-wrap: normal;
 }
 
 #weatherIcon {
@@ -614,6 +640,16 @@ span.fc-event-title {
 .userPopup, .wikiPopup {
 	background-color: white;
 	border-radius: 10px;
+}
+
+.webcamTooltip {
+	background-color: white;
+	border-radius: 10px;
+}
+
+.webcamTooltipPara {
+	width: 100%;
+	white-space: normal
 }
 
 .webcamPreview {
