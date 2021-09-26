@@ -329,6 +329,7 @@ function switchCountry(layersToChange, controlsToChange){
 	calendarNum++;
 	
 	document.getElementById('listView').checked = true;
+	document.getElementById('holidaysError').innerHTML = '';
 	document.getElementById('calendarFieldset').setAttribute('style', 'display: block');
 	let calendarDiv = document.createElement('div');
 	let calendarSibling = document.createElement('div');
@@ -2391,7 +2392,7 @@ function getHolidays(isoA2code){
 				console.log('no holidays found');
 				//document.getElementById(`calendar${calendarNum}`).innerHTML = 'No holidays found';
 				document.getElementById('calendarFieldset').setAttribute('style', 'display: none');
-				document.getElementById('calendarError').innerHTML = 'No holidays found';
+				document.getElementById('holidaysError').innerHTML = 'No holidays found';
 				
 			}			
 				
