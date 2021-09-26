@@ -338,6 +338,10 @@ div[id^=calendar] {
   display: none;
 }
 
+div#holidaysError {
+    padding-left: 0.5rem;
+}
+
 td.fc-header-left {
     padding: 0px;
 }

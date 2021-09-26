@@ -330,6 +330,7 @@ function switchCountry(layersToChange, controlsToChange){
 	
 	document.getElementById('listView').checked = true;
 	document.getElementById('holidaysError').innerHTML = '';
+	document.getElementById('listOfHolidays').setAttribute('style', 'display: block');
 	document.getElementById('calendarFieldset').setAttribute('style', 'display: block');
 	let calendarDiv = document.createElement('div');
 	let calendarSibling = document.createElement('div');
@@ -2222,10 +2223,75 @@ function getHolidays(isoA2code){
 				holidayDays.push(holidayObj);
 
 			}
+		
+			let holidayTable = document.createElement('table');
+			holidayTable.setAttribute('class', 'table');
+			let holidayTableHead = document.createElement('thead');
 			
-					
+			let holidayTableHeadRow = document.createElement('tr');
 			
+			//let tableHeadings = ['Date', 'Holiday', 'Local name'];
+			let tableHeadings = ['Date', 'Holiday'];
 			
+			for (let t = 0; t < tableHeadings.length; t ++) {
+				let tableHeading = document.createElement('th');
+				tableHeading.setAttribute('scope', 'col');
+				tableHeading.innerHTML = tableHeadings[t];
+				holidayTableHeadRow.appendChild(tableHeading);
+			}
+			
+			holidayTableHead.appendChild(holidayTableHeadRow);
+			holidayTable.appendChild(holidayTableHead);
+			
+			let holidayTableBody = document.createElement('tbody');
+			
+			for (let r = 0; r < holidays.length; r++) {
+				let holidayTableBodyRow = document.createElement('tr');
+				//let dateData = [holidays[r].date, holidays[r].name, holidays[r].localName];
+				let dateData = [holidays[r].date, holidays[r].name];
+				for (let d = 0; d < dateData.length; d++){
+					if (d == 0) {
+						let dateHeading = document.createElement('th');
+						dateHeading.setAttribute('scope', 'row');
+						dateHeading.innerHTML = dateData[d];
+						holidayTableBodyRow.appendChild(dateHeading);
+					} else {
+						let dateText = document.createElement('td');
+						dateText.innerHTML = dateData[d]
+						holidayTableBodyRow.appendChild(dateText);
+					}
+				}
+				holidayTableBody.appendChild(holidayTableBodyRow);
+			}
+			
+			holidayTable.appendChild(holidayTableBody);
+			
+			document.getElementById('listOfHolidays').appendChild(holidayTable);
+			
+			/*
+			document.getElementById('listOfHolidays').innerHTML = `<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Date</th>
+      <th scope="col">Holiday</th>
+      <th scope="col">Local name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">Sep 1 2021</th>
+      <td>Something</td>
+			<td>somefing</td>	
+    </tr>
+    <tr>
+      <th scope="row">Sep 2 2021</th>
+      <td>Something else text goes on and on and on and on</td>
+			<td>somefung</td>	
+    </tr>
+  </tbody>
+</table>`;
+			
+			*/
 			//var date = new Date();
 			//var d = date.getDate();
 			//var m = date.getMonth();
@@ -2392,6 +2458,7 @@ function getHolidays(isoA2code){
 				console.log('no holidays found');
 				//document.getElementById(`calendar${calendarNum}`).innerHTML = 'No holidays found';
 				document.getElementById('calendarFieldset').setAttribute('style', 'display: none');
+				document.getElementById('listOfHolidays').setAttribute('style', 'display: none');
 				document.getElementById('holidaysError').innerHTML = 'No holidays found';
 				
 			}			
