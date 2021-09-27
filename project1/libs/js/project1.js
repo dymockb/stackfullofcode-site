@@ -827,7 +827,7 @@ function getWebcams (isoA2code) { // add 1 layer: webcams
 			let webcamTitleNode = document.createElement('div');
 			webcamTitleNode.setAttribute('class', 'webcamTooltipPara');
 			//webcamTitleNode.setAttribute('style', 'overflow-wrap: normal; width: 200px')
-			webcamTitleNode.innerHTML = result.data[r].title;
+			webcamTitleNode.innerHTML = result.data[r].title + ' (Click to view)';
 
 			node.appendChild(webcamTitleNode);
 			node.appendChild(previewNode);
@@ -1795,7 +1795,9 @@ function countryBasics(isoA2){ // add 1 layer: capitalMarker; call getXR & openC
 			
 			let currency = result.data.geonames[0].currencyCode;					
 			//console.log('isoa2',isoA2);
+			document.getElementById("capital").innerHTML = result.data.geonames[0].capital;
 			openCageCapital(result.data.geonames[0].capital, isoA2);
+
 			
 			$.ajax({
 				url: "libs/php/oneRestCountry.php",
