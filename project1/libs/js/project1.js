@@ -327,7 +327,7 @@ function addOverlays(overlaysObj) {
 		
 	} else {
 		
-		document.getElementById("layerErrorText").innerHTML = problemLayers;
+		//document.getElementById("layerErrorText").innerHTML = problemLayers;
 		document.getElementById("dataError").click();
 		throw new Error('API error - reload page');
 		
@@ -577,6 +577,92 @@ function placeBorder(isoa3Code){ // add 2 layers: selectedCountryLayer, wikiClus
 	
 }
 
+function openCageCapital(capital, isoA2){
+	$.ajax({
+		url: "libs/php/openCageCapital.php",
+		type: "POST",
+		dataType: "json",
+		data: {
+			capital: encodeURI(capital),
+			isoA2: isoA2,
+		},
+		success: function(result) {
+			console.log('cage capital', result);
+			if (!result.data.results) {
+				abortfunction('openCageCapital Error');
+			}
+
+			let chooseCities = [];
+			let chooseCity;
+
+			function findBestConfidence(listOfCountries) {
+				let confidence = 10;
+				let selected = listOfCountries[0];
+				for (let i = 0; i < listOfCountries.length; i++) {
+					if (listOfCountries[i].confidence < confidence) {
+						selected = listOfCountries[i];
+						confidence = listOfCountries.confidence;
+					} else {
+						continue
+					}
+				}
+				return selected;
+			}
+
+			if (result.data.results.length == 1) {
+				chooseCity = result.data.results[0];
+			} else {
+				for (let i = 0; i < result.data.results.length; i++) {
+					if (result.data.results[i].components._type == "city" || result.data.results[i].components.city == capital) {
+						chooseCities.push(result.data.results[i]);
+					}
+				}
+				if (chooseCities.length) {
+					chooseCity = findBestConfidence(chooseCities);
+				} else {
+					chooseCity = findBestConfidence(result.data.results);
+				}
+			}
+
+			let lat = chooseCity.geometry.lat;
+			let lng = chooseCity.geometry.lng;
+			let capitalPopup = L.popup({autoPan: false, autoClose: false, closeOnClick: false});
+			let node = document.createElement("button");
+			node.innerHTML = capital;
+			node.setAttribute("type", "button");
+			node.setAttribute("class", "badge rounded-pill bg-secondary");
+			node.setAttribute("data-toggle", "modal");
+			node.setAttribute("style", "font-size: 1rem");
+			node.setAttribute("data-target", "#viewCountry");
+			capitalPopup.setContent(node);
+			
+			capitalMarkerIcon = L.divIcon({
+				className: 'capitalMarkerIcon'
+			});
+			
+			capitalMarker = L.marker([lat, lng], {
+				icon: capitalMarkerIcon
+			}).bindPopup(capitalPopup);
+			
+			capitalMarker.getPopup().on('remove', function () {
+				mymap.removeLayer(capitalMarker);
+			});
+			
+			capitalMarker.addTo(mymap).openPopup();
+			layersAdded++
+			layersOnAndOff.push(capitalMarker);
+			overlaysObj['Capital'] = capitalMarker;
+			
+			getTimezone(lat, lng);
+
+		},
+		error: function(jqXHR, textStatus, errorThrown) {
+			console.log(textStatus);
+			console.log(errorThrown);
+		}
+		}); //end of OpenCage  Capital ajax
+}
+
 function worldBankInfo(isoa3Code){ //add 1 layer: capital marker, also get unsplash images & timezone
 	$.ajax({
 	url: "libs/php/worldBankCapital.php",
@@ -624,8 +710,8 @@ function worldBankInfo(isoa3Code){ //add 1 layer: capital marker, also get unspl
 		//console.log('get timezone');
 		getTimezone(lat, lng);
 		
-		let countryName = result.data[1][0].name;
-		unsplashImages(countryName);
+		//let countryName = result.data[1][0].name;
+		//unsplashImages(countryName);
 		
 	},
 	error: function(jqXHR, textStatus, errorThrown) {
@@ -1691,7 +1777,7 @@ function getWikipedia (currentCountry, bounds) { // called inside place border a
 
 //background functions:
 
-function countryBasics(isoA2){ // add 1 layer: capitalMarker; call getXR
+function countryBasics(isoA2){ // add 1 layer: capitalMarker; call getXR & openCageCapital
 		$.ajax({
 		url: "libs/php/geonamesCountryInfo.php",
 		type: "GET",
@@ -1708,6 +1794,8 @@ function countryBasics(isoA2){ // add 1 layer: capitalMarker; call getXR
 
 			
 			let currency = result.data.geonames[0].currencyCode;					
+			//console.log('isoa2',isoA2);
+			openCageCapital(result.data.geonames[0].capital, isoA2);
 			
 			$.ajax({
 				url: "libs/php/oneRestCountry.php",
@@ -1825,8 +1913,65 @@ function getNews(isoA2code) {
 		console.log('news result',result);
 				
 		let translatedObjs = []
+		let countOfArticles = 5;
+		
+		function createAccordianArticle(oneArt) {
+			
+			let cardDiv = document.createElement('div');
+			
+
+			let bodyDiv = document.createElement('div');
+			let sourceDiv = document.createElement('div');
+			let linkDiv = document.createElement('a');
+			let descDiv = document.createElement('div');
+			let imgDiv = document.createElement('img');
+			let extLinkIcon = document.createElement('i');
+			let imgWrap = document.createElement('a');
+			
+			descDiv.setAttribute('class', 'news-description');
+			extLinkIcon.setAttribute('class', 'fas fa-external-link-alt');
+				
+			linkDiv.appendChild(extLinkIcon);
+
+			imgWrap.setAttribute('href', oneArt.url);
+			imgWrap.setAttribute('target', '_blank');
+						
+			let titleDiv = document.createElement('div');
+			titleDiv.innerHTML = oneArt.title;
+			
+			linkDiv.setAttribute('href', oneArt.url);
+			linkDiv.setAttribute('target', '_blank');
+			linkDiv.setAttribute('class', 'newsLink')
+			
+			descDiv.innerHTML = oneArt.description;
+			descDiv.appendChild(linkDiv);	
+			
+			let articleImg = oneArt.urlToImage == null ? 'img/noImage.png' : oneArt.urlToImage;
+			imgDiv.setAttribute('src',articleImg);
+			//if (oneArt.urlToImage.includes('noImage')){
+			if (oneArt.urlToImage == null){
+				imgDiv.setAttribute('style', 'display: none');
+			}
+			imgDiv.setAttribute('class','newsImage');
+			
+			imgWrap.appendChild(imgDiv);
+			
+			let hzRw = document.createElement('hr');
+			
+			bodyDiv.appendChild(imgWrap);
+			bodyDiv.appendChild(titleDiv);
+
+			bodyDiv.appendChild(descDiv);
+			bodyDiv.appendChild(hzRw);
+			
+		
+			document.getElementById('newsDiv').appendChild(bodyDiv);
+								
+		}			
+		
 		
 		function recursiveTranslate(articlesToTranslate) {
+
 			
 			if (articlesToTranslate.length > 0) {
 				
@@ -1885,8 +2030,19 @@ function getNews(isoA2code) {
 					} else {
 						
 						translatedObjs.push(translatedObj);
-						recursiveTranslate(articlesToTranslate.slice(1));
-	
+						if (translatedObjs[0].EN_source == true) {
+							console.log('english text');
+							for (let c = 0; c < countOfArticles; c++){
+								createAccordianArticle(result.data[c]);
+								if (c == countOfArticles-1) {
+									document.getElementById('newsProgressBar').setAttribute('style', "width: 100%; display: none !important");
+									document.getElementById('newsModalTitle').innerHTML = 'Latest News';
+								}
+							}
+						} else {
+							document.getElementById('newsModalTitle').innerHTML = 'Translating news...';
+							recursiveTranslate(articlesToTranslate.slice(1));
+						}
 					}
 					
 				}
@@ -1907,169 +2063,14 @@ function getNews(isoA2code) {
 				
 				let translatedObj = {};
 				translatedObj['url'] = articlesToTranslate[0].url;
-				translatedObj['imgURL'] = articlesToTranslate[0].urlToImage == null ? 'img/noImage.png' : articlesToTranslate[0].urlToImage; // img URL to be updated on tsohost
+				translatedObj['urlToImage'] = articlesToTranslate[0].urlToImage == null ? null : articlesToTranslate[0].urlToImage; // img URL to be updated on tsohost
 				translatedObj['source'] = articlesToTranslate[0].source.name;
 				
 				recursiveContent(content);
 
 				} else {
 					
-					//let newsProgressTimer = setTimeout(function() {
-						document.getElementById('newsProgressBar').setAttribute('style', "width: 100%; display: none !important");
-						//document.getElementById('newsProgressBar').setAttribute('display', 'none');
-					//	clearTimeout(newsProgressTimer);
-					//}, 1000);
-		
-					function createAccordianArticle(oneArt, target) {
-						
-						let cardDiv = document.createElement('div');
-						
-						//let cardHeaderDiv = document.createElement('div');
-						//let headerDiv = document.createElement('h5');
-						//let buttonDiv = document.createElement('button');
-						
-						//let cardBodyDiv = document.createElement('div');
-						let bodyDiv = document.createElement('div');
-						let sourceDiv = document.createElement('div');
-						let linkDiv = document.createElement('a');
-						let descDiv = document.createElement('div');
-						let imgDiv = document.createElement('img');
-						let extLinkIcon = document.createElement('i');
-						let imgWrap = document.createElement('a');
-						
-						descDiv.setAttribute('class', 'news-description');
-						extLinkIcon.setAttribute('class', 'fas fa-external-link-alt');
-							
-						linkDiv.appendChild(extLinkIcon);
-
-						imgWrap.setAttribute('href', oneArt.url);
-						imgWrap.setAttribute('target', '_blank');
-						
-						//cardHeaderDiv.setAttribute('class','card-header');
-						//cardHeaderDiv.setAttribute('id','headingOne');
-						//headerDiv.setAttribute('class','mb-0');
-						
-						//buttonDiv.setAttribute('class','accordion-button collapsed');
-						//buttonDiv.setAttribute('data-toggle','collapse');
-						//buttonDiv.setAttribute('data-target',`#collapse${target}`);
-						//buttonDiv.setAttribute('aria-expanded','false');
-						//buttonDiv.setAttribute('aria-controls','collapseOne');
-						
-						let titleDiv = document.createElement('div');
-						titleDiv.innerHTML = oneArt.title;
-
-					
-						//cardBodyDiv.setAttribute('id',`collapse${target}`);
-						//cardBodyDiv.setAttribute('class','collapse');
-						//cardBodyDiv.setAttribute('aria-labelledby','headingOne');
-						//cardBodyDiv.setAttribute('data-parent','#accordion');
-						
-						//bodyDiv.setAttribute('class','card-body');
-						
-						//sourceDiv.innerHTML = 'Source: '
-						
-						linkDiv.setAttribute('href', oneArt.url);
-						linkDiv.setAttribute('target', '_blank');
-						linkDiv.setAttribute('class', 'newsLink')
-						//linkDiv.innerHTML = oneArt.source;
-						
-						descDiv.innerHTML = oneArt.description;
-						descDiv.appendChild(linkDiv);	
-						
-						imgDiv.setAttribute('src',oneArt.imgURL);
-						if (oneArt.imgURL.includes('noImage')){
-							imgDiv.setAttribute('style', 'display: none');
-						}
-						imgDiv.setAttribute('class','newsImage');
-						
-						imgWrap.appendChild(imgDiv);
-						
-						let hzRw = document.createElement('hr');
-						//headerDiv.appendChild(buttonDiv);
-						//cardHeaderDiv.appendChild(headerDiv);
-						
-						//descDiv.appendChild(imgDiv);
-						//sourceDiv.appendChild(linkDiv);
-						
-						bodyDiv.appendChild(imgWrap);
-						bodyDiv.appendChild(titleDiv);
-						//bodyDiv.appendChild(linkDiv);						
-						//bodyDiv.appendChild(sourceDiv);
-						bodyDiv.appendChild(descDiv);
-						bodyDiv.appendChild(hzRw);
-						
-						//cardBodyDiv.appendChild(bodyDiv);
-						
-						//cardDiv.appendChild(cardHeaderDiv);
-						//cardDiv.appendChild(sourceDiv);
-						//cardDiv.appendChild(bodyDiv);
-					
-						document.getElementById('newsDiv').appendChild(bodyDiv);
-						
-						/*
-						let cardDiv = document.createElement('div');
-						
-						let cardHeaderDiv = document.createElement('div');
-						let headerDiv = document.createElement('h5');
-						let buttonDiv = document.createElement('button');
-						
-						let cardBodyDiv = document.createElement('div');
-						let bodyDiv = document.createElement('div');
-						let sourceDiv = document.createElement('div');
-						let linkDiv = document.createElement('a');
-						let descDiv = document.createElement('div');
-						let imgDiv = document.createElement('img');
-						
-						cardHeaderDiv.setAttribute('class','card-header');
-						cardHeaderDiv.setAttribute('id','headingOne');
-						headerDiv.setAttribute('class','mb-0');
-						
-						buttonDiv.setAttribute('class','accordion-button collapsed');
-						buttonDiv.setAttribute('data-toggle','collapse');
-						buttonDiv.setAttribute('data-target',`#collapse${target}`);
-						buttonDiv.setAttribute('aria-expanded','false');
-						buttonDiv.setAttribute('aria-controls','collapseOne');
-						buttonDiv.innerHTML = oneArt.title;
-						
-						cardBodyDiv.setAttribute('id',`collapse${target}`);
-						cardBodyDiv.setAttribute('class','collapse');
-						cardBodyDiv.setAttribute('aria-labelledby','headingOne');
-						cardBodyDiv.setAttribute('data-parent','#accordion');
-						
-						bodyDiv.setAttribute('class','card-body');
-						
-						sourceDiv.innerHTML = 'Source: '
-						
-						linkDiv.setAttribute('href', oneArt.url);
-						linkDiv.setAttribute('target', '_blank');
-						linkDiv.innerHTML = oneArt.source;
-						
-						descDiv.innerHTML = oneArt.description;
-						
-						imgDiv.setAttribute('src',oneArt.imgURL);
-						if (oneArt.imgURL.includes('noImage')){
-							imgDiv.setAttribute('style', 'display: none');
-						}
-						imgDiv.setAttribute('class','newsImage');
-						
-						headerDiv.appendChild(buttonDiv);
-						cardHeaderDiv.appendChild(headerDiv);
-						
-						//descDiv.appendChild(imgDiv);
-						sourceDiv.appendChild(linkDiv);
-						bodyDiv.appendChild(sourceDiv);
-						bodyDiv.appendChild(descDiv);
-						bodyDiv.appendChild(imgDiv);
-						
-						cardBodyDiv.appendChild(bodyDiv);
-						
-						cardDiv.appendChild(cardHeaderDiv);
-						cardDiv.appendChild(cardBodyDiv);
-					
-						document.getElementById('accordion').appendChild(cardDiv);
-						*/
-						
-					}
+					document.getElementById('newsProgressBar').setAttribute('style', "width: 100%; display: none !important");
 
 					if (translatedObjs.length == 0) {
 
@@ -2082,6 +2083,60 @@ function getNews(isoA2code) {
 						} else if (translatedObjs[0].EN_source == true){
 							document.getElementById('newsModalTitle').innerHTML = 'Latest News';
 						}
+		
+		/*	
+		function createAccordianArticle(oneArt, target) {
+			
+			let cardDiv = document.createElement('div');
+			
+
+			let bodyDiv = document.createElement('div');
+			let sourceDiv = document.createElement('div');
+			let linkDiv = document.createElement('a');
+			let descDiv = document.createElement('div');
+			let imgDiv = document.createElement('img');
+			let extLinkIcon = document.createElement('i');
+			let imgWrap = document.createElement('a');
+			
+			descDiv.setAttribute('class', 'news-description');
+			extLinkIcon.setAttribute('class', 'fas fa-external-link-alt');
+				
+			linkDiv.appendChild(extLinkIcon);
+
+			imgWrap.setAttribute('href', oneArt.url);
+			imgWrap.setAttribute('target', '_blank');
+						
+			let titleDiv = document.createElement('div');
+			titleDiv.innerHTML = oneArt.title;
+			
+			linkDiv.setAttribute('href', oneArt.url);
+			linkDiv.setAttribute('target', '_blank');
+			linkDiv.setAttribute('class', 'newsLink')
+			
+			descDiv.innerHTML = oneArt.description;
+			descDiv.appendChild(linkDiv);	
+			
+			imgDiv.setAttribute('src',oneArt.imgURL);
+			if (oneArt.imgURL.includes('noImage')){
+				imgDiv.setAttribute('style', 'display: none');
+			}
+			imgDiv.setAttribute('class','newsImage');
+			
+			imgWrap.appendChild(imgDiv);
+			
+			let hzRw = document.createElement('hr');
+			
+			bodyDiv.appendChild(imgWrap);
+			bodyDiv.appendChild(titleDiv);
+
+			bodyDiv.appendChild(descDiv);
+			bodyDiv.appendChild(hzRw);
+			
+		
+			document.getElementById('newsDiv').appendChild(bodyDiv);
+								
+		}		
+		*/
 						
 						for (let oneArt = 0; oneArt < translatedObjs.length; oneArt++) {
 							
@@ -2100,14 +2155,14 @@ function getNews(isoA2code) {
 					}
 		
 				}
+				
 		
 		}
+		 
 		
 		
 		
-
-		
-		let countOfArticles = 5;
+		//let countOfArticles = 5;
 		let newsProgressIncrement = 100/countOfArticles;
 		let newsIncrement = 100/countOfArticles;
 		
@@ -2652,8 +2707,8 @@ function displayCountry(isoa3Code) {
 	//Add layers:
 
 	placeBorder(isoa3Code);	//2 layers		
-	
-	worldBankInfo(isoa3Code); //1 layer, also unsplash images and timezone
+	countryBasics(isoA2); //1 layer - opencage capital	
+	//worldBankInfo(isoa3Code); //1 layer, also unsplash images and timezone
 	getWebcams(isoA2);  // 1 layer
 	getGeonamesAirports(isoA2); // 1 layer
 	getGeonamesCities(isoA2); //3 layers (cities and cityCirles), also weatherlayer but controlled by toggle
@@ -2661,11 +2716,12 @@ function displayCountry(isoa3Code) {
 
 	//Background data
 	
-	countryBasics(isoA2);
+
 	getHolidays(isoA2);
 	weatherChartCelcius(isoa3Code);
 	weatherChartRain(isoa3Code);
 	getNews(isoA2);
+	unsplashImages(currentCountry);
 
 } // end of DISPLAY COUNTRY 
 
