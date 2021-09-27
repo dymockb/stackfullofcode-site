@@ -340,7 +340,18 @@ function countryBordersFunc(response) {
 	countryBorders = response;
 	
 	for (let i = 0; i < countryBorders.length; i++) {
-		if (countryBorders[i].A3code != 'ESH'){
+		//(randCountry.name == 'Kosovo' || randCountry.name == 'N. Cyprus' || randCountry.name == 'Somaliland' || randCountry.A3code == 'ESH')
+		let skipCountry = false;
+		if (countryBorders[i].A3code == 'ESH'){
+			skipCountry = true;
+		} else if (countryBorders[i].name == 'Kosovo') {
+			skipCountry = true;
+		} else if (countryBorders[i].name == 'N. Cyprus') {
+			skipCountry = true;
+		} else if (countryBorders[i].name == 'Somaliland') {
+			skipCountry = true;
+		}
+		if (!skipCountry){
 			let textValue = countryBorders[i].name;
 			let node = document.createElement("option");
 			node.innerHTML = textValue;
@@ -349,6 +360,8 @@ function countryBordersFunc(response) {
 			//dropdownList.push(textValue);
 			//document.getElementById("selectCountries").appendChild(node);
 			document.getElementById("floatSelect").appendChild(node);
+		} else {
+			continue;
 		}
 	}	
 	
