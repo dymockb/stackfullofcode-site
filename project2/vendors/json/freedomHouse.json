@@ -1,0 +1,698 @@
+[
+  {
+    "Status": "NF",
+    "Code": "AFG"
+  },
+  {
+    "Status": "PF",
+    "Code": "ALB"
+  },
+  {
+    "Status": "NF",
+    "Code": "DZA"
+  },
+  {
+    "Status": "NF",
+    "Code": "AGO"
+  },
+  {
+    "Status": "F",
+    "Code": "ARG"
+  },
+  {
+    "Status": "PF",
+    "Code": "ARM"
+  },
+  {
+    "Status": "F",
+    "Code": "AUS"
+  },
+  {
+    "Status": "F",
+    "Code": "AUT"
+  },
+  {
+    "Status": "NF",
+    "Code": "AZE"
+  },
+  {
+    "Status": "F",
+    "Code": "BHS"
+  },
+  {
+    "Status": "PF",
+    "Code": "BGD"
+  },
+  {
+    "Status": "NF",
+    "Code": "BLR"
+  },
+  {
+    "Status": "F",
+    "Code": "BEL"
+  },
+  {
+    "Status": "F",
+    "Code": "BLZ"
+  },
+  {
+    "Status": "PF",
+    "Code": "BEN"
+  },
+  {
+    "Status": "PF",
+    "Code": "BTN"
+  },
+  {
+    "Status": "PF",
+    "Code": "BOL"
+  },
+  {
+    "Status": "PF",
+    "Code": "BIH"
+  },
+  {
+    "Status": "F",
+    "Code": "BWA"
+  },
+  {
+    "Status": "F",
+    "Code": "BRA"
+  },
+  {
+    "Status": "NF",
+    "Code": "BRN"
+  },
+  {
+    "Status": "F",
+    "Code": "BGR"
+  },
+  {
+    "Status": "PF",
+    "Code": "BFA"
+  },
+  {
+    "Status": "NF",
+    "Code": "BDI"
+  },
+  {
+    "Status": "NF",
+    "Code": "KHM"
+  },
+  {
+    "Status": "NF",
+    "Code": "CMR"
+  },
+  {
+    "Status": "F",
+    "Code": "CAN"
+  },
+  {
+    "Status": "NF",
+    "Code": "CAF"
+  },
+  {
+    "Status": "NF",
+    "Code": "TCD"
+  },
+  {
+    "Status": "F",
+    "Code": "CHL"
+  },
+  {
+    "Status": "NF",
+    "Code": "CHN"
+  },
+  {
+    "Status": "PF",
+    "Code": "COL"
+  },
+  {
+    "Status": "NF",
+    "Code": "COG"
+  },
+  {
+    "Status": "F",
+    "Code": "CRI"
+  },
+  {
+    "Status": "F",
+    "Code": "HRV"
+  },
+  {
+    "Status": "NF",
+    "Code": "CUB"
+  },
+  {
+    "Status": "F",
+    "Code": "CYP"
+  },
+  {
+    "Status": "F",
+    "Code": "CZE"
+  },
+  {
+    "Status": "PF",
+    "Code": "CIV"
+  },
+  {
+    "Status": "NF",
+    "Code": "COD"
+  },
+  {
+    "Status": "NF",
+    "Code": "PRK"
+  },
+  {
+    "Status": "F",
+    "Code": "DNK"
+  },
+  {
+    "Status": "NF",
+    "Code": "DJI"
+  },
+  {
+    "Status": "PF",
+    "Code": "DOM"
+  },
+  {
+    "Status": "PF",
+    "Code": "ECU"
+  },
+  {
+    "Status": "NF",
+    "Code": "EGY"
+  },
+  {
+    "Status": "PF",
+    "Code": "SLV"
+  },
+  {
+    "Status": "NF",
+    "Code": "GNQ"
+  },
+  {
+    "Status": "NF",
+    "Code": "ERI"
+  },
+  {
+    "Status": "F",
+    "Code": "EST"
+  },
+  {
+    "Status": "NF",
+    "Code": "ETH"
+  },
+  {
+    "Status": "no data",
+    "Code": "FLK"
+  },
+  {
+    "Status": "PF",
+    "Code": "FJI"
+  },
+  {
+    "Status": "F",
+    "Code": "FIN"
+  },
+  {
+    "Status": "F",
+    "Code": "FRA"
+  },
+  {
+    "Status": "NF",
+    "Code": "GAB"
+  },
+  {
+    "Status": "PF",
+    "Code": "GMB"
+  },
+  {
+    "Status": "PF",
+    "Code": "GEO"
+  },
+  {
+    "Status": "F",
+    "Code": "DEU"
+  },
+  {
+    "Status": "F",
+    "Code": "GHA"
+  },
+  {
+    "Status": "F",
+    "Code": "GRC"
+  },
+  {
+    "Status": "F",
+    "Code": "GRL"
+  },
+  {
+    "Status": "PF",
+    "Code": "GTM"
+  },
+  {
+    "Status": "PF",
+    "Code": "GIN"
+  },
+  {
+    "Status": "PF",
+    "Code": "GNB"
+  },
+  {
+    "Status": "F",
+    "Code": "GUY"
+  },
+  {
+    "Status": "PF",
+    "Code": "HTI"
+  },
+  {
+    "Status": "PF",
+    "Code": "HND"
+  },
+  {
+    "Status": "PF",
+    "Code": "HUN"
+  },
+  {
+    "Status": "F",
+    "Code": "ISL"
+  },
+  {
+    "Status": "PF",
+    "Code": "IND"
+  },
+  {
+    "Status": "PF",
+    "Code": "IDN"
+  },
+  {
+    "Status": "NF",
+    "Code": "IRN"
+  },
+  {
+    "Status": "NF",
+    "Code": "IRQ"
+  },
+  {
+    "Status": "F",
+    "Code": "IRL"
+  },
+  {
+    "Status": "F",
+    "Code": "ISR"
+  },
+  {
+    "Status": "F",
+    "Code": "ITA"
+  },
+  {
+    "Status": "F",
+    "Code": "JAM"
+  },
+  {
+    "Status": "F",
+    "Code": "JPN"
+  },
+  {
+    "Status": "NF",
+    "Code": "JOR"
+  },
+  {
+    "Status": "NF",
+    "Code": "KAZ"
+  },
+  {
+    "Status": "PF",
+    "Code": "KEN"
+  },
+  {
+    "Status": "F",
+    "Code": "KOR"
+  },
+  {
+    "Status": "PF",
+    "Code": -99
+  },
+  {
+    "Status": "PF",
+    "Code": "KWT"
+  },
+  {
+    "Status": "NF",
+    "Code": "KGZ"
+  },
+  {
+    "Status": "NF",
+    "Code": "LAO"
+  },
+  {
+    "Status": "F",
+    "Code": "LVA"
+  },
+  {
+    "Status": "PF",
+    "Code": "LBN"
+  },
+  {
+    "Status": "PF",
+    "Code": "LSO"
+  },
+  {
+    "Status": "PF",
+    "Code": "LBR"
+  },
+  {
+    "Status": "NF",
+    "Code": "LBY"
+  },
+  {
+    "Status": "F",
+    "Code": "LTU"
+  },
+  {
+    "Status": "F",
+    "Code": "LUX"
+  },
+  {
+    "Status": "PF",
+    "Code": "MKD"
+  },
+  {
+    "Status": "PF",
+    "Code": "MDG"
+  },
+  {
+    "Status": "PF",
+    "Code": "MWI"
+  },
+  {
+    "Status": "PF",
+    "Code": "MYS"
+  },
+  {
+    "Status": "NF",
+    "Code": "MLI"
+  },
+  {
+    "Status": "PF",
+    "Code": "MRT"
+  },
+  {
+    "Status": "PF",
+    "Code": "MEX"
+  },
+  {
+    "Status": "PF",
+    "Code": "MDA"
+  },
+  {
+    "Status": "F",
+    "Code": "MNG"
+  },
+  {
+    "Status": "PF",
+    "Code": "MNE"
+  },
+  {
+    "Status": "PF",
+    "Code": "MAR"
+  },
+  {
+    "Status": "PF",
+    "Code": "MOZ"
+  },
+  {
+    "Status": "NF",
+    "Code": "MMR"
+  },
+  {
+    "Status": "F",
+    "Code": -99
+  },
+  {
+    "Status": "F",
+    "Code": "NAM"
+  },
+  {
+    "Status": "PF",
+    "Code": "NPL"
+  },
+  {
+    "Status": "F",
+    "Code": "NLD"
+  },
+  {
+    "Status": "F",
+    "Code": "NCL"
+  },
+  {
+    "Status": "F",
+    "Code": "NZL"
+  },
+  {
+    "Status": "NF",
+    "Code": "NIC"
+  },
+  {
+    "Status": "PF",
+    "Code": "NER"
+  },
+  {
+    "Status": "PF",
+    "Code": "NGA"
+  },
+  {
+    "Status": "F",
+    "Code": "NOR"
+  },
+  {
+    "Status": "NF",
+    "Code": "OMN"
+  },
+  {
+    "Status": "PF",
+    "Code": "PAK"
+  },
+  {
+    "Status": "no data",
+    "Code": "PSE"
+  },
+  {
+    "Status": "F",
+    "Code": "PAN"
+  },
+  {
+    "Status": "PF",
+    "Code": "PNG"
+  },
+  {
+    "Status": "PF",
+    "Code": "PRY"
+  },
+  {
+    "Status": "PF",
+    "Code": "PER"
+  },
+  {
+    "Status": "PF",
+    "Code": "PHL"
+  },
+  {
+    "Status": "F",
+    "Code": "POL"
+  },
+  {
+    "Status": "F",
+    "Code": "PRT"
+  },
+  {
+    "Status": "no data",
+    "Code": "PRI"
+  },
+  {
+    "Status": "NF",
+    "Code": "QAT"
+  },
+  {
+    "Status": "F",
+    "Code": "ROU"
+  },
+  {
+    "Status": "NF",
+    "Code": "RUS"
+  },
+  {
+    "Status": "NF",
+    "Code": "RWA"
+  },
+  {
+    "Status": "NF",
+    "Code": "SSD"
+  },
+  {
+    "Status": "NF",
+    "Code": "SAU"
+  },
+  {
+    "Status": "PF",
+    "Code": "SEN"
+  },
+  {
+    "Status": "PF",
+    "Code": "SRB"
+  },
+  {
+    "Status": "PF",
+    "Code": "SLE"
+  },
+  {
+    "Status": "F",
+    "Code": "SVK"
+  },
+  {
+    "Status": "F",
+    "Code": "SVN"
+  },
+  {
+    "Status": "F",
+    "Code": "SLB"
+  },
+  {
+    "Status": "NF",
+    "Code": "SOM"
+  },
+  {
+    "Status": "PF",
+    "Code": -99
+  },
+  {
+    "Status": "F",
+    "Code": "ZAF"
+  },
+  {
+    "Status": "F",
+    "Code": "ESP"
+  },
+  {
+    "Status": "PF",
+    "Code": "LKA"
+  },
+  {
+    "Status": "NF",
+    "Code": "SDN"
+  },
+  {
+    "Status": "F",
+    "Code": "SUR"
+  },
+  {
+    "Status": "NF",
+    "Code": "SWZ"
+  },
+  {
+    "Status": "F",
+    "Code": "SWE"
+  },
+  {
+    "Status": "F",
+    "Code": "CHE"
+  },
+  {
+    "Status": "NF",
+    "Code": "SYR"
+  },
+  {
+    "Status": "F",
+    "Code": "TWN"
+  },
+  {
+    "Status": "NF",
+    "Code": "TJK"
+  },
+  {
+    "Status": "PF",
+    "Code": "TZA"
+  },
+  {
+    "Status": "NF",
+    "Code": "THA"
+  },
+  {
+    "Status": "F",
+    "Code": "TLS"
+  },
+  {
+    "Status": "PF",
+    "Code": "TGO"
+  },
+  {
+    "Status": "F",
+    "Code": "TTO"
+  },
+  {
+    "Status": "F",
+    "Code": "TUN"
+  },
+  {
+    "Status": "NF",
+    "Code": "TUR"
+  },
+  {
+    "Status": "NF",
+    "Code": "TKM"
+  },
+  {
+    "Status": "NF",
+    "Code": "UGA"
+  },
+  {
+    "Status": "PF",
+    "Code": "UKR"
+  },
+  {
+    "Status": "NF",
+    "Code": "ARE"
+  },
+  {
+    "Status": "F",
+    "Code": "GBR"
+  },
+  {
+    "Status": "F",
+    "Code": "USA"
+  },
+  {
+    "Status": "F",
+    "Code": "URY"
+  },
+  {
+    "Status": "NF",
+    "Code": "UZB"
+  },
+  {
+    "Status": "F",
+    "Code": "VUT"
+  },
+  {
+    "Status": "NF",
+    "Code": "VEN"
+  },
+  {
+    "Status": "NF",
+    "Code": "VNM"
+  },
+  {
+    "Status": "NF",
+    "Code": "YEM"
+  },
+  {
+    "Status": "PF",
+    "Code": "ZMB"
+  },
+  {
+    "Status": "NF",
+    "Code": "ZWE"
+  }
+]
