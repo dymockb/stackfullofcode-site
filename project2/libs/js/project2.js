@@ -2781,11 +2781,15 @@ $.ajax({
 			type: "GET",
 			dataType: "json",
 			data: {
-				id: 44
+				id: 12
 			},
 			success: function (result) {
 				
-					console.log('Delete Department ', result);
+					if (result.data == 'Department Does Not Exist') {
+						console.log('Department Does Not Exist');						
+					} else {
+						console.log('Department Deleted');
+					}
 					
 					$.ajax({
 					url: "libs/php/getAllDepartments.php",

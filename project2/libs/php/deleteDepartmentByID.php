@@ -37,7 +37,7 @@
 	// $_REQUEST used for development / debugging. Remember to change to $_POST for production
 	
 	$check = $conn->prepare('SELECT COUNT(*) FROM department WHERE id = ?');
-	echo 'requestedID is' . $_REQUEST['id'];
+	//echo 'requestedID is' . $_REQUEST['id'];
 
 	$check->bind_param("i", $_REQUEST['id']);
 	
@@ -45,17 +45,19 @@
 	
 	$result = $check->get_result();
 
-  $data = [];
+  //$data = [];
+  $data;
 
 	while ($row = mysqli_fetch_assoc($result)) {
 		
-		echo 'row ' . json_encode($row);
+		//echo 'row ' . json_encode($row);
 
-		array_push($data, $row['COUNT(*)']);
+		//array_push($data, $row['COUNT(*)']);
+		$data = $row['COUNT(*)'];
 
 	}
 	
-	echo 'data count' . json_encode($data);
+	//echo 'data count' . json_encode($data);
 
 	$message;
 	
@@ -92,7 +94,7 @@
 	$output['status']['name'] = "ok";
 	$output['status']['description'] = "success";
 	$output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000 . " ms";
-	$output['data'] = [$message];
+	$output['data'] = $message;
 	
 	mysqli_close($conn);
 
