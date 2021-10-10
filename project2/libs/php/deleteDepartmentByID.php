@@ -35,7 +35,38 @@
 
 	// SQL statement accepts parameters and so is prepared to avoid SQL injection.
 	// $_REQUEST used for development / debugging. Remember to change to $_POST for production
+	
+	$check = $conn->prepare('SELECT COUNT(*) FROM department WHERE id = ?');
+	echo 'requestedID is' . $_REQUEST['id'];
 
+	$check->bind_param("i", $_REQUEST['id']);
+	
+	$check->execute();
+	
+	$result = $check->get_result();
+
+  $data = [];
+
+	while ($row = mysqli_fetch_assoc($result)) {
+		
+		echo 'row ' . json_encode($row);
+
+		array_push($data, $row['COUNT(*)']);
+
+	}
+	
+	echo 'data count' . json_encode($data);
+
+	$message;
+	
+	if ($data != 0) {
+		$message =  'Department Deleted';
+	} else {
+		$message =  'Department Does Not Exist';		
+	}
+	
+
+	 
 	$query = $conn->prepare('DELETE FROM department WHERE id = ?');
 	
 	$query->bind_param("i", $_REQUEST['id']);
@@ -61,10 +92,10 @@
 	$output['status']['name'] = "ok";
 	$output['status']['description'] = "success";
 	$output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000 . " ms";
-	$output['data'] = [];
+	$output['data'] = [$message];
 	
 	mysqli_close($conn);
 
 	echo json_encode($output); 
-
+  
 ?>

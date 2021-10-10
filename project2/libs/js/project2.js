@@ -2731,6 +2731,90 @@ mymap.on('baselayerchange', function(e) {
 
 */
 
+$('#insertDeptBtn').click(function(){
+	
+	$.ajax({
+	url: "libs/php/insertDepartment.php",
+	type: "GET",
+	dataType: "json",
+	data: {
+		name: 'NewDept',
+		locationID: 89
+	},
+	success: function (result) {
+		
+			console.log('insertDepartment', result);
+			
+			$.ajax({
+			url: "libs/php/getAllDepartments.php",
+			type: "GET",
+			dataType: "json",
+			data: {},
+			success: function (result) {
+				
+					console.log('deparments after InsertDept ',result);
+					$('#afterInsertDept').html(JSON.stringify(result, null, 2));
+				
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+					console.log('error');
+					console.log(textStatus);
+					console.log(errorThrown);
+				},
+			});
+		
+	},
+	error: function (jqXHR, textStatus, errorThrown) {
+			console.log('error');
+			console.log(textStatus);
+			console.log(errorThrown);
+		},
+	});
+	
+});
+
+
+$('#deleteDeptBtn').click(function (){
+	
+$.ajax({
+			url: "libs/php/deleteDepartmentByID.php",
+			type: "GET",
+			dataType: "json",
+			data: {
+				id: 44
+			},
+			success: function (result) {
+				
+					console.log('Delete Department ', result);
+					
+					$.ajax({
+					url: "libs/php/getAllDepartments.php",
+					type: "GET",
+					dataType: "json",
+					data: {},
+					success: function (result) {
+						
+							console.log('deparments after DeleteDept ',result);
+							$('#afterDeleteDept').html(JSON.stringify(result, null, 2));
+						
+					},
+					error: function (jqXHR, textStatus, errorThrown) {
+							console.log('error');
+							console.log(textStatus);
+							console.log(errorThrown);
+						},
+					});
+				
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+					console.log('error');
+					console.log(textStatus);
+					console.log(errorThrown);
+				},
+			});
+	
+});
+
 window.onload = (event) => {	
 	if ($('#preloader').length) {
 		$('#preloader').delay(1000).fadeOut('slow', function () {
@@ -2815,47 +2899,10 @@ window.onload = (event) => {
 				},
 			});
 			
-			$.ajax({
-			url: "libs/php/insertDepartment.php",
-			type: "GET",
-			dataType: "json",
-			data: {
-				name: 'NewDept',
-				locationID: 88
-			},
-			success: function (result) {
-				
-					console.log('insertDepartment', result);
-					
-					$.ajax({
-					url: "libs/php/getAllDepartments.php",
-					type: "GET",
-					dataType: "json",
-					data: {},
-					success: function (result) {
-						
-							console.log('deparments after InsertDept ',result);
-							$('#afterInsertDept').html(JSON.stringify(result, null, 2));
-						
-					},
-					error: function (jqXHR, textStatus, errorThrown) {
-							console.log('error');
-							console.log(textStatus);
-							console.log(errorThrown);
-						},
-					});
-				
-			},
-			error: function (jqXHR, textStatus, errorThrown) {
-					console.log('error');
-					console.log(textStatus);
-					console.log(errorThrown);
-				},
-			});
-			
-			});
-			
 			
 		});
-	};
+			
+			
+	});
+};
 } //END OF WINDOW ON LOAD
