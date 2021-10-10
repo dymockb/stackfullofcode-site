@@ -2746,7 +2746,8 @@ window.onload = (event) => {
 			data: {},
 			success: function (result) {
 				
-					console.log(result);
+					console.log('getAll ',result);
+					$('#getAll').html(JSON.stringify(result, null, 2));
 				
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
@@ -2755,9 +2756,106 @@ window.onload = (event) => {
 					console.log(errorThrown);
 				},
 			});
+			
+			$.ajax({
+			url: "libs/php/getAllDepartments.php",
+			type: "GET",
+			dataType: "json",
+			data: {},
+			success: function (result) {
 				
+					console.log('getAllDepartments ',result);
+					$('#getAllDepartments').html(JSON.stringify(result, null, 2));
 				
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+					console.log('error');
+					console.log(textStatus);
+					console.log(errorThrown);
+				},
 			});
+
+			$.ajax({
+			url: "libs/php/getDepartmentByID.php",
+			type: "GET",
+			dataType: "json",
+			data: {
+				id: 1
+			},
+			success: function (result) {
+				
+					console.log('getDepartmentByID ',result);
+					$('#getDepartmentByID').html(JSON.stringify(result, null, 2));
+				
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+					console.log('error');
+					console.log(textStatus);
+					console.log(errorThrown);
+				},
+			});				
+					
+			$.ajax({
+			url: "libs/php/getPersonnelByID.php",
+			type: "GET",
+			dataType: "json",
+			data: {
+				id: 1
+			},
+			success: function (result) {
+				
+					console.log('getPersonnelByID ',result);
+					$('#getPersonnelByID').html(JSON.stringify(result, null, 2));
+				
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+					console.log('error');
+					console.log(textStatus);
+					console.log(errorThrown);
+				},
+			});
+			
+			$.ajax({
+			url: "libs/php/insertDepartment.php",
+			type: "GET",
+			dataType: "json",
+			data: {
+				name: 'NewDept',
+				locationID: 88
+			},
+			success: function (result) {
+				
+					console.log('insertDepartment', result);
+					
+					$.ajax({
+					url: "libs/php/getAllDepartments.php",
+					type: "GET",
+					dataType: "json",
+					data: {},
+					success: function (result) {
+						
+							console.log('deparments after InsertDept ',result);
+							$('#afterInsertDept').html(JSON.stringify(result, null, 2));
+						
+					},
+					error: function (jqXHR, textStatus, errorThrown) {
+							console.log('error');
+							console.log(textStatus);
+							console.log(errorThrown);
+						},
+					});
+				
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+					console.log('error');
+					console.log(textStatus);
+					console.log(errorThrown);
+				},
+			});
+			
+			});
+			
+			
 		});
 	};
 } //END OF WINDOW ON LOAD
