@@ -2730,9 +2730,61 @@ mymap.on('baselayerchange', function(e) {
 });
 
 */
+function logSubmit(event) {
+  console.log(`Form Submitted! Time stamp: ${event.timeStamp}`);
+  console.log('event log ', event);
+	event.preventDefault();
+}
+
+const form = document.getElementById('myform');
+form.addEventListener('submit', logSubmit);
+
+$('#myform').submit(function(event) {
+    event.preventDefault(); // Prevent the form from submitting via the browser
+		console.log('event ',event);
+    let form = $(this);		
+		let viewArr = form.serializeArray();
+    let view = {};
+
+		for (let i in viewArr) {
+			view[viewArr[i].name] = viewArr[i].value;
+		}
+		
+		console.log('view ', view);
+		
+		// manually trigger form somewhere else
+		//	$(function() {
+		//	$('form.my_form').trigger('submit');
+		//  });
+		
+		
+		$.ajax({
+      type: form.attr('method'),
+      url: 'libs/php/deleteDepartmentByID.php',
+			dataType: 'json',
+      data: view,
+			success: function (result) {
+				
+					console.log('form ',result);
+			
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+					console.log('error');
+					console.log(textStatus);
+					console.log(errorThrown);
+				},
+			});
+			
+			
+});
+		
+  
 
 $('#insertDeptBtn').click(function(){
 	
+	
+	
+	/*
 	$.ajax({
 	url: "libs/php/insertDepartment.php",
 	type: "GET",
@@ -2770,7 +2822,7 @@ $('#insertDeptBtn').click(function(){
 			console.log(errorThrown);
 		},
 	});
-	
+	*/
 });
 
 
