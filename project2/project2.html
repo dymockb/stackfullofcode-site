@@ -57,23 +57,41 @@
 	<pre id="getAll" class="box">something</pre>
 	
 	<h3>Get All Departments</h3>
+	<button id="getAllDeptsBtn">Refresh</button>
 	<pre id="getAllDepartments" class="box">something</pre>
 	
 	<h3>Get Department by ID</h3>
+	<form id="getDeptByIdForm" action="#" method="post">
+    <label for="DeptId">ID:</label>
+    <input type="text" id="DeptId" name="id" placeholder="enter dept ID"/>
+		<button type="submit">Send your message</button>
+	</form>
 	<pre id="getDepartmentByID" class="box">something</pre>
 
 	<h3>Get Personnel by ID</h3>
+	<form id="getPersonnelByIdForm" action="#" method="post">
+    <label for="PersonnelId">ID:</label>
+    <input type="text" id="PersonnelId" name="id" placeholder="enter personnel ID"/>
+		<button type="submit">Send your message</button>
+	</form>
 	<pre id="getPersonnelByID" class="box">something</pre>
-	
-	<button id="insertDeptBtn">Insert Dept</button>
+
+	<h3>Insert Dept</h3>
+	<form id="insertDeptForm" action="#" method="post">
+    <label for="locationID">Location ID:</label>
+    <input type="text" id="locationID" name="locationID" placeholder="enter location ID"/>
+    <label for="deptName">Name of Dept:</label>
+    <input type="text" id="deptName" name="name" placeholder="enter Department Name"/>
+		<button type="submit">Send your message</button>
+	</form>
 	<pre id="afterInsertDept" class="box">something</pre>
-	
-	<form id="myform" action="#" method="post">
+
+	<h3>Delete Dept by ID</h3>
+	<form id="deleteDeptForm" action="#" method="post">
     <label for="id">ID:</label>
     <input type="text" id="id" name="id" placeholder="enter dept ID"/>
 		<button type="submit">Send your message</button>
 	</form>
-	<button id="deleteDeptBtn">Delete Dept</button>
 	<pre id="afterDeleteDept" class="box">something</pre>
 
 

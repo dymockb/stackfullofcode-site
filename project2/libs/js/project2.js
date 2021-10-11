@@ -2736,10 +2736,125 @@ function logSubmit(event) {
 	event.preventDefault();
 }
 
-const form = document.getElementById('myform');
+const form = document.getElementById('deleteDeptForm');
 form.addEventListener('submit', logSubmit);
 
-$('#myform').submit(function(event) {
+$('#insertDeptForm').submit(function(event) {
+    event.preventDefault(); // Prevent the form from submitting via the browser
+    let form = $(this);		
+		let viewArr = form.serializeArray();
+    let view = {};
+
+		for (let i in viewArr) {
+			view[viewArr[i].name] = viewArr[i].value;
+		}
+		
+		console.log('view ', view);
+				
+		$.ajax({
+      type: form.attr('method'),
+      url: 'libs/php/insertDepartment.php',
+			dataType: 'json',
+      data: view,
+			success: function (result) {
+				
+					console.log('insertDept form ',result);
+			
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+					console.log('error');
+					console.log(textStatus);
+					console.log(errorThrown);
+				},
+			});
+			
+			
+});
+
+$('#getDeptByIdForm').submit(function(event) {
+    event.preventDefault(); // Prevent the form from submitting via the browser
+    let form = $(this);		
+		let viewArr = form.serializeArray();
+    let view = {};
+
+		for (let i in viewArr) {
+			view[viewArr[i].name] = viewArr[i].value;
+		}
+		
+		console.log('view ', view);
+		
+		// manually trigger form somewhere else
+		//	$(function() {
+		//	$('form.my_form').trigger('submit');
+		//  });
+		
+		
+		$.ajax({
+      type: form.attr('method'),
+      url: 'libs/php/getDepartmentByID.php',
+			dataType: 'json',
+      data: view,
+			success: function (result) {
+					
+					if (result.data == []) {
+						console.log('dept does not exist');
+					}
+				
+					console.log('get Dept by ID ',result);
+					$('#getDepartmentByID').html(JSON.stringify(result, null, 2));
+			
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+					console.log('error');
+					console.log(textStatus);
+					console.log(errorThrown);
+				},
+			});
+			
+			
+});
+
+$('#getPersonnelByIdForm').submit(function(event) {
+    event.preventDefault(); // Prevent the form from submitting via the browser
+		console.log('event ',event);
+    let form = $(this);		
+		let viewArr = form.serializeArray();
+    let view = {};
+
+		for (let i in viewArr) {
+			view[viewArr[i].name] = viewArr[i].value;
+		}
+		
+		console.log('view ', view);
+		
+		// manually trigger form somewhere else
+		//	$(function() {
+		//	$('form.my_form').trigger('submit');
+		//  });
+		
+		
+		$.ajax({
+      type: form.attr('method'),
+      url: 'libs/php/getPersonnelByID.php',
+			dataType: 'json',
+      data: view,
+			success: function (result) {
+				
+					console.log('get personnel by ID ',result);
+					$('#getPersonnelByID').html(JSON.stringify(result, null, 2));
+			
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+					console.log('error');
+					console.log(textStatus);
+					console.log(errorThrown);
+				},
+			});
+			
+			
+});
+
+$('#deleteDeptForm').submit(function(event) {
     event.preventDefault(); // Prevent the form from submitting via the browser
 		console.log('event ',event);
     let form = $(this);		
@@ -2777,43 +2892,21 @@ $('#myform').submit(function(event) {
 			
 			
 });
-		
-  
 
-$('#insertDeptBtn').click(function(){
-	
-	
-	
-	/*
+$('#getAllDeptsBtn').click(function(){
+	getAllDepartments();
+});
+
+function getAllDepartments(){
 	$.ajax({
-	url: "libs/php/insertDepartment.php",
+	url: "libs/php/getAllDepartments.php",
 	type: "GET",
 	dataType: "json",
-	data: {
-		name: 'NewDept',
-		locationID: 89
-	},
+	data: {},
 	success: function (result) {
 		
-			console.log('insertDepartment', result);
-			
-			$.ajax({
-			url: "libs/php/getAllDepartments.php",
-			type: "GET",
-			dataType: "json",
-			data: {},
-			success: function (result) {
-				
-					console.log('deparments after InsertDept ',result);
-					$('#afterInsertDept').html(JSON.stringify(result, null, 2));
-				
-			},
-			error: function (jqXHR, textStatus, errorThrown) {
-					console.log('error');
-					console.log(textStatus);
-					console.log(errorThrown);
-				},
-			});
+			console.log('getAllDepartments ',result);
+			$('#getAllDepartments').html(JSON.stringify(result, null, 2));
 		
 	},
 	error: function (jqXHR, textStatus, errorThrown) {
@@ -2822,54 +2915,7 @@ $('#insertDeptBtn').click(function(){
 			console.log(errorThrown);
 		},
 	});
-	*/
-});
-
-
-$('#deleteDeptBtn').click(function (){
-	
-$.ajax({
-			url: "libs/php/deleteDepartmentByID.php",
-			type: "GET",
-			dataType: "json",
-			data: {
-				id: 12
-			},
-			success: function (result) {
-				
-					if (result.data == 'Department Does Not Exist') {
-						console.log('Department Does Not Exist');						
-					} else {
-						console.log('Department Deleted');
-					}
-					
-					$.ajax({
-					url: "libs/php/getAllDepartments.php",
-					type: "GET",
-					dataType: "json",
-					data: {},
-					success: function (result) {
-						
-							console.log('deparments after DeleteDept ',result);
-							$('#afterDeleteDept').html(JSON.stringify(result, null, 2));
-						
-					},
-					error: function (jqXHR, textStatus, errorThrown) {
-							console.log('error');
-							console.log(textStatus);
-							console.log(errorThrown);
-						},
-					});
-				
-			},
-			error: function (jqXHR, textStatus, errorThrown) {
-					console.log('error');
-					console.log(textStatus);
-					console.log(errorThrown);
-				},
-			});
-	
-});
+}
 
 window.onload = (event) => {	
 	if ($('#preloader').length) {
@@ -2896,66 +2942,9 @@ window.onload = (event) => {
 					console.log(errorThrown);
 				},
 			});
-			
-			$.ajax({
-			url: "libs/php/getAllDepartments.php",
-			type: "GET",
-			dataType: "json",
-			data: {},
-			success: function (result) {
-				
-					console.log('getAllDepartments ',result);
-					$('#getAllDepartments').html(JSON.stringify(result, null, 2));
-				
-			},
-			error: function (jqXHR, textStatus, errorThrown) {
-					console.log('error');
-					console.log(textStatus);
-					console.log(errorThrown);
-				},
-			});
 
-			$.ajax({
-			url: "libs/php/getDepartmentByID.php",
-			type: "GET",
-			dataType: "json",
-			data: {
-				id: 1
-			},
-			success: function (result) {
-				
-					console.log('getDepartmentByID ',result);
-					$('#getDepartmentByID').html(JSON.stringify(result, null, 2));
-				
-			},
-			error: function (jqXHR, textStatus, errorThrown) {
-					console.log('error');
-					console.log(textStatus);
-					console.log(errorThrown);
-				},
-			});				
-					
-			$.ajax({
-			url: "libs/php/getPersonnelByID.php",
-			type: "GET",
-			dataType: "json",
-			data: {
-				id: 1
-			},
-			success: function (result) {
-				
-					console.log('getPersonnelByID ',result);
-					$('#getPersonnelByID').html(JSON.stringify(result, null, 2));
-				
-			},
-			error: function (jqXHR, textStatus, errorThrown) {
-					console.log('error');
-					console.log(textStatus);
-					console.log(errorThrown);
-				},
-			});
-			
-			
+			getAllDepartments();
+								
 		});
 			
 			
