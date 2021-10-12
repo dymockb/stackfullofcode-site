@@ -1,11 +1,10 @@
 <?php
 
 	// example use from browser
-	// use insertDepartment.php first to create new dummy record and then specify it's id in the command below
-	// http://localhost/companydirectory/libs/php/deleteDepartmentByID.php?id=<id>
+	// http://localhost/companydirectory/libs/php/getDepartmentByID.php?id=<id>
 
-	// remove next two lines for production
-	
+	// remove next two lines for production	
+
 	ini_set('display_errors', 'On');
 	error_reporting(E_ALL);
 
@@ -24,56 +23,20 @@
 		$output['status']['description'] = "database unavailable";
 		$output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000 . " ms";
 		$output['data'] = [];
-
+		
 		mysqli_close($conn);
 
 		echo json_encode($output);
-
+		
 		exit;
 
 	}	
 
 	// SQL statement accepts parameters and so is prepared to avoid SQL injection.
 	// $_REQUEST used for development / debugging. Remember to change to $_POST for production
-	
-	$check = $conn->prepare('SELECT COUNT(*) FROM department WHERE id = ?');
 
-	$check->bind_param("i", $_REQUEST['id']);
-	
-	$check->execute();
-	
-	$result = $check->get_result();
+	$query = $conn->prepare('SELECT id, name, locationID FROM department WHERE id =  ?');
 
-  $data;
-
-	while ($row = mysqli_fetch_assoc($result)) {
-		
-		//echo 'row ' . json_encode($row);
-		//array_push($data, $row['COUNT(*)']);
-		$data = $row['COUNT(*)'];
-
-	}
-
-	$message;
-	
-	if ($data != 0) {
-		$message =  'Department Deleted';
-	} else {
-		$message =  'Department Does Not Exist';		
-	}
-	
-	$checkDependency = $conn->prepare('SELECT COUNT(*) FROM department WHERE id = ?');
-
-	$checkDependency->bind_param("i", $_REQUEST['id']);
-	
-	$checkDependency->execute();
-	
-	$dependencyResult = $checkcheckDependency->get_result();
-
-	
-	// 
-	$query = $conn->prepare('DELETE FROM department WHERE id = ?');
-	
 	$query->bind_param("i", $_REQUEST['id']);
 
 	$query->execute();
@@ -85,11 +48,20 @@
 		$output['status']['description'] = "query failed";	
 		$output['data'] = [];
 
-		mysqli_close($conn);
-
 		echo json_encode($output); 
-
+	
+		mysqli_close($conn);
 		exit;
+
+	}
+
+	$result = $query->get_result();
+
+   	$data = [];
+
+	while ($row = mysqli_fetch_assoc($result)) {
+
+		array_push($data, $row);
 
 	}
 
@@ -97,10 +69,12 @@
 	$output['status']['name'] = "ok";
 	$output['status']['description'] = "success";
 	$output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000 . " ms";
-	$output['data'] = $message;
+	$output['data'] = $data;
+
+	header('Content-Type: application/json; charset=UTF-8');
 	
+	echo json_encode($output); 
+
 	mysqli_close($conn);
 
-	echo json_encode($output); 
-  
 ?>

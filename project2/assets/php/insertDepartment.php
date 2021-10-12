@@ -1,8 +1,7 @@
 <?php
 
 	// example use from browser
-	// use insertDepartment.php first to create new dummy record and then specify it's id in the command below
-	// http://localhost/companydirectory/libs/php/deleteDepartmentByID.php?id=<id>
+	// http://localhost/companydirectory/libs/php/insertDepartment.php?name=New%20Department&locationID=<id>
 
 	// remove next two lines for production
 	
@@ -10,7 +9,7 @@
 	error_reporting(E_ALL);
 
 	$executionStartTime = microtime(true);
-
+//this includes the login details
 	include("config.php");
 
 	header('Content-Type: application/json; charset=UTF-8');
@@ -35,46 +34,10 @@
 
 	// SQL statement accepts parameters and so is prepared to avoid SQL injection.
 	// $_REQUEST used for development / debugging. Remember to change to $_POST for production
-	
-	$check = $conn->prepare('SELECT COUNT(*) FROM department WHERE id = ?');
 
-	$check->bind_param("i", $_REQUEST['id']);
-	
-	$check->execute();
-	
-	$result = $check->get_result();
+	$query = $conn->prepare('INSERT INTO department (name, locationID) VALUES(?,?)');
 
-  $data;
-
-	while ($row = mysqli_fetch_assoc($result)) {
-		
-		//echo 'row ' . json_encode($row);
-		//array_push($data, $row['COUNT(*)']);
-		$data = $row['COUNT(*)'];
-
-	}
-
-	$message;
-	
-	if ($data != 0) {
-		$message =  'Department Deleted';
-	} else {
-		$message =  'Department Does Not Exist';		
-	}
-	
-	$checkDependency = $conn->prepare('SELECT COUNT(*) FROM department WHERE id = ?');
-
-	$checkDependency->bind_param("i", $_REQUEST['id']);
-	
-	$checkDependency->execute();
-	
-	$dependencyResult = $checkcheckDependency->get_result();
-
-	
-	// 
-	$query = $conn->prepare('DELETE FROM department WHERE id = ?');
-	
-	$query->bind_param("i", $_REQUEST['id']);
+	$query->bind_param("si", $_REQUEST['name'], $_REQUEST['locationID']);
 
 	$query->execute();
 	
@@ -97,10 +60,10 @@
 	$output['status']['name'] = "ok";
 	$output['status']['description'] = "success";
 	$output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000 . " ms";
-	$output['data'] = $message;
+	$output['data'] = [];
 	
 	mysqli_close($conn);
 
 	echo json_encode($output); 
-  
+
 ?>
