@@ -2992,10 +2992,6 @@ function updateValue(e) {
 }
 
 window.onload = (event) => {	
-	if ($('#preloader').length) {
-		$('#preloader').delay(1000).fadeOut('slow', function () {
-			$(this).remove();
-			console.log("Window loaded", event);
 		
 			$(document).ready(function () {
 			
@@ -3018,6 +3014,13 @@ window.onload = (event) => {
 					for (let e = 1; e < result.data.length; e ++) {
 						otherEmployees.appendChild(createEmployeeRow(result.data[e].firstName, result.data[e].lastName, result.data[e].department));
 					}
+					
+					if ($('#preloader').length) {
+						$('#preloader').delay(1000).fadeOut('slow', function () {
+							$(this).remove();
+							console.log("Window loaded", event);		
+						});
+					}
 
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
@@ -3033,6 +3036,5 @@ window.onload = (event) => {
 		});
 			
 			
-	});
-};
-} //END OF WINDOW ON LOAD
+	
+}; //END OF WINDOW ON LOAD
