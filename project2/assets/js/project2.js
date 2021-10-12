@@ -2998,31 +2998,45 @@ function updateValue(e) {
 	}
 }
 
+function addFunctonality(){
+	$('.employee-modal-btn').click(function(event){	
+		//for (element in event.target.parentElement.querySelector('div')) {
+		//		console.log(element);
+		//}
+		let employeeName = event.target.parentElement.querySelector('div').firstChild.textContent;
+		let employeeDepartment = event.target.parentElement.querySelector('div').querySelector('div').textContent;
+
+		console.log('Employee', event.target.parentElement.querySelector('div').firstChild.textContent);
+		console.log('Department', event.target.parentElement.querySelector('div').querySelector('div').textContent);
+		
+		document.getElementById('employee-name-modal').innerHTML = employeeName;
+		document.getElementById('employee-department-modal').innerHTML = employeeDepartment;
+		
+		$('#modal').modal('show');
+	});
+
+	$('td:not(#employee-details-field)').mouseover(function(){
+		$(this).attr('style','background: gray; cursor: pointer');
+	});
+
+	$('td:not(#employee-details-field)').mouseout(function(){
+		$(this).attr('style','background: white; cursor: auto');
+	});
+
+	$('td:not(#employee-details-field)').click(function(event){
+		//console.log('Employee', event.target.parentElement.querySelector('div'));
+		console.log(this.firstChild.children[1].firstChild.textContent);
+		console.log(this.firstChild.children[1].querySelector('div').textContent);
+	});
+}
+
 window.onload = (event) => {	
 		
-			$(document).ready(function () {
-				
-				$('.ui.accordion')
-		.accordion();
-		
-	//$('.ui.modal')
-  //.modal()
-	//;
-
-	$('#modal')
-  .modal()
-	;
-	
-	//$('#modalBtn').click(function(){
-	//	console.log('test');
-	//	$('#modal').modal('show');
-	//});
-	
-	$('.employee-modal-btn').click(function(){
-		console.log('test');
-		$('#modal').modal('show');
-	});	
+		$(document).ready(function () {
 			
+			$('.ui.accordion').accordion();
+
+			$('#modal').modal();			
 						
 			$.ajax({
 			url: "assets/php/getAll.php",
@@ -3043,22 +3057,7 @@ window.onload = (event) => {
 						otherEmployees.appendChild(createEmployeeRow(result.data[e].firstName, result.data[e].lastName, result.data[e].department));
 					}
 					
-						$('.employee-modal-btn').click(function(event){
-							
-							//for (element in event.target.parentElement.querySelector('div')) {
-							//		console.log(element);
-							//}
-							let employeeName = event.target.parentElement.querySelector('div').firstChild.textContent;
-							let employeeDepartment = event.target.parentElement.querySelector('div').querySelector('div').textContent;
-
-							console.log('Employee', event.target.parentElement.querySelector('div').firstChild.textContent);
-							console.log('Department', event.target.parentElement.querySelector('div').querySelector('div').textContent);
-							
-							document.getElementById('employee-name-modal').innerHTML = employeeName;
-							document.getElementById('employee-department-modal').innerHTML = employeeDepartment;
-							
-							$('#modal').modal('show');
-						});
+					addFunctonality();
 					
 					if ($('#preloader').length) {
 						$('#preloader').delay(1000).fadeOut('slow', function () {
