@@ -137,13 +137,18 @@
 		float: right;
 	}
 	
+	.employee-btn {
+		float: right;
+		display: none !important;
+	}
+	
 	h4.ui.image.header {
     display: inline;
 	}
 	
 	@media only screen and (max-width: 767.98px) {
 		
-		#employee-details-field, #employee-details-column, #pc-search-column {
+		#employee-details-field, #employee-details-column, #pc-search-column, .employee-btn {
 			display: none !important;
 		}
 		
@@ -404,9 +409,9 @@
       <img src="assets/images/wireframe/image.png">
     </div>
     <div class="content">
-      <div class="header">Employee name</div>
+      <div id="employee-name-modal" class="header">Employee name</div>
       <div class="meta">
-        <a class="group">Job title</a>
+        <a id="employee-department-modal" class="group">Job title</a>
       </div>
       <div class="description">Employee details etc</div>
     </div>
@@ -461,26 +466,6 @@
 $(document)
 	.ready(function() {
 
-	$('.ui.accordion')
-		.accordion();
-		
-	//$('.ui.modal')
-  //.modal()
-	//;
-
-	$('#modal')
-  .modal()
-	;
-	
-	//$('#modalBtn').click(function(){
-	//	console.log('test');
-	//	$('#modal').modal('show');
-	//});
-	
-	$('.employee-modal-btn').click(function(){
-		console.log('test');
-		$('#modal').modal('show');
-	});
 	
 	});
 				

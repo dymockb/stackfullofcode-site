@@ -2959,14 +2959,20 @@ function createEmployee(firstName, lastName, department){
 	employeeModalBtn.setAttribute('id', 'modalBtn');
 	employeeModalBtn.innerHTML = 'View Details';
 	
-	return [employeeH4, employeeModalBtn];
+	let employeeBtn = document.createElement('div');
+	employeeBtn.setAttribute('class', 'employee-btn ui button');
+	employeeBtn.setAttribute('id', 'modalBtn');
+	employeeBtn.innerHTML = 'View';
+	
+	return [employeeH4, employeeModalBtn, employeeBtn];
 	
 };
 
 function appendEmployee(elementToAppend, employeeElements){
 	elementToAppend.innerHTML = '';
 	elementToAppend.appendChild(employeeElements[0]);
-	elementToAppend.appendChild(employeeElements[1]);	
+	elementToAppend.appendChild(employeeElements[1]);
+	elementToAppend.appendChild(employeeElements[2]);	
 }
 
 function createEmployeeRow(firstName, lastName, department) {
@@ -2976,6 +2982,7 @@ function createEmployeeRow(firstName, lastName, department) {
 	let employeeElements = createEmployee(firstName, lastName, department);					
 	tableData.appendChild(employeeElements[0]);
 	tableData.appendChild(employeeElements[1]);
+	tableData.appendChild(employeeElements[2]);
 	
 	tableRow.appendChild(tableData);
 	return tableRow;
@@ -2994,6 +3001,27 @@ function updateValue(e) {
 window.onload = (event) => {	
 		
 			$(document).ready(function () {
+				
+				$('.ui.accordion')
+		.accordion();
+		
+	//$('.ui.modal')
+  //.modal()
+	//;
+
+	$('#modal')
+  .modal()
+	;
+	
+	//$('#modalBtn').click(function(){
+	//	console.log('test');
+	//	$('#modal').modal('show');
+	//});
+	
+	$('.employee-modal-btn').click(function(){
+		console.log('test');
+		$('#modal').modal('show');
+	});	
 			
 						
 			$.ajax({
@@ -3014,6 +3042,23 @@ window.onload = (event) => {
 					for (let e = 1; e < result.data.length; e ++) {
 						otherEmployees.appendChild(createEmployeeRow(result.data[e].firstName, result.data[e].lastName, result.data[e].department));
 					}
+					
+						$('.employee-modal-btn').click(function(event){
+							
+							//for (element in event.target.parentElement.querySelector('div')) {
+							//		console.log(element);
+							//}
+							let employeeName = event.target.parentElement.querySelector('div').firstChild.textContent;
+							let employeeDepartment = event.target.parentElement.querySelector('div').querySelector('div').textContent;
+
+							console.log('Employee', event.target.parentElement.querySelector('div').firstChild.textContent);
+							console.log('Department', event.target.parentElement.querySelector('div').querySelector('div').textContent);
+							
+							document.getElementById('employee-name-modal').innerHTML = employeeName;
+							document.getElementById('employee-department-modal').innerHTML = employeeDepartment;
+							
+							$('#modal').modal('show');
+						});
 					
 					if ($('#preloader').length) {
 						$('#preloader').delay(1000).fadeOut('slow', function () {
