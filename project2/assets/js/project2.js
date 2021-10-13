@@ -2932,6 +2932,10 @@ function getAllDepartments(){
         </td>
 	
 */	
+
+let employeeModalCount = 0;
+let employeePropertiesObj = {};
+
 function createEmployee(firstName, lastName, department, location, email, jobTitle, id){
 	
 	let employeeH4 = document.createElement('h4');
@@ -3003,7 +3007,7 @@ let t;
 window.onresize = () => {
     resizing(this, this.innerWidth, this.innerHeight) //1
     if (typeof t == 'undefined') resStarted() //2
-    clearTimeout(t); t = setTimeout(() => { t = undefined; resEnded() }, 500) //3
+    clearTimeout(t); t = setTimeout(() => { t = undefined; resEnded() }, 200) //3
 }
 
 function resizing(target, w, h) {
@@ -3020,6 +3024,11 @@ function resEnded() {
 
 	$('td:not(#employee-details-field)').off('click');
 	
+	selectEmployeeFunctionality()
+	
+}
+
+function selectEmployeeFunctionality(){
 	if ($('#mobile-search-options').css('display') == 'none') {
 		$('tr:not(#first-employee-row)').mouseover(function(){
 			$(this).attr('style','background: gray; cursor: pointer');
@@ -3033,48 +3042,128 @@ function resEnded() {
 		$('td:not(#employee-details-field)').click(function(event){
 			let employeeProperties = JSON.parse(this.firstChild.children[1].getAttribute('employee-properties'));
 			console.log(employeeProperties);
-			console.log($('#mobile-search-options').css('display'));
+			renderEmployee(employeeProperties);
 		});
 	}
 }
 
-function addFunctonality(){
-	$('.employee-modal-btn').click(function(event){	
-		//for (element in event.target.parentElement.querySelector('div')) {
-		//		console.log(element);
-		//}
-		let employeeProperties = JSON.parse($($(this).context.previousSibling.children[1]).attr('employee-properties'));
-		console.log('this', JSON.parse($($(this).context.previousSibling.children[1]).attr('employee-properties')));
-				
-		document.getElementById('employee-name-modal').innerHTML = `${employeeProperties.firstName} ${employeeProperties.lastName}`;
-		document.getElementById('employee-department-modal').innerHTML = employeeProperties.department;
-		
-		$('#modal').modal('show');
-	});
-
-	//$('tr:not(#employee-details-field)').mouseover(function(){
-
-
-		if ($('#mobile-search-options').css('display') == 'none') {
-			$('tr:not(#first-employee-row)').mouseover(function(){
-				$(this).attr('style','background: gray; cursor: pointer');
-			});
-
-	//$('tr:not(#employee-details-field)').mouseout(function(){
-			$('tr:not(#first-employee-row)').mouseout(function(){
-				$(this).attr('style','background: white; cursor: auto');
-			});
-
-			$('td:not(#employee-details-field)').click(function(event){
-				let employeeProperties = JSON.parse(this.firstChild.children[1].getAttribute('employee-properties'));
-				console.log(employeeProperties);
-				console.log($('#mobile-search-options').css('display'));
-
-			});
-	}
+function viewDetailsBtnFunctionality(){
 	
+	$('.employee-modal-btn').click(function(event){	
+	
+		console.log(employeeModalCount);
+		//$(`#modal${employeeModalCount}`).modal();	
+		
+		employeePropertiesObj = {};
+
+		let employeeProperties = JSON.parse($($(this).context.previousSibling.children[1]).attr('employee-properties'));
+				
+		//document.getElementById('employee-name-modal').innerHTML = `${employeeProperties.firstName} ${employeeProperties.lastName}`;
+		//document.getElementById('employee-department-modal').innerHTML = employeeProperties.department;
+		
+		for (const [key, value] of Object.entries(employeeProperties)) {
+			//console.log(document.getElementById(`employee-${key}-modal${employeeModalCount}`));
+			document.getElementById(`employee-${key}-modal${employeeModalCount}`).setAttribute('value',value);
+			employeePropertiesObj[key] = value;
+		}
+				
+		$(`#modal${employeeModalCount}`).modal('show');
+	
+	});
 	
 }
+
+function renderEmployee(employeeProperties){
+	
+	for (const [key, value] of Object.entries(employeeProperties)) {
+		//if (key == 'firstName') {
+			document.getElementById(`employee-${key}-field`).setAttribute('value',value);
+		//}
+		
+		//document.getElementById(`employee-${key}-field`).innerHTML = value;
+	}
+	
+}
+
+function addFunctonality(){
+	
+	viewDetailsBtnFunctionality()
+	
+	selectEmployeeFunctionality()
+	
+}
+
+$('#edit-employee-fields-btn').click(function(){
+	
+	console.log('clicked');
+	console.log($('#myText'));
+	//$("#myText").removeAttr('readonly');
+	$(".employee-editable-field").removeAttr('readonly');
+	$('.employee-editable-field').attr('style', 'border-color: blue');
+
+});
+
+$('#edit-employee-modal-btn').click(function(){
+	$(".employee-editable-modal-field").removeAttr('readonly');
+	$('.employee-editable-modal-field').attr('style', 'border-color: blue');
+});
+
+$('#close-modal-btn').click(function(){
+	
+	$(`#modal${employeeModalCount}`).modal('hide');
+
+	document.getElementById(`modal${employeeModalCount}`).setAttribute('id', `modal${employeeModalCount+1}`)
+	
+	for (const [key, value] of Object.entries(employeePropertiesObj)) {
+		//console.log(document.getElementById(`employee-${key}-modal${employeeModalCount}`));
+		document.getElementById(`employee-${key}-modal${employeeModalCount}`).setAttribute('name', `${employeeModalCount+1}`);
+		document.getElementById(`employee-${key}-modal${employeeModalCount}`).setAttribute('id', `employee-${key}-modal${employeeModalCount+1}`);
+	}
+
+
+	
+	console.log('clicked');
+	$(".employee-editable-modal-field").attr('readonly', 'readOnly');
+
+	$(`#modal${employeeModalCount+1}`).modal();
+	
+	employeeModalCount += 1;
+
+
+
+	/*
+	for (let ep = 0; ep < employeePropertiesList.length; ep ++) {
+		console.log(document.getElementById(`employee-${employeePropertiesList[ep]}-modal${employeeModalCount}`).value)
+	}
+
+	let newModal = document.getElementById(`modal${employeeModalCount}`).cloneNode(true);
+
+	let removeModalTimer = setTimeout(function (){
+	
+		//for (let ep = 0; ep < employeePropertiesList.length; ep ++) {
+		//	document.getElementById(`employee-${employeePropertiesList[ep]}-modal${employeeModalCount}`).setAttribute('id', `employee-${employeePropertiesList[ep]}-modal${employeeModalCount+1}`);
+		//}
+	
+		console.log(document.getElementById(`modal${employeeModalCount}`));	
+	
+	//document.getElementById(`modal${employeeModalCount}`).remove();		
+		
+		document.querySelector('body').appendChild(newModal);
+
+		document.getElementById(`modal${employeeModalCount}`).setAttribute('id', `modal${employeeModalCount+1}`)
+		
+		console.log(document.getElementById(`modal${employeeModalCount+1}`));
+		
+		//employeeModalCount += 1;
+
+		//$(`#modal${employeeModalCount}`).modal();	
+		
+		clearTimeout(removeModalTimer);
+		
+	}, 500);
+	*/
+});
+
 
 window.onload = (event) => {	
 		
@@ -3082,7 +3171,7 @@ window.onload = (event) => {
 			
 			$('.ui.accordion').accordion();
 
-			$('#modal').modal();			
+			$(`#modal${employeeModalCount}`).modal();		
 						
 			$.ajax({
 			url: "assets/php/getAll.php",
@@ -3099,7 +3188,8 @@ window.onload = (event) => {
 
 					let otherEmployees = document.getElementById('table-body');
 
-					for (let e = 1; e < result.data.length; e ++) {
+					//for (let e = 1; e < result.data.length; e ++) {
+					for (let e = 1; e < 18; e ++) {
 						otherEmployees.appendChild(createEmployeeRow(result.data[e].firstName, result.data[e].lastName, result.data[e].department, result.data[e].location, result.data[e].email, result.data[e].jobTitle, result.data[e].id));
 					}
 					

@@ -130,6 +130,7 @@
     z-index: 1;
     top: 7.1rem;
 		border-left: none;
+		vertical-align: top;
 	}
 	
 	.employee-modal-btn {
@@ -236,7 +237,7 @@
 <body>
 
 <!-- <div class="ui stackable container menu"> -->
-	<div id="preloader"></div>
+<!--	<div id="preloader"></div> -->
 	<div id="top-nav" class="ui segment">
   <div id="top-nav-items" class="ui fluid form">
 		<div id="search-box" class="item">
@@ -323,14 +324,7 @@
 
 		
 	<div id="pc-search-column-wrapper"> 
-	<div id="pc-search-column" class="computer only one column">
-	<!--
-	<div class="computer only one column row">
-	<div class="ui segment"> </div>
-		<div id="table-wrapper">	</div>
-	-->
-
-	</div>
+	<div id="pc-search-column" class="computer only one column"></div>
 
 		<div id="pc-table-segment" class="ui segment">
 		<table id="pc-table" class="ui celled table">
@@ -352,17 +346,21 @@
           </h4>
 					<div id="modalBtn" class="employee-modal-btn ui button">view details</div>
         </td>
-        <td id="employee-details-field" rowspan="4">
+        <td id="employee-details-field" rowspan="8">
           
 					<div class="ui segment">
 						<div class="ui small image">
 							<img src="assets/images/wireframe/image.png">
 						</div>
 						<div class="content">
-							<a class="header">Content Header</a>
+							<input type="text" class="employee-editable-field" readOnly="readOnly" id="employee-firstName-field" />
+							<input type="text" class="employee-editable-field" readOnly="readOnly" id="employee-lastName-field" />
 							<div class="meta">
-								<a>Date</a>
-								<a>Category</a>
+								<input type="text" class="employee-editable-field" readOnly="readOnly" id="employee-jobTitle-field" />
+								<input type="text" class="employee-editable-field" readOnly="readOnly" id="employee-department-field" />
+								<input type="text" class="employee-editable-field" readOnly="readOnly" id="employee-location-field" />
+								<input type="text" class="employee-editable-field" readOnly="readOnly" id="employee-id-field" />
+								<input type="text" class="employee-editable-field" readOnly="readOnly" href="#" id="employee-email-field" />
 							</div>
 							<div class="description">
 								A description which may flow for several lines and give context to the content.
@@ -370,9 +368,12 @@
 							<div class="extra">
 								<img src="assets/images/wireframe/square-image.png" class="ui circular avatar image"> Username
 							</div>
+							<button id="edit-employee-fields-btn">Try it</button>
 						</div>
 					</div>
-					
+		
+
+				
         </td>
       </tr>
 
@@ -383,7 +384,7 @@
 
 	</div>	
 	
-	<div id="modal" class="ui modal" style="display: block !important;">
+	<div id="modal0" class="ui modal" style="display: block !important;">
     <div class="header">
       Employee Details Modal
     </div>
@@ -408,13 +409,29 @@
       </div>
       <img src="assets/images/wireframe/image.png">
     </div>
-    <div class="content">
-      <div id="employee-name-modal" class="header">Employee name</div>
-      <div class="meta">
-        <a id="employee-department-modal" class="group">Job title</a>
-      </div>
-      <div class="description">Employee details etc</div>
-    </div>
+		<div class="ui segment">
+			<div class="ui small image">
+				<img src="assets/images/wireframe/image.png">
+			</div>
+			<div class="content">
+				<input name="0" autocomplete="new-password" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-firstName-modal0" />
+				<input autocomplete="new-password" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-lastName-modal0" />
+				<div class="meta">
+					<input name="0" autocomplete="new-password" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-jobTitle-modal0" />
+					<input name="0" autocomplete="new-password" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-department-modal0" />
+					<input name="0" autocomplete="new-password" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-location-modal0" />
+					<input name="0" autocomplete="new-password" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-id-modal0" />
+					<input name="0" autocomplete="new-password" type="text" class="employee-editable-modal-field" readOnly="readOnly" href="#" id="employee-email-modal0" />
+				</div>
+				<div class="description">
+					A description which may flow for several lines and give context to the content.
+				</div>
+				<div class="extra">
+					<img src="assets/images/wireframe/square-image.png" class="ui circular avatar image"> Username
+				</div>
+				<button id="edit-employee-modal-btn">Try it</button>
+			</div>
+		</div>
     <div class="extra content">
       <a class="right floated created">
 				Delete</a>
@@ -444,6 +461,7 @@
         Proceed
         <i class="right chevron icon"></i>
       </div>
+			<button id="close-modal-btn">my button</button>
     </div>
   </div>
 
