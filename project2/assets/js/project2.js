@@ -3169,14 +3169,9 @@ function delay(callback, ms) {
   };
 }
 
-$('#input').keyup(delay(function (e) {
-  console.log('search term:', this.value);
-}, 500));
-
-
 //inputField.addEventListener('input', updateValue);
 inputField.addEventListener('input', delay(function (e) {
-  console.log('Time elapsed!', this.value);
+  console.log('search term:', this.value);
 }, 500));
 
 function updateValue(e) {
@@ -3231,6 +3226,8 @@ window.onload = (event) => {
 		
 		$(document).ready(function () {
 			
+			document.getElementById('search-input').value = ""; 
+			
 			$('.ui.accordion').accordion();
 
 			$(`#modal${employeeModalCount}`).modal({
@@ -3252,12 +3249,13 @@ window.onload = (event) => {
 					//$('#getAll').html(JSON.stringify(result, null, 2));
 					
 					let firstEmployee = document.getElementById('first-employee');
-					appendEmployee(firstEmployee, createEmployee(result.data[0].firstName, result.data[0].lastName, result.data[0].department, result.data[0].location, result.data[0].email, result.data[0].jobTitle, result.data[0].id));
+					//appendEmployee(firstEmployee, createEmployee(result.data[0].firstName, result.data[0].lastName, result.data[0].department, result.data[0].location, result.data[0].email, result.data[0].jobTitle, result.data[0].id));
+					appendEmployee(firstEmployee, createEmployee('blank data' ,'blank data' ,'blank data' ,'blank data' ,'blank data' ,'blank data' ,'x' ));
 
 					let otherEmployees = document.getElementById('table-body');
 
 					//for (let e = 1; e < result.data.length; e ++) {
-					for (let e = 1; e < 18; e ++) {
+					for (let e = 0; e < 18; e ++) {
 						otherEmployees.appendChild(createEmployeeRow(result.data[e].firstName, result.data[e].lastName, result.data[e].department, result.data[e].location, result.data[e].email, result.data[e].jobTitle, result.data[e].id));
 					}
 					
