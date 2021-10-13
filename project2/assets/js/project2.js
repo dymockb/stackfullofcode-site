@@ -3075,6 +3075,8 @@ function viewDetailsBtnFunctionality(){
 
 function renderEmployee(employeeProperties){
 	
+	document.getElementById(`employee-form`).reset();
+	
 	for (const [key, value] of Object.entries(employeeProperties)) {
 		//if (key == 'firstName') {
 			document.getElementById(`employee-${key}-field`).setAttribute('value',value);
@@ -3112,12 +3114,15 @@ $('#close-modal-btn').click(function(){
 	
 	$(`#modal${employeeModalCount}`).modal('hide');
 
-	document.getElementById(`modal${employeeModalCount}`).setAttribute('id', `modal${employeeModalCount+1}`)
+	//document.getElementById(`modal${employeeModalCount}`).setAttribute('id', `modal${employeeModalCount+1}`)
+	
+	document.getElementById(`employee-modal-form`).reset();
 	
 	for (const [key, value] of Object.entries(employeePropertiesObj)) {
 		//console.log(document.getElementById(`employee-${key}-modal${employeeModalCount}`));
-		document.getElementById(`employee-${key}-modal${employeeModalCount}`).setAttribute('name', `${employeeModalCount+1}`);
-		document.getElementById(`employee-${key}-modal${employeeModalCount}`).setAttribute('id', `employee-${key}-modal${employeeModalCount+1}`);
+		
+		//document.getElementById(`employee-${key}-modal${employeeModalCount}`).setAttribute('name', `${employeeModalCount+1}`);
+		//document.getElementById(`employee-${key}-modal${employeeModalCount}`).setAttribute('id', `employee-${key}-modal${employeeModalCount+1}`);
 	}
 
 
@@ -3125,9 +3130,9 @@ $('#close-modal-btn').click(function(){
 	console.log('clicked');
 	$(".employee-editable-modal-field").attr('readonly', 'readOnly');
 
-	$(`#modal${employeeModalCount+1}`).modal();
+	//$(`#modal${employeeModalCount+1}`).modal();
 	
-	employeeModalCount += 1;
+	//employeeModalCount += 1;
 
 
 
@@ -3171,7 +3176,13 @@ window.onload = (event) => {
 			
 			$('.ui.accordion').accordion();
 
-			$(`#modal${employeeModalCount}`).modal();		
+			$(`#modal${employeeModalCount}`).modal({
+				title: 'IDIOT', 
+				preserveHTML: false,
+				onShow: function(){console.log('show')}
+				});
+				
+			console.log($(`#modal${employeeModalCount}`));
 						
 			$.ajax({
 			url: "assets/php/getAll.php",
