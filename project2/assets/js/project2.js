@@ -2935,6 +2935,8 @@ function getAllDepartments(){
 
 let employeeModalCount = 0;
 let employeePropertiesObj = {};
+let inputField = document.getElementById('search-input');
+let t;
 
 function createEmployee(firstName, lastName, department, location, email, jobTitle, id){
 	
@@ -2993,17 +2995,6 @@ function createEmployeeRow(firstName, lastName, department, location, email, job
 	return tableRow;
 }
 
-let inputField = document.getElementById('search-input');
-
-inputField.addEventListener('input', updateValue);
-
-function updateValue(e) {
-	if (e.target.value.length > 1) {
-  console.log(e.target.value);
-	}
-}
-
-let t;
 window.onresize = () => {
     resizing(this, this.innerWidth, this.innerHeight) //1
     if (typeof t == 'undefined') resStarted() //2
@@ -3017,7 +3008,7 @@ function resStarted() {
     //console.log('Resize Started') 
 }
 function resEnded() { 
-	console.log('Resize Ended')
+	//console.log('Resize Ended')
 	$('tr:not(#first-employee-row)').off('mouseover');
 
 	$('tr:not(#first-employee-row)').off('mouseout');
@@ -3112,8 +3103,6 @@ $('#edit-employee-modal-btn').click(function(){
 
 $('#close-modal-btn').click(function(){
 	
-	$(`#modal${employeeModalCount}`).modal('hide');
-
 	//document.getElementById(`modal${employeeModalCount}`).setAttribute('id', `modal${employeeModalCount+1}`)
 	
 	document.getElementById(`employee-modal-form`).reset();
@@ -3168,6 +3157,74 @@ $('#close-modal-btn').click(function(){
 	}, 500);
 	*/
 });
+
+function delay(callback, ms) {
+  var timer = 0;
+  return function() {
+    var context = this, args = arguments;
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+      callback.apply(context, args);
+    }, ms || 0);
+  };
+}
+
+$('#input').keyup(delay(function (e) {
+  console.log('search term:', this.value);
+}, 500));
+
+
+//inputField.addEventListener('input', updateValue);
+inputField.addEventListener('input', delay(function (e) {
+  console.log('Time elapsed!', this.value);
+}, 500));
+
+function updateValue(e) {
+	
+	let startTyping = 0
+	
+	let startTypingTimer = setTimeout(function(){
+		startTyping += 1;
+	}, 250);
+	if (e.target.value.length > 1) {
+  console.log(e.target.value);
+	console.log('search');
+	
+	//filterTable(e);
+	
+	}
+}
+
+function filterTable(e) {
+	
+	 // Declare variables
+  var input, filter, table, tr, td, i, txtValue;
+  //input = document.getElementById("myInput");
+  filter = e.target.value.toUpperCase();
+  tableBody = document.getElementById("table-body");
+  tr = tableBody.getElementsByTagName("tr");
+	console.log(tr);
+
+	
+  // Loop through all table rows, and hide those who don't match the search query
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0].getElementsByTagName("h4")[0].getElementsByClassName("content")[0];
+		console.log(td.getAttribute('employee-properties'));
+		/*
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }
+		*/
+  }
+	
+
+	
+}
 
 
 window.onload = (event) => {	
