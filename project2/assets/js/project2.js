@@ -3255,12 +3255,10 @@ $('.ui.radio.checkbox').click(function(){
 */
 function sendRadioSelection(value){
 	
-		console.log(value, lastSearch);
-		
+		console.log('orderby',value, 'lastsearch',lastSearch);	
 		orderBy = value;
 		runSearch(orderBy, lastSearch);
 		
-	
 };
 
 
@@ -3287,6 +3285,7 @@ window.onload = (event) => {
 				},	
 			});
 			
+			/* this is overlapping with radio buttons create distinct classes
 			$('.ui.checkbox').checkbox({
 				onChecked: function(){
 					console.log(this.name);
@@ -3301,6 +3300,8 @@ window.onload = (event) => {
 					console.log(departmentsObj);
 				},				
 			});
+			
+			*/
 
 			$('#order-by-first-name-mobile').checkbox('attach events', '#order-by-first-name', 'check');
 			$('#order-by-last-name-mobile').checkbox('attach events', '#order-by-last-name', 'check');
