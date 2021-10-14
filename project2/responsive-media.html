@@ -65,6 +65,20 @@
 		display: none;
 	}
 	
+	#search-accordion {
+		display: flex;
+		justify-content: center
+	}
+	
+	#mobile-search-options-wrapper {
+		width: 100%;
+		padding: 0 3rem
+	}
+	
+	.mobile-radio-field {
+		width: fit-content !important
+	}
+	
 	#grid-view {
 		margin: 0;
 		display: block;
@@ -250,8 +264,9 @@
       <i class="search icon"></i>
 			</div>
 		</div>
-    <div id="mobile-search-options" class="ui accordion field">
-      <div class="title">
+    <div id="mobile-search-options-wrapper">
+		<div id="mobile-search-options" class="ui accordion field">
+      <div id="search-accordion" class="title">
         <i class="icon dropdown"></i>
         Search options
       </div>
@@ -287,13 +302,13 @@
 							<div class="ui form">
 								<div class="inline fields">
 									<label for="order">Order by:</label>
-									<div class="field">
+									<div class="field mobile-radio-field">
 										<div id="order-by-first-name-mobile" class="ui radio checkbox">
 											<input type="radio" name="mobile-order-by" tabindex="0" class="hidden" value="firstName">
 											<label>First Name</label>
 										</div>
 									</div>
-									<div class="field">
+									<div class="field mobile-radio-field">
 										<div id="order-by-last-name-mobile" class="ui radio checkbox checked">
 											<input type="radio" name="mobile-order-by" checked="" tabindex="0" class="hidden" value="lastName">
 											<label>Last Name</label>
@@ -331,6 +346,7 @@
 
       </div>
     </div>
+	</div>
   </div>
 </div>
 
@@ -519,14 +535,14 @@
 			</div>
 			<div class="content">
 				<form id="employee-modal-form">
-				<input name="0" autocomplete="new-password" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-firstName-modal0" />
-				<input autocomplete="new-password" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-lastName-modal0" />
+				<input name="0" autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-firstName-modal0" />
+				<input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-lastName-modal0" />
 				<div class="meta">
-					<input name="0" autocomplete="new-password" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-jobTitle-modal0" />
-					<input name="0" autocomplete="new-password" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-department-modal0" />
-					<input name="0" autocomplete="new-password" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-location-modal0" />
-					<input name="0" autocomplete="new-password" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-id-modal0" />
-					<input name="0" autocomplete="new-password" type="text" class="employee-editable-modal-field" readOnly="readOnly" href="#" id="employee-email-modal0" />
+					<input name="0" autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-jobTitle-modal0" />
+					<input name="0" autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-department-modal0" />
+					<input name="0" autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-location-modal0" />
+					<input name="0" autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-id-modal0" />
+					<input name="0" autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" href="#" id="employee-email-modal0" />
 				</div>
 				</form>
 				<div class="description">
