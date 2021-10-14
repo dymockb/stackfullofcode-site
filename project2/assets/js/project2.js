@@ -2987,6 +2987,9 @@ function appendEmployee(elementToAppend, employeeElements){
 function createEmployeeRow(firstName, lastName, department, location, email, jobTitle, id) {
 	let tableRow = document.createElement('tr');
 	tableRow.setAttribute('class', 'result-row');
+	if (firstName == 'blank data') {
+		tableRow.setAttribute('style', 'visibility: hidden');
+	}
 	let tableData = document.createElement('td');
 
 	let employeeElements = createEmployee(firstName, lastName, department, location, email, jobTitle, id);					
@@ -3020,6 +3023,10 @@ function resEnded() {
 	
 	selectEmployeeFunctionality()
 	
+	//if ($('#mobile-search-options').css('display') != 'none') {
+	//	viewDetailsBtnFunctionality();	
+	//};
+	
 }
 
 function selectEmployeeFunctionality(){
@@ -3035,17 +3042,15 @@ function selectEmployeeFunctionality(){
 
 		$('td:not(#employee-details-field)').click(function(event){
 			let employeeProperties = JSON.parse(this.firstChild.children[1].getAttribute('employee-properties'));
-			console.log(employeeProperties);
 			renderEmployee(employeeProperties);
 		});
 	}
+	
 }
 
 function viewDetailsBtnFunctionality(){
 	
 	$('.employee-modal-btn').click(function(event){	
-	
-		console.log(employeeModalCount);
 		
 		employeePropertiesObj = {};
 
@@ -3076,6 +3081,7 @@ function renderEmployee(employeeProperties){
 	
 }
 
+/*
 function addFunctonality(){
 	
 	viewDetailsBtnFunctionality()
@@ -3083,6 +3089,7 @@ function addFunctonality(){
 	selectEmployeeFunctionality()
 	
 }
+*/
 
 $('#edit-employee-fields-btn').click(function(){
 	
@@ -3103,48 +3110,38 @@ $('#close-modal-btn').click(function(){
 		
 	document.getElementById(`employee-modal-form`).reset();
 	
-	console.log('clicked');
 	$(".employee-editable-modal-field").attr('readonly', 'readOnly');
 
 });
 
-function delay(callback, ms) {
-	var timer = 0;
-  return function() {
-    console.log('start typing');
-		var context = this, args = arguments;
-    clearTimeout(timer);
-    timer = setTimeout(function () {
-      callback.apply(context, args);
-    }, ms || 0);
-  };
-}
-
-//inputField.addEventListener('input', updateValue);
-inputField.addEventListener('input', delay(function () {
-  console.log('search term:', this.value.toLowerCase());
-
-	let searchTerm = this.value.toLowerCase();
-	lastSearch = searchTerm;
+function runSearch(orderBy, searchTerm){
 	
+	console.log('runsearch orderBy:', orderBy, 'searchTerm: ', searchTerm);
+
 	$.ajax({
 		url: "assets/php/searchAll.php",
 		type: "GET",
 		dataType: "json",
 		data: {
 			searchTerm: `${searchTerm}%`,
-			searchEmail: `%${searchTerm}%`,
+			//searchEmail: `%${searchTerm}%`, // this one searches anywhere in email
+			searchEmail: `${searchTerm}%`, // email starts with term
 			orderBy: orderBy
 		},
 		success: function (result) {
-			
-				console.log('searchAll ',result.data);
 				
 				$('.result-row').remove();
 
 				let otherEmployees = document.getElementById('table-body');
 				
 				let rowsToCreate = result.data.length < 20 ? 20 : result.data.length;
+				
+				if (result.data.length < 8) {
+					document.getElementById('body-tag').setAttribute('style', 'overflow: hidden');
+				} else {
+					document.getElementById('body-tag').setAttribute('style', 'overflow: auto');
+				}
+				
 
 				//for (let e = 0; e < result.data.length; e ++) {
 				for (let e = 0; e < rowsToCreate; e ++) {
@@ -3156,7 +3153,11 @@ inputField.addEventListener('input', delay(function () {
 					}
 				}
 				
-				addFunctonality();				
+				viewDetailsBtnFunctionality()
+				
+				selectEmployeeFunctionality()
+
+				document.getElementById('search-box-icon').setAttribute('class', 'ui icon input');				
 				
 
 		},
@@ -3166,6 +3167,33 @@ inputField.addEventListener('input', delay(function () {
 				console.log(errorThrown);
 			},
 		});
+		
+};
+
+function delay(callback, ms) {
+	var timer = 0;
+  return function() {
+    console.log('start typing');
+		document.getElementById('search-box-icon').setAttribute('class', 'ui icon input loading');
+		var context = this, args = arguments;
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+      callback.apply(context, args);
+    }, ms || 0);
+  };
+}
+
+//inputField.addEventListener('input', updateValue);
+inputField.addEventListener('input', delay(function () {
+  
+	console.log('search term:', this.value.toLowerCase());
+	
+	console.log('order by: ', orderBy);
+
+	let searchTerm = this.value.toLowerCase();
+	lastSearch = searchTerm;
+	
+	runSearch(orderBy, searchTerm);
 	
 }, 500));
 
@@ -3223,7 +3251,11 @@ $('.ui.radio.checkbox').click(function(){
 */
 function sendRadioSelection(value){
 	
-		console.log(value);
+		console.log(value, lastSearch);
+		
+		orderBy = value;
+		runSearch(orderBy, lastSearch);
+		
 	
 };
 
@@ -3237,18 +3269,21 @@ window.onload = (event) => {
 			$('.ui.accordion').accordion();
 
 			$(`#modal${employeeModalCount}`).modal({
-				title: 'IDIOT', 
-				preserveHTML: false,
-				onShow: function(){console.log('show')}
+				//title: 'IDIOT', 
+				//preserveHTML: false,
+				//onShow: function(){console.log('show')}
 				});
 				
 			//$('.ui.radio.checkbox').checkbox();
+			
 			$('.ui.radio.checkbox').checkbox({
 				onChecked: function(){
 					sendRadioSelection(this.value);
-				}
+					console.log(this.name);
+				},	
 			});
 			
+			$('#mobile-order-by-first-name').checkbox('attach events', '#order-by-first-name', 'check');
 		
 						
 			$.ajax({
@@ -3272,7 +3307,9 @@ window.onload = (event) => {
 						otherEmployees.appendChild(createEmployeeRow(result.data[e].firstName, result.data[e].lastName, result.data[e].department, result.data[e].location, result.data[e].email, result.data[e].jobTitle, result.data[e].id));
 					}
 					
-					addFunctonality();
+					viewDetailsBtnFunctionality()
+					
+					selectEmployeeFunctionality()
 					
 					if ($('#preloader').length) {
 						$('#preloader').delay(1000).fadeOut('slow', function () {
