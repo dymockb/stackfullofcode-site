@@ -32,19 +32,11 @@
 
 	}	
 
-	// SQL does not accept parameters and so is not prepared
-
-	#$query = 'SELECT p.id, p.lastName, p.firstName, p.jobTitle, p.email, d.name as department, l.name as location FROM personnel p LEFT JOIN department d ON (d.id = p.departmentID) LEFT JOIN location l ON (l.id = d.locationID) WHERE p.firstName LIKE "tam" ORDER BY p.lastName, p.firstName, d.name, l.name';
-
 	#$query = "SELECT * FROM `companydirectory`.`personnel` WHERE (CONVERT(`id` USING utf8) LIKE '%tam%' OR CONVERT(`firstName` USING utf8) LIKE '%tam%' OR CONVERT(`lastName` USING utf8) LIKE '%tam%' OR CONVERT(`jobTitle` USING utf8) LIKE '%tam%' OR CONVERT(`email` USING utf8) LIKE '%tam%' OR CONVERT(`departmentID` USING utf8) LIKE '%tam%')";
 	
-	#$query = "SELECT * FROM `companydirectory`.`personnel` WHERE (CONVERT(`firstName` USING utf8) LIKE '%tam%')";
+	$query = $conn->prepare("SELECT p.lastName, p.firstName, p.jobTitle, p.email, p.id, d.name as department, d.id as departmentID, l.id as locationID, l.name as location FROM personnel p LEFT JOIN department d ON (d.id = p.departmentID) LEFT JOIN location l ON (l.id = d.locationID) WHERE (CONVERT(`firstName` USING utf8) LIKE ? OR CONVERT(`lastName` USING utf8) LIKE ? OR CONVERT(`email` USING utf8) LIKE ?) ORDER BY p.lastName, p.firstName, d.name, l.name");
 	
-	$query = $conn->prepare("SELECT * FROM `companydirectory`.`personnel` WHERE (CONVERT(`firstName` USING utf8) LIKE ? OR CONVERT(`lastName` USING utf8) LIKE ?)");
-
-	#$query->bind_param("s", '%' . $_REQUEST['searchTerm'] . '%' );
-	
-	$query->bind_param("ss", $_REQUEST['searchTerm'], $_REQUEST['searchTerm']);
+	$query->bind_param("sss", $_REQUEST['searchTerm'], $_REQUEST['searchTerm'], $_REQUEST['searchEmail']);
 	
 	$query->execute();
 	

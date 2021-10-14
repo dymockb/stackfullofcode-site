@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- Standard Meta -->
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
+  <!-- Site Properties -->
+  <title>Responsive Elements - Semantic</title>
+  <link rel="stylesheet" type="text/css" href="dist/my-semantic.css">
+	<link href="assets/css/project2CSS.css" rel="stylesheet">
+	
+	<style>
+	
+	body {
+		min-width: 350px;
+	}
+	
+	#pc-table {
+		width: 100%;  
+		border: none;
+		padding-right: 0;
+		margin-top: -0.2rem;
+		margin-left: auto;
+		margin-right: auto
+	}
+	
+	#nav-menu {
+    margin-bottom: 0px;
+    position: sticky;
+    z-index: 2;
+    top: 0;
+    height: 4rem;
+    width: 90%;
+    margin-left: auto;
+    margin-right: auto;
+	}
+	
+	#top-nav {
+    margin-bottom: 0px;
+    position: fixed;
+    z-index: 5;
+    top: 0;
+    min-height: 4rem;
+		width: 100%;
+		box-shadow: none;
+		padding: 0;
+	}
+	
+	#top-nav-items {
+		display: flex;
+		padding-top: 0.5rem;
+    flex-direction: column;
+    align-items: center;
+	}
+	
+	#company-logo {
+    width: 30%;
+    text-align: center;
+    padding-top: 1rem;
+	}
+	
+	#mobile-search-options {
+		display: none;
+	}
+	
+	#grid-view {
+		margin: 0;
+		display: block;
+	}
+
+	#pc-search {
+		position: fixed;
+		width: 30%;
+		top: 4rem;
+		height: 100%;
+		margin: 0;
+		border-top: 0;
+	}
+	
+	#pc-search-column-wrapper {
+		display: flex;
+		width: 100%;
+		padding-left: 0;
+		padding-right: 0;
+	}
+	
+	#pc-search-column{
+		width: 40%;
+	}
+	
+	#pc-table-segment {
+		width: 100%;
+		margin-top: 0;
+		padding: 0;
+		border-top: none;
+	}
+	
+	#last-search-option {
+		margin-bottom: 1rem;
+	}
+	
+	thead {
+    position: sticky;
+    top: 4rem;
+    z-index: 2;
+		background: #F9FAFB;
+	}
+	
+	th, td {
+		width: 50%;
+	}
+	
+	.break {
+		flex-basis: 100%;
+		height: 0;
+	}
+	
+	#footer {
+		position: fixed;
+		background: grey;
+		width: 90%;
+		height: 5vh;
+		top: 95vh;
+	}
+	
+	#first-employee {
+		visibility: hidden;
+	}
+	
+	td#employee-details-field {
+    position: sticky;
+    z-index: 1;
+    top: 7.1rem;
+		border-left: none;
+		vertical-align: top;
+	}
+	
+	.employee-modal-btn {
+		display: none !important;
+		float: right;
+	}
+	
+	.employee-btn {
+		float: right;
+		display: none !important;
+	}
+	
+	h4.ui.image.header {
+    display: inline;
+	}
+	
+	@media only screen and (max-width: 767.98px) {
+		
+		#employee-details-field, #employee-details-column, #pc-search-column, .employee-btn {
+			display: none !important;
+		}
+		
+		#mobile-search-options {
+			display: flex;
+			flex-direction: column;
+			flex-wrap: wrap;
+		}
+	
+		#pc-table {
+			width: 90%;
+			margin-top: 0.4rem;
+		}
+		
+		thead {
+			top: 5.5rem;
+		}
+		
+		.employee-modal-btn {
+			display: inherit !important;
+		}
+
+	}
+	
+
+	</style>
+	
+	<style>
+  .last.container {
+    margin-bottom: 300px !important;
+  }
+  h1.ui.center.header {
+    margin-top: 3em;
+  }
+  h2.ui.center.header {
+    margin: 4em 0em 2em;
+  }
+  h3.ui.center.header {
+    margin-top: 2em;
+    padding: 2em 0em;
+  }
+	</style>
+
+
+<style>
+/*
+      table {
+        border-collapse: separate;
+        border-spacing: 0;
+        border-top: 1px solid #000;
+      }
+      td,
+      th {
+        margin: 0;
+        border: 1px solid #000;
+        white-space: nowrap;
+        border-top-width: 0px;
+      }
+      div {
+        width: 450px;
+        overflow-y: scroll;
+        margin-left: 5em;
+        overflow-x: visible;
+        padding: 0;
+      }
+      .headcol {
+        position: absolute;
+        width: 5em;
+        left: 0;
+        top: auto;
+        border-top-width: 2px;
+        margin-top: -1px;
+      }
+      .headcol:before {
+        content: 'Row ';
+      }
+      .long {
+        background: #8cdba3;
+        letter-spacing: 1em;
+      }
+*/    
+</style>
+
+</head>
+<body>
+
+<!-- <div class="ui stackable container menu"> -->
+<!--	<div id="preloader"></div> -->
+	<div id="top-nav" class="ui segment">
+  <div id="top-nav-items" class="ui fluid form">
+		<div id="search-box" class="item">
+			<div class="ui icon input"> <!-- add loading to input  -->
+      <input id="search-input" placeholder="Search employees" type="text">
+      <i class="search icon"></i>
+			</div>
+		</div>
+    <div id="mobile-search-options" class="ui accordion field">
+      <div class="title">
+        <i class="icon dropdown"></i>
+        Search options
+      </div>
+      <div id="last-search-option" class="content field">
+        <label class="transition hidden">More options</label>
+
+            <div class="content field">
+							<!--
+              <label class="transition hidden">More options</label>
+              <input placeholder="More search options" type="text" class="transition hidden">
+							-->
+							<div class="ui checkbox">
+								<input type="checkbox" name="1">
+								<label>One</label>
+							</div>						
+							<div class="ui checkbox">
+								<input type="checkbox" name="2">
+								<label>Two</label>
+							</div>
+							<div class="title">
+                Other options
+							</div>
+							<div class="ui checkbox">
+								<input type="checkbox" name="1">
+								<label>One</label>
+							</div>						
+							<div class="ui checkbox">
+								<input type="checkbox" name="2">
+								<label>Two</label>
+							</div>
+            
+          </div>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+			<div id="pc-search" class="ui segment">
+		Search Options
+		
+            <div class="content field">
+							<!--
+              <label class="transition hidden">More options</label>
+              <input placeholder="More search options" type="text" class="transition hidden">
+							-->
+							<div class="ui checkbox">
+								<input type="checkbox" name="1">
+								<label>One</label>
+							</div>						
+							<div class="ui checkbox">
+								<input type="checkbox" name="2">
+								<label>Two</label>
+							</div>
+							<div class="title">
+                Other options
+							</div>
+							<div class="ui checkbox">
+								<input type="checkbox" name="1">
+								<label>One</label>
+							</div>						
+							<div class="ui checkbox">
+								<input type="checkbox" name="2">
+								<label>Two</label>
+							</div>
+            
+          </div>
+		</div>	
+	
+
+<!--	<div id="grid-view" class="ui one column grid"> -->
+	
+
+		
+	<div id="pc-search-column-wrapper"> 
+	<div id="pc-search-column" class="computer only one column"></div>
+
+		<div id="pc-table-segment" class="ui segment">
+		<table id="pc-table" class="ui celled table">
+    <thead>
+      <th>Employee Directory</th>
+      <th id="employee-details-column" >Employee Details</th>
+    </thead>
+
+    <tbody id="table-body">
+      <tr id="first-employee-row">
+        <td id="first-employee">
+          <h4 class="ui image header">
+            <img src="assets/images/wireframe/square-image.png" class="ui mini rounded image">
+            <div class="content">
+              Employee 1
+              <div class="sub header">Human Resources
+            </div>
+						</div>
+          </h4>
+					<div id="modalBtn" class="employee-modal-btn ui button">view details</div>
+        </td>
+        <td id="employee-details-field" rowspan="8">
+				
+        </td>
+      </tr>
+			<tr id="second-employee-row">
+        <td id="first-employee">
+          <h4 class="ui image header">
+            <img src="assets/images/wireframe/square-image.png" class="ui mini rounded image">
+            <div class="content">
+              Employee 2
+              <div class="sub header">Human Resources
+            </div>
+						</div>
+          </h4>
+					<div id="modalBtn" class="employee-modal-btn ui button">view details</div>
+        </td>
+        <td id="employee-details-field" rowspan="8">
+          
+					<div class="ui segment">
+						<div class="ui small image">
+							<img src="assets/images/wireframe/image.png">
+						</div>
+						<div class="content">
+							<form id="employee-form">
+							<input type="text" class="employee-editable-field" readOnly="readOnly" id="employee-firstName-field" />
+							<input type="text" class="employee-editable-field" readOnly="readOnly" id="employee-lastName-field" />
+							<div class="meta">
+								<input type="text" class="employee-editable-field" readOnly="readOnly" id="employee-jobTitle-field" />
+								<input type="text" class="employee-editable-field" readOnly="readOnly" id="employee-department-field" />
+								<input type="text" class="employee-editable-field" readOnly="readOnly" id="employee-location-field" />
+								<input type="text" class="employee-editable-field" readOnly="readOnly" id="employee-id-field" />
+								<input type="text" class="employee-editable-field" readOnly="readOnly" href="#" id="employee-email-field" />
+							</div>
+							</form>
+							<div class="description">
+								A description which may flow for several lines and give context to the content.
+							</div>
+							<div class="extra">
+								<img src="assets/images/wireframe/square-image.png" class="ui circular avatar image"> Username
+							</div>
+							<button id="edit-employee-fields-btn">Try it</button>
+						</div>
+					</div>
+		
+
+				
+        </td>
+      </tr>
+
+    </tbody>
+		
+  </table>
+	</div>	
+
+	</div>	
+	
+	<div id="modal0" class="ui modal" style="display: block !important;">
+    <div class="header">
+      Employee Details Modal
+    </div>
+    <div class="scrolling image content">
+      <div class="ui medium image">
+			<!--  <img src="/images/wireframe/image.png"> 
+			
+			class="ui longer test modal front transition visible active" -->
+      </div>
+      <div class="description">
+        <div class="ui header">Modal Header</div>
+        <p>This is an example of expanded content that will cause the modal's dimmer to scroll</p>
+				
+				    		<div class="ui card">
+    <div class="image">
+      <div class="ui blurring inverted dimmer">
+        <div class="content">
+          <div class="center">
+            <div class="ui teal button">Add Friend</div>
+          </div>
+        </div>
+      </div>
+      <img src="assets/images/wireframe/image.png">
+    </div>
+		<div class="ui segment">
+			<div class="ui small image">
+				<img src="assets/images/wireframe/image.png">
+			</div>
+			<div class="content">
+				<form id="employee-modal-form">
+				<input name="0" autocomplete="new-password" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-firstName-modal0" />
+				<input autocomplete="new-password" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-lastName-modal0" />
+				<div class="meta">
+					<input name="0" autocomplete="new-password" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-jobTitle-modal0" />
+					<input name="0" autocomplete="new-password" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-department-modal0" />
+					<input name="0" autocomplete="new-password" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-location-modal0" />
+					<input name="0" autocomplete="new-password" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-id-modal0" />
+					<input name="0" autocomplete="new-password" type="text" class="employee-editable-modal-field" readOnly="readOnly" href="#" id="employee-email-modal0" />
+				</div>
+				</form>
+				<div class="description">
+					A description which may flow for several lines and give context to the content.
+				</div>
+				<div class="extra">
+					<img src="assets/images/wireframe/square-image.png" class="ui circular avatar image"> Username
+				</div>
+				<button id="edit-employee-modal-btn">Try it</button>
+			</div>
+		</div>
+    <div class="extra content">
+      <a class="right floated created">
+				Delete</a>
+      <a class="friends">
+        Modify</a>
+    </div>
+  </div>
+        <!--
+				<img class="ui wireframe image" src="/images/wireframe/paragraph.png">
+        <div class="ui divider"></div>
+        <img class="ui wireframe image" src="/images/wireframe/paragraph.png">
+        <div class="ui divider"></div>
+        <img class="ui wireframe image" src="/images/wireframe/paragraph.png">
+        <div class="ui divider"></div>
+        <img class="ui wireframe image" src="/images/wireframe/paragraph.png">
+        <div class="ui divider"></div>
+        <img class="ui wireframe image" src="/images/wireframe/paragraph.png">
+        <div class="ui divider"></div>
+        <img class="ui wireframe image" src="/images/wireframe/paragraph.png">
+        <div class="ui divider"></div>
+        <img class="ui wireframe image" src="/images/wireframe/paragraph.png">
+				-->
+      </div>
+    </div>
+    <div id="close-modal-btn" class="actions">
+      <div class="ui primary approve button">
+        Proceed
+        <i class="right chevron icon"></i>
+      </div>
+    </div>
+  </div>
+
+<!--	
+<div id="footer">footer</div>
+-->
+		
+<!-- grid view	</div> -->
+
+<!-- Content JS HERE !-->
+
+<script src="assets/library/jquery.min.js"></script>
+<script src="dist/semantic.js"></script>
+
+<script type="text/javascript" src="dist/components/accordion.js"></script>
+<script src='assets/js/project2.js' type="text/javascript"></script>
+
+<script>
+
+$(document)
+	.ready(function() {
+
+	
+	});
+				
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function() {
+	
+	/*
+  var
+    $headers     = $('body > h3'),
+    $header      = $headers.first(),
+    ignoreScroll = false,
+    timer
+  ;
+
+  // Preserve example in viewport when resizing browser
+  $(window)
+    .on('resize', function() {
+      // ignore callbacks from scroll change
+      clearTimeout(timer);
+      $headers.visibility('disable callbacks');
+
+      // preserve position
+      $(document).scrollTop( $header.offset().top );
+
+      // allow callbacks in 500ms
+      timer = setTimeout(function() {
+        $headers.visibility('enable callbacks');
+      }, 500);
+    })
+  ;
+  $headers
+    .visibility({
+      // fire once each time passed
+      once: false,
+
+      // don't refresh position on resize
+      checkOnRefresh: true,
+
+      // lock to this element on resize
+      onTopPassed: function() {
+        $header = $(this);
+      },
+      onTopPassedReverse: function() {
+        $header = $(this);
+      }
+    });
+	
+	*/
+});
+</script>
+
+</body>
+</html>
+
+
+<!--
+    <div>
+      <table>
+        <tr>
+          <th class="headcol">1</th>
+          <td class="long">LOREM IPSUM LOREM IPSUM</td>
+          <td class="long">LOREM IPSUM LOREM IPSUM</td>
+        </tr>
+        <tr>
+          <th class="headcol">2</th>
+          <td class="long">LOREM IPSUM LOREM IPSUM</td>
+          <td class="long">LOREM IPSUM LOREM IPSUM</td>
+        </tr>
+        <tr>
+          <th class="headcol">3</th>
+          <td class="long">LOREM IPSUM LOREM IPSUM</td>
+          <td class="long">LOREM IPSUM LOREM IPSUM</td>
+        </tr>
+        <tr>
+          <th class="headcol">4</th>
+          <td class="long">LOREM IPSUM LOREM IPSUM</td>
+          <td class="long">LOREM IPSUM LOREM IPSUM</td>
+        </tr>
+        <tr>
+          <th class="headcol">5</th>
+          <td class="long">LOREM IPSUM LOREM IPSUM</td>
+          <td class="long">LOREM IPSUM LOREM IPSUM</td>
+        </tr>
+        <tr>
+          <th class="headcol">6</th>
+          <td class="long">LOREM IPSUM LOREM IPSUM</td>
+          <td class="long">LOREM IPSUM LOREM IPSUM</td>
+        </tr>
+      </table>
+    </div>
+-->
+
+			<!--
+      <tr>
+        <td>
+          <h4 class="ui image header">
+            <img src="assets/images/wireframe/square-image.png" class="ui mini rounded image">
+            <div class="content">
+              Employee 2
+              <div class="sub header">Fabric Design
+            </div>
+						</div>
+          </h4>
+					<div id="modalBtn" class="employee-modal-btn ui button">view details</div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <h4 class="ui image header">
+            <img src="assets/images/wireframe/square-image.png" class="ui mini rounded image">
+            <div class="content">
+              Lindsay
+              <div class="sub header">Entertainment
+            	</div>
+							</div> 
+				</h4>
+				<div id="modalBtn" class="employee-modal-btn ui button">view details</div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <h4 class="ui image header">
+            <img src="assets/images/wireframe/square-image.png" class="ui mini rounded image">
+            <div class="content">
+              Mark
+              <div class="sub header">Executive
+						</div>
+						</div>
+          </h4>
+					<div id="modalBtn" class="employee-modal-btn ui button">view details</div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <h4 class="ui image header">
+            <img src="assets/images/wireframe/square-image.png" class="ui mini rounded image">
+            <div class="content">
+              Lindsay
+              <div class="sub header">Entertainment
+            	</div>
+							</div>
+          </h4>
+					<div id="modalBtn" class="employee-modal-btn ui button">view details</div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <h4 class="ui image header">
+            <img src="assets/images/wireframe/square-image.png" class="ui mini rounded image">
+            <div class="content">
+              Lindsay
+              <div class="sub header">Entertainment
+            	</div>
+							</div>
+          </h4>
+					<div id="modalBtn" class="employee-modal-btn ui button">view details</div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <h4 class="ui image header">
+            <img src="assets/images/wireframe/square-image.png" class="ui mini rounded image">
+            <div class="content">
+              Lindsay
+              <div class="sub header">Entertainment
+            	</div>
+							</div>
+          </h4>
+					<div id="modalBtn" class="employee-modal-btn ui button">view details</div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <h4 class="ui image header">
+            <img src="assets/images/wireframe/square-image.png" class="ui mini rounded image">
+            <div class="content">
+              Lindsay
+              <div class="sub header">Entertainment
+            	</div>
+							</div>
+          </h4>
+					<div id="modalBtn" class="employee-modal-btn ui button">view details</div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <h4 class="ui image header">
+            <img src="assets/images/wireframe/square-image.png" class="ui mini rounded image">
+            <div class="content">
+              Mark
+              <div class="sub header">Executive
+						</div>
+						</div>
+          </h4>
+					<div id="modalBtn" class="employee-modal-btn ui button">view details</div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <h4 class="ui image header">
+            <img src="assets/images/wireframe/square-image.png" class="ui mini rounded image">
+            <div class="content">
+              Lindsay
+              <div class="sub header">Entertainment
+            	</div>
+							</div>
+          </h4>
+					<div id="modalBtn" class="employee-modal-btn ui button">view details</div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <h4 class="ui image header">
+            <img src="assets/images/wireframe/square-image.png" class="ui mini rounded image">
+            <div class="content">
+              Lindsay
+              <div class="sub header">Entertainment
+            	</div>
+							</div>
+          </h4>
+					<div id="modalBtn" class="employee-modal-btn ui button">view details</div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <h4 class="ui image header">
+            <img src="assets/images/wireframe/square-image.png" class="ui mini rounded image">
+            <div class="content">
+              Lindsay
+              <div class="sub header">Entertainment
+            	</div>
+							</div>
+          </h4>
+					<div id="modalBtn" class="employee-modal-btn ui button">view details</div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <h4 class="ui image header">
+            <img src="assets/images/wireframe/square-image.png" class="ui mini rounded image">
+            <div class="content">
+              Lindsay
+              <div class="sub header">Entertainment
+            	</div>
+							</div>
+          </h4>
+					<div id="modalBtn" class="employee-modal-btn ui button">view details</div>
+        </td>
+      </tr>
+			-->

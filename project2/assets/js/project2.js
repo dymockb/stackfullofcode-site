@@ -2984,6 +2984,7 @@ function appendEmployee(elementToAppend, employeeElements){
 
 function createEmployeeRow(firstName, lastName, department, location, email, jobTitle, id) {
 	let tableRow = document.createElement('tr');
+	tableRow.setAttribute('class', 'result-row');
 	let tableData = document.createElement('td');
 
 	let employeeElements = createEmployee(firstName, lastName, department, location, email, jobTitle, id);					
@@ -3128,11 +3129,31 @@ inputField.addEventListener('input', delay(function () {
 		type: "GET",
 		dataType: "json",
 		data: {
-			searchTerm: `%${searchTerm}%`
+			searchTerm: `${searchTerm}%`,
+			searchEmail: `%${searchTerm}%`
 		},
 		success: function (result) {
 			
-				console.log('searchAll ',result.data);				
+				console.log('searchAll ',result.data);
+				
+				$('.result-row').remove();
+
+				let otherEmployees = document.getElementById('table-body');
+				
+				let rowsToCreate = result.data.length < 20 ? 20 : result.data.length;
+
+				//for (let e = 0; e < result.data.length; e ++) {
+				for (let e = 0; e < rowsToCreate; e ++) {
+				//for (let e = 0; e < 18; e ++) {
+					if (e < result.data.length) {
+						otherEmployees.appendChild(createEmployeeRow(result.data[e].firstName, result.data[e].lastName, result.data[e].department, result.data[e].location, result.data[e].email, result.data[e].jobTitle, result.data[e].id));
+					} else {
+						otherEmployees.appendChild(createEmployeeRow('blank data' ,'blank data' ,'blank data' ,'blank data' ,'blank data' ,'blank data' ,'x' ))
+					}
+				}
+				
+				addFunctonality();				
+				
 
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
