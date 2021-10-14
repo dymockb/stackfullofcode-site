@@ -2938,7 +2938,11 @@ let employeePropertiesObj = {};
 let inputField = document.getElementById('search-input');
 let t;
 let lastSearch = "";
-let orderBy = 'lastName'
+let orderBy = 'lastName';
+let departmentsObj = {
+	marketing: true,
+	legal: true
+	};
 
 function createEmployee(firstName, lastName, department, location, email, jobTitle, id){
 	
@@ -3283,8 +3287,26 @@ window.onload = (event) => {
 				},	
 			});
 			
-			$('#mobile-order-by-first-name').checkbox('attach events', '#order-by-first-name', 'check');
-		
+			$('.ui.checkbox').checkbox({
+				onChecked: function(){
+					console.log(this.name);
+					console.log(this.checked);
+					departmentsObj[this.name] = this.checked;
+					console.log(departmentsObj);
+				},
+				onUnchecked: function(){
+					console.log(this.name);
+					console.log(this.checked);
+					departmentsObj[this.name] = this.checked;
+					console.log(departmentsObj);
+				},				
+			});
+
+			$('#order-by-first-name-mobile').checkbox('attach events', '#order-by-first-name', 'check');
+			$('#order-by-last-name-mobile').checkbox('attach events', '#order-by-last-name', 'check');
+
+			$('#order-by-first-name').checkbox('attach events', '#order-by-first-name-mobile', 'check');
+			$('#order-by-last-name').checkbox('attach events', '#order-by-last-name-mobile', 'check');		
 						
 			$.ajax({
 			url: "assets/php/getAll.php",
