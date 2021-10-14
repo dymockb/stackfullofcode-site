@@ -3043,19 +3043,16 @@ function viewDetailsBtnFunctionality(){
 	$('.employee-modal-btn').click(function(event){	
 	
 		console.log(employeeModalCount);
-		//$(`#modal${employeeModalCount}`).modal();	
 		
 		employeePropertiesObj = {};
 
 		let employeeProperties = JSON.parse($($(this).context.previousSibling.children[1]).attr('employee-properties'));
 				
-		//document.getElementById('employee-name-modal').innerHTML = `${employeeProperties.firstName} ${employeeProperties.lastName}`;
-		//document.getElementById('employee-department-modal').innerHTML = employeeProperties.department;
-		
 		for (const [key, value] of Object.entries(employeeProperties)) {
-			//console.log(document.getElementById(`employee-${key}-modal${employeeModalCount}`));
+
 			document.getElementById(`employee-${key}-modal${employeeModalCount}`).setAttribute('value',value);
 			employeePropertiesObj[key] = value;
+			
 		}
 				
 		$(`#modal${employeeModalCount}`).modal('show');
@@ -3069,11 +3066,9 @@ function renderEmployee(employeeProperties){
 	document.getElementById(`employee-form`).reset();
 	
 	for (const [key, value] of Object.entries(employeeProperties)) {
-		//if (key == 'firstName') {
-			document.getElementById(`employee-${key}-field`).setAttribute('value',value);
-		//}
 		
-		//document.getElementById(`employee-${key}-field`).innerHTML = value;
+		document.getElementById(`employee-${key}-field`).setAttribute('value',value);
+
 	}
 	
 }
@@ -3102,66 +3097,19 @@ $('#edit-employee-modal-btn').click(function(){
 });
 
 $('#close-modal-btn').click(function(){
-	
-	//document.getElementById(`modal${employeeModalCount}`).setAttribute('id', `modal${employeeModalCount+1}`)
-	
-	document.getElementById(`employee-modal-form`).reset();
-	
-	for (const [key, value] of Object.entries(employeePropertiesObj)) {
-		//console.log(document.getElementById(`employee-${key}-modal${employeeModalCount}`));
 		
-		//document.getElementById(`employee-${key}-modal${employeeModalCount}`).setAttribute('name', `${employeeModalCount+1}`);
-		//document.getElementById(`employee-${key}-modal${employeeModalCount}`).setAttribute('id', `employee-${key}-modal${employeeModalCount+1}`);
-	}
-
-
+	document.getElementById(`employee-modal-form`).reset();
 	
 	console.log('clicked');
 	$(".employee-editable-modal-field").attr('readonly', 'readOnly');
 
-	//$(`#modal${employeeModalCount+1}`).modal();
-	
-	//employeeModalCount += 1;
-
-
-
-	/*
-	for (let ep = 0; ep < employeePropertiesList.length; ep ++) {
-		console.log(document.getElementById(`employee-${employeePropertiesList[ep]}-modal${employeeModalCount}`).value)
-	}
-
-	let newModal = document.getElementById(`modal${employeeModalCount}`).cloneNode(true);
-
-	let removeModalTimer = setTimeout(function (){
-	
-		//for (let ep = 0; ep < employeePropertiesList.length; ep ++) {
-		//	document.getElementById(`employee-${employeePropertiesList[ep]}-modal${employeeModalCount}`).setAttribute('id', `employee-${employeePropertiesList[ep]}-modal${employeeModalCount+1}`);
-		//}
-	
-		console.log(document.getElementById(`modal${employeeModalCount}`));	
-	
-	//document.getElementById(`modal${employeeModalCount}`).remove();		
-		
-		document.querySelector('body').appendChild(newModal);
-
-		document.getElementById(`modal${employeeModalCount}`).setAttribute('id', `modal${employeeModalCount+1}`)
-		
-		console.log(document.getElementById(`modal${employeeModalCount+1}`));
-		
-		//employeeModalCount += 1;
-
-		//$(`#modal${employeeModalCount}`).modal();	
-		
-		clearTimeout(removeModalTimer);
-		
-	}, 500);
-	*/
 });
 
 function delay(callback, ms) {
-  var timer = 0;
+	var timer = 0;
   return function() {
-    var context = this, args = arguments;
+    console.log('start typing');
+		var context = this, args = arguments;
     clearTimeout(timer);
     timer = setTimeout(function () {
       callback.apply(context, args);
@@ -3170,8 +3118,30 @@ function delay(callback, ms) {
 }
 
 //inputField.addEventListener('input', updateValue);
-inputField.addEventListener('input', delay(function (e) {
-  console.log('search term:', this.value);
+inputField.addEventListener('input', delay(function () {
+  console.log('search term:', this.value.toLowerCase());
+	
+	let searchTerm = this.value.toLowerCase();
+	
+	$.ajax({
+		url: "assets/php/searchAll.php",
+		type: "GET",
+		dataType: "json",
+		data: {
+			searchTerm: `%${searchTerm}%`
+		},
+		success: function (result) {
+			
+				console.log('searchAll ',result.data);				
+
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+				console.log('error');
+				console.log(textStatus);
+				console.log(errorThrown);
+			},
+		});
+	
 }, 500));
 
 function updateValue(e) {
@@ -3235,8 +3205,6 @@ window.onload = (event) => {
 				preserveHTML: false,
 				onShow: function(){console.log('show')}
 				});
-				
-			console.log($(`#modal${employeeModalCount}`));
 						
 			$.ajax({
 			url: "assets/php/getAll.php",
@@ -3254,8 +3222,8 @@ window.onload = (event) => {
 
 					let otherEmployees = document.getElementById('table-body');
 
-					//for (let e = 1; e < result.data.length; e ++) {
-					for (let e = 0; e < 18; e ++) {
+					for (let e = 0; e < result.data.length; e ++) {
+					//for (let e = 0; e < 18; e ++) {
 						otherEmployees.appendChild(createEmployeeRow(result.data[e].firstName, result.data[e].lastName, result.data[e].department, result.data[e].location, result.data[e].email, result.data[e].jobTitle, result.data[e].id));
 					}
 					
