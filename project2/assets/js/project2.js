@@ -3207,10 +3207,13 @@ function filterTable(e) {
     }
 		*/
   }
-	
-
-	
 }
+
+$('.ui.radio.checkbox').click(function(){
+		console.log(document.querySelector('input[name="orderBy"]:checked').id);
+		//console.log(document.querySelector('input[name="orderBy"]:checked').value);
+		//console.log($('input[name=orderBy]:checked').val());
+});
 
 
 window.onload = (event) => {	
@@ -3226,6 +3229,8 @@ window.onload = (event) => {
 				preserveHTML: false,
 				onShow: function(){console.log('show')}
 				});
+				
+			$('.ui.radio.checkbox').checkbox();
 						
 			$.ajax({
 			url: "assets/php/getAll.php",

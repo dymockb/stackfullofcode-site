@@ -256,13 +256,14 @@
         Search options
       </div>
       <div id="last-search-option" class="content field">
-        <label class="transition hidden">More options</label>
+
 
             <div class="content field">
 							<!--
+        <label class="transition hidden">More options</label>
               <label class="transition hidden">More options</label>
               <input placeholder="More search options" type="text" class="transition hidden">
-							-->
+							
 							<div class="ui checkbox">
 								<input type="checkbox" name="1">
 								<label>One</label>
@@ -282,9 +283,65 @@
 								<input type="checkbox" name="2">
 								<label>Two</label>
 							</div>
+							-->
+							<div class="ui form">
+								<div class="inline fields">
+									<label for="fruit">Select your favorite fruit:</label>
+									<div class="field">
+										<div class="ui radio checkbox checked">
+											<input type="radio" name="fruit" checked="" tabindex="0" class="hidden">
+											<label>Apples</label>
+										</div>
+									</div>
+									<div class="field">
+										<div class="ui radio checkbox">
+											<input type="radio" name="fruit" tabindex="0" class="hidden">
+											<label>Oranges</label>
+										</div>
+									</div>
+									<div class="field">
+										<div class="ui radio checkbox">
+											<input type="radio" name="fruit" tabindex="0" class="hidden">
+											<label>Pears</label>
+										</div>
+									</div>
+									<div class="field">
+										<div class="ui radio checkbox">
+											<input type="radio" name="fruit" tabindex="0" class="hidden">
+											<label>Grapefruit</label>
+										</div>
+									</div>
+								</div>
+								<div class="grouped fields">
+									<label for="fruit">Select your second favorite fruit:</label>
+									<div class="field">
+										<div class="ui radio checkbox checked">
+											<input type="radio" name="fruit2" checked="" tabindex="0" class="hidden">
+											<label>Apples</label>
+										</div>
+									</div>
+									<div class="field">
+										<div class="ui radio checkbox">
+											<input type="radio" name="fruit2" tabindex="0" class="hidden">
+											<label>Oranges</label>
+										</div>
+									</div>
+									<div class="field">
+										<div class="ui radio checkbox">
+											<input type="radio" name="fruit2" tabindex="0" class="hidden">
+											<label>Pears</label>
+										</div>
+									</div>
+									<div class="field">
+										<div class="ui radio checkbox">
+											<input type="radio" name="fruit2" tabindex="0" class="hidden">
+											<label>Grapefruit</label>
+										</div>
+									</div>
+								</div>
+							</div>
             
           </div>
-
 
       </div>
     </div>
@@ -298,13 +355,13 @@
 							<!--
               <label class="transition hidden">More options</label>
               <input placeholder="More search options" type="text" class="transition hidden">
-							-->
+							
 							<div class="ui checkbox">
-								<input type="checkbox" name="1">
+								<input type="radio" name="1" checked>
 								<label>One</label>
 							</div>						
 							<div class="ui checkbox">
-								<input type="checkbox" name="2">
+								<input type="radio" name="2">
 								<label>Two</label>
 							</div>
 							<div class="title">
@@ -318,9 +375,42 @@
 								<input type="checkbox" name="2">
 								<label>Two</label>
 							</div>
-            
-          </div>
-		</div>	
+							-->
+							<div class="ui form">
+								<div class="inline fields">
+									<label for="order">Order by:</label>
+									<div class="field">
+										<div class="ui radio checkbox checked">
+											<input type="radio" name="orderBy" checked="" id="radio-first-name" tabindex="0" class="hidden">
+											<label>First Name</label>
+										</div>
+									</div>
+									<div class="field">
+										<div class="ui radio checkbox">
+											<input type="radio" name="orderBy" tabindex="0" id="radio-last-name" class="hidden">
+											<label>Last Name</label>
+										</div>
+									</div>
+								</div>
+								<div class="grouped fields">
+									<label for="order">Order by:</label>
+									<div class="field">
+										<div class="ui radio checkbox checked">
+											<input type="radio" name="orderBy2" checked="" id="radio-first-name2" tabindex="0" class="hidden">
+											<label>First Name</label>
+										</div>
+									</div>
+									<div class="field">
+										<div class="ui radio checkbox">
+											<input type="radio" name="orderBy2" id="radio-last-name2" tabindex="0" class="hidden">
+											<label>Last Name</label>
+										</div>
+									</div>
+								</div>
+							</div>
+													
+						</div>
+			</div>	
 	
 
 <!--	<div id="grid-view" class="ui one column grid"> -->
