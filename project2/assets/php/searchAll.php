@@ -34,7 +34,15 @@
 
 	#$query = "SELECT * FROM `companydirectory`.`personnel` WHERE (CONVERT(`id` USING utf8) LIKE '%tam%' OR CONVERT(`firstName` USING utf8) LIKE '%tam%' OR CONVERT(`lastName` USING utf8) LIKE '%tam%' OR CONVERT(`jobTitle` USING utf8) LIKE '%tam%' OR CONVERT(`email` USING utf8) LIKE '%tam%' OR CONVERT(`departmentID` USING utf8) LIKE '%tam%')";
 	
-	$query = $conn->prepare("SELECT p.lastName, p.firstName, p.jobTitle, p.email, p.id, d.name as department, d.id as departmentID, l.id as locationID, l.name as location FROM personnel p LEFT JOIN department d ON (d.id = p.departmentID) LEFT JOIN location l ON (l.id = d.locationID) WHERE (CONVERT(`firstName` USING utf8) LIKE ? OR CONVERT(`lastName` USING utf8) LIKE ? OR CONVERT(`email` USING utf8) LIKE ?) ORDER BY p.lastName, p.firstName, d.name, l.name");
+	if ($_REQUEST['orderBy'] == 'lastName') {
+	
+		$query = $conn->prepare("SELECT p.lastName, p.firstName, p.jobTitle, p.email, p.id, d.name as department, d.id as departmentID, l.id as locationID, l.name as location FROM personnel p LEFT JOIN department d ON (d.id = p.departmentID) LEFT JOIN location l ON (l.id = d.locationID) WHERE (CONVERT(`firstName` USING utf8) LIKE ? OR CONVERT(`lastName` USING utf8) LIKE ? OR CONVERT(`email` USING utf8) LIKE ?) ORDER BY p.lastName, p.firstName, d.name, l.name");
+	
+	} elseif ($_REQUEST['orderBy'] == 'firstName') {
+	
+		$query = $conn->prepare("SELECT p.lastName, p.firstName, p.jobTitle, p.email, p.id, d.name as department, d.id as departmentID, l.id as locationID, l.name as location FROM personnel p LEFT JOIN department d ON (d.id = p.departmentID) LEFT JOIN location l ON (l.id = d.locationID) WHERE (CONVERT(`firstName` USING utf8) LIKE ? OR CONVERT(`lastName` USING utf8) LIKE ? OR CONVERT(`email` USING utf8) LIKE ?) ORDER BY p.firstName, p.lastName, d.name, l.name");
+	
+	}
 	
 	$query->bind_param("sss", $_REQUEST['searchTerm'], $_REQUEST['searchTerm'], $_REQUEST['searchEmail']);
 	

@@ -2937,6 +2937,8 @@ let employeeModalCount = 0;
 let employeePropertiesObj = {};
 let inputField = document.getElementById('search-input');
 let t;
+let lastSearch = "";
+let orderBy = 'lastName'
 
 function createEmployee(firstName, lastName, department, location, email, jobTitle, id){
 	
@@ -3121,8 +3123,9 @@ function delay(callback, ms) {
 //inputField.addEventListener('input', updateValue);
 inputField.addEventListener('input', delay(function () {
   console.log('search term:', this.value.toLowerCase());
-	
+
 	let searchTerm = this.value.toLowerCase();
+	lastSearch = searchTerm;
 	
 	$.ajax({
 		url: "assets/php/searchAll.php",
@@ -3130,7 +3133,8 @@ inputField.addEventListener('input', delay(function () {
 		dataType: "json",
 		data: {
 			searchTerm: `${searchTerm}%`,
-			searchEmail: `%${searchTerm}%`
+			searchEmail: `%${searchTerm}%`,
+			orderBy: orderBy
 		},
 		success: function (result) {
 			
@@ -3208,12 +3212,20 @@ function filterTable(e) {
 		*/
   }
 }
-
+/*
 $('.ui.radio.checkbox').click(function(){
-		console.log(document.querySelector('input[name="orderBy"]:checked').id);
+		//console.log(document.querySelector('input[name="orderBy"]:checked').id);
 		//console.log(document.querySelector('input[name="orderBy"]:checked').value);
 		//console.log($('input[name=orderBy]:checked').val());
+		//console.log($('.order-by-input[name=orderBy]:checked').val());
+		console.log($("input[type='radio'][name='orderBy']:checked").val());
 });
+*/
+function sendRadioSelection(value){
+	
+		console.log(value);
+	
+};
 
 
 window.onload = (event) => {	
@@ -3230,7 +3242,14 @@ window.onload = (event) => {
 				onShow: function(){console.log('show')}
 				});
 				
-			$('.ui.radio.checkbox').checkbox();
+			//$('.ui.radio.checkbox').checkbox();
+			$('.ui.radio.checkbox').checkbox({
+				onChecked: function(){
+					sendRadioSelection(this.value);
+				}
+			});
+			
+		
 						
 			$.ajax({
 			url: "assets/php/getAll.php",
