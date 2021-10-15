@@ -1,16 +1,13 @@
 let employeeDetailsVisibility = 0;
 let employeeModalCount = 0;
 let employeePropertiesObj = {};
+let blankEmployeeObj = {};
 let inputField = document.getElementById('search-input');
 let t;
 let lastSearch = "";
 let orderBy = 'lastName';
-let departmentsObj = {
-	marketing: true,
-	legal: true
-	};
-	
-let blankEmployeeObj = {};
+let departmentsObj = {};
+let locationsObj = {};
 
 
 function logSubmit(event) {
@@ -490,6 +487,46 @@ function getAllDepartments(){
 		
 			console.log('getAllDepartments ',result);
 			//$('#getAllDepartments').html(JSON.stringify(result, null, 2));
+			let listOfDepts = [];
+			
+			for (let d = 0; d < result.data.length; d++) {
+				if (!listOfDepts.includes(result.data[d].name)) {
+					listOfDepts.push(result.data[d].name);
+				}
+			}
+
+			console.log('listOfDepts', listOfDepts);
+
+	},
+	error: function (jqXHR, textStatus, errorThrown) {
+			console.log('error');
+			console.log(textStatus);
+			console.log(errorThrown);
+		},
+	});
+}
+
+function getAllLocations(){
+	$.ajax({
+	url: "assets/php/getAllLocations.php",
+	type: "GET",
+	dataType: "json",
+	data: {},
+	success: function (result) {
+		
+			console.log('getAllLocations ', result);
+			//$('#getAllDepartments').html(JSON.stringify(result, null, 2));
+
+			let listOfLocations = [];
+			
+			for (let l = 0; l < result.data.length; l++) {
+				if (!listOfLocations.includes(result.data[l].name)) {
+					listOfLocations.push(result.data[l].name);
+				}
+			}
+
+			console.log('listOfLocations', listOfLocations);
+
 		
 	},
 	error: function (jqXHR, textStatus, errorThrown) {
@@ -615,6 +652,8 @@ window.onload = (event) => {
 			getAllEmployees();
 
 			getAllDepartments();
+
+			getAllLocations();
 
 		});
 
