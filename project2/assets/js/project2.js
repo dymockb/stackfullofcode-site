@@ -7,6 +7,8 @@ let t;
 let lastSearch = "";
 let orderBy = 'lastName';
 let departmentsObj = {};
+let countOfDepts;
+let countOfCheckedDepts;
 let locationsObj = {};
 
 
@@ -302,7 +304,7 @@ function renderEmployee(employeeProperties){
 
 function createCheckbox (checkboxName){
 	let checkboxDiv = document.createElement('div');
-	checkboxDiv.setAttribute('class', 'ui checkbox checked');
+	checkboxDiv.setAttribute('class', 'ui checkbox department-checkbox checked');
 	//checkboxDiv.setAttribute('class', 'ui checkbox');
 
 	let checkboxInput = document.createElement('input');
@@ -321,18 +323,57 @@ function createCheckbox (checkboxName){
 }
 
 function departmentCheckboxFunctionality() {
+	
+		function setSelectAllCheckBox(){
+			if (countOfCheckedDepts < countOfDepts) {
+				if (countOfCheckedDepts == 0) {
+				 $('#select-none-departments').checkbox('set checked');
+				} else {
+				 $('#select-none-departments').checkbox('set unchecked');					
+				}
+
+				$('#select-all-departments').checkbox('set unchecked');
+
+			} else if (countOfCheckedDepts == countOfDepts) {
+				$('#select-all-departments').checkbox('set checked');
+				$('#select-none-departments').checkbox('set unchecked');
+			}
+		}
 
 		// this was overlapping with radio buttons create distinct classes?
-		$('.ui.checkbox:not(.active-radio-checkbox)').checkbox({
+		//$('.ui.checkbox:not(.active-radio-checkbox)').checkbox({
+		$('.department-checkbox').checkbox({
 			onChecked: function(){
 				departmentsObj[this.name] = this.checked;
-				console.log(departmentsObj);
+				countOfCheckedDepts ++;
+				setSelectAllCheckBox(countOfDepts);
 			},
 			onUnchecked: function(){
 				departmentsObj[this.name] = this.checked;
-				console.log(departmentsObj);
+				countOfCheckedDepts --;
+				setSelectAllCheckBox(countOfDepts);
 			},				
 		});
+		
+		//$('.department-checkbox').checkbox('attach events', '#select-all-departments', 'check');
+
+		//$('.department-checkbox').checkbox('attach events', '#select-none-departments', 'uncheck');
+		
+		
+		$('#select-none-departments').checkbox({
+			onChecked: function(){
+			  //$('.department-checkbox').checkbox('set checked');
+			  $('.department-checkbox').checkbox('uncheck');
+			},
+		});
+
+		$('#select-all-departments').checkbox({
+			onChecked: function(){
+			  //$('.department-checkbox').checkbox('set checked');
+			  $('.department-checkbox').checkbox('check');
+			},
+		});
+		
 
 };
 
@@ -542,6 +583,9 @@ function getAllDepartments(){
 					listOfDepts.push(result.data[d].name);
 				}
 			}
+
+			countOfDepts = listOfDepts.length;
+			countOfCheckedDepts = listOfDepts.length;
 
 			for (lod = 0; lod < listOfDepts.length; lod ++) {
 				let deptName = listOfDepts[lod];
