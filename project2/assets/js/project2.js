@@ -2961,7 +2961,12 @@ function createEmployee(employeePropertiesObj){
 	employeeDiv.setAttribute('class', 'content');
 	//employeeDiv.setAttribute('employee-properties', `{"firstName": "${firstName}", "lastName": "${lastName}", "department": "${department}", "location": "${location}", "email": "${email}", "jobTitle":"${jobTitle}", "id":"${id}"}`);
 	employeeDiv.setAttribute('employee-properties', JSON.stringify(employeePropertiesObj));
-	employeeDiv.innerHTML = `${employeePropertiesObj.firstName} ${employeePropertiesObj.lastName}`;
+	if (orderBy == 'firstName') {
+		employeeDiv.innerHTML = `${employeePropertiesObj.firstName} ${employeePropertiesObj.lastName}`;		
+	} else if (orderBy == 'lastName'){
+		employeeDiv.innerHTML = `${employeePropertiesObj.lastName}, ${employeePropertiesObj.firstName}`;
+	}
+	//employeeDiv.innerHTML = `${employeePropertiesObj.firstName} ${employeePropertiesObj.lastName}`;
 	
 	let employeeSubHeader = document.createElement('div');
 	employeeSubHeader.setAttribute('class', 'sub header');
@@ -3180,6 +3185,8 @@ function runSearch(orderBy, searchTerm){
 					document.getElementById('body-tag').setAttribute('style', 'overflow: auto');
 				}
 
+
+				console.log('orderby', orderBy);
 				//for (let e = 0; e < result.data.length; e ++) {
 				for (let e = 0; e < rowsToCreate; e ++) {
 				//for (let e = 0; e < 18; e ++) {
@@ -3328,7 +3335,16 @@ window.onload = (event) => {
 				
 			//$('.ui.radio.checkbox').checkbox();
 			
+			/*
 			$('.ui.radio.checkbox').checkbox({
+				onChecked: function(){
+					sendRadioSelection(this.value);
+					console.log(this.name);
+				},	
+			});
+			*/
+			
+			$('.active-radio-checkbox').checkbox({
 				onChecked: function(){
 					sendRadioSelection(this.value);
 					console.log(this.name);
