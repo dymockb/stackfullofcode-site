@@ -154,6 +154,12 @@
 	.employee-detail-fields {
 		visibility: hidden;
 	}
+
+	.employee-panel-btn {
+		display: block !important;
+		margin-left: auto !important;
+		margin-bottom: 1rem !important;
+	}
 	
 	.display-none-field {
 		display: none
@@ -377,7 +383,7 @@
 </div>
 
 			<div id="pc-search" class="ui segment">
-		Search Options
+		
 		
             <div class="content field">
 							<!--
@@ -403,19 +409,11 @@
 								<input type="checkbox" name="2">
 								<label>Two</label>
 							</div>
+							<div class="ui form"> </div>
+							
 							-->
-							
-							<div class="ui checkbox">
-								<input type="checkbox" name="example">
-								<label>Make my profile visible</label>
-							</div>
-
-							<div class="ui checkbox">
-								<input type="checkbox" name="example">
-								<label>Make my profile visible</label>
-							</div>
-							
-							<div class="ui form">
+														
+							<div class="item">
 								<div class="inline fields">
 									<label for="order">Order by:</label>
 									<div class="field">
@@ -431,6 +429,10 @@
 										</div>
 									</div>
 								</div>
+							</div>
+
+
+							<div class="item">
 								<div class="grouped fields">
 									<label for="order">Order by:</label>
 									<div class="field">
@@ -446,16 +448,17 @@
 										</div>
 									</div>
 								</div>
-							</div>
 							
-							<div id="department-checkboxes">
-								<!--
-								<div class="ui checkbox">
-									<input type="checkbox" name="legal" checked="">
-									<label>Legal</label>
-								</div>
-								-->
+							
+								<div id="department-checkboxes">
+									<!--
+									<div class="ui checkbox">
+										<input type="checkbox" name="legal" checked="">
+										<label>Legal</label>
+									</div>
+									-->
 
+								</div>
 							</div>
 													
 						</div>
@@ -489,11 +492,13 @@
           </h4>
 					<div id="modalBtn" class="employee-modal-btn ui button">view details</div>
         </td>
-        <td id="employee-details-field" rowspan="8">
+        <td id="employee-details-field" rowspan="10">
           
-					<div class="ui segment">
+					 <div class="ui segment" id="employee-segment">
+						<button id="create-employee-btn" class="ui button employee-panel-btn">Create Employee</button>
 						<div class="content employee-detail-fields">
-							<form id="employee-form">
+
+							<div class="ui segment">
 							<h1 id="employee-firstName-field">placeholder</h1>
 							<h1 id="employee-lastName-field">placeholder</h1>
 							<h3 href="#" id="employee-email-field">placeholder<h3>
@@ -503,10 +508,11 @@
 							<h3 id="employee-locationName-field">placeholder</h3>
 							<p class="display-none-field" id="employee-locationID-field">placeholder</p>
 							<p class="display-none-field" id="employee-id-field">placeholder</p>
-							</form>
-							<button id="edit-employee-fields-btn">Edit</button>
+							</div>
+							<button id="edit-employee-fields-btn" class="ui button employee-panel-btn">Edit</button>
 						</div>
-					</div>
+					
+					 </div> 
 		
 
 				

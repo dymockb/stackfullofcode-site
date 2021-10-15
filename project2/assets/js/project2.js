@@ -289,7 +289,7 @@ function createEmployeeRow(employeePropertiesObj) {
 
 function renderEmployee(employeeProperties){
 	
-	document.getElementById(`employee-form`).reset();
+	//document.getElementById(`employee-segment`).reset();
 	
 	for (const [key, value] of Object.entries(employeeProperties)) {
 					
@@ -298,6 +298,44 @@ function renderEmployee(employeeProperties){
 	}
 	
 }
+
+
+function createCheckbox (checkboxName){
+	let checkboxDiv = document.createElement('div');
+	checkboxDiv.setAttribute('class', 'ui checkbox checked');
+	//checkboxDiv.setAttribute('class', 'ui checkbox');
+
+	let checkboxInput = document.createElement('input');
+	checkboxInput.setAttribute('type', 'checkbox');
+	checkboxInput.setAttribute('name', `${checkboxName}`);
+	checkboxInput.setAttribute('checked', "");
+
+	let checkboxLabel =document.createElement('label');
+	checkboxLabel.innerHTML = `${checkboxName}`;
+
+	checkboxDiv.appendChild(checkboxInput);
+	checkboxDiv.appendChild(checkboxLabel);
+
+	return checkboxDiv;
+
+}
+
+function departmentCheckboxFunctionality() {
+
+		// this was overlapping with radio buttons create distinct classes?
+		$('.ui.checkbox:not(.active-radio-checkbox)').checkbox({
+			onChecked: function(){
+				departmentsObj[this.name] = this.checked;
+				console.log(departmentsObj);
+			},
+			onUnchecked: function(){
+				departmentsObj[this.name] = this.checked;
+				console.log(departmentsObj);
+			},				
+		});
+
+};
+
 
 function selectEmployeeFunctionality(){
 	if ($('#mobile-search-options').css('display') == 'none') {
@@ -319,6 +357,8 @@ function selectEmployeeFunctionality(){
 				$('.employee-detail-fields').attr('style', 'visibility: visible');
 				document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails)
 				employeeDetailsVisibility ++;
+			} else {
+				document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails)
 			}
 			 
 		});
@@ -380,7 +420,7 @@ $('#edit-employee-modal-btn').click(function(){
 
 $('#close-modal-btn').click(function(){
 		
-	document.getElementById(`employee-modal-form`).reset();
+	//document.getElementById(`employee-modal-form`).reset();
 	
 	//$(".employee-editable-modal-field").attr('readonly', 'readOnly');
 
@@ -609,42 +649,15 @@ function getAllEmployees(){
 
 };
 
-function createCheckbox (checkboxName){
-	let checkboxDiv = document.createElement('div');
-	checkboxDiv.setAttribute('class', 'ui checkbox checked');
-	//checkboxDiv.setAttribute('class', 'ui checkbox');
+function closeModal(){
+	console.log('close');
 
-	let checkboxInput = document.createElement('input');
-	checkboxInput.setAttribute('type', 'checkbox');
-	checkboxInput.setAttribute('name', `${checkboxName}`);
-	checkboxInput.setAttribute('checked', "");
+	document.getElementById(`employee-modal-form`).reset();
 
-	let checkboxLabel =document.createElement('label');
-	checkboxLabel.innerHTML = `${checkboxName}`;
-
-	checkboxDiv.appendChild(checkboxInput);
-	checkboxDiv.appendChild(checkboxLabel);
-
-	return checkboxDiv;
-
-}
-
-function departmentCheckboxFunctionality() {
-
-		// this was overlapping with radio buttons create distinct classes?
-		$('.ui.checkbox:not(.active-radio-checkbox)').checkbox({
-			onChecked: function(){
-				departmentsObj[this.name] = this.checked;
-				console.log(departmentsObj);
-			},
-			onUnchecked: function(){
-				departmentsObj[this.name] = this.checked;
-				console.log(departmentsObj);
-			},				
-		});
+	$(".employee-editable-modal-field").attr('readonly', 'readonly');
+	$('.employee-editable-modal-field').attr('style', 'border-color: black');
 
 };
-
 
 window.onload = (event) => {	
 		
@@ -654,10 +667,13 @@ window.onload = (event) => {
 			
 			$('.ui.accordion').accordion();
 
-			$(`#modal${employeeModalCount}`).modal({
+			$(`#modal${employeeModalCount}`).modal(
+				{
 				//title: 'IDIOT', 
 				//preserveHTML: false,
-				//onShow: function(){console.log('show')}
+				//onHidden: function(){console.log('close')}
+				onHidden: function(){closeModal()}
+				//onHidden: closeModal()
 				});
 			
 			/*
