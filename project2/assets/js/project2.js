@@ -479,6 +479,20 @@ function runSearch(orderBy, searchTerm){
 	}
 
 	let departmentsStr = departments.slice(0,-1);
+	
+	if (countOfCheckedDepts == 0) {
+
+		$('.result-row').remove();
+
+		let otherEmployees = document.getElementById('table-body');
+		
+		for (let e = 0; e < 20; e ++) {
+
+			otherEmployees.appendChild(createEmployeeRow(blankEmployeeObj));
+
+		}
+		
+	} else {
 
 	$.ajax({
 		//url: "assets/php/searchAll.php",
@@ -543,6 +557,8 @@ function runSearch(orderBy, searchTerm){
 				console.log(errorThrown);
 			},
 		});
+		
+		}
 		
 };
 
@@ -633,7 +649,7 @@ function getAllLocations(){
 			console.log(textStatus);
 			console.log(errorThrown);
 		},
-	});
+	});	
 }
 
 function getAllEmployees(){
