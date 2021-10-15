@@ -174,28 +174,6 @@ $('#getAllDeptsBtn').click(function(){
 	getAllDepartments();
 });
 
-function getAllDepartments(){
-	$.ajax({
-	url: "libs/php/getAllDepartments.php",
-	type: "GET",
-	dataType: "json",
-	data: {},
-	success: function (result) {
-		
-			console.log('getAllDepartments ',result);
-			$('#getAllDepartments').html(JSON.stringify(result, null, 2));
-		
-	},
-	error: function (jqXHR, textStatus, errorThrown) {
-			console.log('error');
-			console.log(textStatus);
-			console.log(errorThrown);
-		},
-	});
-}
-
-
-
 function createEmployee(employeePropertiesObj){
 	
 	let employeeH4 = document.createElement('h4');
@@ -207,6 +185,16 @@ function createEmployee(employeePropertiesObj){
 		
 	let employeeDiv = document.createElement('div');
 	employeeDiv.setAttribute('class', 'content');
+
+	for (const [key, value] of Object.entries(employeePropertiesObj)) {
+
+		let checkNull = value == null ? 'null' : value;
+
+		let textValue = checkNull == "" ? 'TBC' : checkNull;
+
+		employeePropertiesObj[key] = textValue;
+		
+	}
 
 	employeeDiv.setAttribute('employee-properties', JSON.stringify(employeePropertiesObj));
 	
@@ -299,10 +287,15 @@ function selectEmployeeFunctionality(){
 		});
 
 		$('td:not(#employee-details-field)').click(function(event){
-			employeePropertiesObj = JSON.parse(this.firstChild.children[1].getAttribute('employee-properties'));
+			let employeeDetails = this.firstChild.children[1].getAttribute('employee-properties');
+			employeePropertiesObj = JSON.parse(employeeDetails);
+
+			console.log('epo', employeePropertiesObj);
 			renderEmployee(employeePropertiesObj);
+
 			if (employeeDetailsVisibility == 0) {
 				$('.employee-detail-fields').attr('style', 'visibility: visible');
+				document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails)
 				employeeDetailsVisibility ++;
 			}
 			 
@@ -315,9 +308,10 @@ function viewDetailsBtnFunctionality(){
 	
 	$('.employee-modal-btn').click(function(event){	
 		
-		employeePropertiesObj = {};
+		//employeePropertiesObj = {};
 
 		let employeeProperties = JSON.parse($($(this).context.previousSibling.children[1]).attr('employee-properties'));
+		let employeeDetails = $($(this).context.previousSibling.children[1]).attr('employee-properties');
 				
 		for (const [key, value] of Object.entries(employeeProperties)) {
 
@@ -327,6 +321,13 @@ function viewDetailsBtnFunctionality(){
 		}
 				
 		$(`#modal${employeeModalCount}`).modal('show');
+
+		if (employeeDetailsVisibility == 0) {
+			renderEmployee(employeePropertiesObj);
+			$('.employee-detail-fields').attr('style', 'visibility: visible');
+			document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails)
+			employeeDetailsVisibility ++;
+		}
 	
 	});
 	
@@ -338,11 +339,11 @@ function renderEmployee(employeeProperties){
 	
 	for (const [key, value] of Object.entries(employeeProperties)) {
 				
-		let checkNull = value == null ? 'NULL' : value;
+		//let checkNull = value == null ? 'null' : value;
 		
-		let textValue = checkNull == "" ? 'TBC' : checkNull;
+		//let textValue = checkNull == "" ? 'TBC' : checkNull;
 		
-		document.getElementById(`employee-${key}-field`).innerHTML = textValue;
+		document.getElementById(`employee-${key}-field`).innerHTML = value;
 
 	}
 	
@@ -350,8 +351,10 @@ function renderEmployee(employeeProperties){
 
 
 $('#edit-employee-fields-btn').click(function(){
+
+	let employeeDetails = JSON.parse(this.getAttribute('employee-details'));
 				
-	for (const [key, value] of Object.entries(employeePropertiesObj)) {
+	for (const [key, value] of Object.entries(employeeDetails)) {
 
 		document.getElementById(`employee-${key}-modal${employeeModalCount}`).setAttribute('value',value);
 				
@@ -477,6 +480,83 @@ function sendRadioSelection(value){
 		
 };
 
+function getAllDepartments(){
+	$.ajax({
+	url: "assets/php/getAllDepartments.php",
+	type: "GET",
+	dataType: "json",
+	data: {},
+	success: function (result) {
+		
+			console.log('getAllDepartments ',result);
+			//$('#getAllDepartments').html(JSON.stringify(result, null, 2));
+		
+	},
+	error: function (jqXHR, textStatus, errorThrown) {
+			console.log('error');
+			console.log(textStatus);
+			console.log(errorThrown);
+		},
+	});
+}
+
+function getAllEmployees(){
+
+	$.ajax({
+		url: "assets/php/getAll.php",
+		type: "GET",
+		dataType: "json",
+		data: {},
+		success: function (result) {
+			
+				console.log('getAll ',result.data);
+				
+				for (const [key, value] of Object.entries(result.data[0])) {
+					
+					console.log(key);
+					blankEmployeeObj[key] = "no data";						
+				
+				}
+		
+				let firstEmployee = document.getElementById('first-employee');
+
+				appendEmployee(firstEmployee, createEmployee(blankEmployeeObj));
+
+				let otherEmployees = document.getElementById('table-body');
+
+				for (let e = 0; e < result.data.length; e ++) {
+					
+					for (const [key, value] of Object.entries(result.data[e])) {
+					
+						employeePropertiesObj[key] = value;
+					
+					}
+
+					otherEmployees.appendChild(createEmployeeRow(employeePropertiesObj));
+					
+				}
+				
+				viewDetailsBtnFunctionality()
+				
+				selectEmployeeFunctionality()
+				
+				if ($('#preloader').length) {
+					$('#preloader').delay(1000).fadeOut('slow', function () {
+						$(this).remove();
+						console.log("Window loaded", event);		
+					});
+				}
+
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+				console.log('error');
+				console.log(textStatus);
+				console.log(errorThrown);
+			},
+		});
+
+};
+
 
 window.onload = (event) => {	
 		
@@ -531,61 +611,10 @@ window.onload = (event) => {
 
 			$('#order-by-first-name').checkbox('attach events', '#order-by-first-name-mobile', 'check');
 			$('#order-by-last-name').checkbox('attach events', '#order-by-last-name-mobile', 'check');		
-						
-			$.ajax({
-			url: "assets/php/getAll.php",
-			type: "GET",
-			dataType: "json",
-			data: {},
-			success: function (result) {
-				
-					console.log('getAll ',result.data);
-					
-					for (const [key, value] of Object.entries(result.data[0])) {
-						
-						console.log(key);
-						blankEmployeeObj[key] = "no data";						
-					
-					}
 			
-					let firstEmployee = document.getElementById('first-employee');
+			getAllEmployees();
 
-					appendEmployee(firstEmployee, createEmployee(blankEmployeeObj));
-
-					let otherEmployees = document.getElementById('table-body');
-
-					for (let e = 0; e < result.data.length; e ++) {
-						
-						for (const [key, value] of Object.entries(result.data[e])) {
-						
-							employeePropertiesObj[key] = value;
-						
-						}
-
-						otherEmployees.appendChild(createEmployeeRow(employeePropertiesObj));
-						
-					}
-					
-					viewDetailsBtnFunctionality()
-					
-					selectEmployeeFunctionality()
-					
-					if ($('#preloader').length) {
-						$('#preloader').delay(1000).fadeOut('slow', function () {
-							$(this).remove();
-							console.log("Window loaded", event);		
-						});
-					}
-
-			},
-			error: function (jqXHR, textStatus, errorThrown) {
-					console.log('error');
-					console.log(textStatus);
-					console.log(errorThrown);
-				},
-			});
-
-			//getAllDepartments();
+			getAllDepartments();
 
 		});
 

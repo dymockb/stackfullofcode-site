@@ -162,10 +162,24 @@
 	.hidden-field {
 		visibility: hidden;
 	}
+
+	#modal0 {
+		min-width: 330px;
+	}
 	
 	.employee-modal-btn {
 		display: none !important;
 		float: right;
+	}
+
+	.scrolling.image.content {
+		display: block !important;
+	}
+
+	.description {
+    margin-left: auto;
+    margin-right: auto;
+    width: 70%;
 	}
 	
 	.employee-btn {
@@ -434,15 +448,16 @@
 								</div>
 							</div>
 							
-							
-							<div class="ui checkbox">
-								<input type="checkbox" name="legal" checked="">
-								<label>Legal</label>
-							</div>
+							<div id="department-checkboxes">
+								<div class="ui checkbox">
+									<input type="checkbox" name="legal" checked="">
+									<label>Legal</label>
+								</div>
 
-							<div class="ui checkbox">
-								<input type="checkbox" name="marketing" checked="">
-								<label>Marketing</label>
+								<div class="ui checkbox">
+									<input type="checkbox" name="marketing" checked="">
+									<label>Marketing</label>
+								</div>
 							</div>
 													
 						</div>
@@ -484,7 +499,6 @@
 							<h1 id="employee-firstName-field">placeholder</h1>
 							<h1 id="employee-lastName-field">placeholder</h1>
 							<h3 href="#" id="employee-email-field">placeholder<h3>
-							<!-- <div class="meta">	</div> -->
 							<h2 id="employee-jobTitle-field">placeholder</h2>
 							<h2 id="employee-department-field">placeholder</h2>
 							<p class="display-none-field" id="employee-departmentID-field">placeholder</p>
@@ -492,13 +506,7 @@
 							<p class="display-none-field" id="employee-locationID-field">placeholder</p>
 							<p class="display-none-field" id="employee-id-field">placeholder</p>
 							</form>
-							<div class="description">
-								A description which may flow for several lines and give context to the content.
-							</div>
-							<div class="extra">
-								<img src="assets/images/wireframe/square-image.png" class="ui circular avatar image"> Username
-							</div>
-							<button id="edit-employee-fields-btn">Try it</button>
+							<button id="edit-employee-fields-btn">Edit</button>
 						</div>
 					</div>
 		
@@ -519,75 +527,24 @@
       Employee Details Modal
     </div>
     <div class="scrolling image content">
-      <div class="ui medium image">
-			<!--  <img src="/images/wireframe/image.png"> 
-			
-			class="ui longer test modal front transition visible active" -->
-      </div>
-      <div class="description">
-        <div class="ui header">Modal Header</div>
-        <p>This is an example of expanded content that will cause the modal's dimmer to scroll</p>
-				
-				    		<div class="ui card">
-    <div class="image">
-      <div class="ui blurring inverted dimmer">
-        <div class="content">
-          <div class="center">
-            <div class="ui teal button">Add Friend</div>
-          </div>
-        </div>
-      </div>
-      <img src="assets/images/wireframe/image.png">
-    </div>
-		<div class="ui segment">
-			<div class="ui small image">
-				<img src="assets/images/wireframe/image.png">
-			</div>
-			<div class="content">
-				<form id="employee-modal-form">
-				<input name="0" autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-firstName-modal0" />
-				<input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-lastName-modal0" />
-				<div class="meta">
-					<input name="0" autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-jobTitle-modal0" />
-					<input name="0" autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-department-modal0" />
-					<input name="0" autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-departmentID-modal0" />
-					<input name="0" autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-locationName-modal0" />
-					<input name="0" autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-locationID-modal0" />
-					<input name="0" autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-id-modal0" />
-					<input name="0" autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" href="#" id="employee-email-modal0" />
+      <div class="description">					
+				<div class="ui segment">
+					<div class="content">
+						<form id="employee-modal-form">
+						<h1><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-firstName-modal0" /></h1>
+						<h1><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-lastName-modal0" /></h1>							
+						<h3><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" href="#" id="employee-email-modal0" /></h3>
+						<h2><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-jobTitle-modal0" /></h2>
+						<h2><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-department-modal0" /></h2>
+						<p class="display-none-field"><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-departmentID-modal0" /></p>
+						<h3><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-locationName-modal0" /></h3>
+						<p class="display-none-field"><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-locationID-modal0" /></p>
+						<p class="display-none-field"><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-id-modal0" /></p>
+						
+						</form>
+						<button id="edit-employee-modal-btn">Edit</button>
+					</div>
 				</div>
-				</form>
-				<div class="description">
-					A description which may flow for several lines and give context to the content.
-				</div>
-				<div class="extra">
-					<img src="assets/images/wireframe/square-image.png" class="ui circular avatar image"> Username
-				</div>
-				<button id="edit-employee-modal-btn">Try it</button>
-			</div>
-		</div>
-    <div class="extra content">
-      <a class="right floated created">
-				Delete</a>
-      <a class="friends">
-        Modify</a>
-    </div>
-  </div>
-        <!--
-				<img class="ui wireframe image" src="/images/wireframe/paragraph.png">
-        <div class="ui divider"></div>
-        <img class="ui wireframe image" src="/images/wireframe/paragraph.png">
-        <div class="ui divider"></div>
-        <img class="ui wireframe image" src="/images/wireframe/paragraph.png">
-        <div class="ui divider"></div>
-        <img class="ui wireframe image" src="/images/wireframe/paragraph.png">
-        <div class="ui divider"></div>
-        <img class="ui wireframe image" src="/images/wireframe/paragraph.png">
-        <div class="ui divider"></div>
-        <img class="ui wireframe image" src="/images/wireframe/paragraph.png">
-        <div class="ui divider"></div>
-        <img class="ui wireframe image" src="/images/wireframe/paragraph.png">
-				-->
       </div>
     </div>
     <div id="close-modal-btn" class="actions">
