@@ -155,14 +155,6 @@
 		visibility: hidden;
 	}
 	
-	.display-none-field {
-		display: none
-	}
-	
-	.hidden-field {
-		visibility: hidden;
-	}
-	
 	.employee-modal-btn {
 		display: none !important;
 		float: right;
@@ -479,18 +471,22 @@
         <td id="employee-details-field" rowspan="8">
           
 					<div class="ui segment">
+						<div class="ui small image employee-detail-fields">
+							<img src="assets/images/wireframe/image.png">
+						</div>
 						<div class="content employee-detail-fields">
 							<form id="employee-form">
-							<h1 id="employee-firstName-field">placeholder</h1>
-							<h1 id="employee-lastName-field">placeholder</h1>
-							<h3 href="#" id="employee-email-field">placeholder<h3>
-							<!-- <div class="meta">	</div> -->
-							<h2 id="employee-jobTitle-field">placeholder</h2>
-							<h2 id="employee-department-field">placeholder</h2>
-							<p class="display-none-field" id="employee-departmentID-field">placeholder</p>
-							<h3 id="employee-locationName-field">placeholder</h3>
-							<p class="display-none-field" id="employee-locationID-field">placeholder</p>
-							<p class="display-none-field" id="employee-id-field">placeholder</p>
+							<input type="text" class="employee-editable-field" readOnly="readOnly" id="employee-firstName-field" />
+							<input type="text" class="employee-editable-field" readOnly="readOnly" id="employee-lastName-field" />
+							<div class="meta">
+								<input type="text" class="employee-editable-field" readOnly="readOnly" id="employee-jobTitle-field" />
+								<input type="text" class="employee-editable-field" readOnly="readOnly" id="employee-department-field" />
+								<input type="text" class="employee-editable-field" readOnly="readOnly" id="employee-departmentID-field" />
+								<input type="text" class="employee-editable-field" readOnly="readOnly" id="employee-locationName-field" />
+								<input type="text" class="employee-editable-field" readOnly="readOnly" id="employee-locationID-field" />
+								<input type="text" class="employee-editable-field" readOnly="readOnly" id="employee-id-field" />
+								<input type="text" class="employee-editable-field" readOnly="readOnly" href="#" id="employee-email-field" />
+							</div>
 							</form>
 							<div class="description">
 								A description which may flow for several lines and give context to the content.

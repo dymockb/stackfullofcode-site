@@ -2933,7 +2933,6 @@ function getAllDepartments(){
 	
 */	
 
-let employeeDetailsVisibility = 0;
 let employeeModalCount = 0;
 let employeePropertiesObj = {};
 let inputField = document.getElementById('search-input');
@@ -2944,11 +2943,8 @@ let departmentsObj = {
 	marketing: true,
 	legal: true
 	};
-	
-let blankEmployeeObj = {};
 
-//function createEmployee(firstName, lastName, department, location, email, jobTitle, id){
-function createEmployee(employeePropertiesObj){
+function createEmployee(firstName, lastName, department, location, email, jobTitle, id){
 	
 	let employeeH4 = document.createElement('h4');
 	employeeH4.setAttribute('class', 'ui image header');
@@ -2959,13 +2955,12 @@ function createEmployee(employeePropertiesObj){
 		
 	let employeeDiv = document.createElement('div');
 	employeeDiv.setAttribute('class', 'content');
-	//employeeDiv.setAttribute('employee-properties', `{"firstName": "${firstName}", "lastName": "${lastName}", "department": "${department}", "location": "${location}", "email": "${email}", "jobTitle":"${jobTitle}", "id":"${id}"}`);
-	employeeDiv.setAttribute('employee-properties', JSON.stringify(employeePropertiesObj));
-	employeeDiv.innerHTML = `${employeePropertiesObj.firstName} ${employeePropertiesObj.lastName}`;
+	employeeDiv.setAttribute('employee-properties', `{"firstName": "${firstName}", "lastName": "${lastName}", "department": "${department}", "location": "${location}", "email": "${email}", "jobTitle":"${jobTitle}", "id":"${id}"}`);
+	employeeDiv.innerHTML = `${firstName} ${lastName}`;
 	
 	let employeeSubHeader = document.createElement('div');
 	employeeSubHeader.setAttribute('class', 'sub header');
-	employeeSubHeader.innerHTML = `${employeePropertiesObj.department}`;
+	employeeSubHeader.innerHTML = `${department}`;
 	
 	employeeDiv.appendChild(employeeSubHeader);
 	
@@ -2993,17 +2988,15 @@ function appendEmployee(elementToAppend, employeeElements){
 	elementToAppend.appendChild(employeeElements[2]);	
 }
 
-//function createEmployeeRow(firstName, lastName, department, location, email, jobTitle, id) {
-function createEmployeeRow(employeePropertiesObj) {
+function createEmployeeRow(firstName, lastName, department, location, email, jobTitle, id) {
 	let tableRow = document.createElement('tr');
 	tableRow.setAttribute('class', 'result-row');
-	if (employeePropertiesObj.firstName == 'no data') {
+	if (firstName == 'blank data') {
 		tableRow.setAttribute('style', 'visibility: hidden');
 	}
 	let tableData = document.createElement('td');
 
-	let employeeElements = createEmployee(employeePropertiesObj);
-	//let employeeElements = createEmployee(firstName, lastName, department, location, email, jobTitle, id);					
+	let employeeElements = createEmployee(firstName, lastName, department, location, email, jobTitle, id);					
 	tableData.appendChild(employeeElements[0]);
 	tableData.appendChild(employeeElements[1]);
 	tableData.appendChild(employeeElements[2]);
@@ -3052,15 +3045,8 @@ function selectEmployeeFunctionality(){
 		});
 
 		$('td:not(#employee-details-field)').click(function(event){
-			//let employeeProperties = JSON.parse(this.firstChild.children[1].getAttribute('employee-properties'));
-			//renderEmployee(employeeProperties);
-			employeePropertiesObj = JSON.parse(this.firstChild.children[1].getAttribute('employee-properties'));
-			renderEmployee(employeePropertiesObj);
-			if (employeeDetailsVisibility == 0) {
-				$('.employee-detail-fields').attr('style', 'visibility: visible');
-				employeeDetailsVisibility ++;
-			}
-			 
+			let employeeProperties = JSON.parse(this.firstChild.children[1].getAttribute('employee-properties'));
+			renderEmployee(employeeProperties);
 		});
 	}
 	
@@ -3093,19 +3079,11 @@ function renderEmployee(employeeProperties){
 	
 	for (const [key, value] of Object.entries(employeeProperties)) {
 		
-		//document.getElementById(`employee-${key}-field`).setAttribute('value',value);
-		
-		let checkNull = value == null ? 'NULL' : value;
-		
-		let textValue = checkNull == "" ? 'TBC' : checkNull;
-		
-		document.getElementById(`employee-${key}-field`).innerHTML = textValue;
+		document.getElementById(`employee-${key}-field`).setAttribute('value',value);
 
 	}
 	
 }
-
-
 
 /*
 function addFunctonality(){
@@ -3119,25 +3097,26 @@ function addFunctonality(){
 
 $('#edit-employee-fields-btn').click(function(){
 	
+	console.log('clicked');
+	console.log($('#myText'));
 	//$("#myText").removeAttr('readonly');
 
-	
-	//employeePropertiesObj = {};
+	/*
+	employeePropertiesObj = {};
 			
-	for (const [key, value] of Object.entries(employeePropertiesObj)) {
+	for (const [key, value] of Object.entries(employeeProperties)) {
 
 		document.getElementById(`employee-${key}-modal${employeeModalCount}`).setAttribute('value',value);
-		//employeePropertiesObj[key] = value;
+		employeePropertiesObj[key] = value;
 		
 	}
 			
 	$(`#modal${employeeModalCount}`).modal('show');
-	$('#edit-employee-modal-btn').click();
 	
+	*/
 	
-	
-	//$(".employee-editable-field").removeAttr('readonly');
-	//$('.employee-editable-field').attr('style', 'border-color: blue');
+	$(".employee-editable-field").removeAttr('readonly');
+	$('.employee-editable-field').attr('style', 'border-color: blue');
 
 });
 
@@ -3155,6 +3134,8 @@ $('#close-modal-btn').click(function(){
 });
 
 function runSearch(orderBy, searchTerm){
+	
+	console.log('runsearch orderBy:', orderBy, 'searchTerm: ', searchTerm);
 
 	$.ajax({
 		url: "assets/php/searchAll.php",
@@ -3179,29 +3160,15 @@ function runSearch(orderBy, searchTerm){
 				} else {
 					document.getElementById('body-tag').setAttribute('style', 'overflow: auto');
 				}
+				
 
 				//for (let e = 0; e < result.data.length; e ++) {
 				for (let e = 0; e < rowsToCreate; e ++) {
 				//for (let e = 0; e < 18; e ++) {
 					if (e < result.data.length) {
-												
-						//otherEmployees.appendChild(createEmployeeRow(result.data[e].firstName, result.data[e].lastName, result.data[e].department, result.data[e].location, result.data[e].email, result.data[e].jobTitle, result.data[e].id));
-					
-						for (const [key, value] of Object.entries(result.data[e])) {
-						
-							employeePropertiesObj[key] = value;
-						
-						}
-						
-						otherEmployees.appendChild(createEmployeeRow(employeePropertiesObj));
-					
-					
+						otherEmployees.appendChild(createEmployeeRow(result.data[e].firstName, result.data[e].lastName, result.data[e].department, result.data[e].location, result.data[e].email, result.data[e].jobTitle, result.data[e].id));
 					} else {
-						
-						//otherEmployees.appendChild(createEmployeeRow('blank data' ,'blank data' ,'blank data' ,'blank data' ,'blank data' ,'blank data' ,'x' ))
-						
-						otherEmployees.appendChild(createEmployeeRow(blankEmployeeObj));
-						
+						otherEmployees.appendChild(createEmployeeRow('blank data' ,'blank data' ,'blank data' ,'blank data' ,'blank data' ,'blank data' ,'x' ))
 					}
 				}
 				
@@ -3249,7 +3216,6 @@ inputField.addEventListener('input', delay(function () {
 	
 }, 500));
 
-/*
 function updateValue(e) {
 	
 	let startTyping = 0
@@ -3281,7 +3247,7 @@ function filterTable(e) {
   for (i = 0; i < tr.length; i++) {
     td = tr[i].getElementsByTagName("td")[0].getElementsByTagName("h4")[0].getElementsByClassName("content")[0];
 		console.log(td.getAttribute('employee-properties'));
-		
+		/*
     if (td) {
       txtValue = td.textContent || td.innerText;
       if (txtValue.toUpperCase().indexOf(filter) > -1) {
@@ -3290,11 +3256,9 @@ function filterTable(e) {
         tr[i].style.display = "none";
       }
     }
-		
+		*/
   }
 }
-
-*/
 /*
 $('.ui.radio.checkbox').click(function(){
 		//console.log(document.querySelector('input[name="orderBy"]:checked').id);
@@ -3306,6 +3270,7 @@ $('.ui.radio.checkbox').click(function(){
 */
 function sendRadioSelection(value){
 	
+		console.log('orderby',value, 'lastsearch',lastSearch);	
 		orderBy = value;
 		runSearch(orderBy, lastSearch);
 		
@@ -3372,10 +3337,11 @@ window.onload = (event) => {
 					for (const [key, value] of Object.entries(result.data[0])) {
 						
 						console.log(key);
-            blankEmployeeObj[key] = "no data";						
-					
+						
 					}
-			
+					
+					
+					
 					let firstEmployee = document.getElementById('first-employee');
 					//appendEmployee(firstEmployee, createEmployee(result.data[0].firstName, result.data[0].lastName, result.data[0].department, result.data[0].location, result.data[0].email, result.data[0].jobTitle, result.data[0].id));
 					appendEmployee(firstEmployee, createEmployee('blank data' ,'blank data' ,'blank data' ,'blank data' ,'blank data' ,'blank data' ,'x' ));
@@ -3387,13 +3353,12 @@ window.onload = (event) => {
 						
 						for (const [key, value] of Object.entries(result.data[e])) {
 						
+							console.log(key);
 							employeePropertiesObj[key] = value;
 						
 						}
 						
-						//otherEmployees.appendChild(createEmployeeRow(result.data[e].firstName, result.data[e].lastName, result.data[e].department, result.data[e].location, result.data[e].email, result.data[e].jobTitle, result.data[e].id));
-						
-						otherEmployees.appendChild(createEmployeeRow(employeePropertiesObj));
+						otherEmployees.appendChild(createEmployeeRow(result.data[e].firstName, result.data[e].lastName, result.data[e].department, result.data[e].location, result.data[e].email, result.data[e].jobTitle, result.data[e].id));
 						
 					}
 					
