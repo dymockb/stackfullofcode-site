@@ -71,9 +71,9 @@
 	
 	$queryString = $queryStringStart . $deptString . $queryStringEnd;
 	
+  echo $queryString;
+
 	if ($_REQUEST['orderBy'] == 'lastName') {
-		
-		#echo $queryString;
 	
 		$query = $conn->prepare($queryString);
 		

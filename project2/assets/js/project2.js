@@ -171,6 +171,43 @@ $('#getAllDeptsBtn').click(function(){
 	getAllDepartments();
 });
 
+window.onresize = () => {
+	resizing(this, this.innerWidth, this.innerHeight) //1
+	if (typeof t == 'undefined') resStarted() //2
+	clearTimeout(t); t = setTimeout(() => { t = undefined; resEnded() }, 200) //3
+}
+
+function resizing(target, w, h) {
+	//console.log(`Youre resizing: width ${w} height ${h}`)
+}    
+function resStarted() { 
+	//console.log('Resize Started') 
+}
+function resEnded() { 
+
+$('tr:not(#first-employee-row)').off('mouseover');
+
+$('tr:not(#first-employee-row)').off('mouseout');
+
+$('td:not(#employee-details-field)').off('click');
+
+selectEmployeeFunctionality()
+
+}
+
+inputField.addEventListener('input', delay(function () {
+  
+	console.log('search term:', this.value.toLowerCase());
+	
+	console.log('order by: ', orderBy);
+
+	let searchTerm = this.value.toLowerCase();
+	lastSearch = searchTerm;
+	
+	runSearch(orderBy, searchTerm);
+	
+}, 500));
+
 function createEmployee(employeePropertiesObj){
 	
 	let employeeH4 = document.createElement('h4');
@@ -249,27 +286,16 @@ function createEmployeeRow(employeePropertiesObj) {
 	return tableRow;
 }
 
-window.onresize = () => {
-    resizing(this, this.innerWidth, this.innerHeight) //1
-    if (typeof t == 'undefined') resStarted() //2
-    clearTimeout(t); t = setTimeout(() => { t = undefined; resEnded() }, 200) //3
-}
 
-function resizing(target, w, h) {
-    //console.log(`Youre resizing: width ${w} height ${h}`)
-}    
-function resStarted() { 
-    //console.log('Resize Started') 
-}
-function resEnded() { 
-
-	$('tr:not(#first-employee-row)').off('mouseover');
-
-	$('tr:not(#first-employee-row)').off('mouseout');
-
-	$('td:not(#employee-details-field)').off('click');
+function renderEmployee(employeeProperties){
 	
-	selectEmployeeFunctionality()
+	document.getElementById(`employee-form`).reset();
+	
+	for (const [key, value] of Object.entries(employeeProperties)) {
+					
+		document.getElementById(`employee-${key}-field`).innerHTML = value;
+
+	}
 	
 }
 
@@ -287,7 +313,6 @@ function selectEmployeeFunctionality(){
 			let employeeDetails = this.firstChild.children[1].getAttribute('employee-properties');
 			employeePropertiesObj = JSON.parse(employeeDetails);
 
-			console.log('epo', employeePropertiesObj);
 			renderEmployee(employeePropertiesObj);
 
 			if (employeeDetailsVisibility == 0) {
@@ -330,23 +355,6 @@ function viewDetailsBtnFunctionality(){
 	
 }
 
-function renderEmployee(employeeProperties){
-	
-	document.getElementById(`employee-form`).reset();
-	
-	for (const [key, value] of Object.entries(employeeProperties)) {
-				
-		//let checkNull = value == null ? 'null' : value;
-		
-		//let textValue = checkNull == "" ? 'TBC' : checkNull;
-		
-		document.getElementById(`employee-${key}-field`).innerHTML = value;
-
-	}
-	
-}
-
-
 $('#edit-employee-fields-btn').click(function(){
 
 	let employeeDetails = JSON.parse(this.getAttribute('employee-details'));
@@ -374,21 +382,34 @@ $('#close-modal-btn').click(function(){
 		
 	document.getElementById(`employee-modal-form`).reset();
 	
-	$(".employee-editable-modal-field").attr('readonly', 'readOnly');
+	//$(".employee-editable-modal-field").attr('readonly', 'readOnly');
 
 });
 
 function runSearch(orderBy, searchTerm){
 
+	let departments = "";
+
+	for (const [key, value] of Object.entries(departmentsObj)) {
+						
+		if (value == true) {
+			departments += `${key},`;
+		}
+	}
+
+	let departmentsStr = departments.slice(0,-1);
+
 	$.ajax({
-		url: "assets/php/searchAll.php",
+		//url: "assets/php/searchAll.php",
+		url: "assets/php/searchAllBuildInDepts.php",
 		type: "GET",
 		dataType: "json",
 		data: {
 			searchTerm: `${searchTerm}%`,
 			//searchEmail: `%${searchTerm}%`, // this one searches anywhere in email
 			searchEmail: `${searchTerm}%`, // email starts with term
-			orderBy: orderBy
+			orderBy: orderBy,
+			departments: departmentsStr
 		},
 		success: function (result) {
 				
@@ -404,8 +425,8 @@ function runSearch(orderBy, searchTerm){
 					document.getElementById('body-tag').setAttribute('style', 'overflow: auto');
 				}
 
-
 				console.log('orderby', orderBy);
+				console.log('no of results', result.data.length);
 	
 				for (let e = 0; e < rowsToCreate; e ++) {
 
@@ -457,19 +478,6 @@ function delay(callback, ms) {
   };
 }
 
-inputField.addEventListener('input', delay(function () {
-  
-	console.log('search term:', this.value.toLowerCase());
-	
-	console.log('order by: ', orderBy);
-
-	let searchTerm = this.value.toLowerCase();
-	lastSearch = searchTerm;
-	
-	runSearch(orderBy, searchTerm);
-	
-}, 500));
-
 function sendRadioSelection(value){
 	
 		orderBy = value;
@@ -495,7 +503,14 @@ function getAllDepartments(){
 				}
 			}
 
-			console.log('listOfDepts', listOfDepts);
+			for (lod = 0; lod < listOfDepts.length; lod ++) {
+				let deptName = listOfDepts[lod];
+				let checkedStatus = createCheckbox(deptName).getAttribute('class').includes('checked');
+				document.getElementById('department-checkboxes').appendChild(createCheckbox(deptName));
+				departmentsObj[deptName] = checkedStatus;
+			}
+
+			departmentCheckboxFunctionality();
 
 	},
 	error: function (jqXHR, textStatus, errorThrown) {
@@ -594,6 +609,42 @@ function getAllEmployees(){
 
 };
 
+function createCheckbox (checkboxName){
+	let checkboxDiv = document.createElement('div');
+	checkboxDiv.setAttribute('class', 'ui checkbox checked');
+	//checkboxDiv.setAttribute('class', 'ui checkbox');
+
+	let checkboxInput = document.createElement('input');
+	checkboxInput.setAttribute('type', 'checkbox');
+	checkboxInput.setAttribute('name', `${checkboxName}`);
+	checkboxInput.setAttribute('checked', "");
+
+	let checkboxLabel =document.createElement('label');
+	checkboxLabel.innerHTML = `${checkboxName}`;
+
+	checkboxDiv.appendChild(checkboxInput);
+	checkboxDiv.appendChild(checkboxLabel);
+
+	return checkboxDiv;
+
+}
+
+function departmentCheckboxFunctionality() {
+
+		// this was overlapping with radio buttons create distinct classes?
+		$('.ui.checkbox:not(.active-radio-checkbox)').checkbox({
+			onChecked: function(){
+				departmentsObj[this.name] = this.checked;
+				console.log(departmentsObj);
+			},
+			onUnchecked: function(){
+				departmentsObj[this.name] = this.checked;
+				console.log(departmentsObj);
+			},				
+		});
+
+};
+
 
 window.onload = (event) => {	
 		
@@ -623,25 +674,7 @@ window.onload = (event) => {
 					sendRadioSelection(this.value);
 					console.log(this.name);
 				},	
-			});
-			
-			/* this is overlapping with radio buttons create distinct classes
-			$('.ui.checkbox').checkbox({
-				onChecked: function(){
-					console.log(this.name);
-					console.log(this.checked);
-					departmentsObj[this.name] = this.checked;
-					console.log(departmentsObj);
-				},
-				onUnchecked: function(){
-					console.log(this.name);
-					console.log(this.checked);
-					departmentsObj[this.name] = this.checked;
-					console.log(departmentsObj);
-				},				
-			});
-			
-			*/
+			});		
 
 			$('#order-by-first-name-mobile').checkbox('attach events', '#order-by-first-name', 'check');
 			$('#order-by-last-name-mobile').checkbox('attach events', '#order-by-last-name', 'check');
