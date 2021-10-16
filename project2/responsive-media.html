@@ -143,6 +143,7 @@
 		visibility: hidden;
 	}
 	
+	/*
 	td#employee-details-field {
     position: sticky;
     z-index: 1;
@@ -150,6 +151,7 @@
 		border-left: none;
 		vertical-align: top;
 	}
+	*/
 	
 	.employee-detail-fields {
 		visibility: hidden;
@@ -481,7 +483,9 @@
 		<table id="pc-table" class="ui celled table">
     <thead>
       <th>Employee Directory</th>
-      <th id="employee-details-column" >Employee Details</th>
+      <th id="employee-details-column" >
+			<button id="create-employee-btn" class="ui button">Create Employee</button>
+			</th>
     </thead>
 
     <tbody id="table-body">
@@ -500,7 +504,6 @@
         <td id="employee-details-field" rowspan="10">
           
 					 <div class="ui segment" id="employee-segment">
-						<button id="create-employee-btn" class="ui button employee-panel-btn">Create Employee</button>
 						<div class="content employee-detail-fields">
 
 							<div class="ui segment">

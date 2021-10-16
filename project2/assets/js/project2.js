@@ -10,6 +10,7 @@ let departmentsObj = {};
 let countOfDepts;
 let countOfCheckedDepts;
 let locationsObj = {};
+let howManyDeptsSelected = 'All';
 
 
 function logSubmit(event) {
@@ -347,11 +348,27 @@ function departmentCheckboxFunctionality() {
 				departmentsObj[this.name] = this.checked;
 				countOfCheckedDepts ++;
 				setSelectAllCheckBox(countOfDepts);
+				if (howManyDeptsSelected == 'All') {
+					if (countOfCheckedDepts == countOfDepts) {
+						runSearch(orderBy, lastSearch);						
+					}
+				} else {
+					runSearch(orderBy,lastSearch);
+				}
+				
 			},
 			onUnchecked: function(){
 				departmentsObj[this.name] = this.checked;
 				countOfCheckedDepts --;
 				setSelectAllCheckBox(countOfDepts);
+				if (howManyDeptsSelected == 'None') {
+					if (countOfCheckedDepts == 0) {
+						runSearch(orderBy, lastSearch);						
+					}
+				} else {
+					runSearch(orderBy,lastSearch);
+				}
+
 			},				
 		});
 		
@@ -362,6 +379,7 @@ function departmentCheckboxFunctionality() {
 		
 		$('#select-none-departments').checkbox({
 			onChecked: function(){
+				howManyDeptsSelected = 'None';
 			  //$('.department-checkbox').checkbox('set checked');
 			  $('.department-checkbox').checkbox('uncheck');
 			},
@@ -369,12 +387,31 @@ function departmentCheckboxFunctionality() {
 
 		$('#select-all-departments').checkbox({
 			onChecked: function(){
+				howManyDeptsSelected = 'All';
 			  //$('.department-checkbox').checkbox('set checked');
 			  $('.department-checkbox').checkbox('check');
 			},
 		});
 		
 
+};
+
+function createEmployeeModalForm(){
+	
+		/*
+		<form id="create-employee-modal-form">
+		<h1><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-firstName-modal0" /></h1>
+		<h1><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-lastName-modal0" /></h1>							
+		<h3><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" href="#" id="employee-email-modal0" /></h3>
+		<h2><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-jobTitle-modal0" /></h2>
+		<h2><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-department-modal0" /></h2>
+		<p class="display-none-field"><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-departmentID-modal0" /></p>
+		<h3><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-locationName-modal0" /></h3>
+		<p class="display-none-field"><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-locationID-modal0" /></p>
+		<p class="display-none-field"><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-id-modal0" /></p>
+		
+		</form>
+		*/
 };
 
 
