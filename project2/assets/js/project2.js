@@ -430,11 +430,9 @@ function locationCheckboxFunctionality() {
 		//$('.ui.checkbox:not(.active-radio-checkbox)').checkbox({
 		$('.location-checkbox').checkbox({
 			onChecked: function(){
-				console.log('checked');
 				locationsObj[this.name] = this.checked;
 				countOfCheckedLocations ++;
 				setSelectAllCheckBox(countOfLocations);
-				console.log('howmany',howManyLocationsSelected);
 				if (howManyLocationsSelected == 'All') {
 					if (countOfCheckedLocations == countOfLocations) {
 						runSearch(orderBy, lastSearch);						
@@ -995,6 +993,14 @@ window.onload = (event) => {
 					closeModal();
 				}
 			});
+
+			$('.message .close')
+				.on('click', function() {
+					$(this)
+						.closest('.message')
+						.transition('fade')
+					;
+				});
 
 /*
 	$('#employee-details-modal').modal({
