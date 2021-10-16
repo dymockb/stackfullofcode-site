@@ -243,7 +243,7 @@ function createEmployee(employeePropertiesObj){
 	
 	let employeeSubHeader = document.createElement('div');
 	employeeSubHeader.setAttribute('class', 'sub header');
-	employeeSubHeader.innerHTML = `${employeePropertiesObj.department}`;
+	employeeSubHeader.innerHTML = `${employeePropertiesObj.department} | ${employeePropertiesObj.locationName}`;
 	
 	employeeDiv.appendChild(employeeSubHeader);
 	
@@ -255,12 +255,15 @@ function createEmployee(employeePropertiesObj){
 	employeeModalBtn.setAttribute('id', 'modalBtn');
 	employeeModalBtn.innerHTML = 'View Details';
 	
+	/*
 	let employeeBtn = document.createElement('div');
 	employeeBtn.setAttribute('class', 'employee-btn ui button');
 	employeeBtn.setAttribute('id', 'modalBtn');
 	employeeBtn.innerHTML = 'View';
+	*/
 	
-	return [employeeH4, employeeModalBtn, employeeBtn];
+	//return [employeeH4, employeeModalBtn, employeeBtn];
+	return [employeeH4, employeeModalBtn];
 	
 };
 
@@ -268,7 +271,7 @@ function appendEmployee(elementToAppend, employeeElements){
 	elementToAppend.innerHTML = '';
 	elementToAppend.appendChild(employeeElements[0]);
 	elementToAppend.appendChild(employeeElements[1]);
-	elementToAppend.appendChild(employeeElements[2]);	
+	//elementToAppend.appendChild(employeeElements[2]);	
 }
 
 function createEmployeeRow(employeePropertiesObj) {
@@ -283,7 +286,7 @@ function createEmployeeRow(employeePropertiesObj) {
 					
 	tableData.appendChild(employeeElements[0]);
 	tableData.appendChild(employeeElements[1]);
-	tableData.appendChild(employeeElements[2]);
+	//tableData.appendChild(employeeElements[2]);
 	
 	tableRow.appendChild(tableData);
 	return tableRow;
@@ -567,7 +570,6 @@ $('#create-employee-btn').click(function(){
 	$('#create-employee-modal').modal({
 		//onHidden: function(){console.log('close')}
 		onHidden: function(){
-			console.log('close create employee modal');
 			closeModal()
 		}
 	});
@@ -836,7 +838,6 @@ function getAllEmployees(){
 };
 
 function closeModal(){
-	console.log('close');
 
 	document.getElementById('employee-modal-form').reset();
 	document.getElementById('create-employee-modal-form').reset();

@@ -156,6 +156,10 @@
 	.employee-detail-fields {
 		visibility: hidden;
 	}
+	
+	.email-address {
+		word-break: break-all
+	}
 
 	.employee-panel-btn {
 		display: block !important;
@@ -452,20 +456,62 @@
 								</div>
 							
 							
-								<div id="department-checkboxes">
-									
-									<div class="ui checkbox checked" id="select-all-departments">
-										<input type="checkbox" name="select-all-departments" checked="">
-										<label >Select All</label>
-									</div>
-									
-									<div class="ui checkbox" id="select-none-departments">
-										<input type="checkbox" name="select-none-departments">
-										<label>Select None</label>
-									</div>
-									
+			<div class="ui segment">
+								
+			<div id="department-search-options" class="ui accordion field">
+      <div id="department-search-accordion" class="title">
+        <i class="icon dropdown"></i>
+        Departments
+      </div>
+			
+      <div class="content field">
+           <div class="content field" id="department-checkboxes">
+  
+						<div class="item">Departments</div>
+						
+						<div class="ui checkbox checked" id="select-all-departments">
+							<input type="checkbox" name="select-all-departments" checked="">
+							<label >Select All</label>
+						</div>
+						
+						<div class="ui checkbox" id="select-none-departments">
+							<input type="checkbox" name="select-none-departments">
+							<label>Select None</label>
+						</div>	
+					
+					</div>
 
-								</div>
+      </div>
+    </div>
+		</div>
+								
+			<div class="ui segment">
+								
+			<div id="location-search-options" class="ui accordion field">
+      <div id="location-search-accordion" class="title">
+        <i class="icon dropdown"></i>
+        Locations
+      </div>
+			
+      <div class="content field">
+           <div class="content field" id="location-checkboxes">
+							<div class="item">Locations</div>
+							
+							<div class="ui checkbox checked" id="select-all-locations">
+								<input type="checkbox" name="select-all-locations" checked="">
+								<label >Select All</label>
+							</div>
+							
+							<div class="ui checkbox" id="select-none-locations">
+								<input type="checkbox" name="select-none-locations">
+								<label>Select None</label>
+							</div>						
+					</div>
+
+      </div>
+    </div>
+		</div>
+								
 							</div>
 													
 						</div>
@@ -509,7 +555,7 @@
 							<div class="ui segment">
 							<h1 id="employee-firstName-field">placeholder</h1>
 							<h1 id="employee-lastName-field">placeholder</h1>
-							<h3 href="#" id="employee-email-field">placeholder<h3>
+							<a href="#" class="email-address"><h3 id="employee-email-field">placeholder<h3></a>
 							<h2 id="employee-jobTitle-field">placeholder</h2>
 							<h2 id="employee-department-field">placeholder</h2>
 							<p class="display-none-field" id="employee-departmentID-field">placeholder</p>
