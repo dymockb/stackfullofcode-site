@@ -398,6 +398,60 @@ function departmentCheckboxFunctionality() {
 
 function createEmployeeModalForm(){
 	
+	let newEmployeeFieldsObj = {};
+
+	for (const [key, value] of Object.entries(blankEmployeeObj)) {
+		
+		if (key == 'firstName') {
+			newEmployeeFieldsObj[key] = document.createElement('h1');
+		} else if (key == 'lastName') {
+			newEmployeeFieldsObj[key] = document.createElement('h1');
+		} else if (key == 'email') {
+			newEmployeeFieldsObj[key] = document.createElement('h3');
+		} else if (key == 'jobTitle') {
+			newEmployeeFieldsObj[key] = document.createElement('h2');
+		} else if (key == 'department') {
+			newEmployeeFieldsObj[key] = document.createElement('h2');
+		} else if (key == 'locationName') {
+			newEmployeeFieldsObj[key] = document.createElement('h3');
+		} else {
+			newEmployeeFieldsObj[key] = document.createElement('p');
+			newEmployeeFieldsObj[key].setAttribute('class', 'display-none-field');
+		}
+	
+	}
+	
+	
+	for (const [key, value] of Object.entries(newEmployeeFieldsObj)) {
+		
+		let inputField = document.createElement('input');
+		inputField.setAttribute('autocomplete', 'off');
+		inputField.setAttribute('type', 'text');
+		//inputField.setAttribute('class', 'employee-editable-modal-field');
+		//inputField.setAttribute('readonly', 'readonly');
+		inputField.setAttribute('id', `create-employee-${key}-field`);
+		inputField.setAttribute('placeholder', key);
+		
+		newEmployeeFieldsObj[key].appendChild(inputField);
+		
+		//newEmployeeFieldsObj[key].innerHTML = key;
+		
+		
+		if (key == 'firstName') {
+			document.getElementById('create-employee-modal-form').appendChild(newEmployeeFieldsObj[key]);
+		}
+	
+	}
+	
+	for (const [key, value] of Object.entries(newEmployeeFieldsObj)) {
+		
+		if (key != 'firstName') {
+			document.getElementById('create-employee-modal-form').appendChild(newEmployeeFieldsObj[key]);
+		}
+	
+	}
+	
+	
 		/*
 		<form id="create-employee-modal-form">
 		<h1><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-firstName-modal0" /></h1>
@@ -413,7 +467,6 @@ function createEmployeeModalForm(){
 		</form>
 		*/
 };
-
 
 function selectEmployeeFunctionality(){
 	if ($('#mobile-search-options').css('display') == 'none') {
@@ -455,12 +508,22 @@ function viewDetailsBtnFunctionality(){
 				
 		for (const [key, value] of Object.entries(employeeProperties)) {
 
-			document.getElementById(`employee-${key}-modal${employeeModalCount}`).setAttribute('value',value);
+			document.getElementById(`employee-${key}-modal0`).setAttribute('value',value);
 			employeePropertiesObj[key] = value;
 			
 		}
-				
-		$(`#modal${employeeModalCount}`).modal('show');
+
+		$('#modal0').modal(
+			{
+				//onHidden: function(){console.log('close')}
+				onHidden: function(){
+					console.log('close view employee modal');
+					closeModal()
+					}
+			});
+			
+		$('#modal0').modal('show');
+		//$('#create-employee-modal').modal('show');
 
 		if (employeeDetailsVisibility == 0) {
 			renderEmployee(employeePropertiesObj);
@@ -482,8 +545,16 @@ $('#edit-employee-fields-btn').click(function(){
 		document.getElementById(`employee-${key}-modal${employeeModalCount}`).setAttribute('value',value);
 				
 	}
+		
+	$('#modal0').modal({
+		//onHidden: function(){console.log('close')}
+		onHidden: function(){
+			console.log('close view employee modal');
+			closeModal()
+		}
+	});
 			
-	$(`#modal${employeeModalCount}`).modal('show');
+	$('#modal0').modal('show');
 	$('#edit-employee-modal-btn').click();
 	
 	//$(".employee-editable-field").removeAttr('readonly');
@@ -491,9 +562,25 @@ $('#edit-employee-fields-btn').click(function(){
 
 });
 
+$('#create-employee-btn').click(function(){
+	
+	$('#create-employee-modal').modal({
+		//onHidden: function(){console.log('close')}
+		onHidden: function(){
+			console.log('close create employee modal');
+			closeModal()
+		}
+	});
+	
+	$('#create-employee-modal').modal('show');
+
+});
+
 $('#edit-employee-modal-btn').click(function(){
+	
 	$(".employee-editable-modal-field").removeAttr('readonly');
 	$('.employee-editable-modal-field').attr('style', 'border-color: blue');
+	
 });
 
 $('#close-modal-btn').click(function(){
@@ -729,6 +816,8 @@ function getAllEmployees(){
 				
 				selectEmployeeFunctionality()
 				
+				createEmployeeModalForm();
+				
 				if ($('#preloader').length) {
 					$('#preloader').delay(1000).fadeOut('slow', function () {
 						$(this).remove();
@@ -749,13 +838,25 @@ function getAllEmployees(){
 function closeModal(){
 	console.log('close');
 
-	document.getElementById(`employee-modal-form`).reset();
+	document.getElementById('employee-modal-form').reset();
+	document.getElementById('create-employee-modal-form').reset();
+	$(".employee-editable-modal-field").attr('readonly', 'readonly');
+	$('.employee-editable-modal-field').attr('style', 'border-color: black');
+
+};
+
+/*
+function closeCreateEmployeeModal(){
+	console.log('close');
+
+	document.getElementById('create-employee-modal-form').reset();
 
 	$(".employee-editable-modal-field").attr('readonly', 'readonly');
 	$('.employee-editable-modal-field').attr('style', 'border-color: black');
 
 };
 
+*/
 window.onload = (event) => {	
 		
 		$(document).ready(function () {
@@ -764,7 +865,8 @@ window.onload = (event) => {
 			
 			$('.ui.accordion').accordion();
 
-			$(`#modal${employeeModalCount}`).modal(
+			/*
+			$('#modal0').modal(
 				{
 				//title: 'IDIOT', 
 				//preserveHTML: false,
@@ -772,6 +874,28 @@ window.onload = (event) => {
 				onHidden: function(){closeModal()}
 				//onHidden: closeModal()
 				});
+			*/
+			
+			/*
+			$('.ui.modal').modal(
+				{
+				//title: 'IDIOT', 
+				//preserveHTML: false,
+				onHidden: function(){closeModal()}
+				//onHidden: closeModal()
+			});
+			*/
+			
+			/*	
+			$('#create-employee-modal').modal(
+				{
+				//title: 'IDIOT', 
+				//preserveHTML: false,
+				//onHidden: function(){console.log('close')}
+				onHidden: function(){closeCreateEmployeeModal()}
+				//onHidden: closeModal()
+				});
+			*/
 			
 			/*
 			$('.ui.radio.checkbox').checkbox({
