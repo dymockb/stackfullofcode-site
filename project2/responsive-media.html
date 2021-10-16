@@ -190,7 +190,7 @@
 	}
 
 
-	#employee-modal-create-fields, #employee-modal-view-fields {
+	#employee-modal-create-fields, #employee-modal-view-fields, #close-view-employee, #submit-create-employee {
 		display: none;
 	}
 	
@@ -408,11 +408,22 @@
 <div class="ui floating message">
   <i class="close icon"></i>
   <div class="header">
-    Was this what you wanted?
+msg1
   </div>
   <ul class="list">
-    <li>It's good to see you again.</li>
-    <li>Did you know it's been a while?</li>
+    <li>1</li>
+    <li>1</li>
+  </ul>
+</div>
+
+<div class="ui floating message">
+  <i class="close icon"></i>
+  <div class="header">
+msg2
+  </div>
+  <ul class="list">
+    <li>2</li>
+    <li>2</li>
   </ul>
 </div>
 		
@@ -644,10 +655,14 @@
       </div>
     </div>
     <div id="close-modal-btn" class="actions">
-      <div class="ui primary approve button">
-        Proceed
+      <button id="submit-create-employee" form="employee-modal-create-fields" class="ui primary approve button">
+        Create employee
         <i class="right chevron icon"></i>
-      </div>
+      </button>
+      <button id="close-view-employee" class="ui primary approve button">
+        Close
+        <i class="right chevron icon"></i>
+      </button>
     </div>
   </div>
 

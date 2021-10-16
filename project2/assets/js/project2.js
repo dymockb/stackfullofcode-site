@@ -615,6 +615,7 @@ function viewDetailsBtnFunctionality(){
 		$('').modal();
 		*/
 		document.getElementById('employee-modal-view-fields').setAttribute('style','display: inherit');
+		document.getElementById('close-view-employee').setAttribute('style','display: inline');
 			
 		$('.ui.modal').modal('show');
 
@@ -659,15 +660,40 @@ $('#edit-employee-fields-btn').click(function(){
 });
 
 $('#create-employee-btn').click(function(){
-
-	console.log('ww');
+	
 	
 	createEmployeeModalContent();
 	
 	document.getElementById('employee-modal-create-fields').setAttribute('style','display: inherit');
+	document.getElementById('submit-create-employee').setAttribute('style', 'display: inline');
+	
+	let createEmployeeForm = document.getElementById('employee-modal-create-fields');
+	
+	createEmployeeForm.addEventListener( "submit", function ( event ) {
+    event.preventDefault();
 
+		let FD = new FormData (createEmployeeForm);
+    //sendData();
+		
+		console.log('submitted', FD.values);
+
+		console.log('elements', createEmployeeForm.elements);
+		
+		for (let e = 0; e < createEmployeeForm.elements.length; e ++) {
+		
+			if (createEmployeeForm.elements[e].tagName == 'INPUT') {
+				console.log(createEmployeeForm.elements[e].placeholder, createEmployeeForm.elements[e].value);
+			}
+
+		}
+		
+		$('.message').attr('class', 'ui floating message');
+		
+	});
+	
+	
 	$('.ui.modal').modal('show');
-
+	
 });
 
 $('#edit-employee-modal-btn').click(function(){
@@ -962,6 +988,9 @@ function closeModal(){
 	document.getElementById('employee-modal-view-fields').setAttribute('style','display: none');
 	document.getElementById('employee-modal-create-fields').setAttribute('style','display: none');
 
+	document.getElementById('close-view-employee').setAttribute('style','display: none');
+	document.getElementById('submit-create-employee').setAttribute('style','display: none');
+
 	$(".employee-editable-modal-field").attr('readonly', 'readonly');
 	$('.employee-editable-modal-field').attr('style', 'border-color: black');
 
@@ -979,6 +1008,7 @@ function closeCreateEmployeeModal(){
 };
 
 */
+
 window.onload = (event) => {	
 		
 		$(document).ready(function () {
