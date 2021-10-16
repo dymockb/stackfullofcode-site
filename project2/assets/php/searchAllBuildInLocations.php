@@ -60,15 +60,33 @@
         $deptString = $deptString . " OR d.name = ";
       } elseif ($i == count($departmentsArray)-1) {
         #$deptString = $deptString . " AND l.name = 'Paris') AND ";
-        $deptString = $deptString . " ) AND (l.name = 'Paris') AND ";
-      }
+        #$deptString = $deptString . " ) AND (l.name = 'Paris' OR l.name = 'New York') AND ";
+        $deptString = $deptString . " ) AND "; 
+     }
     };
 
-    $queryStringIncDepts = $startOfQueryString . $deptString . $searchParamString;
+		#$locString = "(l.name = 'Paris' OR l.name = 'New York') AND"; 
+
+		$locationsArray = explode(',',$_REQUEST['locations']);
+
+		$locString = "(l.name = "; 
+
+		for ($i = 0; $i < count($locationsArray); $i ++) {
+      $locString = $locString . "?";
+      if ($i != count($locationsArray)-1) {
+        $locString = $locString . " OR l.name = ";
+      } elseif ($i == count($locationsArray)-1) {
+        #$deptString = $deptString . " AND l.name = 'Paris') AND ";
+        #$deptString = $deptString . " ) AND (l.name = 'Paris' OR l.name = 'New York') AND ";
+        $locString = $locString . " ) AND "; 
+     }
+    };
+
+		$queryStringIncDeptsAndLocs = $startOfQueryString . $deptString . $locString . $searchParamString;
     
     #echo $queryStringIncDepts;
 
-    $outputQueryString = $queryStringIncDepts;
+    $outputQueryString = $queryStringIncDeptsAndLocs;
   
   }
   
@@ -93,7 +111,8 @@
 	$query = $conn->prepare($outputQueryString . $orderByQueryString);
 
 
-  $requestArray = array_merge($departmentsArray, array($_REQUEST['searchTerm'], $_REQUEST['searchTerm'], $_REQUEST['searchEmail']));
+  #$requestArray = array_merge($departmentsArray, array($_REQUEST['searchTerm'], $_REQUEST['searchTerm'], $_REQUEST['searchEmail']));
+  $requestArray = array_merge($departmentsArray, $locationsArray, array($_REQUEST['searchTerm'], $_REQUEST['searchTerm'], $_REQUEST['searchEmail']));
 
   #echo $requestArray;
 

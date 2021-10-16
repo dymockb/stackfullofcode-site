@@ -14,7 +14,7 @@ let howManyDeptsSelected = 'All';
 let locationsObj = {};
 let countOfLocations;
 let countOfCheckedLocations;
-let howManyLocationssSelected = 'All';
+let howManyLocationsSelected = 'All';
 
 
 
@@ -430,14 +430,17 @@ function locationCheckboxFunctionality() {
 		//$('.ui.checkbox:not(.active-radio-checkbox)').checkbox({
 		$('.location-checkbox').checkbox({
 			onChecked: function(){
+				console.log('checked');
 				locationsObj[this.name] = this.checked;
 				countOfCheckedLocations ++;
 				setSelectAllCheckBox(countOfLocations);
-				if (howManyLocationssSelected == 'All') {
+				console.log('howmany',howManyLocationsSelected);
+				if (howManyLocationsSelected == 'All') {
 					if (countOfCheckedLocations == countOfLocations) {
 						runSearch(orderBy, lastSearch);						
 					}
 				} else {
+					console.log('runserach');
 					runSearch(orderBy,lastSearch);
 				}
 				
@@ -696,8 +699,21 @@ function runSearch(orderBy, searchTerm){
 	}
 
 	let departmentsStr = departments.slice(0,-1);
+
+	let locations = "";
+
+	for (const [key, value] of Object.entries(locationsObj)) {
+						
+		if (value == true) {
+			locations += `${key},`;
+		}
+	}
+
+	let locationsStr = locations.slice(0,-1);
+
+	console.log('depts', countOfCheckedDepts, 'locs', countOfCheckedLocations);
 	
-	if (countOfCheckedDepts == 0) {
+	if (countOfCheckedDepts == 0 || countOfCheckedLocations == 0) {
 
 		$('.result-row').remove();
 
@@ -722,7 +738,8 @@ function runSearch(orderBy, searchTerm){
 			//searchEmail: `%${searchTerm}%`, // this one searches anywhere in email
 			searchEmail: `${searchTerm}%`, // email starts with term
 			orderBy: orderBy,
-			departments: departmentsStr
+			departments: departmentsStr,
+			locations: locationsStr
 		},
 		success: function (result) {
 			
