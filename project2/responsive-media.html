@@ -104,6 +104,10 @@
 		width: 40%;
 	}
 	
+	.ui.checkbox {
+		display: block;
+	}
+	
 	#pc-table-segment {
 		width: 100%;
 		margin-top: 0;
@@ -175,8 +179,13 @@
 		visibility: hidden;
 	}
 
-	#modal0 {
+	#employee-details-modal {
 		min-width: 330px;
+	}
+
+
+	#employee-modal-create-fields, #employee-modal-view-fields {
+		display: none;
 	}
 	
 	.employee-modal-btn {
@@ -477,7 +486,9 @@
 						<div class="ui checkbox" id="select-none-departments">
 							<input type="checkbox" name="select-none-departments">
 							<label>Select None</label>
-						</div>	
+						</div>
+
+						<hr>
 					
 					</div>
 
@@ -505,9 +516,14 @@
 							<div class="ui checkbox" id="select-none-locations">
 								<input type="checkbox" name="select-none-locations">
 								<label>Select None</label>
-							</div>						
+							</div>	
+
+							<hr>							
+
 					</div>
 
+					
+					
       </div>
     </div>
 		</div>
@@ -579,41 +595,8 @@
 	</div>	
 
 	</div>	
-
-	<div id="create-employee-modal" class="ui modal" style="display: block !important;">
-    <div class="header">
-      Create Employee
-    </div>
-    <div class="scrolling image content">
-      <div class="description">					
-				<div class="ui segment">
-					<div class="content">
-						<form id="create-employee-modal-form">
-						<!--	
-						<h1><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-firstName-modal0" /></h1>
-						<h1><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-lastName-modal0" /></h1>							
-						<h3><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" href="#" id="employee-email-modal0" /></h3>
-						<h2><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-jobTitle-modal0" /></h2>
-						<h2><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-department-modal0" /></h2>
-						<p class="display-none-field"><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-departmentID-modal0" /></p>
-						<h3><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-locationName-modal0" /></h3>
-						<p class="display-none-field"><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-locationID-modal0" /></p>
-						<p class="display-none-field"><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-id-modal0" /></p>
-						-->
-						</form>
-					</div>
-				</div>
-      </div>
-    </div>
-    <div id="close-create-employee-modal-btn" class="actions">
-      <div class="ui primary approve button">
-        Proceed
-        <i class="right chevron icon"></i>
-      </div>
-    </div>
-  </div>
 	
-	<div id="modal0" class="ui modal" style="display: block !important;">
+		<div id="#employee-details-modal" class="ui modal" style="display: block !important;">
     <div class="header">
       Employee Details Modal
     </div>
@@ -621,18 +604,23 @@
       <div class="description">					
 				<div class="ui segment">
 					<div class="content">
-						<form id="employee-modal-form">
-						<h1><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-firstName-modal0" /></h1>
-						<h1><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-lastName-modal0" /></h1>							
-						<h3><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" href="#" id="employee-email-modal0" /></h3>
-						<h2><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-jobTitle-modal0" /></h2>
-						<h2><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-department-modal0" /></h2>
-						<p class="display-none-field"><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-departmentID-modal0" /></p>
-						<h3><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-locationName-modal0" /></h3>
-						<p class="display-none-field"><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-locationID-modal0" /></p>
-						<p class="display-none-field"><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-id-modal0" /></p>
+						<form autocomplete="off" id="employee-modal-view-fields">
+						<h1><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-firstName-modal" /></h1>
+						<h1><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-lastName-modal" /></h1>							
+						<h3><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" href="#" id="employee-email-modal" /></h3>
+						<h2><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-jobTitle-modal" /></h2>
+						<h2><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-department-modal" /></h2>
+						<p class="display-none-field"><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-departmentID-modal" /></p>
+						<h3><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-locationName-modal" /></h3>
+						<p class="display-none-field"><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-locationID-modal" /></p>
+						<p class="display-none-field"><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-id-modal" /></p>
 						
 						</form>
+
+						<form autocomplete="off" id="employee-modal-create-fields">
+						
+						</form>
+
 						<button id="edit-employee-modal-btn">Edit</button>
 					</div>
 				</div>
@@ -645,6 +633,43 @@
       </div>
     </div>
   </div>
+
+<!--
+
+	<div id="create-employee-modal" class="ui modal create-employee-modal-class" style="display: block !important;">
+    <div class="header">
+      Create Employee
+    </div>
+    <div class="scrolling image content">
+      <div class="description">					
+				<div class="ui segment">
+					<div class="content">
+						<form id="create-employee-modal-form">
+						
+						<h1><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-firstName-modal0" /></h1>
+						<h1><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-lastName-modal0" /></h1>							
+						<h3><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" href="#" id="employee-email-modal0" /></h3>
+						<h2><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-jobTitle-modal0" /></h2>
+						<h2><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-department-modal0" /></h2>
+						<p class="display-none-field"><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-departmentID-modal0" /></p>
+						<h3><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-locationName-modal0" /></h3>
+						<p class="display-none-field"><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-locationID-modal0" /></p>
+						<p class="display-none-field"><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-id-modal0" /></p>
+						
+						</form>
+					</div>
+				</div>
+      </div>
+    </div>
+    <div id="close-create-employee-modal-btn" class="actions">
+      <div class="ui primary approve button">
+        Proceed
+        <i class="right chevron icon"></i>
+      </div>
+    </div>
+  </div>
+
+-->
 
 <!--	
 <div id="footer">footer</div>

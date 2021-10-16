@@ -3,14 +3,21 @@ let employeeModalCount = 0;
 let employeePropertiesObj = {};
 let blankEmployeeObj = {};
 let inputField = document.getElementById('search-input');
-let t;
 let lastSearch = "";
 let orderBy = 'lastName';
+
 let departmentsObj = {};
 let countOfDepts;
 let countOfCheckedDepts;
-let locationsObj = {};
 let howManyDeptsSelected = 'All';
+
+let locationsObj = {};
+let countOfLocations;
+let countOfCheckedLocations;
+let howManyLocationssSelected = 'All';
+
+
+
 
 
 function logSubmit(event) {
@@ -174,10 +181,11 @@ $('#getAllDeptsBtn').click(function(){
 	getAllDepartments();
 });
 
+let tForWindow;
 window.onresize = () => {
 	resizing(this, this.innerWidth, this.innerHeight) //1
-	if (typeof t == 'undefined') resStarted() //2
-	clearTimeout(t); t = setTimeout(() => { t = undefined; resEnded() }, 200) //3
+	if (typeof tForWindow == 'undefined') resStarted() //2
+	clearTimeout(tForWindow); tForWindow = setTimeout(() => { tForWindow = undefined; resEnded() }, 200) //3
 }
 
 function resizing(target, w, h) {
@@ -295,7 +303,7 @@ function createEmployeeRow(employeePropertiesObj) {
 
 function renderEmployee(employeeProperties){
 	
-	//document.getElementById(`employee-segment`).reset();
+	//document.getElementById(`employee-segment`).reset();##
 	
 	for (const [key, value] of Object.entries(employeeProperties)) {
 					
@@ -306,9 +314,9 @@ function renderEmployee(employeeProperties){
 }
 
 
-function createCheckbox (checkboxName){
+function createCheckbox (checkboxName, department){
 	let checkboxDiv = document.createElement('div');
-	checkboxDiv.setAttribute('class', 'ui checkbox department-checkbox checked');
+	checkboxDiv.setAttribute('class', `ui checkbox ${department}-checkbox checked`);
 	//checkboxDiv.setAttribute('class', 'ui checkbox');
 
 	let checkboxInput = document.createElement('input');
@@ -399,7 +407,82 @@ function departmentCheckboxFunctionality() {
 
 };
 
-function createEmployeeModalForm(){
+
+function locationCheckboxFunctionality() {
+	
+		function setSelectAllCheckBox(){
+			if (countOfCheckedLocations < countOfLocations) {
+				if (countOfCheckedLocations == 0) {
+				 $('#select-none-locations').checkbox('set checked');
+				} else {
+				 $('#select-none-locations').checkbox('set unchecked');					
+				}
+
+				$('#select-all-locations').checkbox('set unchecked');
+
+			} else if (countOfCheckedLocations == countOfLocations) {
+				$('#select-all-locations').checkbox('set checked');
+				$('#select-none-locations').checkbox('set unchecked');
+			}
+		}
+
+		// this was overlapping with radio buttons create distinct classes?
+		//$('.ui.checkbox:not(.active-radio-checkbox)').checkbox({
+		$('.location-checkbox').checkbox({
+			onChecked: function(){
+				locationsObj[this.name] = this.checked;
+				countOfCheckedLocations ++;
+				setSelectAllCheckBox(countOfLocations);
+				if (howManyLocationssSelected == 'All') {
+					if (countOfCheckedLocations == countOfLocations) {
+						runSearch(orderBy, lastSearch);						
+					}
+				} else {
+					runSearch(orderBy,lastSearch);
+				}
+				
+			},
+			onUnchecked: function(){
+				locationsObj[this.name] = this.checked;
+				countOfCheckedLocations --;
+				setSelectAllCheckBox(countOfLocations);
+				if (howManyLocationsSelected == 'None') {
+					if (countOfCheckedLocations == 0) {
+						runSearch(orderBy, lastSearch);						
+					}
+				} else {
+					runSearch(orderBy,lastSearch);
+				}
+
+			},				
+		});
+		
+		//$('.department-checkbox').checkbox('attach events', '#select-all-departments', 'check');
+
+		//$('.department-checkbox').checkbox('attach events', '#select-none-departments', 'uncheck');
+		
+		
+		$('#select-none-locations').checkbox({
+			onChecked: function(){
+				howManyLocationsSelected = 'None';
+			  //$('.department-checkbox').checkbox('set checked');
+			  $('.location-checkbox').checkbox('uncheck');
+			},
+		});
+
+		$('#select-all-locations').checkbox({
+			onChecked: function(){
+				howManyLocationsSelected = 'All';
+			  //$('.department-checkbox').checkbox('set checked');
+			  $('.location-checkbox').checkbox('check');
+			},
+		});
+		
+
+};
+
+
+function createEmployeeModalContent(){
 	
 	let newEmployeeFieldsObj = {};
 
@@ -439,9 +522,8 @@ function createEmployeeModalForm(){
 		
 		//newEmployeeFieldsObj[key].innerHTML = key;
 		
-		
 		if (key == 'firstName') {
-			document.getElementById('create-employee-modal-form').appendChild(newEmployeeFieldsObj[key]);
+			document.getElementById('employee-modal-create-fields').appendChild(newEmployeeFieldsObj[key]);
 		}
 	
 	}
@@ -449,7 +531,7 @@ function createEmployeeModalForm(){
 	for (const [key, value] of Object.entries(newEmployeeFieldsObj)) {
 		
 		if (key != 'firstName') {
-			document.getElementById('create-employee-modal-form').appendChild(newEmployeeFieldsObj[key]);
+			document.getElementById('employee-modal-create-fields').appendChild(newEmployeeFieldsObj[key]);
 		}
 	
 	}
@@ -506,17 +588,21 @@ function viewDetailsBtnFunctionality(){
 		
 		//employeePropertiesObj = {};
 
+		console.log('bla');
+
 		let employeeProperties = JSON.parse($($(this).context.previousSibling.children[1]).attr('employee-properties'));
 		let employeeDetails = $($(this).context.previousSibling.children[1]).attr('employee-properties');
 				
 		for (const [key, value] of Object.entries(employeeProperties)) {
 
-			document.getElementById(`employee-${key}-modal0`).setAttribute('value',value);
+			document.getElementById(`employee-${key}-modal`).setAttribute('value',value);
 			employeePropertiesObj[key] = value;
 			
 		}
 
-		$('#modal0').modal(
+		/*
+
+		$('#employee-details-modal').modal(
 			{
 				//onHidden: function(){console.log('close')}
 				onHidden: function(){
@@ -524,9 +610,12 @@ function viewDetailsBtnFunctionality(){
 					closeModal()
 					}
 			});
+
+		$('').modal();
+		*/
+		document.getElementById('employee-modal-view-fields').setAttribute('style','display: inherit');
 			
-		$('#modal0').modal('show');
-		//$('#create-employee-modal').modal('show');
+		$('.ui.modal').modal('show');
 
 		if (employeeDetailsVisibility == 0) {
 			renderEmployee(employeePropertiesObj);
@@ -534,30 +623,33 @@ function viewDetailsBtnFunctionality(){
 			document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails)
 			employeeDetailsVisibility ++;
 		}
+
+		renderEmployee(employeePropertiesObj);
 	
 	});
 	
 }
 
 $('#edit-employee-fields-btn').click(function(){
+	
+	console.log('what');
 
 	let employeeDetails = JSON.parse(this.getAttribute('employee-details'));
+
+	console.log(employeeDetails);
 				
 	for (const [key, value] of Object.entries(employeeDetails)) {
 
-		document.getElementById(`employee-${key}-modal${employeeModalCount}`).setAttribute('value',value);
+		document.getElementById(`employee-${key}-modal`).setAttribute('value',value);
 				
 	}
-		
-	$('#modal0').modal({
-		//onHidden: function(){console.log('close')}
-		onHidden: function(){
-			console.log('close view employee modal');
-			closeModal()
-		}
-	});
-			
-	$('#modal0').modal('show');
+
+	document.getElementById('employee-modal-view-fields').setAttribute('style','display: inherit');
+				
+	document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
+
+	$('.ui.modal').modal('show');
+
 	$('#edit-employee-modal-btn').click();
 	
 	//$(".employee-editable-field").removeAttr('readonly');
@@ -566,15 +658,14 @@ $('#edit-employee-fields-btn').click(function(){
 });
 
 $('#create-employee-btn').click(function(){
+
+	console.log('ww');
 	
-	$('#create-employee-modal').modal({
-		//onHidden: function(){console.log('close')}
-		onHidden: function(){
-			closeModal()
-		}
-	});
+	createEmployeeModalContent();
 	
-	$('#create-employee-modal').modal('show');
+	document.getElementById('employee-modal-create-fields').setAttribute('style','display: inherit');
+
+	$('.ui.modal').modal('show');
 
 });
 
@@ -622,7 +713,8 @@ function runSearch(orderBy, searchTerm){
 
 	$.ajax({
 		//url: "assets/php/searchAll.php",
-		url: "assets/php/searchAllBuildInDepts.php",
+		//url: "assets/php/searchAllBuildInDepts.php",
+		url: "assets/php/searchAllBuildInLocations.php",
 		type: "GET",
 		dataType: "json",
 		data: {
@@ -633,6 +725,9 @@ function runSearch(orderBy, searchTerm){
 			departments: departmentsStr
 		},
 		success: function (result) {
+			
+				console.log('search result',result);
+				console.log('no of results', result.data.length);
 				
 				$('.result-row').remove();
 
@@ -645,9 +740,6 @@ function runSearch(orderBy, searchTerm){
 				} else {
 					document.getElementById('body-tag').setAttribute('style', 'overflow: auto');
 				}
-
-				console.log('orderby', orderBy);
-				console.log('no of results', result.data.length);
 	
 				for (let e = 0; e < rowsToCreate; e ++) {
 
@@ -731,8 +823,8 @@ function getAllDepartments(){
 
 			for (lod = 0; lod < listOfDepts.length; lod ++) {
 				let deptName = listOfDepts[lod];
-				let checkedStatus = createCheckbox(deptName).getAttribute('class').includes('checked');
-				document.getElementById('department-checkboxes').appendChild(createCheckbox(deptName));
+				let checkedStatus = createCheckbox(deptName, 'department').getAttribute('class').includes('checked');
+				document.getElementById('department-checkboxes').appendChild(createCheckbox(deptName, 'department'));
 				departmentsObj[deptName] = checkedStatus;
 			}
 
@@ -767,6 +859,18 @@ function getAllLocations(){
 			}
 
 			console.log('listOfLocations', listOfLocations);
+
+			countOfLocations = listOfLocations.length;
+			countOfCheckedLocations = listOfLocations.length;
+
+			for (lol = 0; lol < listOfLocations.length; lol ++) {
+				let locName = listOfLocations[lol];
+				let checkedStatus = createCheckbox(locName, 'location').getAttribute('class').includes('checked');
+				document.getElementById('location-checkboxes').appendChild(createCheckbox(locName, 'location'));
+				locationsObj[locName] = checkedStatus;
+			}
+
+			locationCheckboxFunctionality();
 
 		
 	},
@@ -818,8 +922,6 @@ function getAllEmployees(){
 				
 				selectEmployeeFunctionality()
 				
-				createEmployeeModalForm();
-				
 				if ($('#preloader').length) {
 					$('#preloader').delay(1000).fadeOut('slow', function () {
 						$(this).remove();
@@ -837,10 +939,14 @@ function getAllEmployees(){
 
 };
 
-function closeModal(){
+function closeModal(){	
 
-	document.getElementById('employee-modal-form').reset();
-	document.getElementById('create-employee-modal-form').reset();
+	document.getElementById('employee-modal-create-fields').reset();
+	document.getElementById('employee-modal-view-fields').reset();
+
+	document.getElementById('employee-modal-view-fields').setAttribute('style','display: none');
+	document.getElementById('employee-modal-create-fields').setAttribute('style','display: none');
+
 	$(".employee-editable-modal-field").attr('readonly', 'readonly');
 	$('.employee-editable-modal-field').attr('style', 'border-color: black');
 
@@ -865,6 +971,23 @@ window.onload = (event) => {
 			document.getElementById('search-input').value = ""; 
 			
 			$('.ui.accordion').accordion();
+
+			$('.ui.modal').modal({
+				onHidden: function(){	
+					console.log('close view employee modal');
+					closeModal();
+				}
+			});
+
+/*
+	$('#employee-details-modal').modal({
+		//onHidden: function(){console.log('close')}
+		onHidden: function(){
+			console.log('close view employee modal');
+			closeModal()
+		}
+	});
+*/
 
 			/*
 			$('#modal0').modal(
