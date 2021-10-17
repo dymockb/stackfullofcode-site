@@ -17,11 +17,13 @@
 		min-width: 350px;
 	}
 
+	/*
 	.ui.floating.message {
 		position: absolute;
 		top: 5rem;
 		z-index: 10
 	}
+	*/
 	
 	#pc-table {
 		width: 100%;  
@@ -423,7 +425,7 @@ msg1
 <div class="ui floating message">
   <i class="close icon"></i>
   <div class="header">
-msg2
+msg3
   </div>
   <ul class="list">
     <li>2</li>
@@ -597,9 +599,15 @@ msg2
           </h4>
 					<div id="modalBtn" class="employee-modal-btn ui button">view details</div>
         </td>
-        <td id="employee-details-field" rowspan="10">
-          
-					 <div class="ui segment" id="employee-segment">
+        <td id="employee-details-field" rowspan="10">     
+					 <div class="segment" id="employee-segment">
+					<!-- <div class="ui segment" id="employee-segment"> -->
+					 
+					 				<div class="ui floating message">
+								<i class="close icon"></i>
+
+
+
 						<div class="content employee-detail-fields">
 
 							<div class="ui segment">
@@ -614,6 +622,8 @@ msg2
 							<p class="display-none-field" id="employee-id-field">placeholder</p>
 							</div>
 							<button id="edit-employee-fields-btn" class="ui button employee-panel-btn">Edit</button>
+						</div>
+						
 						</div>
 					
 					 </div> 
@@ -651,7 +661,7 @@ msg2
 						
 						</form>
 
-						<form autocomplete="off" id="employee-modal-create-fields">
+						<form autocomplete="off" id="employee-modal-create-fields" class="ui form">
 
 						</form>
 

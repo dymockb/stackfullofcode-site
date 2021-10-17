@@ -685,6 +685,7 @@ $('#create-employee-btn').click(function(){
 			//document.getElementById('submit-create-employee').setAttribute('class', 'ui primary approve button');
 			//document.getElementById('submit-create-employee').setAttribute('style', 'display: inline');
 			document.getElementById('submit-create-employee').click();
+			document.getElementById('employee-modal-create-fields').innerHTML = "";
 			//document.getElementById('try-to-submit').setAttribute('style', 'display: none');
 		}
 		
@@ -702,7 +703,21 @@ $('#create-employee-btn').click(function(){
 	
 	
 	//$('.ui.modal').modal('prompt');
-	$('.ui.modal').modal('show');
+	$('.ui.modal').modal({
+		title: 'Create Employee',
+		closable: false,
+		onDeny: function(){
+			console.log('deny');
+			return false;
+		},
+		onApprove: function (){
+			console.log('approve');
+		},
+		onHidden: function(){	
+			console.log('close view employee modal');
+			closeModal();
+		}
+		}).modal('show');
 	//$('.ui.modal').modal('prompt', 'Custom Input', '<div class="ui labeled input"><div class="ui blue label">Nickname</div><input type="text" placeholder="Do not use your email!"></div>', function(name) {
   //  $('body').toast({message: 'Your name is ' + (name || 'CANCELLED')});
   //});
@@ -994,6 +1009,8 @@ function getAllEmployees(){
 };
 
 function closeModal(){	
+
+	console.log('closeModal func fun');
 
 	document.getElementById('employee-modal-create-fields').reset();
 	document.getElementById('employee-modal-view-fields').reset();
