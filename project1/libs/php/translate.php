@@ -7,7 +7,11 @@
 
 $curl = curl_init();
 //$URL = "https://translo.p.rapidapi.com/translate?text=Hey%2C%20how%20are%20you%20today%3F&to=en";
-$URL = "https://translo.p.rapidapi.com/translate?text=" . urlencode($_REQUEST['text']) . "&to=en";
+
+// was working
+//$URL = "https://translo.p.rapidapi.com/translate?text=" . urlencode($_REQUEST['text']) . "&to=en";
+
+$URL = "https://translo.p.rapidapi.com/translate";
 
 curl_setopt_array($curl, [
 	//CURLOPT_URL => "https://translo.p.rapidapi.com/translate?text=Hey%2C%20how%20are%20you%20today%3F&to=en",
@@ -20,9 +24,10 @@ curl_setopt_array($curl, [
 	CURLOPT_TIMEOUT => 30,
 	CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
 	CURLOPT_CUSTOMREQUEST => "POST",
-	CURLOPT_POSTFIELDS => "{\r\n    \"key1\": \"value\",\r\n    \"key2\": \"value\"\r\n}",
+	CURLOPT_POSTFIELDS => "text=" . urlencode($_REQUEST['text']) . "&to=en",
 	CURLOPT_HTTPHEADER => [
-		"content-type: application/json",
+		"content-type: application/x-www-form-urlencoded",
+		//"content-type: application/json",
 		"x-rapidapi-host: translo.p.rapidapi.com",
 		"x-rapidapi-key: e1e25d1b8emsh6d6284ceab9616ep1546efjsnb9119f125e5a"
 	],

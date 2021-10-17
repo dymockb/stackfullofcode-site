@@ -2008,8 +2008,11 @@ function getNews(isoA2code) {
 						text: contentObj.text
 						},
 						success: function (result) {
+							
+						console.log('translate result', result);
 						
-						if (result.data.code == 200) {
+						if (result.data.ok == true) {
+						//if (result.data.code == 200) {
 						
 							if (contentObj.type == 'description') {
 
