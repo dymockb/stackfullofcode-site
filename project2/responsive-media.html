@@ -198,6 +198,10 @@
 		display: none !important;
 		float: right;
 	}
+	
+	#submit-create-employee {
+		display: none;
+	}
 
 	.scrolling.image.content {
 		display: block !important;
@@ -648,24 +652,31 @@ msg2
 						</form>
 
 						<form autocomplete="off" id="employee-modal-create-fields">
-						
+
 						</form>
 
-						<button id="edit-employee-modal-btn">Edit</button>
+						<button id="edit-employee-modal-btn">Edit</button>		
 					</div>
 				</div>
       </div>
     </div>
-    <div id="close-modal-btn" class="actions">
+   <!-- <div id="close-modal-btn" class="actions"> -->
+    <div id="create-employee-close-modal-btn" class="actions">
+			<button id="try-to-submit" form="employee-modal-create-fields" class="ui button">
+      Create Employee 
+			<i class="right chevron icon"></i>			
+			</button>
       <button id="submit-create-employee" form="employee-modal-create-fields" class="ui primary approve button">
         Create employee
-        <i class="right chevron icon"></i>
       </button>
-      <button id="close-view-employee" class="ui primary approve button">
+			<button class="ui approve button">
+			Cancel
+			</button>
+			<button id="close-view-employee" class="ui primary approve button">
         Close
         <i class="right chevron icon"></i>
-      </button>
-    </div>
+     </button>
+		</div>
   </div>
 
 <!--

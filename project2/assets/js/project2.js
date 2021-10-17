@@ -513,7 +513,15 @@ function createEmployeeModalContent(){
 		
 		let inputField = document.createElement('input');
 		inputField.setAttribute('autocomplete', 'off');
-		inputField.setAttribute('type', 'text');
+		if (key == 'email') {
+			inputField.setAttribute('type', 'email');			
+		} else {
+			inputField.setAttribute('type', 'text');			
+		}
+		if (key == 'firstName' || key == 'lastName') {
+			inputField.setAttribute('required', '');
+		}
+
 		//inputField.setAttribute('class', 'employee-editable-modal-field');
 		//inputField.setAttribute('readonly', 'readonly');
 		inputField.setAttribute('id', `create-employee-${key}-field`);
@@ -537,21 +545,6 @@ function createEmployeeModalContent(){
 	
 	}
 	
-	
-		/*
-		<form id="create-employee-modal-form">
-		<h1><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-firstName-modal0" /></h1>
-		<h1><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-lastName-modal0" /></h1>							
-		<h3><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" href="#" id="employee-email-modal0" /></h3>
-		<h2><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-jobTitle-modal0" /></h2>
-		<h2><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-department-modal0" /></h2>
-		<p class="display-none-field"><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-departmentID-modal0" /></p>
-		<h3><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-locationName-modal0" /></h3>
-		<p class="display-none-field"><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-locationID-modal0" /></p>
-		<p class="display-none-field"><input autocomplete="off" type="text" class="employee-editable-modal-field" readOnly="readOnly" id="employee-id-modal0" /></p>
-		
-		</form>
-		*/
 };
 
 function selectEmployeeFunctionality(){
@@ -632,6 +625,14 @@ function viewDetailsBtnFunctionality(){
 	
 }
 
+//$('#submit-create-employee').click(function(e){
+$('#whatisthis').click(function(e){
+	console.log('this',this);
+	console.log('e',e);
+	//e.preventDefault();
+
+});
+
 $('#edit-employee-fields-btn').click(function(){
 	
 	console.log('what');
@@ -665,8 +666,9 @@ $('#create-employee-btn').click(function(){
 	createEmployeeModalContent();
 	
 	document.getElementById('employee-modal-create-fields').setAttribute('style','display: inherit');
-	document.getElementById('submit-create-employee').setAttribute('style', 'display: inline');
-	
+	//document.getElementById('submit-create-employee').setAttribute('style', 'display: inline');
+	document.getElementById('try-to-submit').setAttribute('style', 'display: inline');
+
 	let createEmployeeForm = document.getElementById('employee-modal-create-fields');
 	
 	createEmployeeForm.addEventListener( "submit", function ( event ) {
@@ -678,6 +680,13 @@ $('#create-employee-btn').click(function(){
 		console.log('submitted', FD.values);
 
 		console.log('elements', createEmployeeForm.elements);
+		
+		if (createEmployeeForm.elements) {
+			//document.getElementById('submit-create-employee').setAttribute('class', 'ui primary approve button');
+			//document.getElementById('submit-create-employee').setAttribute('style', 'display: inline');
+			document.getElementById('submit-create-employee').click();
+			//document.getElementById('try-to-submit').setAttribute('style', 'display: none');
+		}
 		
 		for (let e = 0; e < createEmployeeForm.elements.length; e ++) {
 		
@@ -692,7 +701,11 @@ $('#create-employee-btn').click(function(){
 	});
 	
 	
+	//$('.ui.modal').modal('prompt');
 	$('.ui.modal').modal('show');
+	//$('.ui.modal').modal('prompt', 'Custom Input', '<div class="ui labeled input"><div class="ui blue label">Nickname</div><input type="text" placeholder="Do not use your email!"></div>', function(name) {
+  //  $('body').toast({message: 'Your name is ' + (name || 'CANCELLED')});
+  //});
 	
 });
 
