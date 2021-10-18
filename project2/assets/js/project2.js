@@ -526,6 +526,7 @@ function createEmployeeModalContent(){
 		//inputField.setAttribute('readonly', 'readonly');
 		inputField.setAttribute('id', `create-employee-${key}-field`);
 		inputField.setAttribute('placeholder', blankEmployeeObj[key]);
+		inputField.setAttribute('field-name', key);
 		
 		newEmployeeFieldsObj[key].appendChild(inputField);
 		
@@ -683,19 +684,28 @@ $('#create-employee-btn').click(function(){
 			//document.getElementById('try-to-submit').setAttribute('style', 'display: none');
 		}
 		
+		createEmployeeDataObj = {}
+		
 		for (let e = 0; e < createEmployeeForm.elements.length; e ++) {
 		
 			if (createEmployeeForm.elements[e].tagName == 'INPUT') {
 				console.log(createEmployeeForm.elements[e].placeholder, createEmployeeForm.elements[e].value);
+				if (createEmployeeForm.elements[e].value) {
+				createEmployeeDataObj[createEmployeeForm.elements[e].field-name] = createEmployeeForm.elements[e].value;
+				} else {
+				console.log('prob');	
+				}
 			}
 
 		}
+		
+		console.log(createEmployeeDataObj);
 		
 		$.ajax({
 		url: "assets/php/insertEmployee.php",
 		type: "GET",
 		dataType: "json",
-		data: {},
+		data: createEmployeeDataObj,
 		success: function (result) {
 			
 				console.log('insertEmployee ',result.data);
