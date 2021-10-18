@@ -285,7 +285,7 @@ function appendEmployee(elementToAppend, employeeElements){
 function createEmployeeRow(employeePropertiesObj) {
 	let tableRow = document.createElement('tr');
 	tableRow.setAttribute('class', 'result-row');
-	if (employeePropertiesObj.firstName == 'no data') {
+	if (employeePropertiesObj.firstName == 'First Name') {
 		tableRow.setAttribute('style', 'visibility: hidden');
 	}
 	let tableData = document.createElement('td');
@@ -490,9 +490,9 @@ function createEmployeeModalContent(){
 	for (const [key, value] of Object.entries(blankEmployeeObj)) {
 		
 		if (key == 'firstName') {
-			newEmployeeFieldsObj[key] = document.createElement('h1');
+			newEmployeeFieldsObj[key] = document.createElement('h2');
 		} else if (key == 'lastName') {
-			newEmployeeFieldsObj[key] = document.createElement('h1');
+			newEmployeeFieldsObj[key] = document.createElement('h2');
 		} else if (key == 'email') {
 			newEmployeeFieldsObj[key] = document.createElement('h3');
 		} else if (key == 'jobTitle') {
@@ -525,7 +525,7 @@ function createEmployeeModalContent(){
 		//inputField.setAttribute('class', 'employee-editable-modal-field');
 		//inputField.setAttribute('readonly', 'readonly');
 		inputField.setAttribute('id', `create-employee-${key}-field`);
-		inputField.setAttribute('placeholder', key);
+		inputField.setAttribute('placeholder', blankEmployeeObj[key]);
 		
 		newEmployeeFieldsObj[key].appendChild(inputField);
 		
@@ -690,6 +690,25 @@ $('#create-employee-btn').click(function(){
 			}
 
 		}
+		
+		$.ajax({
+		url: "assets/php/insertEmployee.php",
+		type: "GET",
+		dataType: "json",
+		data: {},
+		success: function (result) {
+			
+				console.log('insertEmployee ',result.data);
+
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+				console.log('error');
+				console.log(textStatus);
+				console.log(errorThrown);
+			},
+		});
+		
+		
 			
 	});
 	
@@ -701,10 +720,10 @@ $('#create-employee-btn').click(function(){
 		closable: false,
 		onDeny: function(){
 			console.log('deny');
-			return false;
+			//return false;
 		},
 		onApprove: function (){
-		document.getElementById('submit-create-employee').click();
+		//document.getElementById('submit-create-employee').click();
 		console.log('approve');
 		},
 		onHidden: function(){	
@@ -961,7 +980,22 @@ function getAllEmployees(){
 				for (const [key, value] of Object.entries(result.data[0])) {
 					
 					console.log(key);
-					blankEmployeeObj[key] = "no data";						
+					if (key == "firstName") {
+						blankEmployeeObj[key] = "First name";						
+					} else if (key == "lastName") {
+						blankEmployeeObj[key] = "Last name";					
+					} else if (key == "email") {
+						blankEmployeeObj[key] = "Email address";
+					} else if (key == "department") {
+						blankEmployeeObj[key] = "Department";					
+					} else if (key == "jobTitle") {
+						blankEmployeeObj[key] = "Job title";					
+					} else if (key == "locationName") {
+						blankEmployeeObj[key] = "Location";					
+					} else {
+						blankEmployeeObj[key] = "no data";						
+					} 
+
 				
 				}
 		
