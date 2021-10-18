@@ -289,7 +289,8 @@ function createEmployeeRow(employeePropertiesObj) {
 	let tableRow = document.createElement('tr');
 	tableRow.setAttribute('class', 'result-row');
 	if (employeePropertiesObj.firstName == 'First Name') {
-		tableRow.setAttribute('style', 'visibility: hidden');
+		//tableRow.setAttribute('style', 'visibility: hidden');
+		tableRow.setAttribute('class', 'result-row hidden-field');
 	}
 	let tableData = document.createElement('td');
 
@@ -864,12 +865,13 @@ $('#create-employee-btn').click(function(){
 					if (createEmployeeForm.elements[e].id == 'location-dropdown') {
 
 						console.log('location dropdown value', createEmployeeForm.elements[e].value);
+						createEmployeeDataObj['locationName'] = createEmployeeForm.elements[e].value;
 						createEmployeeDataObj['locationID'] = locationsDropDownObj[createEmployeeForm.elements[e].value];
 				
 					} else if (createEmployeeForm.elements[e].id == 'department-dropdown'){
 						
 						createEmployeeDataObj['departmentID'] = departmentsDropDownObj[createEmployeeForm.elements[e].value];
-						
+						createEmployeeDataObj['department'] = createEmployeeForm.elements[e].value;
 					}
 				
 				
@@ -887,6 +889,8 @@ $('#create-employee-btn').click(function(){
 		success: function (result) {
 			
 				console.log('insertEmployee ',result.data);
+				console.log('orderby', orderBy, 'lastSearch', lastSearch);
+				runSearch(orderBy,lastSearch);
 
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
