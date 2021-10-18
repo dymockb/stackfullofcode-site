@@ -135,7 +135,14 @@
 	}
 	
 	th, td {
-		width: 50%;
+		width: 50%;	
+    border-right: 1px solid rgba(34, 36, 38, 0.1);
+    border-right-width: 1px;
+    border-right-style: solid;
+    border-right-color: rgba(34, 36, 38, 0.1);
+	}
+
+
 	}
 	
 	.break {
@@ -155,6 +162,11 @@
 		visibility: hidden;
 	}
 	
+	td#employee-details-field {
+		border-left: none;
+	}
+	
+
 	/*
 	td#employee-details-field {
     position: sticky;
@@ -192,17 +204,13 @@
 	}
 
 
-	#employee-modal-create-fields, #employee-modal-view-fields, #close-view-employee, #submit-create-employee {
+	#employee-modal-create-fields, #employee-modal-view-fields, #close-employee-modal, #submit-create-employee, #submit-edit-employee {
 		display: none;
 	}
 	
 	.employee-modal-btn {
 		display: none !important;
 		float: right;
-	}
-	
-	#submit-create-employee {
-		display: none;
 	}
 
 	.scrolling.image.content {
@@ -410,29 +418,6 @@
 </div>
 
 			<div id="pc-search" class="ui segment">
-
-<div class="ui floating message">
-  <i class="close icon"></i>
-  <div class="header">
-msg1
-  </div>
-  <ul class="list">
-    <li>1</li>
-    <li>1</li>
-  </ul>
-</div>
-
-<div class="ui floating message">
-  <i class="close icon"></i>
-  <div class="header">
-msg3
-  </div>
-  <ul class="list">
-    <li>2</li>
-    <li>2</li>
-  </ul>
-</div>
-		
 		
             <div class="content field">
 							<!--
@@ -603,7 +588,7 @@ msg3
 					 <div class="segment" id="employee-segment">
 					<!-- <div class="ui segment" id="employee-segment"> -->
 					 
-					 				<div class="ui floating message">
+					 	<div class="ui hidden message">
 								<i class="close icon"></i>
 
 
@@ -670,19 +655,25 @@ msg3
 				</div>
       </div>
     </div>
-   <!-- <div id="close-modal-btn" class="actions"> -->
+   <!-- <div id="close-modal-btn" class="actions"> 
+	 
+
+			
+
+			
+	 -->
     <div id="create-employee-close-modal-btn" class="actions">
-			<button id="try-to-submit" form="employee-modal-create-fields" class="ui button">
-      Create Employee 
+	 		<button id="submit-edit-employee" class="ui approve button">
+      Edit Details 
 			<i class="right chevron icon"></i>			
 			</button>
-      <button id="submit-create-employee" form="employee-modal-create-fields" class="ui primary approve button">
+      <button id="submit-create-employee" form="employee-modal-create-fields" class="ui primary button">
         Create employee
       </button>
-			<button class="ui approve button">
+			<button class="ui deny button">
 			Cancel
 			</button>
-			<button id="close-view-employee" class="ui primary approve button">
+			<button id="close-employee-modal" class="ui primary approve button">
         Close
         <i class="right chevron icon"></i>
      </button>

@@ -565,9 +565,11 @@ function selectEmployeeFunctionality(){
 
 			if (employeeDetailsVisibility == 0) {
 				$('.employee-detail-fields').attr('style', 'visibility: visible');
+				$('.message').attr('class', 'ui floating message');
 				document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails)
 				employeeDetailsVisibility ++;
 			} else {
+				$('.message').attr('class', 'ui floating message');
 				document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails)
 			}
 			 
@@ -625,14 +627,6 @@ function viewDetailsBtnFunctionality(){
 	
 }
 
-//$('#submit-create-employee').click(function(e){
-$('#whatisthis').click(function(e){
-	console.log('this',this);
-	console.log('e',e);
-	//e.preventDefault();
-
-});
-
 $('#edit-employee-fields-btn').click(function(){
 	
 	console.log('what');
@@ -666,12 +660,12 @@ $('#create-employee-btn').click(function(){
 	createEmployeeModalContent();
 	
 	document.getElementById('employee-modal-create-fields').setAttribute('style','display: inherit');
-	//document.getElementById('submit-create-employee').setAttribute('style', 'display: inline');
-	document.getElementById('try-to-submit').setAttribute('style', 'display: inline');
+	document.getElementById('submit-create-employee').setAttribute('style', 'display: inline');
 
 	let createEmployeeForm = document.getElementById('employee-modal-create-fields');
 	
 	createEmployeeForm.addEventListener( "submit", function ( event ) {
+	
     event.preventDefault();
 
 		let FD = new FormData (createEmployeeForm);
@@ -684,8 +678,8 @@ $('#create-employee-btn').click(function(){
 		if (createEmployeeForm.elements) {
 			//document.getElementById('submit-create-employee').setAttribute('class', 'ui primary approve button');
 			//document.getElementById('submit-create-employee').setAttribute('style', 'display: inline');
-			document.getElementById('submit-create-employee').click();
-			document.getElementById('employee-modal-create-fields').innerHTML = "";
+			document.getElementById('close-employee-modal').click();
+			//document.getElementById('employee-modal-create-fields').innerHTML = "";
 			//document.getElementById('try-to-submit').setAttribute('style', 'display: none');
 		}
 		
@@ -696,14 +690,13 @@ $('#create-employee-btn').click(function(){
 			}
 
 		}
-		
-		$('.message').attr('class', 'ui floating message');
-		
+			
 	});
 	
 	
 	//$('.ui.modal').modal('prompt');
 	$('.ui.modal').modal({
+		
 		title: 'Create Employee',
 		closable: false,
 		onDeny: function(){
@@ -711,12 +704,15 @@ $('#create-employee-btn').click(function(){
 			return false;
 		},
 		onApprove: function (){
-			console.log('approve');
+		document.getElementById('submit-create-employee').click();
+		console.log('approve');
 		},
 		onHidden: function(){	
 			console.log('close view employee modal');
+			document.getElementById('employee-modal-create-fields').innerHTML = "";
 			closeModal();
 		}
+		
 		}).modal('show');
 	//$('.ui.modal').modal('prompt', 'Custom Input', '<div class="ui labeled input"><div class="ui blue label">Nickname</div><input type="text" placeholder="Do not use your email!"></div>', function(name) {
   //  $('body').toast({message: 'Your name is ' + (name || 'CANCELLED')});
@@ -1018,8 +1014,8 @@ function closeModal(){
 	document.getElementById('employee-modal-view-fields').setAttribute('style','display: none');
 	document.getElementById('employee-modal-create-fields').setAttribute('style','display: none');
 
-	document.getElementById('close-view-employee').setAttribute('style','display: none');
 	document.getElementById('submit-create-employee').setAttribute('style','display: none');
+	document.getElementById('submit-edit-employee').setAttribute('style', 'display: none');
 
 	$(".employee-editable-modal-field").attr('readonly', 'readonly');
 	$('.employee-editable-modal-field').attr('style', 'border-color: black');
