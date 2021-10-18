@@ -2,7 +2,7 @@ let employeeDetailsVisibility = 0;
 let employeeModalCount = 0;
 let employeePropertiesObj = {};
 let blankEmployeeObj = {};
-let inputField = document.getElementById('search-input');
+let searchField = document.getElementById('search-input');
 let lastSearch = "";
 let orderBy = 'lastName';
 
@@ -206,7 +206,7 @@ selectEmployeeFunctionality()
 
 }
 
-inputField.addEventListener('input', delay(function () {
+searchField.addEventListener('input', delay(function () {
   
 	console.log('search term:', this.value.toLowerCase());
 	
@@ -511,40 +511,81 @@ function createEmployeeModalContent(){
 	
 	for (const [key, value] of Object.entries(newEmployeeFieldsObj)) {
 		
-		let inputField = document.createElement('input');
-		inputField.setAttribute('autocomplete', 'off');
-		if (key == 'email') {
-			inputField.setAttribute('type', 'email');			
+		let inputField;
+		if (key == 'locationName' || key == 'department'){
+			
+			if (key == 'locationName') {
+				inputField = document.createElement('select');
+				inputField.setAttribute('required', '');
+				
+				let locationSelectOption = document.createElement('option');
+				locationSelectOption.setAttribute('disabled', '');
+				locationSelectOption.setAttribute('value', '');
+				locationSelectOption.setAttribute('selected', '');
+				locationSelectOption.innerHTML = 'choose one';
+				
+				let locationChoice = document.createElement('option');
+				locationChoice.innerHTML = 'choice';
+
+				inputField.appendChild(locationSelectOption);
+				inputField.appendChild(locationChoice);
+
+			} else if (key == 'department') {
+				
+				inputField = document.createElement('select');
+				inputField.setAttribute('required', '');
+				
+				let departmentSelectOption = document.createElement('option');
+				departmentSelectOption.setAttribute('disabled', '');
+				departmentSelectOption.setAttribute('value', '');
+				departmentSelectOption.setAttribute('selected', '');
+				departmentSelectOption.innerHTML = 'choose one';
+
+				let departmentChoice = document.createElement('option');
+				departmentChoice.innerHTML = 'choice';
+
+				inputField.appendChild(departmentSelectOption);
+				inputField.appendChild(departmentChoice);
+
+			}
+			
 		} else {
-			inputField.setAttribute('type', 'text');			
-		}
-		if (key == 'firstName' || key == 'lastName') {
-			inputField.setAttribute('required', '');
+			inputField = document.createElement('input');
+			inputField.setAttribute('autocomplete', 'off');
+
+			if (key == 'email') {
+				inputField.setAttribute('type', 'email');			
+			} else {
+				inputField.setAttribute('type', 'text');			
+			}
+			
+			if (key == 'firstName' || key == 'lastName') {
+				inputField.setAttribute('required', '');
+			}			
+
+			inputField.setAttribute('id', `create-employee-${key}-field`);
+			inputField.setAttribute('placeholder', key);
+			inputField.setAttribute('field-name', key);
+			
 		}
 
-		//inputField.setAttribute('class', 'employee-editable-modal-field');
-		//inputField.setAttribute('readonly', 'readonly');
-		inputField.setAttribute('id', `create-employee-${key}-field`);
-		inputField.setAttribute('placeholder', blankEmployeeObj[key]);
-		inputField.setAttribute('field-name', key);
 		
 		newEmployeeFieldsObj[key].appendChild(inputField);
-		
-		//newEmployeeFieldsObj[key].innerHTML = key;
 		
 		if (key == 'firstName') {
 			document.getElementById('employee-modal-create-fields').appendChild(newEmployeeFieldsObj[key]);
 		}
 	
-	}
-	
+	}	
+
 	for (const [key, value] of Object.entries(newEmployeeFieldsObj)) {
 		
 		if (key != 'firstName') {
-			document.getElementById('employee-modal-create-fields').appendChild(newEmployeeFieldsObj[key]);
+				document.getElementById('employee-modal-create-fields').appendChild(newEmployeeFieldsObj[key]);
 		}
-	
 	}
+	
+
 	
 };
 
@@ -684,14 +725,20 @@ $('#create-employee-btn').click(function(){
 			//document.getElementById('try-to-submit').setAttribute('style', 'display: none');
 		}
 		
-		createEmployeeDataObj = {}
+		createEmployeeDataObj = {
+			firstName: '',
+			lastName: '',
+			jobTitle: '',
+			email: '',
+			departmentID: 5
+	}
 		
 		for (let e = 0; e < createEmployeeForm.elements.length; e ++) {
 		
 			if (createEmployeeForm.elements[e].tagName == 'INPUT') {
 				console.log(createEmployeeForm.elements[e].placeholder, createEmployeeForm.elements[e].value);
 				if (createEmployeeForm.elements[e].value) {
-				createEmployeeDataObj[createEmployeeForm.elements[e].field-name] = createEmployeeForm.elements[e].value;
+				createEmployeeDataObj[createEmployeeForm.elements[e].placeholder] = createEmployeeForm.elements[e].value;
 				} else {
 				console.log('prob');	
 				}
