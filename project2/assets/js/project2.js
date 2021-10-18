@@ -19,6 +19,12 @@ let howManyLocationsSelected = 'All';
 let locationsDropDownObj = {};
 let departmentsDropDownObj = {};
 
+let maxNewEmployeeID = 0;
+let maxEmployeeID = 0;
+let finalMaxID;
+
+let newestElement;
+
 
 
 
@@ -236,9 +242,13 @@ function createEmployee(employeePropertiesObj){
 
 	for (const [key, value] of Object.entries(employeePropertiesObj)) {
 
-		let checkNull = value == null ? 'null' : value;
+		let checkNull = value == 0 ? 0 : value;
 
-		let textValue = checkNull == "" ? 'TBC' : checkNull;
+		let textValue = checkNull == "" ? 0 : checkNull;
+
+		if (textValue == 'TBC') {
+			console.log(key, value);
+		}
 
 		employeePropertiesObj[key] = textValue;
 		
@@ -286,12 +296,24 @@ function appendEmployee(elementToAppend, employeeElements){
 }
 
 function createEmployeeRow(employeePropertiesObj) {
+
 	let tableRow = document.createElement('tr');
 	tableRow.setAttribute('class', 'result-row');
-	if (employeePropertiesObj.firstName == 'First Name') {
-		//tableRow.setAttribute('style', 'visibility: hidden');
-		tableRow.setAttribute('class', 'result-row hidden-field');
+	if (employeePropertiesObj.firstName == 'First name') {
+	  tableRow.setAttribute('style', 'visibility: hidden');
+		//tableRow.setAttribute('class', 'result-row hidden-field');
 	}
+
+	if (employeePropertiesObj.id == finalMaxID) {
+
+		//invisibleElement.parentNode.setAttribute('id', 'newest-employee');
+		//invisibleElement.children[1].setAttribute('id', 'newest-employee-btn');
+		console.log('THIS IS THE NEWEST EMPLOYEE',employeePropertiesObj);
+	}
+
+	
+	maxNewEmployeeID = employeePropertiesObj.id > maxNewEmployeeID ? employeePropertiesObj.id : maxNewEmployeeID; 
+
 	let tableData = document.createElement('td');
 
 	let employeeElements = createEmployee(employeePropertiesObj);
@@ -890,7 +912,7 @@ $('#create-employee-btn').click(function(){
 			
 				console.log('insertEmployee ',result.data);
 				console.log('orderby', orderBy, 'lastSearch', lastSearch);
-				runSearch(orderBy,lastSearch);
+				runSearch(orderBy,'');
 
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
@@ -922,8 +944,7 @@ $('#create-employee-btn').click(function(){
 			console.log('close view employee modal');
 			document.getElementById('employee-modal-create-fields').innerHTML = "";
 			closeModal();
-		}
-		
+		}	
 		}).modal('show');
 	//$('.ui.modal').modal('prompt', 'Custom Input', '<div class="ui labeled input"><div class="ui blue label">Nickname</div><input type="text" placeholder="Do not use your email!"></div>', function(name) {
   //  $('body').toast({message: 'Your name is ' + (name || 'CANCELLED')});
@@ -1002,6 +1023,8 @@ function runSearch(orderBy, searchTerm){
 		},
 		success: function (result) {
 			
+				maxNewEmployeeID = 0;
+
 				console.log('search result',result);
 				console.log('no of results', result.data.length);
 				
@@ -1017,6 +1040,9 @@ function runSearch(orderBy, searchTerm){
 					document.getElementById('body-tag').setAttribute('style', 'overflow: auto');
 				}
 	
+				let nextNewestElement;
+				let newestEmployeeObj = {};
+
 				for (let e = 0; e < rowsToCreate; e ++) {
 
 					if (e < result.data.length) {
@@ -1027,6 +1053,22 @@ function runSearch(orderBy, searchTerm){
 						
 						}
 						
+						newestEmployeeObj[JSON.parse(createEmployeeRow(employeePropertiesObj).getElementsByTagName('div')[0].attributes[1].textContent).id] = createEmployeeRow(employeePropertiesObj);
+						
+						//let elementID = JSON.parse(createEmployeeRow(employeePropertiesObj).getElementsByTagName('div')[0].attributes[1].textContent).id;
+						
+						//console.log('elementid', elementID);
+						//if (JSON.parse(createEmployeeRow(employeePropertiesObj).getElementsByTagName('div')[0].attributes[1].textContent).id > maxNewEmployeeID) {
+
+						///	console.log(JSON.parse(createEmployeeRow(employeePropertiesObj).getElementsByTagName('div')[0].attributes[1].textContent));
+						//};
+						
+						
+						//if (elementID == maxNewEmployeeID) {
+						//	nextNewestElement = employeePropertiesObj;
+						//	console.log('match',JSON.stringify(nextNewestElement));
+						//}
+						
 						otherEmployees.appendChild(createEmployeeRow(employeePropertiesObj));
 					
 					
@@ -1036,8 +1078,34 @@ function runSearch(orderBy, searchTerm){
 						
 					}
 				}
+
+				//console.log('newestelement', JSON.stringify(nextNewestElement));
+
+				//newestEmployeeObj[maxNewEmployeeID].getElementsByTagName('tr').setAttribute('style', 'display: none');
+				function newElem (){
+					finalMaxID = maxNewEmployeeID;
+					return newestEmployeeObj[maxNewEmployeeID] 
+				}
+
+				if (newElem()) {
 				
+				//newElem().getElementsByTagName('td')[0].parentNode.setAttribute('style', 'display: none');
+				//newElem().getElementsByTagName('td')[0].parentNode.setAttribute('id', 'newest-employee');
+
+				//newElem().getElementsByTagName('td')[0].children[1].setAttribute('id', 'newest-employee-btn')
+				
+				console.log('try obj', newElem().getElementsByTagName('td')[0].parentNode);
+
+				console.log('td', newElem().getElementsByTagName('td'));
+				console.log('td', newElem().getElementsByTagName('td')[0].children[0].children[1].attributes[1].textContent);
+
+				otherEmployees.appendChild(createEmployeeRow(JSON.parse(newElem().getElementsByTagName('td')[0].children[0].children[1].attributes[1].textContent)));
+				
+				}
+
 				viewDetailsBtnFunctionality()
+
+				//document.getElementById('newest-employee-btn').click(); 
 				
 				selectEmployeeFunctionality()
 
@@ -1185,7 +1253,8 @@ function getAllEmployees(){
 					} else if (key == "locationName") {
 						blankEmployeeObj[key] = "Location";					
 					} else {
-						blankEmployeeObj[key] = "no data";						
+						blankEmployeeObj[key] = 0;
+						//blankEmployeeObj[key] = 'what is this';						
 					} 
 
 				
@@ -1202,6 +1271,7 @@ function getAllEmployees(){
 					for (const [key, value] of Object.entries(result.data[e])) {
 					
 						employeePropertiesObj[key] = value;
+						maxEmployeeID = employeePropertiesObj.id > maxEmployeeID ? employeePropertiesObj.id : maxEmployeeID;
 					
 					}
 
