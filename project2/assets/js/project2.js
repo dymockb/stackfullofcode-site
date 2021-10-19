@@ -25,6 +25,8 @@ let finalMaxID;
 
 let newestElement;
 
+let deleteAttempts = 0;
+
 
 
 
@@ -745,17 +747,94 @@ function selectEmployeeFunctionality(){
 			if (employeeDetailsVisibility == 0) {
 				$('.employee-detail-fields').attr('style', 'visibility: visible');
 				$('.message').attr('class', 'ui floating message');
-				document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails)
+				document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
+				document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', employeeDetails);
 				employeeDetailsVisibility ++;
 			} else {
 				$('.message').attr('class', 'ui floating message');
-				document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails)
+				document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
+				document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', employeeDetails)
 			}
 			 
 		});
 	}
 	
 }
+
+$('#delete-employee-btn').click(function (){
+	console.log('delete?');
+	
+	let employeeDetails = JSON.parse(document.getElementById('delete-employee-modal-btn').getAttribute('employee-details'));
+	//let employeeDetails = JSON.parse(this.getAttribute('employee-details'));
+	//console.log(JSON.parse(this.getAttribute('employee-details')));
+	$('#delete-employee-modal-btn').attr('style', 'display: inline')
+	
+	/*
+	$('.ui.modal').modal('alert',{
+   title: 'Are you sure you want to delete this employee?',
+   content: 'I love Fomantic-UI',
+   handler: function() {
+     $('body').toast({message:'Great!'});
+   }
+ });
+*/
+	
+	//$('#delete-employee-alert-modal').modal({
+  //title: 'Are you sure you want to delete this employee?',
+  // content: `${employeeDetails.firstName} ${employeeDetails.lastName}`,	
+  //})
+ 
+ //$('.ui.small.basic.test.modal').modal('show');
+ $('#delete-employee-alert').modal(
+ {
+	 title: '<i class="archive icon"></i>',
+	 content: `Delete this employee?  ${employeeDetails.firstName} ${employeeDetails.lastName}`
+ }
+ ).modal('show');
+	
+	
+	/*
+	$('.ui.modal').modal({
+   title: 'Are you sure you want to delete this employee?',
+   content: `${employeeDetails.firstName} ${employeeDetails.lastName}`,	
+ }).modal('show');
+	*/
+
+ 
+});
+
+$('#delete-employee-modal-btn').click(function (){
+	
+	console.log(JSON.parse(this.getAttribute('employee-details')));
+	
+	let employeeID = JSON.parse(this.getAttribute('employee-details')).id;
+	
+	$.ajax({
+	url: "assets/php/deleteEmployeeByID.php",
+	type: "GET",
+	dataType: "json",
+	data: {
+		id: employeeID
+	},
+	success: function (result) {
+		
+		console.log('delete employee result',result);
+		runSearch(orderBy, lastSearch);
+		
+		let deletedEmployeeTimer = setTimeout(function (){
+			document.getElementById('close-panel-icon').click();
+			clearTimeout(deletedEmployeeTimer);
+		}, 750);
+
+	},
+	error: function (jqXHR, textStatus, errorThrown) {
+			console.log('error');
+			console.log(textStatus);
+			console.log(errorThrown);
+		},
+	});
+	
+});
 
 function viewDetailsBtnFunctionality(){
 	
@@ -789,14 +868,16 @@ function viewDetailsBtnFunctionality(){
 		$('').modal();
 		*/
 		document.getElementById('employee-modal-view-fields').setAttribute('style','display: inherit');
-		document.getElementById('close-view-employee').setAttribute('style','display: inline');
+		document.getElementById('close-employee-modal').setAttribute('style','display: inline');
 			
-		$('.ui.modal').modal('show');
-
+		//$('.ui.modal').modal('show');
+		$('.ui.modal.employee-details-modal').modal('show');
+	
 		if (employeeDetailsVisibility == 0) {
 			renderEmployee(employeePropertiesObj);
 			$('.employee-detail-fields').attr('style', 'visibility: visible');
 			document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails)
+			document.getElementById('delete-employee-btn').setAttribute('employee-details', employeeDetails)
 			employeeDetailsVisibility ++;
 		}
 
@@ -808,8 +889,6 @@ function viewDetailsBtnFunctionality(){
 
 $('#edit-employee-fields-btn').click(function(){
 	
-	console.log('what');
-
 	let employeeDetails = JSON.parse(this.getAttribute('employee-details'));
 
 	console.log(employeeDetails);
@@ -822,10 +901,14 @@ $('#edit-employee-fields-btn').click(function(){
 
 	document.getElementById('employee-modal-view-fields').setAttribute('style','display: inherit');
 				
-	document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
+	//document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
+	//document.getElementById('delete-employee-btn').setAttribute('employee-details', employeeDetails);
 
-	$('.ui.modal').modal('show');
+	
+	//$('.ui.modal').modal('show');
+	$('.ui.modal.employee-details-modal').modal('show');
 
+	
 	$('#edit-employee-modal-btn').click();
 	
 	//$(".employee-editable-field").removeAttr('readonly');
@@ -927,8 +1010,9 @@ $('#create-employee-btn').click(function(){
 	});
 	
 	
-	//$('.ui.modal').modal('prompt');
-	$('.ui.modal').modal({
+
+	//$('#employee-details-modal').modal({
+	$('.ui.modal.employee-details-modal').modal({
 		
 		title: 'Create Employee',
 		closable: false,
@@ -946,9 +1030,7 @@ $('#create-employee-btn').click(function(){
 			closeModal();
 		}	
 		}).modal('show');
-	//$('.ui.modal').modal('prompt', 'Custom Input', '<div class="ui labeled input"><div class="ui blue label">Nickname</div><input type="text" placeholder="Do not use your email!"></div>', function(name) {
-  //  $('body').toast({message: 'Your name is ' + (name || 'CANCELLED')});
-  //});
+
 	
 });
 
@@ -1094,10 +1176,10 @@ function runSearch(orderBy, searchTerm){
 
 				//newElem().getElementsByTagName('td')[0].children[1].setAttribute('id', 'newest-employee-btn')
 				
-				console.log('try obj', newElem().getElementsByTagName('td')[0].parentNode);
+				//console.log('try obj', newElem().getElementsByTagName('td')[0].parentNode);
 
-				console.log('td', newElem().getElementsByTagName('td'));
-				console.log('td', newElem().getElementsByTagName('td')[0].children[0].children[1].attributes[1].textContent);
+				//console.log('td', newElem().getElementsByTagName('td'));
+				//console.log('td', newElem().getElementsByTagName('td')[0].children[0].children[1].attributes[1].textContent);
 
 				otherEmployees.appendChild(createEmployeeRow(JSON.parse(newElem().getElementsByTagName('td')[0].children[0].children[1].attributes[1].textContent)));
 				
@@ -1340,9 +1422,17 @@ window.onload = (event) => {
 			$('.ui.accordion').accordion();
 
 			$('.ui.modal').modal({
+			//$('#employee-details-modal').modal({
 				onHidden: function(){	
 					console.log('close view employee modal');
 					closeModal();
+				}
+			});
+			
+			$('#delete-employee-alert-modal').modal({
+				onHidden: function(){	
+					console.log('close delete employee modal');
+					//closeModal();
 				}
 			});
 
