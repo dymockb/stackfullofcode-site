@@ -23,6 +23,8 @@ let maxNewEmployeeID = 0;
 let maxEmployeeID = 0;
 let finalMaxID;
 
+let employeeJustCreated = false;
+
 let newestElement;
 
 let deleteAttempts = 0;
@@ -299,21 +301,29 @@ function appendEmployee(elementToAppend, employeeElements){
 
 function createEmployeeRow(employeePropertiesObj) {
 
+	
+	let setMax = false;
+	if (employeePropertiesObj.id == finalMaxID) {
+
+		//invisibleElement.parentNode.setAttribute('id', 'newest-employee');
+		//invisibleElement.children[1].setAttribute('id', 'newest-employee-btn');
+		setMax = true;
+		console.log('THIS IS THE NEWEST EMPLOYEE',employeePropertiesObj);
+		newestElement = employeePropertiesObj;
+	}
+
 	let tableRow = document.createElement('tr');
 	tableRow.setAttribute('class', 'result-row');
 	if (employeePropertiesObj.firstName == 'First name') {
 	  tableRow.setAttribute('style', 'visibility: hidden');
 		//tableRow.setAttribute('class', 'result-row hidden-field');
+	} 
+	
+	if (setMax) {
+		if (!document.getElementById('newest-employee')) {
+			tableRow.setAttribute('id', 'newest-employee');
+		}
 	}
-
-	if (employeePropertiesObj.id == finalMaxID) {
-
-		//invisibleElement.parentNode.setAttribute('id', 'newest-employee');
-		//invisibleElement.children[1].setAttribute('id', 'newest-employee-btn');
-		
-		//	console.log('THIS IS THE NEWEST EMPLOYEE',employeePropertiesObj);
-	}
-
 	
 	maxNewEmployeeID = employeePropertiesObj.id > maxNewEmployeeID ? employeePropertiesObj.id : maxNewEmployeeID; 
 
@@ -766,7 +776,7 @@ function buildForm(listOfNames, listOfIDs){
 	
 	let dataValue = document.createElement('div');
 	dataValue.setAttribute('class', 'item');
-		
+
 	let dropdownOptions = ['option1', 'option2', 'option3'];
 	
 	function createInputField (mainTitle, data, fieldName) {
@@ -788,17 +798,21 @@ function buildForm(listOfNames, listOfIDs){
 		return outerNode
 	}
 	
-	function createDropDown(mainTitle, placeholder, listOfNames, listOfIDs, fieldName, fieldID, emptyDepts){
+	function createDropDown(mainTitle, placeholder, listOfNames, listOfIDs, fieldName, fieldID, dropdownType){
 		
+		console.log('ddt', dropdownType);
 		let outerNode = requiredField.cloneNode(true);
 		let heading = label.cloneNode(true);
 		heading.innerHTML = mainTitle;
 		
 		let dropdown = selectionDropdown.cloneNode(true);
+		dropdown.setAttribute('id', dropdownType);
+
 		let selected = defaultText.cloneNode(true);
 		let icon = dropdownIcon.cloneNode(true);
 		let input = inputField.cloneNode(true);
 		let menu = menuDiv.cloneNode(true);
+		menu.setAttribute('id', dropdownType + '-menu');
 		
 		console.log('listofnames', listOfNames);
 		
@@ -846,11 +860,13 @@ function buildForm(listOfNames, listOfIDs){
 	
 	let twoCategories = twoFields.cloneNode(true);
 		
-	twoCategories.appendChild(createDropDown('Location', 'Select a location', listOfNames, listOfIDs, 'locationName', 'locationID'));
+	twoCategories.appendChild(createDropDown('Location', 'Select a location', listOfNames, listOfIDs, 'locationName', 'locationID', 'location-dropdown'));
+
+	//$('.ui.selection.dropdown').attr('id', 'location-dropdown');
 	
 	let depNames = [];
 	let depIDs = [];
-	twoCategories.appendChild(createDropDown('Department', 'Select a department', depNames, depIDs, 'department', 'departmentID'));
+	twoCategories.appendChild(createDropDown('Department', 'Select a department', depNames, depIDs, 'department', 'departmentID', 'department-dropdown'));
 	
 	let nameCategories = twoFields.cloneNode(true);
 	
@@ -923,53 +939,33 @@ function createEmployeeModalContent(){
 			
 			let locationDropDown = document.getElementById('location-dropdown');
 			
-			locationDropDown.addEventListener('change', function(e){
-				
-				console.log('change');
-				console.log(e.target.value);
-				
-						/*
+			locationDropDown.addEventListener('change', function(e){			
+						
 						$.ajax({
 						url: "assets/php/departmentsChange.php",
 						type: "GET",
 						dataType: "json",
 						data: {
-							locationID: locationsDropDownObj[e.target.value]	
+							locationID: e.target.value
 						},
 						success: function (result) {
+
+								document.getElementById('department-dropdown-menu').innerHTML = "";
 							
 								console.log('departments change ',result.data);
-								
-								let inputField;
-								
-							
-								inputField = document.createElement('select');
-								inputField.setAttribute('required', '');
-								inputField.setAttribute('class', 'ui fluid dropdown');
-								inputField.setAttribute('id', 'department-dropdown');
-								
-								let departmentSelectOption = document.createElement('option');
-								departmentSelectOption.setAttribute('disabled', '');
-								departmentSelectOption.setAttribute('value', '');
-								departmentSelectOption.setAttribute('selected', '');
-								departmentSelectOption.innerHTML = 'choose a department';
-								inputField.appendChild(departmentSelectOption);
-								
-								for (dc = 0; dc < result.data.length; dc ++) {
-									let departmentChoice = document.createElement('option');
-									departmentChoice.innerHTML = result.data[dc].name;
-									departmentChoice.setAttribute('value', result.data[dc].name);
-									inputField.appendChild(departmentChoice);
+
+								for (let dc = 0; dc < result.data.length; dc ++ ) {
+
+									let oneOption = document.createElement('div');
+									oneOption.setAttribute('class', 'item');
+
+									let outputValue = result.data[dc].id;
+									oneOption.innerHTML = result.data[dc].name;
+									oneOption.setAttribute('data-value', outputValue);
 									
-									departmentsDropDownObj[result.data[dc].name] = result.data[dc].id;
+									document.getElementById('department-dropdown-menu').appendChild(oneOption);
+									
 								}
-								
-								if (document.getElementById('department-dropdown')) {
-									document.getElementById('department-dropdown').remove();
-								}
-								document.getElementById('employee-modal-create-fields').appendChild(inputField);
-						
-						
 
 						},
 						error: function (jqXHR, textStatus, errorThrown) {
@@ -978,7 +974,7 @@ function createEmployeeModalContent(){
 								console.log(errorThrown);
 							},
 						});
-						*/			
+									
 			}); // end of event listener
 			
 
@@ -1230,11 +1226,13 @@ function selectEmployeeFunctionality(){
 				$('.employee-detail-fields').attr('style', 'visibility: visible');
 				$('.message').attr('class', 'ui floating message');
 				document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
-				document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', employeeDetails);
+				document.getElementById('delete-employee-btn').setAttribute('employee-details', employeeDetails);
+				document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', employeeDetails)
 				employeeDetailsVisibility ++;
 			} else {
 				$('.message').attr('class', 'ui floating message');
 				document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
+				document.getElementById('delete-employee-btn').setAttribute('employee-details', employeeDetails);
 				document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', employeeDetails)
 			}
 			 
@@ -1246,7 +1244,7 @@ function selectEmployeeFunctionality(){
 $('#delete-employee-btn').click(function (){
 	console.log('delete?');
 	
-	let employeeDetails = JSON.parse(document.getElementById('delete-employee-modal-btn').getAttribute('employee-details'));
+	let employeeDetails = JSON.parse(document.getElementById('delete-employee-btn').getAttribute('employee-details'));
 	//let employeeDetails = JSON.parse(this.getAttribute('employee-details'));
 	//console.log(JSON.parse(this.getAttribute('employee-details')));
 	$('#delete-employee-modal-btn').attr('style', 'display: inline')
@@ -1301,12 +1299,16 @@ $('#delete-employee-modal-btn').click(function (){
 	success: function (result) {
 		
 		console.log('delete employee result',result);
-		runSearch(orderBy, lastSearch);
 		
-		let deletedEmployeeTimer = setTimeout(function (){
-			document.getElementById('close-panel-icon').click();
+		runSearch(orderBy, lastSearch);
+		console.log('pause')
+		let deletedEmployeeTimer = setTimeout(function () {
+			document.getElementById('close-panel-icon').click();	
+			console.log('done');
 			clearTimeout(deletedEmployeeTimer);
-		}, 750);
+		
+		}, 1000);
+
 
 	},
 	error: function (jqXHR, textStatus, errorThrown) {
@@ -1378,8 +1380,9 @@ function viewDetailsBtnFunctionality(){
 		if (employeeDetailsVisibility == 0) {
 			renderEmployee(employeePropertiesObj);
 			$('.employee-detail-fields').attr('style', 'visibility: visible');
-			document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails)
-			document.getElementById('delete-employee-btn').setAttribute('employee-details', employeeDetails)
+			document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
+			document.getElementById('delete-employee-btn').setAttribute('employee-details', employeeDetails);
+			document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', employeeDetails)
 			employeeDetailsVisibility ++;
 		}
 
@@ -1683,45 +1686,19 @@ createEmployeeForm.addEventListener("submit", function ( event ) {
 	
 	for (let e = 0; e < createEmployeeForm.elements.length; e ++) {
 	
-		if (createEmployeeForm.elements[e].tagName != 'BUTTON') {
-			//console.log(createEmployeeForm.elements[e].getAttribute('fieldID'), createEmployeeForm.elements[e].value);			
-			//console.log(JSON.parse(`{"lastName":"Canner","firstName":"Melvyn","jobTitle":0,"email":"mcanner12@eepurl.com","id":"39","department":"Legal","departmentID":"4","locationID":"1","locationName":"London"}`));
+		if (createEmployeeForm.elements[e].tagName != 'BUTTON') {			
 			
-			
-			console.log('element', createEmployeeForm.elements[e], 'value', createEmployeeForm.elements[e].value);
+			//console.log('element', createEmployeeForm.elements[e], 'value', createEmployeeForm.elements[e].value);
 		
 			createEmployeeDataObj[createEmployeeForm.elements[e].getAttribute('fieldname')] = createEmployeeForm.elements[e].value;
 			
 		}
-		/*
-		if (createEmployeeForm.elements[e].tagName == 'INPUT') {
-			console.log(createEmployeeForm.elements[e].placeholder, createEmployeeForm.elements[e].value);
-			if (createEmployeeForm.elements[e].value) {
-			createEmployeeDataObj[createEmployeeForm.elements[e].placeholder] = createEmployeeForm.elements[e].value;
-			}
-		} else if (createEmployeeForm.elements[e].tagName == 'SELECT'){
-			
-				if (createEmployeeForm.elements[e].id == 'location-dropdown') {
-
-					console.log('location dropdown value', createEmployeeForm.elements[e].value);
-					createEmployeeDataObj['locationName'] = createEmployeeForm.elements[e].value;
-					createEmployeeDataObj['locationID'] = locationsDropDownObj[createEmployeeForm.elements[e].value];
-			
-				} else if (createEmployeeForm.elements[e].id == 'department-dropdown'){
-					
-					createEmployeeDataObj['departmentID'] = departmentsDropDownObj[createEmployeeForm.elements[e].value];
-					createEmployeeDataObj['department'] = createEmployeeForm.elements[e].value;
-				}
-			
-			
-			}
-		*/
 
 	}
 	
 	console.log(createEmployeeDataObj);
 	
-	/*
+	
 	$.ajax({
 	url: "assets/php/insertEmployee.php",
 	type: "GET",
@@ -1731,6 +1708,7 @@ createEmployeeForm.addEventListener("submit", function ( event ) {
 		
 			console.log('insertEmployee ',result.data);
 			console.log('orderby', orderBy, 'lastSearch', lastSearch);
+			employeeJustCreated = true;
 			runSearch(orderBy,'');
 
 	},
@@ -1741,7 +1719,7 @@ createEmployeeForm.addEventListener("submit", function ( event ) {
 		},
 	});
 	
-	*/
+	
 	
 	
 		
@@ -1775,6 +1753,12 @@ $('#create-employee-orig').click(function(){
 		}).modal('show');
 
 	
+});
+
+$('#create-employee-btn-mobile').click(function(){
+
+	$('#create-employee-btn').click();
+
 });
 
 $('#create-employee-btn').click(function(){
@@ -1937,6 +1921,9 @@ function runSearch(orderBy, searchTerm){
 				//console.log('newestelement', JSON.stringify(nextNewestElement));
 
 				//newestEmployeeObj[maxNewEmployeeID].getElementsByTagName('tr').setAttribute('style', 'display: none');
+				
+
+				
 				function newElem (){
 					finalMaxID = maxNewEmployeeID;
 					return newestEmployeeObj[maxNewEmployeeID] 
@@ -1954,15 +1941,49 @@ function runSearch(orderBy, searchTerm){
 				//console.log('td', newElem().getElementsByTagName('td'));
 				//console.log('td', newElem().getElementsByTagName('td')[0].children[0].children[1].attributes[1].textContent);
 
-				otherEmployees.appendChild(createEmployeeRow(JSON.parse(newElem().getElementsByTagName('td')[0].children[0].children[1].attributes[1].textContent)));
 				
+
+				console.log('creates newest employee on first search');
+				otherEmployees.appendChild(createEmployeeRow(JSON.parse(newElem().getElementsByTagName('td')[0].children[0].children[1].attributes[1].textContent)));
+
 				}
+
+				
 
 				viewDetailsBtnFunctionality()
 
 				//document.getElementById('newest-employee-btn').click(); 
 				
 				selectEmployeeFunctionality()
+
+				if (employeeJustCreated) {
+					console.log('employee jc');
+					//document.getElementById('newest-employee').click();
+					console.log(newestElement);
+					
+					renderEmployee(newestElement);
+
+					let employeeDetails = JSON.stringify(newestElement);
+					console.log('test', employeeDetails);
+
+					if (employeeDetailsVisibility == 0) {
+						$('.employee-detail-fields').attr('style', 'visibility: visible');
+						$('.message').attr('class', 'ui floating message');
+						document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
+						document.getElementById('delete-employee-btn').setAttribute('employee-details', employeeDetails);
+						document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', employeeDetails)
+						employeeDetailsVisibility ++;
+					} else {
+						$('.message').attr('class', 'ui floating message');
+						document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
+						document.getElementById('delete-employee-btn').setAttribute('employee-details', employeeDetails);
+						document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', employeeDetails)
+					}
+					
+					
+				}
+
+				employeeJustCreated = false;
 
 				document.getElementById('search-box-icon').setAttribute('class', 'ui icon input');				
 				

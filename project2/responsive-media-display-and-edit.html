@@ -204,7 +204,7 @@
 	}
 
 
-	#employee-modal-create-fields, #employee-modal-view-fields, #close-employee-modal, #submit-create-employee, #submit-edit-employee, #edit-employee-modal-btn, #delete-employee-modal-btn {
+	#employee-modal-create-fields, #employee-modal-view-fields, #close-employee-modal, #submit-create-employee, #submit-edit-employee, #edit-employee-modal-btn, #delete-employee-modal-btn, #create-employee-btn-mobile {
 		display: none;
 	}
 	
@@ -244,6 +244,11 @@
 		
 		#employee-details-field, #employee-details-column, #pc-search-column, .employee-btn {
 			display: none !important;
+		}
+
+		#create-employee-btn-mobile {
+			display: block;
+			float: right;
 		}
 		
 		#mobile-search-options {
@@ -573,7 +578,9 @@
 		<div id="pc-table-segment" class="ui segment">
 		<table id="pc-table" class="ui celled table">
     <thead>
-      <th>Employee Directory</th>
+      <th>Employee Directory
+			<button id="create-employee-btn-mobile" class="ui button">Create Employee</button>
+			</th>
       <th id="employee-details-column" >
 			<button id="create-employee-btn" class="ui button">Create Employee</button>
 			<button id="create-employee-orig" class="ui button">Orig</button>
