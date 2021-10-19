@@ -730,37 +730,53 @@ function createEmployeeModalContentORIGINAL(){
 };
 
 
-function buildForm(listOfObjs){	
+function createEmployeeModalContent(){
+	
+	let newEmployeeFieldsObj = {};
+	let listOfLocationsUpdated = [];	
+	let listOfDepartmentsUpdated = [];
+	
+	let newFormObj = {};
+	
 	let uiForm = document.createElement('div');
 	uiForm.setAttribute('class', 'ui form');
+	newFormObj['uiFormm'] = uiForm;
 	
 	let twoFields = document.createElement('div');
 	twoFields.setAttribute('class', 'two fields');
-	
+	newFormObj['twoFields'] = twoFields;
 	
 	let field = document.createElement('div');
 	field.setAttribute('class', 'field');
+	newFormObj['field'] = field;
 	
 	let requiredField = document.createElement('div');
 	requiredField.setAttribute('class', 'required field');
+	newFormObj['requiredField'] = requiredField;
 	
 	let label = document.createElement('label');
 	label.innerHTML = 'MENU';
+	newFormObj['label'] = label;
 
 	let  selectionDropdown = document.createElement('div')
 	selectionDropdown.setAttribute('class', 'ui selection dropdown');
+	newFormObj['selectionDropdown'] = selectionDropdown;
 	
 	let defaultText = document.createElement('div');
 	defaultText.setAttribute('class', 'default text');
 	defaultText.innerHTML = 'Default Text';
+	newFormObj['defaultText'] = defaultText;
 	
 	let dropdownIcon = document.createElement('i');
 	dropdownIcon.setAttribute('class', 'dropdown icon');
+	newFormObj['dropdownIcon'] = dropdownIcon;
 	
 	let inputField = document.createElement('input');
+	newFormObj['inputField'] = inputField;
 	
 	let menuDiv = document.createElement('div');
 	menuDiv.setAttribute('class', 'menu');
+	newFormObj['menuDiv'] = menuDiv
 	
 	let dataValue = document.createElement('div');
 	dataValue.setAttribute('class', 'item');
@@ -798,18 +814,6 @@ function buildForm(listOfObjs){
 		
 		heading.innerHTML = mainTitle;
 		
-		for (let loc = 0; loc < listOfObjs.length; loc ++){
-			
-			let oneOption = dataValue.cloneNode(true);
-			let outputValue = listOfObjs[loc].id;
-			//let outputValue = `{${fieldID}: ${value}, ${fieldName}: ${key}}`;
-			oneOption.innerHTML = listOfObjs[loc].name;
-			oneOption.setAttribute('data-value', outputValue);
-			menu.appendChild(oneOption);
-			
-		}
-		
-		/*
 		for (const [key, value] of Object.entries(optionsObj)) {
 		
 			let oneOption = dataValue.cloneNode(true);
@@ -820,8 +824,7 @@ function buildForm(listOfObjs){
 			menu.appendChild(oneOption);
 
 		}
-		*/
-		
+
 		input.setAttribute('value', '');
 		input.setAttribute('fieldname', fieldID);
 		input.setAttribute('fieldID', fieldID);
@@ -842,21 +845,9 @@ function buildForm(listOfObjs){
 	
 	let twoCategories = twoFields.cloneNode(true);
 	
-	twoCategories.appendChild(createDropDown('Location', 'Select a location', listOfObjs, 'locationName', 'locationID'));
+	twoCategories.appendChild(createDropDown('Location', 'Select a location', {'loc1': 1, 'loc2' : 2, 'loc3' : 3}, 'locationName', 'locationID'));
 	
-	//twoCategories.appendChild(createDropDown('Location', 'Select a location', {'loc1': 1, 'loc2' : 2, 'loc3' : 3}, 'locationName', 'locationID'));
-	
-	let deptObjs =  []
-	let deptObj = {
-		'name': 'no data',
-		'id': '0'
-	}
-	
-	deptObjs.push(deptObj);
-	
-	console.log('deptobjs', deptObjs);
-	
-	twoCategories.appendChild(createDropDown('Department', 'Select a department', deptObjs, 'department', 'departmentID'));
+	twoCategories.appendChild(createDropDown('Department', 'Select a department', {'dept1': 1, 'dept2': 2, 'dept3' : 3}, 'department', 'departmentID'));
 	
 	let nameCategories = twoFields.cloneNode(true);
 	
@@ -899,15 +890,7 @@ function buildForm(listOfObjs){
 	$('.selection.dropdown')
 	.dropdown();
 	
-}
-
-function createEmployeeModalContent(){
-	
-	let newEmployeeFieldsObj = {};
-	let listOfLocationsUpdated = [];	
-	let listOfDepartmentsUpdated = [];
-	
-	
+	/*
 	$.ajax({
 	url: "assets/php/getAllLocations.php",
 	type: "GET",
@@ -917,11 +900,110 @@ function createEmployeeModalContent(){
 		
 			console.log('all locations create employee ',result.data);
 			
-			for (let loc = 0; loc < result.data.length; loc ++){
-				listOfLocationsUpdated.push(result.data[loc].name);
-			}
+			//let locationsChangeObj = {};
 			
-			buildForm(result.data);
+			
+			for (let l = 0; l < result.data.length; l ++) {
+				listOfLocationsUpdated.push(result.data[l].name)
+				//locationsChangeObj[result.data[l].name] = result.data[l].id;
+				locationsDropDownObj[result.data[l].name] = result.data[l].id;
+			}
+
+			for (const [key, value] of Object.entries(blankEmployeeObj)) {
+				
+				if (key == 'firstName') {
+					newEmployeeFieldsObj[key] = document.createElement('div');
+				} else if (key == 'lastName') {
+					newEmployeeFieldsObj[key] = document.createElement('div');
+				} else if (key == 'email') {
+					newEmployeeFieldsObj[key] = document.createElement('div');
+				} else if (key == 'jobTitle') {
+					newEmployeeFieldsObj[key] = document.createElement('div');
+				} else if (key == 'department') {
+					newEmployeeFieldsObj[key] = document.createElement('div');
+				} else if (key == 'locationName') {
+					newEmployeeFieldsObj[key] = document.createElement('div');
+				} else {
+					newEmployeeFieldsObj[key] = document.createElement('div');
+					newEmployeeFieldsObj[key].setAttribute('class', 'display-none-field');
+				}
+			
+			}
+	
+			console.log('listoflocationsupdated',listOfLocationsUpdated);
+			//console.log('locationchangeobj', locationsChangeObj);
+			
+			for (const [key, value] of Object.entries(newEmployeeFieldsObj)) {
+				
+				let inputField;
+				//if (key == 'locationName' || key == 'department'){
+				if (key == 'locationName'){
+					
+					if (key == 'locationName') {
+						inputField = document.createElement('select');
+						inputField.setAttribute('required', '');
+						inputField.setAttribute('class', 'ui fluid dropdown');
+						inputField.setAttribute('id', 'location-dropdown');
+						
+						let locationSelectOption = document.createElement('option');
+						locationSelectOption.setAttribute('disabled', '');
+						locationSelectOption.setAttribute('value', '');
+						locationSelectOption.setAttribute('selected', '');
+						locationSelectOption.innerHTML = 'choose a location';
+						
+						
+						inputField.appendChild(locationSelectOption);
+						
+						for (let lc = 0; lc < listOfLocationsUpdated.length; lc ++) {
+													
+							let locationChoice = document.createElement('option');
+							locationChoice.setAttribute('value', listOfLocationsUpdated[lc]);
+							locationChoice.innerHTML = listOfLocationsUpdated[lc];
+							//locationChoice.setAttribute('placeholder-id', locationsChangeObj[listOfLocationsUpdated[lc]]);
+							locationChoice.setAttribute('placeholder-id', locationsDropDownObj[listOfLocationsUpdated[lc]]);
+							inputField.appendChild(locationChoice);
+							
+						}
+
+					} 
+					
+				} else if ( key != 'department') {
+					
+					inputField = document.createElement('input');
+					inputField.setAttribute('autocomplete', 'off');
+
+					if (key == 'email') {
+						inputField.setAttribute('type', 'email');			
+					} else {
+						inputField.setAttribute('type', 'text');			
+					}
+					
+					if (key == 'firstName' || key == 'lastName') {
+						inputField.setAttribute('required', '');
+					}			
+
+					inputField.setAttribute('id', `create-employee-${key}-field`);
+					inputField.setAttribute('placeholder', key);
+					inputField.setAttribute('field-name', key);
+					
+				}
+
+				if (key != 'department'){
+					newEmployeeFieldsObj[key].appendChild(inputField);
+				}
+				
+				if (key == 'firstName') {
+					document.getElementById('employee-modal-create-fields').appendChild(newEmployeeFieldsObj[key]);
+				}
+			
+			}	
+
+			for (const [key, value] of Object.entries(newEmployeeFieldsObj)) {
+				
+				if (key != 'firstName') {
+						document.getElementById('employee-modal-create-fields').appendChild(newEmployeeFieldsObj[key]);
+				}
+			}
 			
 			let locationDropDown = document.getElementById('location-dropdown');
 			
@@ -930,7 +1012,6 @@ function createEmployeeModalContent(){
 				console.log('change');
 				console.log(e.target.value);
 				
-						/*
 						$.ajax({
 						url: "assets/php/departmentsChange.php",
 						type: "GET",
@@ -980,7 +1061,7 @@ function createEmployeeModalContent(){
 								console.log(errorThrown);
 							},
 						});
-						*/			
+						
 			}); // end of event listener
 			
 
@@ -991,7 +1072,7 @@ function createEmployeeModalContent(){
 			console.log(errorThrown);
 		},
 	});
-	
+	*/
 };
 
 
