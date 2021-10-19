@@ -1345,7 +1345,7 @@ function viewDetailsBtnFunctionality(){
 }
 
 
-//original edit employee button click
+//original edit employee button click - KEEP
 $('#edit-employee-fields-btn').click(function(){
 	
 	
@@ -1396,7 +1396,7 @@ $('#edit-employee-fields-btn').click(function(){
 
 
 
-/*
+/* // Another version, not needed?
 $('#edit-employee-fields-btn').click(function(){
 	
 	
@@ -1516,7 +1516,7 @@ $('#edit-employee-fields-btn').click(function(){
 
 */
 
-editEmployeeForm = document.getElementById('employee-modal-view-fields');
+let editEmployeeForm = document.getElementById('employee-modal-view-fields');
 
 editEmployeeForm.addEventListener( "submit", function ( event ) {
 
@@ -1694,7 +1694,7 @@ createEmployeeForm.addEventListener( "submit", function ( event ) {
 		
 });
 	
-
+//delete this when create-employee-btn working
 $('#create-employee-orig').click(function(){
 	
 	createEmployeeModalContentORIGINAL();
@@ -1702,9 +1702,6 @@ $('#create-employee-orig').click(function(){
 	document.getElementById('employee-modal-create-fields').setAttribute('style','display: inherit');
 	document.getElementById('submit-create-employee').setAttribute('style', 'display: inline');
 	
-	
-
-	//$('#employee-details-modal').modal({
 	$('.ui.modal.employee-details-modal').modal({
 		
 		title: 'Create Employee',
@@ -1727,104 +1724,14 @@ $('#create-employee-orig').click(function(){
 	
 });
 
-
 $('#create-employee-btn').click(function(){
-	
 	
 	createEmployeeModalContent();
 	
 	document.getElementById('employee-modal-create-fields').setAttribute('style','display: inherit');
 	document.getElementById('submit-create-employee').setAttribute('style', 'display: inline');
 
-	/*
-	let createEmployeeForm = document.getElementById('employee-modal-create-fields');
-	
-	createEmployeeForm.addEventListener( "submit", function ( event ) {
-	
-    event.preventDefault();
 
-		//let FD = new FormData (createEmployeeForm);
-    //sendData();
-		
-		//console.log('submitted', FD.values);
-
-		console.log('elements', createEmployeeForm.elements);
-		
-		if (createEmployeeForm.elements) {
-			//document.getElementById('submit-create-employee').setAttribute('class', 'ui primary approve button');
-			//document.getElementById('submit-create-employee').setAttribute('style', 'display: inline');
-			document.getElementById('close-employee-modal').click();
-			//document.getElementById('employee-modal-create-fields').innerHTML = "";
-			//document.getElementById('try-to-submit').setAttribute('style', 'display: none');
-		}
-		
-		createEmployeeDataObj = {
-			firstName: '',
-			lastName: '',
-			jobTitle: '',
-			email: '',
-			departmentID: '',
-			locationName: '',
-			locationID: '',
-			department: '',
-			id: ''
-	}
-		console.log('LOCATIONS OBJ', locationsObj);
-		
-		for (let e = 0; e < createEmployeeForm.elements.length; e ++) {
-		
-			if (createEmployeeForm.elements[e].tagName == 'INPUT') {
-				console.log(createEmployeeForm.elements[e].placeholder, createEmployeeForm.elements[e].value);
-				if (createEmployeeForm.elements[e].value) {
-				createEmployeeDataObj[createEmployeeForm.elements[e].placeholder] = createEmployeeForm.elements[e].value;
-				}
-			} else if (createEmployeeForm.elements[e].tagName == 'SELECT'){
-				
-					if (createEmployeeForm.elements[e].id == 'location-dropdown') {
-
-						console.log('location dropdown value', createEmployeeForm.elements[e].value);
-						createEmployeeDataObj['locationName'] = createEmployeeForm.elements[e].value;
-						createEmployeeDataObj['locationID'] = locationsDropDownObj[createEmployeeForm.elements[e].value];
-				
-					} else if (createEmployeeForm.elements[e].id == 'department-dropdown'){
-						
-						createEmployeeDataObj['departmentID'] = departmentsDropDownObj[createEmployeeForm.elements[e].value];
-						createEmployeeDataObj['department'] = createEmployeeForm.elements[e].value;
-					}
-				
-				
-				}
-
-		}
-		
-		console.log(createEmployeeDataObj);
-		
-		$.ajax({
-		url: "assets/php/insertEmployee.php",
-		type: "GET",
-		dataType: "json",
-		data: createEmployeeDataObj,
-		success: function (result) {
-			
-				console.log('insertEmployee ',result.data);
-				console.log('orderby', orderBy, 'lastSearch', lastSearch);
-				runSearch(orderBy,'');
-
-		},
-		error: function (jqXHR, textStatus, errorThrown) {
-				console.log('error');
-				console.log(textStatus);
-				console.log(errorThrown);
-			},
-		});
-		
-		
-			
-	});
-	
-	*/
-
-	//$('#employee-details-modal').modal({
 	$('.ui.modal.employee-details-modal').modal({
 		
 		title: 'Create Employee',
