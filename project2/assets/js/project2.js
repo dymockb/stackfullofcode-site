@@ -728,6 +728,224 @@ function createEmployeeModalContent(){
 	
 };
 
+
+function editEmployeeModalContent(){
+	
+	let newEmployeeFieldsObj = {};
+	let listOfLocationsUpdated = [];	
+	let listOfDepartmentsUpdated = [];
+	
+	$.ajax({
+	url: "assets/php/getAllLocations.php",
+	type: "GET",
+	dataType: "json",
+	data: {},
+	success: function (result) {
+		
+			console.log('all locations create employee ',result.data);
+			
+			//let locationsChangeObj = {};
+			
+			
+			for (let l = 0; l < result.data.length; l ++) {
+				listOfLocationsUpdated.push(result.data[l].name)
+				//locationsChangeObj[result.data[l].name] = result.data[l].id;
+				locationsDropDownObj[result.data[l].name] = result.data[l].id;
+			}
+
+			for (const [key, value] of Object.entries(blankEmployeeObj)) {
+				
+				if (key == 'firstName') {
+					newEmployeeFieldsObj[key] = document.createElement('h2');
+				} else if (key == 'lastName') {
+					newEmployeeFieldsObj[key] = document.createElement('h2');
+				} else if (key == 'email') {
+					newEmployeeFieldsObj[key] = document.createElement('h3');
+				} else if (key == 'jobTitle') {
+					newEmployeeFieldsObj[key] = document.createElement('h2');
+				} else if (key == 'department') {
+					newEmployeeFieldsObj[key] = document.createElement('h2');
+				} else if (key == 'locationName') {
+					newEmployeeFieldsObj[key] = document.createElement('h3');
+				} else {
+					newEmployeeFieldsObj[key] = document.createElement('p');
+					newEmployeeFieldsObj[key].setAttribute('class', 'display-none-field');
+				}
+			
+			}
+	
+			console.log('listoflocationsupdated',listOfLocationsUpdated);
+			//console.log('locationchangeobj', locationsChangeObj);
+			
+			for (const [key, value] of Object.entries(newEmployeeFieldsObj)) {
+				
+				let inputField;
+				//if (key == 'locationName' || key == 'department'){
+				if (key == 'locationName'){
+					
+					if (key == 'locationName') {
+						inputField = document.createElement('select');
+						inputField.setAttribute('required', '');
+						inputField.setAttribute('class', 'ui fluid dropdown');
+						inputField.setAttribute('id', 'location-dropdown');
+						
+						let locationSelectOption = document.createElement('option');
+						locationSelectOption.setAttribute('disabled', '');
+						locationSelectOption.setAttribute('value', '');
+						locationSelectOption.setAttribute('selected', '');
+						locationSelectOption.innerHTML = 'choose a location';
+						
+						
+						inputField.appendChild(locationSelectOption);
+						
+						for (let lc = 0; lc < listOfLocationsUpdated.length; lc ++) {
+													
+							let locationChoice = document.createElement('option');
+							locationChoice.setAttribute('value', listOfLocationsUpdated[lc]);
+							locationChoice.innerHTML = listOfLocationsUpdated[lc];
+							//locationChoice.setAttribute('placeholder-id', locationsChangeObj[listOfLocationsUpdated[lc]]);
+							locationChoice.setAttribute('placeholder-id', locationsDropDownObj[listOfLocationsUpdated[lc]]);
+							inputField.appendChild(locationChoice);
+							
+						}
+
+					} 
+					
+					
+					/*
+					
+					else if (key == 'department') {
+						
+						inputField = document.createElement('select');
+						inputField.setAttribute('required', '');
+						inputField.setAttribute('class', 'ui fluid dropdown');
+						inputField.setAttribute('id', 'department-dropdown');
+						
+						let departmentSelectOption = document.createElement('option');
+						departmentSelectOption.setAttribute('disabled', '');
+						departmentSelectOption.setAttribute('value', '');
+						departmentSelectOption.setAttribute('selected', '');
+						departmentSelectOption.innerHTML = 'choose a department';
+
+						let departmentChoice = document.createElement('option');
+						departmentChoice.innerHTML = 'choice';
+
+						inputField.appendChild(departmentSelectOption);
+						inputField.appendChild(departmentChoice);
+
+					}
+					
+					*/
+					
+					
+				//} else {
+				} else if ( key != 'department') {
+					
+					inputField = document.createElement('input');
+					inputField.setAttribute('autocomplete', 'off');
+
+					if (key == 'email') {
+						inputField.setAttribute('type', 'email');			
+					} else {
+						inputField.setAttribute('type', 'text');			
+					}
+					
+					if (key == 'firstName' || key == 'lastName') {
+						inputField.setAttribute('required', '');
+					}			
+
+					inputField.setAttribute('id', `create-employee-${key}-field`);
+					inputField.setAttribute('placeholder', key);
+					inputField.setAttribute('field-name', key);
+					
+				}
+
+				if (key != 'department'){
+					newEmployeeFieldsObj[key].appendChild(inputField);
+				}
+				
+				if (key == 'firstName') {
+					document.getElementById('employee-modal-view-fields').appendChild(newEmployeeFieldsObj[key]);
+				}
+			
+			}	
+
+			for (const [key, value] of Object.entries(newEmployeeFieldsObj)) {
+				
+				if (key != 'firstName') {
+						document.getElementById('employee-modal-view-fields').appendChild(newEmployeeFieldsObj[key]);
+				}
+			}
+			
+			let locationDropDown = document.getElementById('location-dropdown');
+			
+			locationDropDown.addEventListener('change', function(e){
+				
+				console.log('change');
+				console.log(e.target.value);
+				
+						$.ajax({
+						url: "assets/php/departmentsChange.php",
+						type: "GET",
+						dataType: "json",
+						data: {
+							locationID: locationsDropDownObj[e.target.value]	
+						},
+						success: function (result) {
+							
+								console.log('departments change ',result.data);
+								
+								let inputField;
+								
+							
+								inputField = document.createElement('select');
+								inputField.setAttribute('required', '');
+								inputField.setAttribute('class', 'ui fluid dropdown');
+								inputField.setAttribute('id', 'department-dropdown');
+								
+								let departmentSelectOption = document.createElement('option');
+								departmentSelectOption.setAttribute('disabled', '');
+								departmentSelectOption.setAttribute('value', '');
+								departmentSelectOption.setAttribute('selected', '');
+								departmentSelectOption.innerHTML = 'choose a department';
+								inputField.appendChild(departmentSelectOption);
+								
+								for (dc = 0; dc < result.data.length; dc ++) {
+									let departmentChoice = document.createElement('option');
+									departmentChoice.innerHTML = result.data[dc].name;
+									departmentChoice.setAttribute('value', result.data[dc].name);
+									inputField.appendChild(departmentChoice);
+									
+									departmentsDropDownObj[result.data[dc].name] = result.data[dc].id;
+								}
+								
+								if (document.getElementById('department-dropdown')) {
+									document.getElementById('department-dropdown').remove();
+								}
+								document.getElementById('employee-modal-view-fields').appendChild(inputField);
+						
+						
+
+						},
+						error: function (jqXHR, textStatus, errorThrown) {
+								console.log('error');
+								console.log(textStatus);
+								console.log(errorThrown);
+							},
+						});
+			});
+			
+
+	},
+	error: function (jqXHR, textStatus, errorThrown) {
+			console.log('error');
+			console.log(textStatus);
+			console.log(errorThrown);
+		},
+	});
+	
+};
+
 function selectEmployeeFunctionality(){
 	if ($('#mobile-search-options').css('display') == 'none') {
 		$('tr:not(#first-employee-row)').mouseover(function(){
@@ -871,7 +1089,27 @@ function viewDetailsBtnFunctionality(){
 		document.getElementById('close-employee-modal').setAttribute('style','display: inline');
 			
 		//$('.ui.modal').modal('show');
-		$('.ui.modal.employee-details-modal').modal('show');
+		//$('.ui.modal.employee-details-modal').modal('show');
+		
+		$('.ui.modal.employee-details-modal').modal({
+		title: 'Employee Details',
+		closable: false,
+		onDeny: function(){
+			console.log('deny');
+			//return false;
+		},
+		onApprove: function (){
+		//document.getElementById('submit-create-employee').click();
+		console.log('approve');
+		},
+		onHidden: function(){	
+			console.log('close view employee modal');
+			//document.getElementById('employee-modal-create-fields').innerHTML = "";
+			closeModal();
+		}	
+	}).modal('show');
+		
+		
 	
 		if (employeeDetailsVisibility == 0) {
 			renderEmployee(employeePropertiesObj);
@@ -887,7 +1125,10 @@ function viewDetailsBtnFunctionality(){
 	
 }
 
+
+//original edit employee button click
 $('#edit-employee-fields-btn').click(function(){
+	
 	
 	let employeeDetails = JSON.parse(this.getAttribute('employee-details'));
 
@@ -895,18 +1136,36 @@ $('#edit-employee-fields-btn').click(function(){
 				
 	for (const [key, value] of Object.entries(employeeDetails)) {
 
-		document.getElementById(`employee-${key}-modal`).setAttribute('value',value);
+		//document.getElementById(`employee-${key}-modal`).setAttribute('value',value);
 				
 	}
 
 	document.getElementById('employee-modal-view-fields').setAttribute('style','display: inherit');
+	document.getElementById('submit-edit-employee').setAttribute('style','display: inline');
+
 				
 	//document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
 	//document.getElementById('delete-employee-btn').setAttribute('employee-details', employeeDetails);
 
 	
 	//$('.ui.modal').modal('show');
-	$('.ui.modal.employee-details-modal').modal('show');
+	$('.ui.modal.employee-details-modal').modal({
+		title: 'Edit Employee',
+		closable: false,
+		onDeny: function(){
+			console.log('deny');
+			//return false;
+		},
+		onApprove: function (){
+		//document.getElementById('submit-create-employee').click();
+		console.log('approve');
+		},
+		onHidden: function(){	
+			console.log('close view employee modal');
+			//document.getElementById('employee-modal-create-fields').innerHTML = "";
+			closeModal();
+		}	
+	}).modal('show');
 
 	
 	$('#edit-employee-modal-btn').click();
@@ -914,6 +1173,210 @@ $('#edit-employee-fields-btn').click(function(){
 	//$(".employee-editable-field").removeAttr('readonly');
 	//$('.employee-editable-field').attr('style', 'border-color: blue');
 
+});
+
+
+
+/*
+$('#edit-employee-fields-btn').click(function(){
+	
+	
+	editEmployeeModalContent();
+	
+	document.getElementById('employee-modal-view-fields').setAttribute('style','display: inherit');
+	document.getElementById('submit-edit-employee').setAttribute('style', 'display: inline');
+
+	let editEmployeeForm = document.getElementById('employee-modal-view-fields');
+	
+	editEmployeeForm.addEventListener( "submit", function ( event ) {
+	
+    event.preventDefault();
+
+		//let FD = new FormData (createEmployeeForm);
+    //sendData();
+		
+		//console.log('submitted', FD.values);
+
+		console.log('elements', editEmployeeForm.elements);
+		
+		if (editEmployeeForm.elements) {
+			//document.getElementById('submit-create-employee').setAttribute('class', 'ui primary approve button');
+			//document.getElementById('submit-create-employee').setAttribute('style', 'display: inline');
+			document.getElementById('close-employee-modal').click();
+			//document.getElementById('employee-modal-create-fields').innerHTML = "";
+			//document.getElementById('try-to-submit').setAttribute('style', 'display: none');
+		}
+		
+		editEmployeeDataObj = {
+			firstName: '',
+			lastName: '',
+			jobTitle: '',
+			email: '',
+			departmentID: '',
+			locationName: '',
+			locationID: '',
+			department: '',
+			id: ''
+	}
+		console.log('LOCATIONS OBJ', locationsObj);
+		
+		for (let e = 0; e < editEmployeeForm.elements.length; e ++) {
+		
+			if (editEmployeeForm.elements[e].tagName == 'INPUT') {
+				console.log(editEmployeeForm.elements[e].placeholder, editEmployeeForm.elements[e].value);
+				if (editEmployeeForm.elements[e].value) {
+				editEmployeeDataObj[editEmployeeForm.elements[e].placeholder] = editEmployeeForm.elements[e].value;
+				}
+			} else if (editEmployeeForm.elements[e].tagName == 'SELECT'){
+				
+					if (editEmployeeForm.elements[e].id == 'location-dropdown') {
+
+						console.log('location dropdown value', editEmployeeForm.elements[e].value);
+						editEmployeeDataObj['locationName'] = editEmployeeForm.elements[e].value;
+						editEmployeeDataObj['locationID'] = locationsDropDownObj[editEmployeeForm.elements[e].value];
+				
+					} else if (createEmployeeForm.elements[e].id == 'department-dropdown'){
+						
+						editEmployeeDataObj['departmentID'] = departmentsDropDownObj[editEmployeeForm.elements[e].value];
+						editEmployeeDataObj['department'] = editEmployeeForm.elements[e].value;
+					}
+				
+				
+				}
+
+		}
+		
+		console.log(editEmployeeDataObj);
+		
+		$.ajax({
+		url: "assets/php/insertEmployee.php",
+		type: "GET",
+		dataType: "json",
+		data: createEmployeeDataObj,
+		success: function (result) {
+			
+				console.log('insertEmployee ',result.data);
+				console.log('orderby', orderBy, 'lastSearch', lastSearch);
+				runSearch(orderBy,'');
+
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+				console.log('error');
+				console.log(textStatus);
+				console.log(errorThrown);
+			},
+		});
+		
+		
+			
+	});
+	
+
+	//$('#employee-details-modal').modal({
+	$('.ui.modal.employee-details-modal').modal({
+		
+		title: 'Edit Employee',
+		closable: false,
+		onDeny: function(){
+			console.log('deny');
+			//return false;
+		},
+		onApprove: function (){
+		//document.getElementById('submit-create-employee').click();
+		console.log('approve');
+		},
+		onHidden: function(){	
+			console.log('close view employee modal');
+			document.getElementById('employee-modal-create-fields').innerHTML = "";
+			closeModal();
+		}	
+		}).modal('show');
+
+	
+});
+
+*/
+
+editEmployeeForm = document.getElementById('employee-modal-view-fields');
+
+editEmployeeForm.addEventListener( "submit", function ( event ) {
+
+	event.preventDefault();
+	
+	console.log('view employee form submitted');
+
+	console.log('elements', editEmployeeForm.elements);
+	
+	/*
+	if (editEmployeeForm.elements) {
+
+		document.getElementById('close-employee-modal').click();
+
+	}
+	
+	createEmployeeDataObj = {
+		firstName: '',
+		lastName: '',
+		jobTitle: '',
+		email: '',
+		departmentID: '',
+		locationName: '',
+		locationID: '',
+		department: '',
+		id: ''
+}
+	console.log('LOCATIONS OBJ', locationsObj);
+	
+	for (let e = 0; e < createEmployeeForm.elements.length; e ++) {
+	
+		if (createEmployeeForm.elements[e].tagName == 'INPUT') {
+			console.log(createEmployeeForm.elements[e].placeholder, createEmployeeForm.elements[e].value);
+			if (createEmployeeForm.elements[e].value) {
+			createEmployeeDataObj[createEmployeeForm.elements[e].placeholder] = createEmployeeForm.elements[e].value;
+			}
+		} else if (createEmployeeForm.elements[e].tagName == 'SELECT'){
+			
+				if (createEmployeeForm.elements[e].id == 'location-dropdown') {
+
+					console.log('location dropdown value', createEmployeeForm.elements[e].value);
+					createEmployeeDataObj['locationName'] = createEmployeeForm.elements[e].value;
+					createEmployeeDataObj['locationID'] = locationsDropDownObj[createEmployeeForm.elements[e].value];
+			
+				} else if (createEmployeeForm.elements[e].id == 'department-dropdown'){
+					
+					createEmployeeDataObj['departmentID'] = departmentsDropDownObj[createEmployeeForm.elements[e].value];
+					createEmployeeDataObj['department'] = createEmployeeForm.elements[e].value;
+				}
+			
+			
+			}
+
+	}
+	
+	console.log(createEmployeeDataObj);
+	
+	
+	$.ajax({
+	url: "assets/php/insertEmployee.php",
+	type: "GET",
+	dataType: "json",
+	data: createEmployeeDataObj,
+	success: function (result) {
+		
+			console.log('insertEmployee ',result.data);
+			console.log('orderby', orderBy, 'lastSearch', lastSearch);
+			runSearch(orderBy,'');
+
+	},
+	error: function (jqXHR, textStatus, errorThrown) {
+			console.log('error');
+			console.log(textStatus);
+			console.log(errorThrown);
+		},
+	});
+	*/
+	
+		
 });
 
 $('#create-employee-btn').click(function(){
