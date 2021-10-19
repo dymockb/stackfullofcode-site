@@ -236,6 +236,10 @@
     display: inline;
 	}
 	
+	.default.text {
+		color: black !important;
+	}
+	
 	@media only screen and (max-width: 767.98px) {
 		
 		#employee-details-field, #employee-details-column, #pc-search-column, .employee-btn {
@@ -572,6 +576,7 @@
       <th>Employee Directory</th>
       <th id="employee-details-column" >
 			<button id="create-employee-btn" class="ui button">Create Employee</button>
+			<button id="create-employee-orig" class="ui button">Orig</button>
 			</th>
     </thead>
 
@@ -637,25 +642,55 @@
     </div>
     <div class="scrolling image content">
       <div class="description">					
-				<div class="ui segment">
+				
 					<div class="content">
 						<form autocomplete="off" id="employee-modal-view-fields">
 						
 						
 								<div class="ui form">
-									<div class="fields">
-										<div class="field">
-											<label>First name</label>
-											<input type="text" placeholder="First Name">
+									<div class="two fields">
+										<div class="required field">
+											<label>Location</label>
+											<div class="ui selection dropdown">
+												<div class="default text">Location 1</div>
+												<i class="dropdown icon"></i>
+												<input value="Location 1" fieldname="location" type="hidden" name="location">
+												<div class="menu">
+													<div class="item" data-value="Location 1">Location 1</div>
+													<div class="item" data-value="Location 2">Location 2</div>
+												</div>
+											</div>
 										</div>
-										<div class="field">
-											<label>Middle name</label>
-											<input type="text" placeholder="Middle Name">
+										<div class="required field">
+											<label>Department</label>
+											<div class="ui selection dropdown">
+												<div class="default text">Department 1</div>
+												<i class="dropdown icon"></i>
+												<input value="Department 1" fieldname="department" type="hidden" name="department">
+												<div class="menu">
+													<div class="item" data-value="Department 1">Department 1</div>
+													<div class="item" data-value="Department 2">Department 2</div>
+												</div>
+											</div>
 										</div>
-										<div class="field">
-											<label>Last name</label>
-											<input type="text" placeholder="Last Name">
+									</div>
+									<div class="two fields">
+										<div class="required field">
+											<label>First Name</label>
+											<input required value="firstName" fieldname="firstName"  type="text" placeholder="firstName">
 										</div>
+										<div class="required field">
+											<label>Last Name</label>
+											<input required value="lastName" fieldname="lastName" type="text" placeholder="lastName">
+										</div>
+									</div>
+									<div class="field">
+										<label>Job Title</label>
+										<input fieldname="jobTitle" type="text" placeholder="jobTitle">
+									</div>
+									<div class="required field">
+										<label>email</label>
+										<input required value="email" fieldname="email" type="email" placeholder="email">
 									</div>
 								</div>
 						
@@ -669,13 +704,13 @@
 
 						<button id="edit-employee-modal-btn">Edit</button>		
 					</div>
-				</div>
+				
       </div>
     </div>
 
 
     <div class="actions">
-	 		<button form="employee-modal-view-fields" id="submit-edit-employee" class="ui primary approve button">
+	 		<button form="employee-modal-view-fields" id="submit-edit-employee" class="ui primary button">
       Edit Details 
 			<i class="right chevron icon"></i>			
 			</button>
