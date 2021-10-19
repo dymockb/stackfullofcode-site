@@ -730,7 +730,10 @@ function createEmployeeModalContentORIGINAL(){
 };
 
 
-function buildForm(listOfObjs){	
+function buildForm(listOfObjs, locationOnly){	
+
+	console.log('locationonly', locationOnly);
+	
 	let uiForm = document.createElement('div');
 	uiForm.setAttribute('class', 'ui form');
 	
@@ -759,8 +762,11 @@ function buildForm(listOfObjs){
 	
 	let inputField = document.createElement('input');
 	
-	let menuDiv = document.createElement('div');
-	menuDiv.setAttribute('class', 'menu');
+	let locationMenuDiv = document.createElement('div');
+	locationMenuDiv.setAttribute('class', 'menu');
+
+	let departmentMenuDiv = document.createElement('div');
+	departmentMenuDiv.setAttribute('class', 'menu');
 	
 	let dataValue = document.createElement('div');
 	dataValue.setAttribute('class', 'item');
@@ -786,26 +792,48 @@ function buildForm(listOfObjs){
 		return outerNode
 	}
 	
-	function createDropDown(mainTitle, placeholder, optionsObj, fieldName, fieldID){
+	function createDropDown(mainTitle, placeholder, optionsObj, fieldName, fieldID, emptyDepts){
+		
+		console.log('emptyDepts', emptyDepts);
 		
 		let outerNode = requiredField.cloneNode(true);
 		let heading = label.cloneNode(true);
+		heading.innerHTML = mainTitle;
+		
 		let dropdown = selectionDropdown.cloneNode(true);
 		let selected = defaultText.cloneNode(true);
 		let icon = dropdownIcon.cloneNode(true);
 		let input = inputField.cloneNode(true);
-		let menu = menuDiv.cloneNode(true);
+		let menu;
+
+		if (emptyDepts) {
+			menu = locationMenuDiv.cloneNode(true);
 		
-		heading.innerHTML = mainTitle;
-		
-		for (let loc = 0; loc < listOfObjs.length; loc ++){
+			for (let loc = 0; loc < listOfObjs.length; loc ++){
+				
+				let oneOption = dataValue.cloneNode(true);
+				let outputValue = listOfObjs[loc].id;
+				//let outputValue = `{${fieldID}: ${value}, ${fieldName}: ${key}}`;
+				oneOption.innerHTML = listOfObjs[loc].name;
+				oneOption.setAttribute('data-value', outputValue);
+				menu.appendChild(oneOption);
+				
+			}
 			
-			let oneOption = dataValue.cloneNode(true);
-			let outputValue = listOfObjs[loc].id;
-			//let outputValue = `{${fieldID}: ${value}, ${fieldName}: ${key}}`;
-			oneOption.innerHTML = listOfObjs[loc].name;
-			oneOption.setAttribute('data-value', outputValue);
-			menu.appendChild(oneOption);
+		} else {
+			
+			menu = departmentMenuDiv.cloneNode(true);
+		
+			for (let loc = 0; loc < listOfObjs.length; loc ++){
+				
+				let oneOption = dataValue.cloneNode(true);
+				let outputValue = listOfObjs[loc].id;
+				//let outputValue = `{${fieldID}: ${value}, ${fieldName}: ${key}}`;
+				oneOption.innerHTML = listOfObjs[loc].name;
+				oneOption.setAttribute('data-value', outputValue);
+				menu.appendChild(oneOption);
+				
+			}
 			
 		}
 		
@@ -833,7 +861,7 @@ function buildForm(listOfObjs){
 		dropdown.appendChild(icon);
 		dropdown.appendChild(input);
 		dropdown.appendChild(menu);		
-		
+
 		outerNode.appendChild(heading);
 		outerNode.appendChild(dropdown)
 		
@@ -842,21 +870,14 @@ function buildForm(listOfObjs){
 	
 	let twoCategories = twoFields.cloneNode(true);
 	
-	twoCategories.appendChild(createDropDown('Location', 'Select a location', listOfObjs, 'locationName', 'locationID'));
+	let tryThis = createDropDown('Department', 'Select a department', [{'name': 'blank', 'id': 'blank'}], 'department', 'departmentID', emptyDepts = false).cloneNode(true);
 	
-	//twoCategories.appendChild(createDropDown('Location', 'Select a location', {'loc1': 1, 'loc2' : 2, 'loc3' : 3}, 'locationName', 'locationID'));
-	
-	let deptObjs =  []
-	let deptObj = {
-		'name': 'no data',
-		'id': '0'
+	if (locationOnly) {
+	twoCategories.appendChild(createDropDown('Location', 'Select a location', listOfObjs, 'locationName', 'locationID', emptyDepts = true));
+	twoCategories.appendChild(tryThis);
 	}
 	
-	deptObjs.push(deptObj);
-	
-	console.log('deptobjs', deptObjs);
-	
-	twoCategories.appendChild(createDropDown('Department', 'Select a department', deptObjs, 'department', 'departmentID'));
+	//twoCategories.appendChild(createDropDown('Department', 'Select a department', listOfObjs, 'department', 'departmentID'));
 	
 	let nameCategories = twoFields.cloneNode(true);
 	
@@ -921,7 +942,9 @@ function createEmployeeModalContent(){
 				listOfLocationsUpdated.push(result.data[loc].name);
 			}
 			
-			buildForm(result.data);
+			
+			
+			buildForm(result.data, locationOnly = true);
 			
 			let locationDropDown = document.getElementById('location-dropdown');
 			
