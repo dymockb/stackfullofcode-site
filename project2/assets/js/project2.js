@@ -784,7 +784,7 @@ function createEmployeeModalContent(){
 	let dropdownOptions = ['option1', 'option2', 'option3'];
 	
 	
-	function createDropDown(mainTitle, placeholder, listOfOptions){
+	function createDropDown(mainTitle, placeholder, optionsObj, fieldName, fieldID){
 		
 		let outerNode = requiredField.cloneNode(true);
 		let heading = label.cloneNode(true);
@@ -796,14 +796,17 @@ function createEmployeeModalContent(){
 		
 		heading.innerHTML = mainTitle;
 		
-		for (let opt = 0; opt < listOfOptions.length; opt ++) {				
+		for (const [key, value] of Object.entries(optionsObj)) {
+		
 			let oneOption = dataValue.cloneNode(true);
-			oneOption.innerHTML = listOfOptions[opt];
+			oneOption.innerHTML = key;
 			menu.appendChild(oneOption);
-		}
+
+		}	
 
 		input.setAttribute('value', '');
-		input.setAttribute('fieldname', 'fieldname');
+		input.setAttribute('fieldname', fieldName);
+		input.setAttribute('fieldID', fieldID);
 		input.setAttribute('type', 'hidden');
 		input.setAttribute('name', 'category');
 
@@ -819,8 +822,8 @@ function createEmployeeModalContent(){
 		return outerNode;
 	}
 	
-	uiForm.appendChild(createDropDown('Location', 'Select a location', ['1', '2', '3']));
-	uiForm.appendChild(createDropDown('Department', 'Select a department', ['1', '2', '3']));
+	uiForm.appendChild(createDropDown('Location', 'Select a location', {'loc1': 1, 'loc2' : 2, 'loc3' : 3}, 'locationName'));
+uiForm.appendChild(createDropDown('Department', 'Select a department', {'dept1': 1, 'dept2': 2, 'dept3' : 3}, 'department'));
 	
 	document.getElementById('employee-modal-create-fields').appendChild(uiForm);
 	
@@ -1582,7 +1585,7 @@ $('#edit-employee-fields-btn').click(function(){
 
 let editEmployeeForm = document.getElementById('employee-modal-view-fields');
 
-editEmployeeForm.addEventListener( "submit", function ( event ) {
+editEmployeeForm.addEventListener("submit", function ( event ) {
 
 	event.preventDefault();
 	
@@ -1675,31 +1678,24 @@ editEmployeeForm.addEventListener( "submit", function ( event ) {
 
 let createEmployeeForm = document.getElementById('employee-modal-create-fields');
 
-createEmployeeForm.addEventListener( "submit", function ( event ) {
+createEmployeeForm.addEventListener("submit", function ( event ) {
 
 	event.preventDefault();
-
-	//let FD = new FormData (createEmployeeForm);
-	//sendData();
-	
-	//console.log('submitted', FD.values);
 
 	console.log('elements', createEmployeeForm.elements);
 	
 	if (createEmployeeForm.elements) {
-		//document.getElementById('submit-create-employee').setAttribute('class', 'ui primary approve button');
-		//document.getElementById('submit-create-employee').setAttribute('style', 'display: inline');
+
 		document.getElementById('close-employee-modal').click();
-		//document.getElementById('employee-modal-create-fields').innerHTML = "";
-		//document.getElementById('try-to-submit').setAttribute('style', 'display: none');
+
 	}
 	
 	createEmployeeDataObj = {
-		firstName: '',
-		lastName: '',
-		jobTitle: '',
-		email: '',
-		departmentID: '',
+		firstName: '', //
+		lastName: '',		//
+		jobTitle: '', //
+		email: '', //
+		departmentID: '', //
 		locationName: '',
 		locationID: '',
 		department: '',
@@ -1709,6 +1705,13 @@ createEmployeeForm.addEventListener( "submit", function ( event ) {
 	
 	for (let e = 0; e < createEmployeeForm.elements.length; e ++) {
 	
+		if (createEmployeeForm.elements[e].tagName != 'BUTTON') {
+			console.log(createEmployeeForm.elements[e].getAttribute('fieldname'), createEmployeeForm.elements[e].value);
+		
+			createEmployeeDataObj[createEmployeeForm.elements[e].getAttribute('fieldname')] = createEmployeeForm.elements[e].value;
+			
+		}
+		/*
 		if (createEmployeeForm.elements[e].tagName == 'INPUT') {
 			console.log(createEmployeeForm.elements[e].placeholder, createEmployeeForm.elements[e].value);
 			if (createEmployeeForm.elements[e].value) {
@@ -1730,11 +1733,13 @@ createEmployeeForm.addEventListener( "submit", function ( event ) {
 			
 			
 			}
+		*/
 
 	}
 	
 	console.log(createEmployeeDataObj);
 	
+	/*
 	$.ajax({
 	url: "assets/php/insertEmployee.php",
 	type: "GET",
@@ -1753,6 +1758,8 @@ createEmployeeForm.addEventListener( "submit", function ( event ) {
 			console.log(errorThrown);
 		},
 	});
+	
+	*/
 	
 	
 		
