@@ -736,98 +736,6 @@ function createEmployeeModalContent(){
 	let listOfLocationsUpdated = [];	
 	let listOfDepartmentsUpdated = [];
 	
-	let newFormObj = {};
-	
-	let uiForm = document.createElement('div');
-	uiForm.setAttribute('class', 'ui form');
-	newFormObj['uiFormm'] = uiForm;
-	
-	let twoFields = document.createElement('div');
-	twoFields.setAttribute('class', 'two fields');
-	newFormObj['twoFields'] = twoFields;
-	
-	let field = document.createElement('div');
-	field.setAttribute('class', 'field');
-	newFormObj['field'] = field;
-	
-	let requiredField = document.createElement('div');
-	requiredField.setAttribute('class', 'required field');
-	newFormObj['requiredField'] = requiredField;
-	
-	let label = document.createElement('label');
-	label.innerHTML = 'MENU';
-	newFormObj['label'] = label;
-
-	let  selectionDropdown = document.createElement('div')
-	selectionDropdown.setAttribute('class', 'ui selection dropdown');
-	newFormObj['selectionDropdown'] = selectionDropdown;
-	
-	let defaultText = document.createElement('div');
-	defaultText.setAttribute('class', 'default text');
-	defaultText.innerHTML = 'Default Text';
-	newFormObj['defaultText'] = defaultText;
-	
-	let dropdownIcon = document.createElement('i');
-	dropdownIcon.setAttribute('class', 'dropdown icon');
-	newFormObj['dropdownIcon'] = dropdownIcon;
-	
-	let inputField = document.createElement('input');
-	newFormObj['inputField'] = inputField;
-	
-	let menuDiv = document.createElement('div');
-	menuDiv.setAttribute('class', 'menu');
-	newFormObj['menuDiv'] = menuDiv
-	
-	let dataValue = document.createElement('div');
-	dataValue.setAttribute('class', 'item');
-		
-	let dropdownOptions = ['option1', 'option2', 'option3'];
-	
-	
-	function createDropDown(mainTitle, placeholder, listOfOptions){
-		
-		let outerNode = requiredField.cloneNode(true);
-		let heading = label.cloneNode(true);
-		let dropdown = selectionDropdown.cloneNode(true);
-		let selected = defaultText.cloneNode(true);
-		let icon = dropdownIcon.cloneNode(true);
-		let input = inputField.cloneNode(true);
-		let menu = menuDiv.cloneNode(true);
-		
-		heading.innerHTML = mainTitle;
-		
-		for (let opt = 0; opt < listOfOptions.length; opt ++) {				
-			let oneOption = dataValue.cloneNode(true);
-			oneOption.innerHTML = listOfOptions[opt];
-			menu.appendChild(oneOption);
-		}
-
-		input.setAttribute('value', '');
-		input.setAttribute('fieldname', 'fieldname');
-		input.setAttribute('type', 'hidden');
-		input.setAttribute('name', 'category');
-
-		selected.innerHTML = placeholder;
-		dropdown.appendChild(selected);
-		dropdown.appendChild(icon);
-		dropdown.appendChild(input);
-		dropdown.appendChild(menu);		
-		
-		outerNode.appendChild(heading);
-		outerNode.appendChild(dropdown)
-		
-		return outerNode;
-	}
-	
-	uiForm.appendChild(createDropDown('Location', 'Select a location', ['1', '2', '3']));
-	uiForm.appendChild(createDropDown('Department', 'Select a department', ['1', '2', '3']));
-	
-	document.getElementById('employee-modal-create-fields').appendChild(uiForm);
-	
-	$('.selection.dropdown')
-	.dropdown();
-	
-	/*
 	$.ajax({
 	url: "assets/php/getAllLocations.php",
 	type: "GET",
@@ -904,6 +812,34 @@ function createEmployeeModalContent(){
 
 					} 
 					
+					
+					/*
+					
+					else if (key == 'department') {
+						
+						inputField = document.createElement('select');
+						inputField.setAttribute('required', '');
+						inputField.setAttribute('class', 'ui fluid dropdown');
+						inputField.setAttribute('id', 'department-dropdown');
+						
+						let departmentSelectOption = document.createElement('option');
+						departmentSelectOption.setAttribute('disabled', '');
+						departmentSelectOption.setAttribute('value', '');
+						departmentSelectOption.setAttribute('selected', '');
+						departmentSelectOption.innerHTML = 'choose a department';
+
+						let departmentChoice = document.createElement('option');
+						departmentChoice.innerHTML = 'choice';
+
+						inputField.appendChild(departmentSelectOption);
+						inputField.appendChild(departmentChoice);
+
+					}
+					
+					*/
+					
+					
+				//} else {
 				} else if ( key != 'department') {
 					
 					inputField = document.createElement('input');
@@ -1008,7 +944,7 @@ function createEmployeeModalContent(){
 			console.log(errorThrown);
 		},
 	});
-	*/
+	
 };
 
 
