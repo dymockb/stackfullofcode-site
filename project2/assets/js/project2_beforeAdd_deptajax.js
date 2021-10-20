@@ -833,13 +833,10 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 		let icon = dropdownIcon.cloneNode(true);
 		let input = inputField.cloneNode(true);
 		if (editOrCreate == 'edit') {
-			console.log('make edit dropdown');
 				if (mainTitle.includes('epartment')) {
-					console.log('dept edit value', detailsForEditForm.departmentID);
-					input.setAttribute('value', detailsForEditForm.departmentID);
+					input.setAttribute('value', `${detailsForEditForm.department}`);
 				} else if (mainTitle.includes('ocation')) {
-					console.log('loc edit value', detailsForEditForm.locationID);
-					input.setAttribute('value', detailsForEditForm.locationID);
+					input.setAttribute('value', `${detailsForEditForm.locationName}`);
 				}
 			}
 		
@@ -871,9 +868,8 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 
 		}
 		*/
-		if(editOrCreate == 'create'){
-			input.setAttribute('value', '');
-		}
+		
+		input.setAttribute('value', '');
 		input.setAttribute('fieldname', fieldID);
 		input.setAttribute('fieldID', fieldID);
 		input.setAttribute('type', 'hidden');
@@ -909,7 +905,7 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 	let depNames = [];
 	let depIDs = [];
 	twoCategories.appendChild(createDropDown('Department', 'Select a department', depNames, depIDs, 'department', 'departmentID', 'department-dropdown'));
-		
+	
 	let nameCategories = twoFields.cloneNode(true);
 	
 	if (editOrCreate == 'create') {
@@ -972,7 +968,7 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 		type: "GET",
 		dataType: "json",
 		data: {
-			locationID: detailsForEditForm.locationID
+			locationID: e.target.value
 		},
 		success: function (result) {
 
@@ -980,7 +976,7 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 			
 				console.log('departments for edit ',result.data);
 
-				
+				/*
 				for (let dc = 0; dc < result.data.length; dc ++ ) {
 
 					let oneOption = document.createElement('div');
@@ -990,19 +986,17 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 					oneOption.innerHTML = result.data[dc].name;
 					oneOption.setAttribute('data-value', outputValue);
 					
-					if (detailsForEditForm.departmentID != outputValue) {
-						document.getElementById('department-dropdown-menu').appendChild(oneOption);
-					}
+					document.getElementById('department-dropdown-menu').appendChild(oneOption);
+					
 
 					
 				}
 
-				//$('.selection.dropdown').dropdown();								
+				$('.selection.dropdown').dropdown();								
 				
-				//document.getElementById('department-dropdown-placeholder-text').innerHTML = 'Select a department';
-				//document.getElementById('disabled-departments-dropdown').setAttribute('class', 'required field');
-				
-				
+				document.getElementById('department-dropdown-placeholder-text').innerHTML = 'Select a department';
+				document.getElementById('disabled-departments-dropdown').setAttribute('class', 'required field');
+				*/
 				if (dropDownClicked == 0) {
 					$('.selection.dropdown').click(function (){
 						console.log('dropdown clicked', dropDownClicked);
@@ -1010,7 +1004,7 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 					});
 					dropDownClicked ++;
 				}
-				
+
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
 				console.log('error');
@@ -1019,14 +1013,6 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 			},
 		});
 		
-	}
-	
-	if (dropDownClicked == 0) {
-		$('.selection.dropdown').click(function (){
-			console.log('dropdown clicked', dropDownClicked);
-			$('.selection.dropdown').dropdown();		
-		});
-		dropDownClicked ++;
 	}
 
 }
@@ -1096,9 +1082,8 @@ function createEmployeeModalContent(editOrCreate, detailsForEditForm){
 								$('.selection.dropdown').dropdown();								
 								
 								document.getElementById('department-dropdown-placeholder-text').innerHTML = 'Select a department';
-								if (editOrCreate == 'create') {
-									document.getElementById('disabled-departments-dropdown').setAttribute('class', 'required field');
-								}
+								document.getElementById('disabled-departments-dropdown').setAttribute('class', 'required field');
+
 						},
 						error: function (jqXHR, textStatus, errorThrown) {
 								console.log('error');
@@ -1714,70 +1699,12 @@ editEmployeeForm.addEventListener("submit", function ( event ) {
 
 	event.preventDefault();
 	
-	console.log('edit employee form submitted');
+	console.log('view employee form submitted');
 	
-	//document.getElementById('close-employee-modal').click();
+	document.getElementById('close-employee-modal').click();
 
 	console.log('elements', editEmployeeForm.elements);
 	
-	if (editEmployeeForm.elements) {
-
-			document.getElementById('close-employee-modal').click();
-
-		}
-	
-	editEmployeeDataObj = {
-		firstName: '', //
-		lastName: '',		//
-		jobTitle: '', //
-		email: '', //
-		departmentID: '', //
-		locationName: '',
-		locationID: '',
-		department: '',
-		id: ''
-	}
-	//console.log('LOCATIONS OBJ', locationsObj);
-	
-	for (let e = 0; e < editEmployeeForm.elements.length; e ++) {
-	
-		if (editEmployeeForm.elements[e].tagName != 'BUTTON') {			
-			
-			//console.log('element', createEmployeeForm.elements[e], 'value', createEmployeeForm.elements[e].value);
-		
-			editEmployeeDataObj[editEmployeeForm.elements[e].getAttribute('fieldname')] = editEmployeeForm.elements[e].value;
-			
-		}
-
-	}
-	
-	console.log(editEmployeeDataObj);
-	
-	/*
-	$.ajax({
-	url: "assets/php/insertEmployee.php",
-	type: "GET",
-	dataType: "json",
-	data: createEmployeeDataObj,
-	success: function (result) {
-		
-			console.log('insertEmployee ',result.data);
-			console.log('orderby', orderBy, 'lastSearch', lastSearch);
-			employeeJustCreated = true;
-			runSearch(orderBy,'');
-
-	},
-	error: function (jqXHR, textStatus, errorThrown) {
-			console.log('error');
-			console.log(textStatus);
-			console.log(errorThrown);
-		},
-	});
-	
-	*/
-	
-	
-	/*
 	for (let elem = 0; elem < editEmployeeForm.elements.length; elem ++){
 		
 		if (editEmployeeForm.elements[elem].tagName != 'BUTTON') {
@@ -1785,7 +1712,6 @@ editEmployeeForm.addEventListener("submit", function ( event ) {
 		console.log(editEmployeeForm.elements[elem].getAttribute('fieldname'), editEmployeeForm.elements[elem].value);
 		}	
 	}
-	*/
 	
 	
 	/*
