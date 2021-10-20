@@ -240,8 +240,8 @@
 		color: black !important;
 	}
 	
-	.ui.raised.segment.column {
-		margin: 0;
+	.input[type="text"]:focus  {
+		border-color: #22242626;
 	}
 	
 	@media only screen and (max-width: 767.98px) {
@@ -272,6 +272,19 @@
 		
 		.employee-modal-btn {
 			display: inherit !important;
+		}
+		
+		hr {
+			margin-bottom: 2rem;
+		}
+		
+		.ui.grid > .column:not(.row) {
+			padding-top: 0.5rem; 
+			padding-bottom: 1rem;
+		}
+		
+		.ui.stackable.grid > .column:not(.row) {
+			padding: 0;
 		}
 
 	}
@@ -720,17 +733,58 @@
 
 						</form>
 
+
+															
 						<form autocomplete="off" id="manage-depts-and-locs-form">
 						
-							<div class="ui stackable three column relaxed grid">
+							<div class="ui stackable one column grid">
 								<div class="ui column">
-									<div class="ui raised segment">1</div>
-								</div>
-								<div class="ui column">
-									<div class="ui raised segment">1</div>
-								</div>
-								<div class="ui column">
-									<div class="ui raised segment">1</div>
+									<div class="ui raised segment">
+										<div class="ui one top attached black disabled button">
+										Location 1
+										</div>
+										<div class="ui attached segment">
+											<div class="ui form">
+												<div class="field">
+													<div class="ui stackable two column grid">
+														<div class="ui column">														
+															<input readonly value="departmentID" type="text" placeholder="department 1">
+														</div>
+														<div class="ui column">														
+															<div class="ui button disabled">Rename</div>
+															<div class="ui button disabled">Delete</div>
+														</div>
+													</div>
+													<hr>
+													<div class="ui stackable two column grid">
+														<div class="ui column">														
+															<input readonly value="departmentID" type="text" placeholder="department 2">
+														</div>
+														<div class="ui column">														
+															<div class="ui button">Rename</div>
+															<div class="ui button">Delete</div>
+														</div>
+													</div>
+													<hr>
+													<div class="ui stackable two column grid">
+														<div class="ui column">														
+															<input value="" type="text" placeholder="new department">
+														</div>
+														<div class="ui column">														
+															<div class="ui button disabled">Create new department</div>
+														</div>
+													</div>													
+												</div>
+											</div>
+										</div>
+										<div class="ui two bottom attached buttons">
+											<div class="ui button">Edit</div>
+											<div class="ui button">Delete</div>
+										</div>
+									</div>
+									<div class="ui raised segment">b</div>
+									<div class="ui raised segment">c</div>
+									<div class="ui raised segment">d</div>
 								</div>
 							</div>
 
