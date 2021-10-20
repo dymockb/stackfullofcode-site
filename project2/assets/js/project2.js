@@ -401,6 +401,11 @@ function departmentCheckboxFunctionality() {
 			onChecked: function(){
 				departmentsObj[this.name] = this.checked;
 				countOfCheckedDepts ++;
+				
+				if ((countOfCheckedDepts < countOfDepts) && (countOfCheckedDepts > 0)){
+					howManyDeptssSelected = 'Some';
+				}
+				
 				setSelectAllCheckBox(countOfDepts);
 				if (howManyDeptsSelected == 'All') {
 					if (countOfCheckedDepts == countOfDepts) {
@@ -473,15 +478,22 @@ function locationCheckboxFunctionality() {
 		//$('.ui.checkbox:not(.active-radio-checkbox)').checkbox({
 		$('.location-checkbox').checkbox({
 			onChecked: function(){
+
 				locationsObj[this.name] = this.checked;
 				countOfCheckedLocations ++;
+				
+				if ((countOfCheckedLocations < countOfLocations) && (countOfCheckedLocations > 0)){
+					howManyLocationsSelected = 'Some';
+				}
+
 				setSelectAllCheckBox(countOfLocations);
+
 				if (howManyLocationsSelected == 'All') {
 					if (countOfCheckedLocations == countOfLocations) {
 						runSearch(orderBy, lastSearch);						
 					}
 				} else {
-					console.log('runserach');
+					console.log('run search');
 					runSearch(orderBy,lastSearch);
 				}
 				
