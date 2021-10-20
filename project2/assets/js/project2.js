@@ -28,6 +28,7 @@ let maxEmployeeID = 0;
 let finalMaxID;
 
 let employeeJustCreated = false;
+let	employeeJustEdited = false;
 
 let newestElement;
 
@@ -895,9 +896,9 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 			selected.innerHTML = placeholder;
 		} else {
 				if (mainTitle.includes('epartment')) {
-					selected.innerHTML = `${detailsForEditForm.department}`;
+					selected.innerHTML = detailsForEditForm.department;
 				} else if (mainTitle.includes('ocation')) {
-					selected.innerHTML = `${detailsForEditForm.locationName}`;
+					selected.innerHTML = detailsForEditForm.locationName;
 				}
 		}
 		
@@ -928,8 +929,8 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 		nameCategories.appendChild(createInputField('First Name', 'First Name', 'firstName'));
 		nameCategories.appendChild(createInputField('Last Name', 'Last Name', 'lastName'));
 	} else {
-		nameCategories.appendChild(createInputField('First Name', `${detailsForEditForm.firstName}`, 'firstName'));
-		nameCategories.appendChild(createInputField('Last Name', `${detailsForEditForm.lastName}`, 'lastName'));
+		nameCategories.appendChild(createInputField('First Name', detailsForEditForm.firstName, 'firstName'));
+		nameCategories.appendChild(createInputField('Last Name', detailsForEditForm.lastName, 'lastName'));
 	}
 	
 	let jobTitleField = field.cloneNode(true);
@@ -943,8 +944,8 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 	if (editOrCreate == 'create') {
 		jobTitleInput.setAttribute('placeholder', 'Job Title');
 	} else {
-		jobTitleInput.setAttribute('placeholder', `${detailsForEditForm.jobTitle}`);
-		jobTitleInput.setAttribute('value', `${detailsForEditForm.jobTitle}`);
+		jobTitleInput.setAttribute('placeholder', detailsForEditForm.jobTitle);
+		jobTitleInput.setAttribute('value', detailsForEditForm.jobTitle);
 	}
 	
 	jobTitleField.appendChild(jobTitleHeading);
@@ -961,18 +962,28 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 	if (editOrCreate == 'create') {
 		emailInput.setAttribute('placeholder', 'employee@company.com');
 	} else {
-		emailInput.setAttribute('placeholder', `${detailsForEditForm.email}`);
-		emailInput.setAttribute('value', `${detailsForEditForm.email}`);		
+		emailInput.setAttribute('placeholder', detailsForEditForm.email);
+		emailInput.setAttribute('value', detailsForEditForm.email);		
 	}
 	
 	emailField.appendChild(emailHeading);
 	emailField.appendChild(emailInput);
-	
-	
+		
 	uiForm.appendChild(twoCategories);
 	uiForm.appendChild(nameCategories);
 	uiForm.appendChild(jobTitleField);
 	uiForm.appendChild(emailField);
+
+	if (editOrCreate == 'edit'){
+		let idField = field.cloneNode(true);
+		
+		let idInput = inputField.cloneNode(true);
+		idInput.setAttribute('fieldname', 'id');
+		idInput.setAttribute('value', detailsForEditForm.id);
+	
+		idField.appendChild(idInput);
+		uiForm.appendChild(idField);
+	}
 	
 	//document.getElementById('employee-modal-create-fields').appendChild(uiForm);
 	document.getElementById(`employee-modal-${editOrCreate}-fields`).appendChild(uiForm);
@@ -1601,7 +1612,7 @@ $('#edit-employee-fields-btn').click(function(){
 $('#submit-edit-employee').click(function (){
 	console.log('click');
 	
-	document.getElementById('update-employee-modal-btn').setAttribute('style', 'display: inline');
+	document.getElementById('update-employee-modal-btn').setAttribute('style', 'display: inline');	
 	$('#delete-employee-alert').modal(
 	 {
 		 title: '<i class="archive icon"></i>',
@@ -1733,6 +1744,38 @@ $('#edit-employee-fields-btn').click(function(){
 
 */
 
+$('#update-employee-modal-btn').click(function (){
+	console.log('clicked');
+	console.log(JSON.parse(this.getAttribute('employee-details')));
+	
+	let updateEmployeeDataObj = JSON.parse(this.getAttribute('employee-details'));
+
+	
+	
+	$.ajax({
+	url: "assets/php/updateEmployee.php",
+	type: "GET",
+	dataType: "json",
+	data: updateEmployeeDataObj,
+	success: function (result) {
+		
+			console.log('updateEmployee ',result.data);
+			console.log('orderby', orderBy, 'lastSearch', lastSearch);
+			employeeJustEdited = true;
+			runSearch(orderBy,'');
+
+	},
+	error: function (jqXHR, textStatus, errorThrown) {
+			console.log('error');
+			console.log(textStatus);
+			console.log(errorThrown);
+		},
+	});
+	
+	
+
+});
+
 let editEmployeeForm = document.getElementById('employee-modal-edit-fields');
 
 editEmployeeForm.addEventListener("submit", function ( event ) {
@@ -1760,49 +1803,27 @@ editEmployeeForm.addEventListener("submit", function ( event ) {
 	}
 	//console.log('LOCATIONS OBJ', locationsObj);
 	
-	for (let e = 0; e < editEmployeeForm.elements.length; e ++) {
-	
-		if (editEmployeeForm.elements[e].tagName != 'BUTTON') {			
-			
-			//console.log('element', createEmployeeForm.elements[e], 'value', createEmployeeForm.elements[e].value);
+		for (let e = 0; e < editEmployeeForm.elements.length; e ++) {
 		
-			editEmployeeDataObj[editEmployeeForm.elements[e].getAttribute('fieldname')] = editEmployeeForm.elements[e].value;
+			if (editEmployeeForm.elements[e].tagName != 'BUTTON') {			
+				
+				//console.log('element', createEmployeeForm.elements[e], 'value', createEmployeeForm.elements[e].value);
 			
+				editEmployeeDataObj[editEmployeeForm.elements[e].getAttribute('fieldname')] = editEmployeeForm.elements[e].value;
+				
+			}
+
 		}
+		
+		console.log(editEmployeeDataObj);
+		
+		document.getElementById('update-employee-modal-btn').setAttribute('employee-details', JSON.stringify(editEmployeeDataObj));
 
 	}
 	
-	console.log(editEmployeeDataObj);
-
-			//document.getElementById('close-employee-modal').click();
-
-		}
-	
 
 	
-	/*
-	$.ajax({
-	url: "assets/php/insertEmployee.php",
-	type: "GET",
-	dataType: "json",
-	data: createEmployeeDataObj,
-	success: function (result) {
-		
-			console.log('insertEmployee ',result.data);
-			console.log('orderby', orderBy, 'lastSearch', lastSearch);
-			employeeJustCreated = true;
-			runSearch(orderBy,'');
 
-	},
-	error: function (jqXHR, textStatus, errorThrown) {
-			console.log('error');
-			console.log(textStatus);
-			console.log(errorThrown);
-		},
-	});
-	
-	*/
-	
 	
 	/*
 	for (let elem = 0; elem < editEmployeeForm.elements.length; elem ++){
@@ -2215,9 +2236,15 @@ function runSearch(orderBy, searchTerm){
 					
 					
 				}
+				
+				if (employeeJustEdited) {
+					console.log('employee edited');
+					
+					
+				}
 
 				employeeJustCreated = false;
-
+				employeeJustEdited = false;
 				document.getElementById('search-box-icon').setAttribute('class', 'ui icon input');				
 				
 

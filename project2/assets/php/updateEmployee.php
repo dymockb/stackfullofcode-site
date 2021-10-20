@@ -39,9 +39,11 @@
 	//$query->bind_param("si", $_REQUEST['name'], $_REQUEST['locationID']);
 	//$query->bind_param("si", $_REQUEST['name'], $_REQUEST['id']);
 	
-	$query = $conn->prepare('INSERT INTO personnel (firstName, lastName, jobTitle, email, departmentID) VALUES(?,?,?,?,?)');
+	#$query = $conn->prepare('INSERT INTO personnel (firstName, lastName, jobTitle, email, departmentID) VALUES(?,?,?,?,?)');
 
-	$query->bind_param("ssssi", $_REQUEST['firstName'],$_REQUEST['lastName'],$_REQUEST['jobTitle'],$_REQUEST['email'], $_REQUEST['departmentID']);
+	$query = $conn->prepare('UPDATE personnel set firstName = ?, lastName = ?, jobTitle = ?, email = ?, departmentID = ? WHERE id = ?');
+
+	$query->bind_param("ssssii", $_REQUEST['firstName'],$_REQUEST['lastName'],$_REQUEST['jobTitle'],$_REQUEST['email'], $_REQUEST['departmentID'], $_REQUEST['id']);
 
 	$query->execute();
 	
