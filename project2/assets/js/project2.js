@@ -1598,6 +1598,19 @@ $('#edit-employee-fields-btn').click(function(){
 
 });
 
+$('#submit-edit-employee').click(function (){
+	console.log('click');
+	
+	document.getElementById('update-employee-modal-btn').setAttribute('style', 'display: inline');
+	$('#delete-employee-alert').modal(
+	 {
+		 title: '<i class="archive icon"></i>',
+		 //content: `Update this employee?  ${editEmployeeDataObj.firstName} ${editEmployeeDataObj.lastName}`
+		 content: `Update this employee?`
+	 }
+	).modal('show');
+	
+});
 
 
 /* // Another version, not needed?
@@ -1733,12 +1746,8 @@ editEmployeeForm.addEventListener("submit", function ( event ) {
 	console.log('elements', editEmployeeForm.elements);
 	
 	if (editEmployeeForm.elements) {
-
-			document.getElementById('close-employee-modal').click();
-
-		}
-	
-	editEmployeeDataObj = {
+		
+			editEmployeeDataObj = {
 		firstName: '', //
 		lastName: '',		//
 		jobTitle: '', //
@@ -1764,6 +1773,12 @@ editEmployeeForm.addEventListener("submit", function ( event ) {
 	}
 	
 	console.log(editEmployeeDataObj);
+
+			//document.getElementById('close-employee-modal').click();
+
+		}
+	
+
 	
 	/*
 	$.ajax({

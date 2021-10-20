@@ -204,7 +204,7 @@
 	}
 
 
-	#employee-modal-create-fields, #employee-modal-edit-fields, #close-employee-modal, #submit-create-employee, #submit-edit-employee, #edit-employee-modal-btn, #delete-employee-modal-btn, #create-employee-btn-mobile {
+	#employee-modal-create-fields, #employee-modal-edit-fields, #close-employee-modal, #submit-create-employee, #submit-edit-employee, #edit-employee-modal-btn, #delete-employee-modal-btn, #update-employee-modal-btn, #create-employee-btn-mobile {
 		display: none;
 	}
 	
@@ -724,8 +724,9 @@
 
 
     <div class="actions">
-	 		<button form="employee-modal-edit-fields" id="submit-edit-employee" class="ui primary button">
-      Edit Details 
+	 		<!-- <button form="employee-modal-edit-fields" id="submit-edit-employee" class="ui primary button"> -->
+      <button form="employee-modal-edit-fields" id="submit-edit-employee" class="ui primary button">
+			Edit Details 
 			<i class="right chevron icon"></i>			
 			</button>
       <button id="submit-create-employee" form="employee-modal-create-fields" class="ui primary button">
@@ -778,6 +779,10 @@
         No
       </div>
       <div id="delete-employee-modal-btn" class="ui green ok inverted button">
+        <i class="checkmark icon"></i>
+        Yes
+      </div>
+      <div id="update-employee-modal-btn" class="ui green ok inverted button">
         <i class="checkmark icon"></i>
         Yes
       </div>
