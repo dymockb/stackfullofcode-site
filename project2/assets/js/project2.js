@@ -740,8 +740,10 @@ function createEmployeeModalContentORIGINAL(){
 };
 
 
-function buildForm(listOfNames, listOfIDs){	
+function buildForm(listOfNames, listOfIDs, editOrCreate){	
 //function buildForm(listOfObjs, locationOnly){	
+	
+	console.log('build form edit or create', editOrCreate);
 	
 	let uiForm = document.createElement('div');
 	uiForm.setAttribute('class', 'ui form');
@@ -787,7 +789,11 @@ function buildForm(listOfNames, listOfIDs){
 		
 		let input = inputField.cloneNode(true);
 		input.setAttribute('required', '');
-		//input.setAttribute('value', data);
+		
+		if (editOrCreate == 'edit'){
+			input.setAttribute('value', data);
+		}
+		
 		input.setAttribute('fieldname', fieldName);
 		input.setAttribute('type', 'text');
 		input.setAttribute('placeholder', data);
@@ -811,6 +817,10 @@ function buildForm(listOfNames, listOfIDs){
 		let selected = defaultText.cloneNode(true);
 		let icon = dropdownIcon.cloneNode(true);
 		let input = inputField.cloneNode(true);
+		if (editOrCreate == 'edit') {
+				input.setAttribute('value', 'current value');
+			}
+		
 		let menu = menuDiv.cloneNode(true);
 		menu.setAttribute('id', dropdownType + '-menu');
 		
@@ -911,7 +921,9 @@ function buildForm(listOfNames, listOfIDs){
 	
 }
 
-function createEmployeeModalContent(){
+function createEmployeeModalContent(editOrCreate){
+	
+	console.log('editOrCreate', editOrCreate);
 	
 	let newEmployeeFieldsObj = {};
 	let listOfLocationsUpdated = [];	
@@ -933,7 +945,7 @@ function createEmployeeModalContent(){
 				listOfLocationIDs.push(result.data[loc].id);
 			}
 			
-			buildForm(listOfLocationsUpdated, listOfLocationIDs);
+			buildForm(listOfLocationsUpdated, listOfLocationIDs, editOrCreate);
 			
 			//buildForm(result.data, locationOnly = true);
 			
@@ -1400,6 +1412,10 @@ $('#edit-employee-fields-btn').click(function(){
 	let employeeDetails = JSON.parse(this.getAttribute('employee-details'));
 
 	console.log(employeeDetails);
+	
+	//createEmployeeModalContent(editOrCreate = 'edit');	
+	
+	//createEmployeeModalContent(editOrCreate = 'create')
 				
 	for (const [key, value] of Object.entries(employeeDetails)) {
 
@@ -1407,7 +1423,7 @@ $('#edit-employee-fields-btn').click(function(){
 				
 	}
 
-	document.getElementById('employee-modal-view-fields').setAttribute('style','display: inherit');
+	document.getElementById('employee-modal-edit-fields').setAttribute('style','display: inherit');
 	document.getElementById('submit-edit-employee').setAttribute('style','display: inline');
 
 				
@@ -1434,8 +1450,8 @@ $('#edit-employee-fields-btn').click(function(){
 		}	
 	}).modal('show');
 
-	
-	$('#edit-employee-modal-btn').click();
+	// to set the fields to not read-only I think
+	//$('#edit-employee-modal-btn').click();
 	
 	//$(".employee-editable-field").removeAttr('readonly');
 	//$('.employee-editable-field').attr('style', 'border-color: blue');
@@ -1564,7 +1580,7 @@ $('#edit-employee-fields-btn').click(function(){
 
 */
 
-let editEmployeeForm = document.getElementById('employee-modal-view-fields');
+let editEmployeeForm = document.getElementById('employee-modal-edit-fields');
 
 editEmployeeForm.addEventListener("submit", function ( event ) {
 
@@ -1763,7 +1779,8 @@ $('#create-employee-btn-mobile').click(function(){
 
 $('#create-employee-btn').click(function(){
 	
-	createEmployeeModalContent();
+	createEmployeeModalContent(editOrCreate = 'create');
+	//createEmployeeModalContent(editOrCreate = 'edit')
 	
 	document.getElementById('employee-modal-create-fields').setAttribute('style','display: inherit');
 	document.getElementById('submit-create-employee').setAttribute('style', 'display: inline');

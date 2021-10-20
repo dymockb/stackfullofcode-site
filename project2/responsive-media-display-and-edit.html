@@ -204,7 +204,7 @@
 	}
 
 
-	#employee-modal-create-fields, #employee-modal-view-fields, #close-employee-modal, #submit-create-employee, #submit-edit-employee, #edit-employee-modal-btn, #delete-employee-modal-btn, #create-employee-btn-mobile {
+	#employee-modal-create-fields, #employee-modal-edit-fields, #close-employee-modal, #submit-create-employee, #submit-edit-employee, #edit-employee-modal-btn, #delete-employee-modal-btn, #create-employee-btn-mobile {
 		display: none;
 	}
 	
@@ -651,9 +651,9 @@
       <div class="description">					
 				
 					<div class="content">
-						<form autocomplete="off" id="employee-modal-view-fields">
+						<form autocomplete="off" id="employee-modal-edit-fields">
 						
-						
+								<!--
 								<div class="ui form">
 									 <div class="two fields"> 
 										<div class="required field">
@@ -681,9 +681,7 @@
 												</div>
 											</div>
 										</div>
-										</div>
-									<!-- two fields here -->
-									
+										</div>									
 									
 									<div class="two fields">
 										<div class="required field">
@@ -704,7 +702,8 @@
 										<input required value="email" fieldname="email" type="email" placeholder="email">
 								</div>
 							
-							</div><!-- end form here -->
+							</div>
+							end form here -->
 								
 
 								
@@ -725,7 +724,7 @@
 
 
     <div class="actions">
-	 		<button form="employee-modal-view-fields" id="submit-edit-employee" class="ui primary button">
+	 		<button form="employee-modal-edit-fields" id="submit-edit-employee" class="ui primary button">
       Edit Details 
 			<i class="right chevron icon"></i>			
 			</button>
