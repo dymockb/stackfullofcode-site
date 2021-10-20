@@ -204,7 +204,7 @@
 	}
 
 
-	#employee-modal-create-fields, #employee-modal-edit-fields, #close-employee-modal, #submit-create-employee, #submit-edit-employee, #edit-employee-modal-btn, #delete-employee-modal-btn, #update-employee-modal-btn, #create-employee-btn-mobile {
+	#employee-modal-create-fields, #employee-modal-edit-fields, #manage-depts-and-locs-form, #close-employee-modal, #submit-create-employee, #submit-edit-employee, #edit-employee-modal-btn, #delete-employee-modal-btn, #update-employee-modal-btn, #create-employee-btn-mobile, #submit-depts-and-locs {
 		display: none;
 	}
 	
@@ -238,6 +238,10 @@
 	
 	.default.text {
 		color: black !important;
+	}
+	
+	.ui.raised.segment.column {
+		margin: 0;
 	}
 	
 	@media only screen and (max-width: 767.98px) {
@@ -460,7 +464,7 @@
 							
 							-->
 							
-							<button class="ui button">Manage <br/> Departments and Locations</button>
+							<button id="manage-depts-and-locs-btn" class="ui button">Manage <br/> Departments and Locations</button>
 														
 							<div class="item">
 								<div class="inline fields">
@@ -648,7 +652,7 @@
       Employee Details Modal
     </div>
     <div class="scrolling image content">
-      <div class="description">					
+     <!-- <div class="description">		</div>			-->
 				
 					<div class="content">
 						<form autocomplete="off" id="employee-modal-edit-fields">
@@ -716,16 +720,31 @@
 
 						</form>
 
-						<button id="edit-employee-modal-btn">Edit</button>		
+						<form autocomplete="off" id="manage-depts-and-locs-form">
+						
+							<div class="ui stackable four column grid">
+								<div class="ui raised segment column">one`</div>
+								<div class="ui raised segment column">two</div>
+								<div class="ui raised segment column">three</div>
+								<div class="ui raised segment column">four</div>
+							</div>
+
+						</form>
+
+						<!--	<button id="edit-employee-modal-btn">Edit</button>		-->
 					</div>
 				
-      </div>
+       <!-- description div end here -->
     </div>
 
 
     <div class="actions">
 	 		<!-- <button form="employee-modal-edit-fields" id="submit-edit-employee" class="ui primary button"> -->
       <button form="employee-modal-edit-fields" id="submit-edit-employee" class="ui primary button">
+			Edit Details 
+			<i class="right chevron icon"></i>			
+			</button>
+      <button form="manage-depts-and-locs-form" id="submit-depts-and-locs" class="ui primary button">
 			Edit Details 
 			<i class="right chevron icon"></i>			
 			</button>

@@ -31,6 +31,7 @@ let employeeJustCreated = false;
 let	employeeJustEdited = false;
 
 let newestElement;
+let editedElement;
 
 let deleteAttempts = 0;
 
@@ -1762,6 +1763,7 @@ $('#update-employee-modal-btn').click(function (){
 			console.log('updateEmployee ',result.data);
 			console.log('orderby', orderBy, 'lastSearch', lastSearch);
 			employeeJustEdited = true;
+			editedElement = updateEmployeeDataObj;
 			runSearch(orderBy,'');
 
 	},
@@ -2045,6 +2047,35 @@ $('#create-employee-btn').click(function(){
 	
 });
 
+
+$('#manage-depts-and-locs-btn').click(function(){
+	console.log('manage depts click');
+	
+		document.getElementById('manage-depts-and-locs-form').setAttribute('style', 'display: block')
+	
+		$('.ui.modal.employee-details-modal').modal({
+		
+		title: 'Manage Department and Locations',
+		closable: false,
+		onDeny: function(){
+			console.log('deny');
+			//return false;
+		},
+		onApprove: function (){
+		//document.getElementById('submit-create-employee').click();
+		console.log('approve');
+		},
+		onHidden: function(){	
+			console.log('close view employee modal');
+			document.getElementById('employee-modal-create-fields').innerHTML = "";
+			document.getElementById('employee-modal-edit-fields').innerHTML = "";
+			document.getElementById('manage-depts-and-locs-form').innerHTML = "";
+			closeModal();
+		}	
+		}).modal('show');
+	
+});
+
 $('#edit-employee-modal-btn').click(function(){
 	
 	$(".employee-editable-modal-field").removeAttr('readonly');
@@ -2240,6 +2271,24 @@ function runSearch(orderBy, searchTerm){
 				if (employeeJustEdited) {
 					console.log('employee edited');
 					
+					renderEmployee(editedElement);
+
+					let employeeDetails = JSON.stringify(editedElement);
+					console.log('test', employeeDetails);
+
+					if (employeeDetailsVisibility == 0) {
+						$('.employee-detail-fields').attr('style', 'visibility: visible');
+						$('.message').attr('class', 'ui floating message');
+						document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
+						document.getElementById('delete-employee-btn').setAttribute('employee-details', employeeDetails);
+						document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', employeeDetails)
+						employeeDetailsVisibility ++;
+					} else {
+						$('.message').attr('class', 'ui floating message');
+						document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
+						document.getElementById('delete-employee-btn').setAttribute('employee-details', employeeDetails);
+						document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', employeeDetails)
+					}
 					
 				}
 
