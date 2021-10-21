@@ -261,12 +261,15 @@ $('#create-employee-btn').click(function(){
 $('#manage-depts-and-locs-btn').click(function(){
 	console.log('manage depts click');
 	
-		document.getElementById('manage-depts-and-locs-form').setAttribute('style', 'display: block')
+		document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: block')
 	
 		$('.ui.modal.employee-details-modal').modal({
-		
-		title: 'Manage Department and Locations',
+
+		title: `Manage Departments and Locations`,
 		closable: false,
+		onShow: function(){
+			$('.ui.accordion').accordion();
+		},
 		onDeny: function(){
 			console.log('deny');
 			//return false;
@@ -277,9 +280,6 @@ $('#manage-depts-and-locs-btn').click(function(){
 		},
 		onHidden: function(){	
 			console.log('close view employee modal');
-			document.getElementById('employee-modal-create-fields').innerHTML = "";
-			document.getElementById('employee-modal-edit-fields').innerHTML = "";
-			document.getElementById('manage-depts-and-locs-form').innerHTML = "";
 			closeModal();
 		}	
 		}).modal('show');
@@ -1631,6 +1631,10 @@ function closeModal(){
 	document.getElementById('employee-modal-create-fields').setAttribute('style','display: none');
 	document.getElementById('submit-create-employee').setAttribute('style','display: none');
 	document.getElementById('submit-edit-employee').setAttribute('style', 'display: none');
+
+	document.getElementById('employee-modal-create-fields').innerHTML = "";
+	document.getElementById('employee-modal-edit-fields').innerHTML = "";
+	document.getElementById('manage-depts-and-locs').innerHTML = "";
 
 	//$(".employee-editable-modal-field").attr('readonly', 'readonly');
 	//$('.employee-editable-modal-field').attr('style', 'border-color: black');

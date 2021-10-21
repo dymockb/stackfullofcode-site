@@ -248,10 +248,8 @@
 		margin-top: 1rem;
 	}
 
-	.number-of-employees {
-		margin-left: 1rem;
-		margin-right: 1rem;
-		display: inline;
+	.department-details {
+		margin-bottom: 1rem;
 	}
 
 	.manage-dept-btns {
@@ -259,13 +257,25 @@
 	}
 
 	.manage-dept-info {
-		margin-top: 1rem;
+		margin-bottom: 1rem;
 	}
 
 	.department-segment {
 		margin-bottom: 1rem !important;
 	}
 	
+	.location-message-panel {
+    background-color: white !important;
+    border: none !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+	}
+
+	.ui.one.top.attached.black.disabled.button {
+    text-align: left;
+	}
+
 	@media only screen and (max-width: 767.98px) {
 		
 		#employee-details-field, #employee-details-column, #pc-search-column, .employee-btn {
@@ -687,12 +697,13 @@
 
 	</div>	
 	
+
 	<!--	<div id="#employee-details-modal" class="ui modal employee-details-modal" style="display: block !important;"> -->
 		<div id="#employee-details-modal" class="ui modal employee-details-modal">
     <div class="header">
       Employee Details Modal
     </div>
-    <div class="scrolling image content">
+    <div id="scrolling-modal-pane" class="scrolling image content">
      <!-- <div class="description">		</div>			-->
 				
 					<div class="content">
@@ -763,141 +774,134 @@
 
 
 															
-						<form autocomplete="off" id="manage-depts-and-locs-form">
+					<!--	<form autocomplete="off" id="manage-depts-and-locs-form"> -->
+						<div id="manage-depts-and-locs">
 						
 							<div class="ui stackable one column grid">
 								<div class="ui column">
 
-									<div class="ui raised floating message">
+									<div class="ui message">
+										<i id="close-locationID-1-panel" class="close icon"></i>
+										<div class="header">Location Created</div>
+										<p>DepartementID-name add to LocationID-1-name</p>
+									</div>
+
+									<div class="ui segment">
+										<div id="xxx" class="ui accordion field">
+											<div id="xxx" class="title">
+												<i class="icon dropdown"></i>
+												<div class="ui button">Create new location</div>
+											</div>
+											
+											<div class="content field">
+													 <div class="content field transition hidden" id="department-checkboxes">
+
+														<div class="ui form">
+														<div class="ui column">
+															<div class="field error">													
+																<input value="" type="text" placeholder="New location name">
+																<label>A location already exists with that name</label>
+															</div>
+														</div>
+														</div>
+														
+														<div class="ui column manage-dept-info">
+															<div class="manage-dept-btns">
+																<div class="ui mini button">Create new location</div>
+															</div>
+														</div>
+									
+														
+																
+												</div>
+									
+											</div>
+										</div>
+
+									</div> <!---->
+
+
+									<div class="ui raised floating message location-message-panel">
 										<i id="close-locationID-1-panel" class="close icon display-none-field"></i>
 										<div class="ui one top attached black disabled button">
-											Location 1 (50 employees)
+											Location 1 - 50 employees - 3 Departments
 										</div>
 
 										<div  class="ui attached segment">
 											
-											<div class="ui form">
-												
-													<div class="ui stackable two column row">
-													<div class="ui floating message department-segment">
+											<div id="locationID-1-form" class="ui form success"> <!--loading // success -->
+
+												<div class="ui floating message department-segment">
 													<i id="close-departmentID-1-icon" class="close icon display-none-field"></i>
-														<div class="ui column">
-															<div class="field">														
-																<input readonly value="Research and Development" type="text" placeholder="department 1">
-															</div>
-														</div>
-														
-														<div class="ui column manage-dept-info">
-															<div class="number-of-employees">50 employees</div>
-															<div class="manage-dept-btns">
-																<div class="ui mini button disabled">Rename department</div>
-																<div class="ui mini button disabled">Delete department</div>
-															</div>
-														</div>
+													<div class="ui stackable two column row">			
 
-													</div>														
-													</div>
-										
-													<div class="ui stackable two column row">
-														<div class="ui segment department-segment">
-														<div class="ui column">	
-															<div class="field">													
-																<input readonly value="departmentID" type="text" placeholder="department 2">
-															</div>
-														</div>
-
-														<div class="ui column manage-dept-info">
-															<div class="number-of-employees">50 employees</div>
-															<div class="manage-dept-btns">
-																<div class="ui mini button disabled">Rename department</div>
-																<div class="ui mini button disabled">Delete department</div>
-															</div>
-														</div>
-
-													</div>
-													</div>
-
-													<div class="ui stackable two column row">
-														<div class="ui segment department-segment">
-														<div class="ui column">
-															<div class="field">													
-																<input readonly value="" type="text" placeholder="Create new department">
-															</div>
-														</div>
-
-														<div class="ui column manage-dept-info">
 															
-															<div class="manage-dept-btns">
-																<div class="ui mini button disabled">Create new department</div>
-																
+															<div class="ui column manage-dept-info">
+																<div class="department-details">
+																<h3>DepartmentID-1-name</h3>
+																<span>25 employees</span>
+																</div>
+																<div class="manage-dept-btns">
+																	<div id="rename-locationID-1-departmentID-1-btn" class="ui mini button">Rename department</div>
+																	<div id="delete-locationID-1-departmentID-1-btn" class="ui mini button">Delete department</div>
+																</div>
 															</div>
-														</div>
 
-													</div>
-													</div>
+															<div class="ui column">
+																<div class="field">														
+																	<input id="input-locationID-1-departmentID-1-field" value="" type="text" placeholder="DeparmentID-1 Name">						
+																</div>
+															</div>
+
+														</div>														
+												</div>
+
+												<div class="ui floating message department-segment">
+													<i id="close-locationID-1-departmentID-1-panel" class="close icon display-none-field"></i>
+													Department Renamed
+												</div>
+
+												<div class="ui button">Create new department</div>
+
+												<div id="locationID-1-create-new-department-segment" class="ui floating message department-segment"> <!-- hidden -->
+													<div class="ui stackable two column row">
+														
+														<i id="close-create-department-icon" class="close icon display-none-field"></i>
+															<div class="ui column">
+																<div class="field error">	
+																	<label>Name of new department</label>													
+																	<input value="" type="text" placeholder="Create department">
+																	<label>Department already exists in this location</label>
+																</div>
+															</div>
+															
+															<div class="ui column manage-dept-info">
+																<div class="manage-dept-btns">
+																	<div class="ui mini button disabled">Create department</div>
+																</div>
+															</div>
+
+														</div>														
+												</div>
 													
-													
+												<div class="ui success floating message">
+													<i id="close-create-department-icon" class="close icon"></i>
+													<div class="header">Department Created</div>
+													<p>DepartementID-name add to LocationID-1-name</p>
+												</div>
 												
 											</div>
 
 										</div>
-										<div class="ui two bottom attached buttons">
-											<div class="ui button">Delete Location</div>
-											<div class="ui button">Edit Location</div>
-										</div>
 									</div>
+
 								</div>
 							</div>
 
-							<div class="ui stackable one column grid">
-								<div class="ui column">
-									<div class="ui raised segment">
-										<div class="ui one top attached black disabled button">
-										Location 2
-										</div>
-										<div class="ui attached segment">
-											<div class="ui form">
-												<div class="field">
-													<div class="ui stackable two column grid">
-														<div class="ui column">														
-															<input readonly value="departmentID" type="text" placeholder="department 1">
-														</div>
-														<div class="ui column">														
-															<div class="ui button disabled">Rename</div>
-															<div class="ui button disabled">Delete</div>
-														</div>
-													</div>
-													<hr class="hidden-field">
-													<div class="ui stackable two column grid">
-														<div class="ui column">														
-															<input readonly value="departmentID" type="text" placeholder="department 2">
-														</div>
-														<div class="ui column">														
-															<div class="ui button">Rename</div>
-															<div class="ui button">Delete</div>
-														</div>
-													</div>
-													<hr class="hidden-field">
-													<div class="ui stackable two column grid">
-														<div class="ui column">														
-															<input value="" type="text" placeholder="new department">
-														</div>
-														<div class="ui column">														
-															<div id="create-new-dept-btn" class="ui button disabled">Create new department</div>
-														</div>
-													</div>													
-												</div>
-											</div>
-										</div>
-										<div class="ui two bottom attached buttons">
-											<div class="ui button">Edit</div>
-											<div class="ui button">Delete</div>
-										</div>
-									</div>
-								</div>
-							</div>
 
-						</form>
+
+						</div>
+						<!-- </form> -->
 
 						<!--	<button id="edit-employee-modal-btn">Edit</button>		-->
 					</div>
