@@ -37,6 +37,8 @@ let	employeeJustEdited = false;
 let newestElement;
 let editedElement;
 
+let listOfFormIDs = [];
+
 // ** PAGE LOAD FUNCTIONS **
 
 function getAllDepartments(){
@@ -263,12 +265,15 @@ $('#manage-depts-and-locs-btn').click(function(){
 	
 		document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: block')
 	
+		listOfFormIDs = ['locationID-1-DepartmentID-1-form'];
+
 		$('.ui.modal.employee-details-modal').modal({
 
 		title: `Manage Departments and Locations`,
 		closable: false,
 		onShow: function(){
 			$('.ui.accordion').accordion();
+			eventListenersInsideDeptsandLocsModal(listOfFormIDs);
 		},
 		onDeny: function(){
 			console.log('deny');
@@ -527,6 +532,21 @@ $('#employee-modal-create-fields').submit(function(event) {
 	});
 		
 });
+
+//forms within Manage Depts and Locs Modal
+
+function eventListenersInsideDeptsandLocsModal(listOfCreatedFormIDs){
+
+	for (let f = 0; f < listOfCreatedFormIDs.length; f++){
+
+		$(`#${listOfCreatedFormIDs[f]}`).submit(function(event){
+			event.preventDefault();
+			console.log('submitted');
+		});
+
+	}
+
+}
 
 // ** FUNCTIONS TO CREATE ELEMENTS **
 

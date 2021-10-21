@@ -848,9 +848,23 @@
 															</div>
 
 															<div class="ui column">
-																<div class="field">														
-																	<input id="input-locationID-1-departmentID-1-field" value="" type="text" placeholder="DeparmentID-1 Name">						
-																</div>
+																<form id="locationID-1-DepartmentID-1-form" class="ui form">
+																	<div class="field">														
+																		<input id="input-locationID-1-departmentID-1-field" value="" type="text" placeholder="DeparmentID-1 Name">
+																		<!--
+																			$('#input-locationID-1-departmentID-1-field').on('input', function(e){
+																				console.log(e.target.value)
+																			});
+																		-->						
+																	</div>
+																	<button type="submit" class="ui mini button">Submit</button>
+																	<!--
+																	$('#locationID-1-DepartmentID-1-form').submit(function(event){
+																		event.preventDefault();
+																		console.log('submitted');
+																		});
+																	-->
+																</form>
 															</div>
 
 														</div>														
