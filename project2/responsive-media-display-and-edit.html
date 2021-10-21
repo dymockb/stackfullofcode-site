@@ -275,9 +275,14 @@
 		}
 		
 		hr {
-			margin-bottom: 2rem;
+			margin-top: 2rem;
 		}
-		
+
+		.ui.column {
+    	padding-bottom: 0 !important;
+		}
+
+		/*
 		.ui.grid > .column:not(.row) {
 			padding-top: 0.5rem; 
 			padding-bottom: 1rem;
@@ -285,6 +290,24 @@
 		
 		.ui.stackable.grid > .column:not(.row) {
 			padding: 0;
+		}
+		*/
+
+		.ui.grid > .column:not(.row) {
+			padding-top: 0.5rem;
+			padding-bottom: 1rem;
+		}
+
+		.ui.stackable.grid > .column:not(.row) {
+    width: 100% !important;
+    margin: 0 0 !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    /* padding: 1rem 1rem; */
+		}
+
+		#create-new-dept-btn {
+			margin-bottom: 1rem;
 		}
 
 	}
@@ -755,7 +778,7 @@
 															<div class="ui button disabled">Delete</div>
 														</div>
 													</div>
-													<hr>
+													<hr class="hidden-field">
 													<div class="ui stackable two column grid">
 														<div class="ui column">														
 															<input readonly value="departmentID" type="text" placeholder="department 2">
@@ -765,13 +788,13 @@
 															<div class="ui button">Delete</div>
 														</div>
 													</div>
-													<hr>
+													<hr class="hidden-field">
 													<div class="ui stackable two column grid">
 														<div class="ui column">														
 															<input value="" type="text" placeholder="new department">
 														</div>
 														<div class="ui column">														
-															<div class="ui button disabled">Create new department</div>
+															<div id="create-new-dept-btn" class="ui button disabled">Create new department</div>
 														</div>
 													</div>													
 												</div>
@@ -782,9 +805,54 @@
 											<div class="ui button">Delete</div>
 										</div>
 									</div>
-									<div class="ui raised segment">b</div>
-									<div class="ui raised segment">c</div>
-									<div class="ui raised segment">d</div>
+								</div>
+							</div>
+
+							<div class="ui stackable one column grid">
+								<div class="ui column">
+									<div class="ui raised segment">
+										<div class="ui one top attached black disabled button">
+										Location 2
+										</div>
+										<div class="ui attached segment">
+											<div class="ui form">
+												<div class="field">
+													<div class="ui stackable two column grid">
+														<div class="ui column">														
+															<input readonly value="departmentID" type="text" placeholder="department 1">
+														</div>
+														<div class="ui column">														
+															<div class="ui button disabled">Rename</div>
+															<div class="ui button disabled">Delete</div>
+														</div>
+													</div>
+													<hr class="hidden-field">
+													<div class="ui stackable two column grid">
+														<div class="ui column">														
+															<input readonly value="departmentID" type="text" placeholder="department 2">
+														</div>
+														<div class="ui column">														
+															<div class="ui button">Rename</div>
+															<div class="ui button">Delete</div>
+														</div>
+													</div>
+													<hr class="hidden-field">
+													<div class="ui stackable two column grid">
+														<div class="ui column">														
+															<input value="" type="text" placeholder="new department">
+														</div>
+														<div class="ui column">														
+															<div id="create-new-dept-btn" class="ui button disabled">Create new department</div>
+														</div>
+													</div>													
+												</div>
+											</div>
+										</div>
+										<div class="ui two bottom attached buttons">
+											<div class="ui button">Edit</div>
+											<div class="ui button">Delete</div>
+										</div>
+									</div>
 								</div>
 							</div>
 
@@ -814,8 +882,8 @@
 			Cancel
 			</button>
 			<button id="close-employee-modal" class="ui primary approve button">
-        Close
-        <i class="right chevron icon"></i>
+      Close
+      <i class="right chevron icon"></i>
      </button>
 		<!-- 		 <button class="ui primary approve button" id="delete-employee-modal-btn">Delete employee</button> -->
 		</div>

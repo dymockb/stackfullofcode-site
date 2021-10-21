@@ -19,11 +19,19 @@ let howManyLocationsSelected = 'All';
 let locationsDropDownObj = {};
 let departmentsDropDownObj = {};
 
+let locationDropDownHolder = [];
+
+let	dropDownClicked = 0;
+
 let maxNewEmployeeID = 0;
 let maxEmployeeID = 0;
 let finalMaxID;
 
+let employeeJustCreated = false;
+let	employeeJustEdited = false;
+
 let newestElement;
+let editedElement;
 
 let deleteAttempts = 0;
 
@@ -299,21 +307,29 @@ function appendEmployee(elementToAppend, employeeElements){
 
 function createEmployeeRow(employeePropertiesObj) {
 
+	
+	let setMax = false;
+	if (employeePropertiesObj.id == finalMaxID) {
+
+		//invisibleElement.parentNode.setAttribute('id', 'newest-employee');
+		//invisibleElement.children[1].setAttribute('id', 'newest-employee-btn');
+		setMax = true;
+		console.log('THIS IS THE NEWEST EMPLOYEE',employeePropertiesObj);
+		newestElement = employeePropertiesObj;
+	}
+
 	let tableRow = document.createElement('tr');
 	tableRow.setAttribute('class', 'result-row');
 	if (employeePropertiesObj.firstName == 'First name') {
 	  tableRow.setAttribute('style', 'visibility: hidden');
 		//tableRow.setAttribute('class', 'result-row hidden-field');
+	} 
+	
+	if (setMax) {
+		if (!document.getElementById('newest-employee')) {
+			tableRow.setAttribute('id', 'newest-employee');
+		}
 	}
-
-	if (employeePropertiesObj.id == finalMaxID) {
-
-		//invisibleElement.parentNode.setAttribute('id', 'newest-employee');
-		//invisibleElement.children[1].setAttribute('id', 'newest-employee-btn');
-		
-		//	console.log('THIS IS THE NEWEST EMPLOYEE',employeePropertiesObj);
-	}
-
 	
 	maxNewEmployeeID = employeePropertiesObj.id > maxNewEmployeeID ? employeePropertiesObj.id : maxNewEmployeeID; 
 
@@ -387,6 +403,11 @@ function departmentCheckboxFunctionality() {
 			onChecked: function(){
 				departmentsObj[this.name] = this.checked;
 				countOfCheckedDepts ++;
+				
+				if ((countOfCheckedDepts < countOfDepts) && (countOfCheckedDepts > 0)){
+					howManyDeptssSelected = 'Some';
+				}
+				
 				setSelectAllCheckBox(countOfDepts);
 				if (howManyDeptsSelected == 'All') {
 					if (countOfCheckedDepts == countOfDepts) {
@@ -459,15 +480,22 @@ function locationCheckboxFunctionality() {
 		//$('.ui.checkbox:not(.active-radio-checkbox)').checkbox({
 		$('.location-checkbox').checkbox({
 			onChecked: function(){
+
 				locationsObj[this.name] = this.checked;
 				countOfCheckedLocations ++;
+				
+				if ((countOfCheckedLocations < countOfLocations) && (countOfCheckedLocations > 0)){
+					howManyLocationsSelected = 'Some';
+				}
+
 				setSelectAllCheckBox(countOfLocations);
+
 				if (howManyLocationsSelected == 'All') {
 					if (countOfCheckedLocations == countOfLocations) {
 						runSearch(orderBy, lastSearch);						
 					}
 				} else {
-					console.log('runserach');
+					console.log('run search');
 					runSearch(orderBy,lastSearch);
 				}
 				
@@ -730,11 +758,312 @@ function createEmployeeModalContentORIGINAL(){
 };
 
 
-function createEmployeeModalContent(){
+function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){	
+//function buildForm(listOfObjs, locationOnly){	
+	
+	console.log('build form edit or create', editOrCreate);
+	
+	let uiForm = document.createElement('div');
+	uiForm.setAttribute('class', 'ui form');
+	
+	let twoFields = document.createElement('div');
+	twoFields.setAttribute('class', 'two fields');
+	
+	
+	let field = document.createElement('div');
+	field.setAttribute('class', 'field');
+	
+	let requiredField = document.createElement('div');
+	requiredField.setAttribute('class', 'required field');
+	
+	let label = document.createElement('label');
+	label.innerHTML = 'MENU';
+
+	let  selectionDropdown = document.createElement('div')
+	selectionDropdown.setAttribute('class', 'ui selection dropdown');
+	
+	let defaultText = document.createElement('div');
+	defaultText.setAttribute('class', 'default text');
+	defaultText.innerHTML = 'Default Text';
+	
+	let dropdownIcon = document.createElement('i');
+	dropdownIcon.setAttribute('class', 'dropdown icon');
+	
+	let inputField = document.createElement('input');
+	
+	let menuDiv = document.createElement('div');
+	menuDiv.setAttribute('class', 'menu');
+	
+	let dataValue = document.createElement('div');
+	dataValue.setAttribute('class', 'item');
+
+	let dropdownOptions = ['option1', 'option2', 'option3'];
+	
+	function createInputField (mainTitle, data, fieldName) {
+		
+		let outerNode = requiredField.cloneNode(true);
+		let heading = label.cloneNode(true);
+		heading.innerHTML = mainTitle;
+		
+		let input = inputField.cloneNode(true);
+		input.setAttribute('required', '');
+		
+		if (editOrCreate == 'edit'){
+			input.setAttribute('value', data);
+		}
+		
+		input.setAttribute('fieldname', fieldName);
+		input.setAttribute('type', 'text');
+		input.setAttribute('placeholder', data);
+		
+		outerNode.appendChild(heading);
+		outerNode.appendChild(input);
+		
+		return outerNode
+	}
+	
+	function createDropDown(mainTitle, placeholder, listOfNames, listOfIDs, fieldName, fieldID, dropdownType){
+		
+		console.log('ddt', dropdownType);
+		let outerNode = requiredField.cloneNode(true);
+		if (editOrCreate == 'create') {
+			if (mainTitle.includes('epartment')) {
+				outerNode.setAttribute('class', 'required disabled field');
+				outerNode.setAttribute('id', 'disabled-departments-dropdown')
+			}
+		}
+		let heading = label.cloneNode(true);
+		heading.innerHTML = mainTitle;
+		
+		let dropdown = selectionDropdown.cloneNode(true);
+		dropdown.setAttribute('id', dropdownType);
+
+		let selected = defaultText.cloneNode(true);
+		if (mainTitle.includes('epartment')) {
+			selected.setAttribute('id', 'department-dropdown-placeholder-text');
+		}
+
+		
+		let icon = dropdownIcon.cloneNode(true);
+		let input = inputField.cloneNode(true);
+		if (editOrCreate == 'edit') {
+			console.log('make edit dropdown');
+				if (mainTitle.includes('epartment')) {
+					console.log('dept edit value', detailsForEditForm.departmentID);
+					input.setAttribute('value', detailsForEditForm.departmentID);
+				} else if (mainTitle.includes('ocation')) {
+					console.log('loc edit value', detailsForEditForm.locationID);
+					input.setAttribute('value', detailsForEditForm.locationID);
+				}
+			}
+		
+		let menu = menuDiv.cloneNode(true);
+		menu.setAttribute('id', dropdownType + '-menu');
+		
+		console.log('listofnames', listOfNames);
+		
+		for (let loc = 0; loc < listOfNames.length; loc ++){
+			
+			let oneOption = dataValue.cloneNode(true);
+			let outputValue = listOfIDs[loc];
+			//let outputValue = `{${fieldID}: ${value}, ${fieldName}: ${key}}`;
+			oneOption.innerHTML = listOfNames[loc];
+			oneOption.setAttribute('data-value', outputValue);
+			menu.appendChild(oneOption);
+			
+		}
+		
+		/*
+		for (const [key, value] of Object.entries(optionsObj)) {
+		
+			let oneOption = dataValue.cloneNode(true);
+			let outputValue = value;
+			//let outputValue = `{${fieldID}: ${value}, ${fieldName}: ${key}}`;
+			oneOption.innerHTML = key;
+			oneOption.setAttribute('data-value', outputValue);
+			menu.appendChild(oneOption);
+
+		}
+		*/
+		if(editOrCreate == 'create'){
+			input.setAttribute('value', '');
+		}
+		input.setAttribute('fieldname', fieldID);
+		input.setAttribute('fieldID', fieldID);
+		input.setAttribute('type', 'hidden');
+		input.setAttribute('name', 'category');
+
+		if (editOrCreate == 'create'){
+			selected.innerHTML = placeholder;
+		} else {
+				if (mainTitle.includes('epartment')) {
+					selected.innerHTML = detailsForEditForm.department;
+				} else if (mainTitle.includes('ocation')) {
+					selected.innerHTML = detailsForEditForm.locationName;
+				}
+		}
+		
+		dropdown.appendChild(selected);
+		dropdown.appendChild(icon);
+		dropdown.appendChild(input);
+		dropdown.appendChild(menu);		
+
+		outerNode.appendChild(heading);
+		outerNode.appendChild(dropdown)
+		
+		return outerNode;
+	}
+	
+	let twoCategories = twoFields.cloneNode(true);
+		
+	twoCategories.appendChild(createDropDown('Location', 'Select a location', listOfNames, listOfIDs, 'locationName', 'locationID', 'location-dropdown'));
+
+	//$('.ui.selection.dropdown').attr('id', 'location-dropdown');
+	
+	let depNames = [];
+	let depIDs = [];
+	twoCategories.appendChild(createDropDown('Department', 'Select a department', depNames, depIDs, 'department', 'departmentID', 'department-dropdown'));
+		
+	let nameCategories = twoFields.cloneNode(true);
+	
+	if (editOrCreate == 'create') {
+		nameCategories.appendChild(createInputField('First Name', 'First Name', 'firstName'));
+		nameCategories.appendChild(createInputField('Last Name', 'Last Name', 'lastName'));
+	} else {
+		nameCategories.appendChild(createInputField('First Name', detailsForEditForm.firstName, 'firstName'));
+		nameCategories.appendChild(createInputField('Last Name', detailsForEditForm.lastName, 'lastName'));
+	}
+	
+	let jobTitleField = field.cloneNode(true);
+	let jobTitleHeading = label.cloneNode(true);
+	jobTitleHeading.innerHTML = 'Job Title'
+	
+	let jobTitleInput = inputField.cloneNode(true);
+	jobTitleInput.setAttribute('fieldname', 'jobTitle');
+	jobTitleInput.setAttribute('type', 'text');
+	
+	if (editOrCreate == 'create') {
+		jobTitleInput.setAttribute('placeholder', 'Job Title');
+	} else {
+		jobTitleInput.setAttribute('placeholder', detailsForEditForm.jobTitle);
+		jobTitleInput.setAttribute('value', detailsForEditForm.jobTitle);
+	}
+	
+	jobTitleField.appendChild(jobTitleHeading);
+	jobTitleField.appendChild(jobTitleInput);
+	
+	let emailField = requiredField.cloneNode(true);
+	let emailHeading = label.cloneNode(true);
+	emailHeading.innerHTML = 'Email'
+	
+	let emailInput = inputField.cloneNode(true);
+	emailInput.setAttribute('fieldname', 'email');
+	emailInput.setAttribute('type', 'email');
+	emailInput.setAttribute('required', '');
+	if (editOrCreate == 'create') {
+		emailInput.setAttribute('placeholder', 'employee@company.com');
+	} else {
+		emailInput.setAttribute('placeholder', detailsForEditForm.email);
+		emailInput.setAttribute('value', detailsForEditForm.email);		
+	}
+	
+	emailField.appendChild(emailHeading);
+	emailField.appendChild(emailInput);
+		
+	uiForm.appendChild(twoCategories);
+	uiForm.appendChild(nameCategories);
+	uiForm.appendChild(jobTitleField);
+	uiForm.appendChild(emailField);
+
+	if (editOrCreate == 'edit'){
+		let idField = field.cloneNode(true);
+		
+		let idInput = inputField.cloneNode(true);
+		idInput.setAttribute('fieldname', 'id');
+		idInput.setAttribute('value', detailsForEditForm.id);
+	
+		idField.appendChild(idInput);
+		uiForm.appendChild(idField);
+	}
+	
+	//document.getElementById('employee-modal-create-fields').appendChild(uiForm);
+	document.getElementById(`employee-modal-${editOrCreate}-fields`).appendChild(uiForm);
+	
+	if (editOrCreate == 'edit') {
+		
+		$.ajax({
+		url: "assets/php/departmentsChange.php",
+		type: "GET",
+		dataType: "json",
+		data: {
+			locationID: detailsForEditForm.locationID
+		},
+		success: function (result) {
+
+				//document.getElementById('department-dropdown-menu').innerHTML = "";
+			
+				console.log('departments for edit ',result.data);
+
+				
+				for (let dc = 0; dc < result.data.length; dc ++ ) {
+
+					let oneOption = document.createElement('div');
+					oneOption.setAttribute('class', 'item');
+
+					let outputValue = result.data[dc].id;
+					oneOption.innerHTML = result.data[dc].name;
+					oneOption.setAttribute('data-value', outputValue);
+					
+					if (detailsForEditForm.departmentID != outputValue) {
+						document.getElementById('department-dropdown-menu').appendChild(oneOption);
+					}
+
+					
+				}
+
+				//$('.selection.dropdown').dropdown();								
+				
+				//document.getElementById('department-dropdown-placeholder-text').innerHTML = 'Select a department';
+				//document.getElementById('disabled-departments-dropdown').setAttribute('class', 'required field');
+				
+				
+				if (dropDownClicked == 0) {
+					$('.selection.dropdown').click(function (){
+						console.log('dropdown clicked', dropDownClicked);
+						$('.selection.dropdown').dropdown();		
+					});
+					dropDownClicked ++;
+				}
+				
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+				console.log('error');
+				console.log(textStatus);
+				console.log(errorThrown);
+			},
+		});
+		
+	}
+	
+	if (dropDownClicked == 0) {
+		$('.selection.dropdown').click(function (){
+			console.log('dropdown clicked', dropDownClicked);
+			$('.selection.dropdown').dropdown();		
+		});
+		dropDownClicked ++;
+	}
+
+}
+
+function createEmployeeModalContent(editOrCreate, detailsForEditForm){
+	
+	console.log('editOrCreate', editOrCreate);
 	
 	let newEmployeeFieldsObj = {};
 	let listOfLocationsUpdated = [];	
 	let listOfDepartmentsUpdated = [];
+	let listOfLocationIDs = [];
+	
 	
 	$.ajax({
 	url: "assets/php/getAllLocations.php",
@@ -745,188 +1074,55 @@ function createEmployeeModalContent(){
 		
 			console.log('all locations create employee ',result.data);
 			
-			//let locationsChangeObj = {};
-			
-			
-			for (let l = 0; l < result.data.length; l ++) {
-				listOfLocationsUpdated.push(result.data[l].name)
-				//locationsChangeObj[result.data[l].name] = result.data[l].id;
-				locationsDropDownObj[result.data[l].name] = result.data[l].id;
+			for (let loc = 0; loc < result.data.length; loc ++){
+				listOfLocationsUpdated.push(result.data[loc].name);
+				listOfLocationIDs.push(result.data[loc].id);
 			}
-
-			for (const [key, value] of Object.entries(blankEmployeeObj)) {
-				
-				if (key == 'firstName') {
-					newEmployeeFieldsObj[key] = document.createElement('div');
-				} else if (key == 'lastName') {
-					newEmployeeFieldsObj[key] = document.createElement('div');
-				} else if (key == 'email') {
-					newEmployeeFieldsObj[key] = document.createElement('div');
-				} else if (key == 'jobTitle') {
-					newEmployeeFieldsObj[key] = document.createElement('div');
-				} else if (key == 'department') {
-					newEmployeeFieldsObj[key] = document.createElement('div');
-				} else if (key == 'locationName') {
-					newEmployeeFieldsObj[key] = document.createElement('div');
-				} else {
-					newEmployeeFieldsObj[key] = document.createElement('div');
-					newEmployeeFieldsObj[key].setAttribute('class', 'display-none-field');
-				}
 			
-			}
-	
-			console.log('listoflocationsupdated',listOfLocationsUpdated);
-			//console.log('locationchangeobj', locationsChangeObj);
+			buildForm(listOfLocationsUpdated, listOfLocationIDs, editOrCreate, detailsForEditForm);
 			
-			for (const [key, value] of Object.entries(newEmployeeFieldsObj)) {
-				
-				let inputField;
-				//if (key == 'locationName' || key == 'department'){
-				if (key == 'locationName'){
-					
-					if (key == 'locationName') {
-						inputField = document.createElement('select');
-						inputField.setAttribute('required', '');
-						inputField.setAttribute('class', 'ui fluid dropdown');
-						inputField.setAttribute('id', 'location-dropdown');
-						
-						let locationSelectOption = document.createElement('option');
-						locationSelectOption.setAttribute('disabled', '');
-						locationSelectOption.setAttribute('value', '');
-						locationSelectOption.setAttribute('selected', '');
-						locationSelectOption.innerHTML = 'choose a location';
-						
-						
-						inputField.appendChild(locationSelectOption);
-						
-						for (let lc = 0; lc < listOfLocationsUpdated.length; lc ++) {
-													
-							let locationChoice = document.createElement('option');
-							locationChoice.setAttribute('value', listOfLocationsUpdated[lc]);
-							locationChoice.innerHTML = listOfLocationsUpdated[lc];
-							//locationChoice.setAttribute('placeholder-id', locationsChangeObj[listOfLocationsUpdated[lc]]);
-							locationChoice.setAttribute('placeholder-id', locationsDropDownObj[listOfLocationsUpdated[lc]]);
-							inputField.appendChild(locationChoice);
-							
-						}
-
-					} 
-					
-					
-					/*
-					
-					else if (key == 'department') {
-						
-						inputField = document.createElement('select');
-						inputField.setAttribute('required', '');
-						inputField.setAttribute('class', 'ui fluid dropdown');
-						inputField.setAttribute('id', 'department-dropdown');
-						
-						let departmentSelectOption = document.createElement('option');
-						departmentSelectOption.setAttribute('disabled', '');
-						departmentSelectOption.setAttribute('value', '');
-						departmentSelectOption.setAttribute('selected', '');
-						departmentSelectOption.innerHTML = 'choose a department';
-
-						let departmentChoice = document.createElement('option');
-						departmentChoice.innerHTML = 'choice';
-
-						inputField.appendChild(departmentSelectOption);
-						inputField.appendChild(departmentChoice);
-
-					}
-					
-					*/
-					
-					
-				//} else {
-				} else if ( key != 'department') {
-					
-					inputField = document.createElement('input');
-					inputField.setAttribute('autocomplete', 'off');
-
-					if (key == 'email') {
-						inputField.setAttribute('type', 'email');			
-					} else {
-						inputField.setAttribute('type', 'text');			
-					}
-					
-					if (key == 'firstName' || key == 'lastName') {
-						inputField.setAttribute('required', '');
-					}			
-
-					inputField.setAttribute('id', `create-employee-${key}-field`);
-					inputField.setAttribute('placeholder', key);
-					inputField.setAttribute('field-name', key);
-					
-				}
-
-				if (key != 'department'){
-					newEmployeeFieldsObj[key].appendChild(inputField);
-				}
-				
-				if (key == 'firstName') {
-					document.getElementById('employee-modal-create-fields').appendChild(newEmployeeFieldsObj[key]);
-				}
-			
-			}	
-
-			for (const [key, value] of Object.entries(newEmployeeFieldsObj)) {
-				
-				if (key != 'firstName') {
-						document.getElementById('employee-modal-create-fields').appendChild(newEmployeeFieldsObj[key]);
-				}
-			}
+			//buildForm(result.data, locationOnly = true);
 			
 			let locationDropDown = document.getElementById('location-dropdown');
 			
 			locationDropDown.addEventListener('change', function(e){
-				
-				console.log('change');
-				console.log(e.target.value);
-				
+
+						console.log('location changed');
+						
 						$.ajax({
 						url: "assets/php/departmentsChange.php",
 						type: "GET",
 						dataType: "json",
 						data: {
-							locationID: locationsDropDownObj[e.target.value]	
+							locationID: e.target.value
 						},
 						success: function (result) {
+
+								document.getElementById('department-dropdown-menu').innerHTML = "";
 							
 								console.log('departments change ',result.data);
-								
-								let inputField;
-								
-							
-								inputField = document.createElement('select');
-								inputField.setAttribute('required', '');
-								inputField.setAttribute('class', 'ui fluid dropdown');
-								inputField.setAttribute('id', 'department-dropdown');
-								
-								let departmentSelectOption = document.createElement('option');
-								departmentSelectOption.setAttribute('disabled', '');
-								departmentSelectOption.setAttribute('value', '');
-								departmentSelectOption.setAttribute('selected', '');
-								departmentSelectOption.innerHTML = 'choose a department';
-								inputField.appendChild(departmentSelectOption);
-								
-								for (dc = 0; dc < result.data.length; dc ++) {
-									let departmentChoice = document.createElement('option');
-									departmentChoice.innerHTML = result.data[dc].name;
-									departmentChoice.setAttribute('value', result.data[dc].name);
-									inputField.appendChild(departmentChoice);
-									
-									departmentsDropDownObj[result.data[dc].name] = result.data[dc].id;
-								}
-								
-								if (document.getElementById('department-dropdown')) {
-									document.getElementById('department-dropdown').remove();
-								}
-								document.getElementById('employee-modal-create-fields').appendChild(inputField);
-						
-						
 
+								for (let dc = 0; dc < result.data.length; dc ++ ) {
+
+									let oneOption = document.createElement('div');
+									oneOption.setAttribute('class', 'item');
+
+									let outputValue = result.data[dc].id;
+									oneOption.innerHTML = result.data[dc].name;
+									oneOption.setAttribute('data-value', outputValue);
+									
+									document.getElementById('department-dropdown-menu').appendChild(oneOption);
+									
+
+									
+								}
+
+								$('.selection.dropdown').dropdown();								
+								
+								document.getElementById('department-dropdown-placeholder-text').innerHTML = 'Select a department';
+								if (editOrCreate == 'create') {
+									document.getElementById('disabled-departments-dropdown').setAttribute('class', 'required field');
+								}
 						},
 						error: function (jqXHR, textStatus, errorThrown) {
 								console.log('error');
@@ -934,7 +1130,10 @@ function createEmployeeModalContent(){
 								console.log(errorThrown);
 							},
 						});
-			});
+									
+			}); // end of event listener
+			
+			locationDropDownHolder.push(locationDropDown);
 			
 
 	},
@@ -1185,11 +1384,13 @@ function selectEmployeeFunctionality(){
 				$('.employee-detail-fields').attr('style', 'visibility: visible');
 				$('.message').attr('class', 'ui floating message');
 				document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
-				document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', employeeDetails);
+				document.getElementById('delete-employee-btn').setAttribute('employee-details', employeeDetails);
+				document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', employeeDetails)
 				employeeDetailsVisibility ++;
 			} else {
 				$('.message').attr('class', 'ui floating message');
 				document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
+				document.getElementById('delete-employee-btn').setAttribute('employee-details', employeeDetails);
 				document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', employeeDetails)
 			}
 			 
@@ -1201,7 +1402,7 @@ function selectEmployeeFunctionality(){
 $('#delete-employee-btn').click(function (){
 	console.log('delete?');
 	
-	let employeeDetails = JSON.parse(document.getElementById('delete-employee-modal-btn').getAttribute('employee-details'));
+	let employeeDetails = JSON.parse(document.getElementById('delete-employee-btn').getAttribute('employee-details'));
 	//let employeeDetails = JSON.parse(this.getAttribute('employee-details'));
 	//console.log(JSON.parse(this.getAttribute('employee-details')));
 	$('#delete-employee-modal-btn').attr('style', 'display: inline')
@@ -1256,12 +1457,16 @@ $('#delete-employee-modal-btn').click(function (){
 	success: function (result) {
 		
 		console.log('delete employee result',result);
-		runSearch(orderBy, lastSearch);
 		
-		let deletedEmployeeTimer = setTimeout(function (){
-			document.getElementById('close-panel-icon').click();
+		runSearch(orderBy, lastSearch);
+		console.log('pause')
+		let deletedEmployeeTimer = setTimeout(function () {
+			document.getElementById('close-panel-icon').click();	
+			console.log('done');
 			clearTimeout(deletedEmployeeTimer);
-		}, 750);
+		
+		}, 1000);
+
 
 	},
 	error: function (jqXHR, textStatus, errorThrown) {
@@ -1333,8 +1538,9 @@ function viewDetailsBtnFunctionality(){
 		if (employeeDetailsVisibility == 0) {
 			renderEmployee(employeePropertiesObj);
 			$('.employee-detail-fields').attr('style', 'visibility: visible');
-			document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails)
-			document.getElementById('delete-employee-btn').setAttribute('employee-details', employeeDetails)
+			document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
+			document.getElementById('delete-employee-btn').setAttribute('employee-details', employeeDetails);
+			document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', employeeDetails)
 			employeeDetailsVisibility ++;
 		}
 
@@ -1348,10 +1554,18 @@ function viewDetailsBtnFunctionality(){
 //original edit employee button click - KEEP
 $('#edit-employee-fields-btn').click(function(){
 	
+	document.getElementById('employee-modal-edit-fields').innerHTML = "";
 	
 	let employeeDetails = JSON.parse(this.getAttribute('employee-details'));
 
 	console.log(employeeDetails);
+	
+	employeeDetails['jobTitle'] = 'TBC';
+	
+	dropDownClicked = 0;
+	createEmployeeModalContent(editOrCreate = 'edit', employeeDetails);	
+	
+	//createEmployeeModalContent(editOrCreate = 'create')
 				
 	for (const [key, value] of Object.entries(employeeDetails)) {
 
@@ -1359,9 +1573,11 @@ $('#edit-employee-fields-btn').click(function(){
 				
 	}
 
-	document.getElementById('employee-modal-view-fields').setAttribute('style','display: inherit');
+	document.getElementById('employee-modal-edit-fields').setAttribute('style','display: inherit');
 	document.getElementById('submit-edit-employee').setAttribute('style','display: inline');
 
+	//$('.selection.dropdown')
+	//.dropdown();
 				
 	//document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
 	//document.getElementById('delete-employee-btn').setAttribute('employee-details', employeeDetails);
@@ -1386,14 +1602,27 @@ $('#edit-employee-fields-btn').click(function(){
 		}	
 	}).modal('show');
 
-	
-	$('#edit-employee-modal-btn').click();
+	// to set the fields to not read-only I think
+	//$('#edit-employee-modal-btn').click();
 	
 	//$(".employee-editable-field").removeAttr('readonly');
 	//$('.employee-editable-field').attr('style', 'border-color: blue');
 
 });
 
+$('#submit-edit-employee').click(function (){
+	console.log('click');
+	
+	document.getElementById('update-employee-modal-btn').setAttribute('style', 'display: inline');	
+	$('#delete-employee-alert').modal(
+	 {
+		 title: '<i class="archive icon"></i>',
+		 //content: `Update this employee?  ${editEmployeeDataObj.firstName} ${editEmployeeDataObj.lastName}`
+		 content: `Update this employee?`
+	 }
+	).modal('show');
+	
+});
 
 
 /* // Another version, not needed?
@@ -1516,18 +1745,89 @@ $('#edit-employee-fields-btn').click(function(){
 
 */
 
-let editEmployeeForm = document.getElementById('employee-modal-view-fields');
+$('#update-employee-modal-btn').click(function (){
+	console.log('clicked');
+	console.log(JSON.parse(this.getAttribute('employee-details')));
+	
+	let updateEmployeeDataObj = JSON.parse(this.getAttribute('employee-details'));
 
-editEmployeeForm.addEventListener( "submit", function ( event ) {
+	
+	
+	$.ajax({
+	url: "assets/php/updateEmployee.php",
+	type: "GET",
+	dataType: "json",
+	data: updateEmployeeDataObj,
+	success: function (result) {
+		
+			console.log('updateEmployee ',result.data);
+			console.log('orderby', orderBy, 'lastSearch', lastSearch);
+			employeeJustEdited = true;
+			editedElement = updateEmployeeDataObj;
+			runSearch(orderBy,'');
+
+	},
+	error: function (jqXHR, textStatus, errorThrown) {
+			console.log('error');
+			console.log(textStatus);
+			console.log(errorThrown);
+		},
+	});
+	
+	
+
+});
+
+let editEmployeeForm = document.getElementById('employee-modal-edit-fields');
+
+editEmployeeForm.addEventListener("submit", function ( event ) {
 
 	event.preventDefault();
 	
-	console.log('view employee form submitted');
+	console.log('edit employee form submitted');
 	
-	document.getElementById('close-employee-modal').click();
+	//document.getElementById('close-employee-modal').click();
 
 	console.log('elements', editEmployeeForm.elements);
 	
+	if (editEmployeeForm.elements) {
+		
+		editEmployeeDataObj = {
+		firstName: '', //
+		lastName: '',		//
+		jobTitle: '', //
+		email: '', //
+		departmentID: '', //
+		locationName: '',
+		locationID: '',
+		department: '',
+		id: ''
+		}
+	//console.log('LOCATIONS OBJ', locationsObj);
+	
+		for (let e = 0; e < editEmployeeForm.elements.length; e ++) {
+		
+			if (editEmployeeForm.elements[e].tagName != 'BUTTON') {			
+				
+				//console.log('element', createEmployeeForm.elements[e], 'value', createEmployeeForm.elements[e].value);
+			
+				editEmployeeDataObj[editEmployeeForm.elements[e].getAttribute('fieldname')] = editEmployeeForm.elements[e].value;
+				
+			}
+
+		}
+		
+		console.log(editEmployeeDataObj);
+		
+		document.getElementById('update-employee-modal-btn').setAttribute('employee-details', JSON.stringify(editEmployeeDataObj));
+
+	}
+	
+
+	
+
+	
+	/*
 	for (let elem = 0; elem < editEmployeeForm.elements.length; elem ++){
 		
 		if (editEmployeeForm.elements[elem].tagName != 'BUTTON') {
@@ -1535,6 +1835,7 @@ editEmployeeForm.addEventListener( "submit", function ( event ) {
 		console.log(editEmployeeForm.elements[elem].getAttribute('fieldname'), editEmployeeForm.elements[elem].value);
 		}	
 	}
+	*/
 	
 	
 	/*
@@ -1611,31 +1912,24 @@ editEmployeeForm.addEventListener( "submit", function ( event ) {
 
 let createEmployeeForm = document.getElementById('employee-modal-create-fields');
 
-createEmployeeForm.addEventListener( "submit", function ( event ) {
+createEmployeeForm.addEventListener("submit", function ( event ) {
 
 	event.preventDefault();
-
-	//let FD = new FormData (createEmployeeForm);
-	//sendData();
-	
-	//console.log('submitted', FD.values);
 
 	console.log('elements', createEmployeeForm.elements);
 	
 	if (createEmployeeForm.elements) {
-		//document.getElementById('submit-create-employee').setAttribute('class', 'ui primary approve button');
-		//document.getElementById('submit-create-employee').setAttribute('style', 'display: inline');
+
 		document.getElementById('close-employee-modal').click();
-		//document.getElementById('employee-modal-create-fields').innerHTML = "";
-		//document.getElementById('try-to-submit').setAttribute('style', 'display: none');
+
 	}
 	
 	createEmployeeDataObj = {
-		firstName: '',
-		lastName: '',
-		jobTitle: '',
-		email: '',
-		departmentID: '',
+		firstName: '', //
+		lastName: '',		//
+		jobTitle: '', //
+		email: '', //
+		departmentID: '', //
 		locationName: '',
 		locationID: '',
 		department: '',
@@ -1645,31 +1939,18 @@ createEmployeeForm.addEventListener( "submit", function ( event ) {
 	
 	for (let e = 0; e < createEmployeeForm.elements.length; e ++) {
 	
-		if (createEmployeeForm.elements[e].tagName == 'INPUT') {
-			console.log(createEmployeeForm.elements[e].placeholder, createEmployeeForm.elements[e].value);
-			if (createEmployeeForm.elements[e].value) {
-			createEmployeeDataObj[createEmployeeForm.elements[e].placeholder] = createEmployeeForm.elements[e].value;
-			}
-		} else if (createEmployeeForm.elements[e].tagName == 'SELECT'){
+		if (createEmployeeForm.elements[e].tagName != 'BUTTON') {			
 			
-				if (createEmployeeForm.elements[e].id == 'location-dropdown') {
-
-					console.log('location dropdown value', createEmployeeForm.elements[e].value);
-					createEmployeeDataObj['locationName'] = createEmployeeForm.elements[e].value;
-					createEmployeeDataObj['locationID'] = locationsDropDownObj[createEmployeeForm.elements[e].value];
+			//console.log('element', createEmployeeForm.elements[e], 'value', createEmployeeForm.elements[e].value);
+		
+			createEmployeeDataObj[createEmployeeForm.elements[e].getAttribute('fieldname')] = createEmployeeForm.elements[e].value;
 			
-				} else if (createEmployeeForm.elements[e].id == 'department-dropdown'){
-					
-					createEmployeeDataObj['departmentID'] = departmentsDropDownObj[createEmployeeForm.elements[e].value];
-					createEmployeeDataObj['department'] = createEmployeeForm.elements[e].value;
-				}
-			
-			
-			}
+		}
 
 	}
 	
 	console.log(createEmployeeDataObj);
+	
 	
 	$.ajax({
 	url: "assets/php/insertEmployee.php",
@@ -1680,6 +1961,7 @@ createEmployeeForm.addEventListener( "submit", function ( event ) {
 		
 			console.log('insertEmployee ',result.data);
 			console.log('orderby', orderBy, 'lastSearch', lastSearch);
+			employeeJustCreated = true;
 			runSearch(orderBy,'');
 
 	},
@@ -1689,6 +1971,8 @@ createEmployeeForm.addEventListener( "submit", function ( event ) {
 			console.log(errorThrown);
 		},
 	});
+	
+	
 	
 	
 		
@@ -1724,9 +2008,18 @@ $('#create-employee-orig').click(function(){
 	
 });
 
+$('#create-employee-btn-mobile').click(function(){
+
+	$('#create-employee-btn').click();
+
+});
+
 $('#create-employee-btn').click(function(){
 	
-	createEmployeeModalContent();
+	let noDetailsRequired = {};
+	dropDownClicked = 0;
+	createEmployeeModalContent(editOrCreate = 'create', noDetailsRequired);
+	//createEmployeeModalContent(editOrCreate = 'edit')
 	
 	document.getElementById('employee-modal-create-fields').setAttribute('style','display: inherit');
 	document.getElementById('submit-create-employee').setAttribute('style', 'display: inline');
@@ -1751,6 +2044,35 @@ $('#create-employee-btn').click(function(){
 		}	
 		}).modal('show');
 
+	
+});
+
+
+$('#manage-depts-and-locs-btn').click(function(){
+	console.log('manage depts click');
+	
+		document.getElementById('manage-depts-and-locs-form').setAttribute('style', 'display: block')
+	
+		$('.ui.modal.employee-details-modal').modal({
+		
+		title: 'Manage Department and Locations',
+		closable: false,
+		onDeny: function(){
+			console.log('deny');
+			//return false;
+		},
+		onApprove: function (){
+		//document.getElementById('submit-create-employee').click();
+		console.log('approve');
+		},
+		onHidden: function(){	
+			console.log('close view employee modal');
+			document.getElementById('employee-modal-create-fields').innerHTML = "";
+			document.getElementById('employee-modal-edit-fields').innerHTML = "";
+			document.getElementById('manage-depts-and-locs-form').innerHTML = "";
+			closeModal();
+		}	
+		}).modal('show');
 	
 });
 
@@ -1884,6 +2206,9 @@ function runSearch(orderBy, searchTerm){
 				//console.log('newestelement', JSON.stringify(nextNewestElement));
 
 				//newestEmployeeObj[maxNewEmployeeID].getElementsByTagName('tr').setAttribute('style', 'display: none');
+				
+
+				
 				function newElem (){
 					finalMaxID = maxNewEmployeeID;
 					return newestEmployeeObj[maxNewEmployeeID] 
@@ -1901,9 +2226,14 @@ function runSearch(orderBy, searchTerm){
 				//console.log('td', newElem().getElementsByTagName('td'));
 				//console.log('td', newElem().getElementsByTagName('td')[0].children[0].children[1].attributes[1].textContent);
 
-				otherEmployees.appendChild(createEmployeeRow(JSON.parse(newElem().getElementsByTagName('td')[0].children[0].children[1].attributes[1].textContent)));
 				
+
+				console.log('creates newest employee on first search');
+				otherEmployees.appendChild(createEmployeeRow(JSON.parse(newElem().getElementsByTagName('td')[0].children[0].children[1].attributes[1].textContent)));
+
 				}
+
+				
 
 				viewDetailsBtnFunctionality()
 
@@ -1911,6 +2241,59 @@ function runSearch(orderBy, searchTerm){
 				
 				selectEmployeeFunctionality()
 
+				if (employeeJustCreated) {
+					console.log('employee jc');
+					//document.getElementById('newest-employee').click();
+					console.log(newestElement);
+					
+					renderEmployee(newestElement);
+
+					let employeeDetails = JSON.stringify(newestElement);
+					console.log('test', employeeDetails);
+
+					if (employeeDetailsVisibility == 0) {
+						$('.employee-detail-fields').attr('style', 'visibility: visible');
+						$('.message').attr('class', 'ui floating message');
+						document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
+						document.getElementById('delete-employee-btn').setAttribute('employee-details', employeeDetails);
+						document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', employeeDetails)
+						employeeDetailsVisibility ++;
+					} else {
+						$('.message').attr('class', 'ui floating message');
+						document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
+						document.getElementById('delete-employee-btn').setAttribute('employee-details', employeeDetails);
+						document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', employeeDetails)
+					}
+					
+					
+				}
+				
+				if (employeeJustEdited) {
+					console.log('employee edited');
+					
+					renderEmployee(editedElement);
+
+					let employeeDetails = JSON.stringify(editedElement);
+					console.log('test', employeeDetails);
+
+					if (employeeDetailsVisibility == 0) {
+						$('.employee-detail-fields').attr('style', 'visibility: visible');
+						$('.message').attr('class', 'ui floating message');
+						document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
+						document.getElementById('delete-employee-btn').setAttribute('employee-details', employeeDetails);
+						document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', employeeDetails)
+						employeeDetailsVisibility ++;
+					} else {
+						$('.message').attr('class', 'ui floating message');
+						document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
+						document.getElementById('delete-employee-btn').setAttribute('employee-details', employeeDetails);
+						document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', employeeDetails)
+					}
+					
+				}
+
+				employeeJustCreated = false;
+				employeeJustEdited = false;
 				document.getElementById('search-box-icon').setAttribute('class', 'ui icon input');				
 				
 
@@ -2105,11 +2488,16 @@ function getAllEmployees(){
 function closeModal(){	
 
 	console.log('closeModal func run');
+	
+	//locationDropDownHolder[0].remove();
+	locationDropDownHolder = [];
+	
+	$('.selection.dropdown').remove();	
 
 	document.getElementById('employee-modal-create-fields').reset();
-	document.getElementById('employee-modal-view-fields').reset();
+	document.getElementById('employee-modal-edit-fields').reset();
 
-	document.getElementById('employee-modal-view-fields').setAttribute('style','display: none');
+	document.getElementById('employee-modal-edit-fields').setAttribute('style','display: none');
 	document.getElementById('employee-modal-create-fields').setAttribute('style','display: none');
 
 	document.getElementById('submit-create-employee').setAttribute('style','display: none');
