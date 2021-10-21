@@ -1640,6 +1640,8 @@ function runSearch(orderBy, searchTerm){
 
 				if (employeeJustCreated) {
 					
+					newestElement['jobTitle'] = 'Job Title TBC';
+
 					renderEmployee(newestElement);
 
 					let employeeDetails = JSON.stringify(newestElement);
