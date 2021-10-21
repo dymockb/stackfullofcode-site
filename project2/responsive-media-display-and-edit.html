@@ -243,6 +243,28 @@
 	.input[type="text"]:focus  {
 		border-color: #22242626;
 	}
+
+	.manage-dept-row {
+		margin-top: 1rem;
+	}
+
+	.number-of-employees {
+		margin-left: 1rem;
+		margin-right: 1rem;
+		display: inline;
+	}
+
+	.manage-dept-btns {
+		display: inline-flex;
+	}
+
+	.manage-dept-info {
+		margin-top: 1rem;
+	}
+
+	.department-segment {
+		margin-bottom: 1rem !important;
+	}
 	
 	@media only screen and (max-width: 767.98px) {
 		
@@ -292,23 +314,6 @@
 			padding: 0;
 		}
 		*/
-
-		.ui.grid > .column:not(.row) {
-			padding-top: 0.5rem;
-			padding-bottom: 1rem;
-		}
-
-		.ui.stackable.grid > .column:not(.row) {
-    width: 100% !important;
-    margin: 0 0 !important;
-    -webkit-box-shadow: none !important;
-    box-shadow: none !important;
-    /* padding: 1rem 1rem; */
-		}
-
-		#create-new-dept-btn {
-			margin-bottom: 1rem;
-		}
 
 	}
 	
@@ -764,45 +769,69 @@
 								<div class="ui column">
 									<div class="ui raised segment">
 										<div class="ui one top attached black disabled button">
-										Location 1
+											Location 2
 										</div>
 										<div class="ui attached segment">
 											<div class="ui form">
 												<div class="field">
-													<div class="ui stackable two column grid">
+													<div class="ui stackable two column row">
+													<div class="ui segment department-segment">
 														<div class="ui column">														
-															<input readonly value="departmentID" type="text" placeholder="department 1">
+															<input readonly value="Research and Development" type="text" placeholder="department 1">
 														</div>
-														<div class="ui column">														
-															<div class="ui button disabled">Rename</div>
-															<div class="ui button disabled">Delete</div>
+														
+														<div class="ui column manage-dept-info">
+															<div class="number-of-employees">50 employees</div>
+															<div class="manage-dept-btns">
+																<div class="ui mini button disabled">Rename department</div>
+																<div class="ui mini button disabled">Delete department</div>
+															</div>
 														</div>
+
+													</div>														
 													</div>
-													<hr class="hidden-field">
-													<div class="ui stackable two column grid">
+										
+													<div class="ui stackable two column row">
+														<div class="ui segment department-segment">
 														<div class="ui column">														
 															<input readonly value="departmentID" type="text" placeholder="department 2">
 														</div>
-														<div class="ui column">														
-															<div class="ui button">Rename</div>
-															<div class="ui button">Delete</div>
+
+														<div class="ui column manage-dept-info">
+															<div class="number-of-employees">50 employees</div>
+															<div class="manage-dept-btns">
+																<div class="ui mini button disabled">Rename department</div>
+																<div class="ui mini button disabled">Delete department</div>
+															</div>
 														</div>
+
 													</div>
-													<hr class="hidden-field">
-													<div class="ui stackable two column grid">
+													</div>
+
+													<div class="ui stackable two column row">
+														<div class="ui segment department-segment">
 														<div class="ui column">														
-															<input value="" type="text" placeholder="new department">
+															<input readonly value="" type="text" placeholder="Create new department">
 														</div>
-														<div class="ui column">														
-															<div id="create-new-dept-btn" class="ui button disabled">Create new department</div>
+
+														<div class="ui column manage-dept-info">
+															
+															<div class="manage-dept-btns">
+																<div class="ui mini button disabled">Create new department</div>
+																
+															</div>
 														</div>
-													</div>													
+
+													</div>
+													</div>
+													
+													
 												</div>
 											</div>
 										</div>
 										<div class="ui two bottom attached buttons">
-											<div class="ui button">Edit</div>
-											<div class="ui button">Delete</div>
+											<div class="ui button">Edit Location</div>
+											<div class="ui button">Delete Location</div>
 										</div>
 									</div>
 								</div>
