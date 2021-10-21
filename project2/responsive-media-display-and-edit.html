@@ -192,7 +192,7 @@
 	}
 	
 	.display-none-field {
-		display: none
+		display: none !important;
 	}
 	
 	.hidden-field {
@@ -767,17 +767,24 @@
 						
 							<div class="ui stackable one column grid">
 								<div class="ui column">
-									<div class="ui raised segment">
+
+									<div class="ui raised floating message">
+										<i id="close-locationID-1-panel" class="close icon display-none-field"></i>
 										<div class="ui one top attached black disabled button">
-											Location 2
+											Location 1 (50 employees)
 										</div>
-										<div class="ui attached segment">
+
+										<div  class="ui attached segment">
+											
 											<div class="ui form">
-												<div class="field">
+												
 													<div class="ui stackable two column row">
-													<div class="ui segment department-segment">
-														<div class="ui column">														
-															<input readonly value="Research and Development" type="text" placeholder="department 1">
+													<div class="ui floating message department-segment">
+													<i id="close-departmentID-1-icon" class="close icon display-none-field"></i>
+														<div class="ui column">
+															<div class="field">														
+																<input readonly value="Research and Development" type="text" placeholder="department 1">
+															</div>
 														</div>
 														
 														<div class="ui column manage-dept-info">
@@ -793,8 +800,10 @@
 										
 													<div class="ui stackable two column row">
 														<div class="ui segment department-segment">
-														<div class="ui column">														
-															<input readonly value="departmentID" type="text" placeholder="department 2">
+														<div class="ui column">	
+															<div class="field">													
+																<input readonly value="departmentID" type="text" placeholder="department 2">
+															</div>
 														</div>
 
 														<div class="ui column manage-dept-info">
@@ -810,8 +819,10 @@
 
 													<div class="ui stackable two column row">
 														<div class="ui segment department-segment">
-														<div class="ui column">														
-															<input readonly value="" type="text" placeholder="Create new department">
+														<div class="ui column">
+															<div class="field">													
+																<input readonly value="" type="text" placeholder="Create new department">
+															</div>
 														</div>
 
 														<div class="ui column manage-dept-info">
@@ -826,12 +837,13 @@
 													</div>
 													
 													
-												</div>
+												
 											</div>
+
 										</div>
 										<div class="ui two bottom attached buttons">
-											<div class="ui button">Edit Location</div>
 											<div class="ui button">Delete Location</div>
+											<div class="ui button">Edit Location</div>
 										</div>
 									</div>
 								</div>
