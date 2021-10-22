@@ -270,7 +270,7 @@ $('#manage-depts-and-locs-btn').click(function(){
 		let buttonForModal = document.createElement('button')
 		buttonForModal.setAttribute('class', 'ui button');
 		buttonForModal.setAttribute('id', 'create-new-location-btn');
-		buttonForModal.innerHTML = 'Test'
+		buttonForModal.innerHTML = 'Add new location';
 
 		$('.ui.modal.employee-details-modal').modal({
 
@@ -570,11 +570,17 @@ $('#employee-modal-create-fields').submit(function(event) {
 
 function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTemplate){
 
+	let existingDepartmentNames = ['Dept1', 'Dept2'];
+
+	let existingDepartmentName = 'Dept1'
+	let existingLocationName = 'Loc1'
+
+	let existingLocationNames = ['Loc1', 'Loc2'];
 	let basicRules = []
 
 	let ruleOne = {}
 	ruleOne['type'] = 'empty';
-	ruleOne['prompt'] = 'Please enter a location name';
+	ruleOne['prompt'] = 'Please enter a name';
 
 	let ruleTwo = {}
 	ruleTwo['type'] = 'regExp[/^[A-Z]/]';
@@ -587,11 +593,6 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 	basicRules.push(ruleOne);
 	basicRules.push(ruleTwo);
 	basicRules.push(ruleThree);
-
-	let existingDepartmentName = 'Dept1'
-	let existingLocationName = 'Loc1'
-
-	let existingLocationNames = ['Loc1', 'Loc2'];
 
 	let locationRules = basicRules.slice();
 
@@ -638,6 +639,7 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 	$(`#submit-new-location-btn`).click(function(e){
 			
 		console.log('submit new location clicked');
+		console.log($(`#new-location-form`));
 		console.log($(`#new-location-form`).form('validate form'));
 
 		if ($(`#new-location-form`).form('validate form')) {
@@ -670,8 +672,18 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 
 	});
 
+
+
 	for (let f = 0; f < 1; f++){
 
+		let departmentRules = basicRules.slice();
+
+		for (let r = 0 ; r < existingDepartmentNames.length; r ++) {
+			let newRule = {}
+			newRule['type'] = `notExactly[${existingDepartmentNames[r]}]`;
+			newRule['prompt'] = 'That department already exists';
+			departmentRules.push(newRule)
+		}
 		
 
 		$(`#locationID-1-new-dept-form`).form({
@@ -712,6 +724,7 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 
 		$(`#locationID-new-dept-form`).submit(function(event){
 			event.preventDefault();
+			console.log($('#locationID-1-new-dept-form'));
 			console.log('new department submitted');
 
 			for (let e = 0; e < this.elements.length; e ++) {
@@ -727,7 +740,7 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 
 		});
 
-		$(`#${depStringTemplate}-form`).form({
+		$(`#departmentID-1-form`).form({
 			fields: {
 				name: {
 					identifier: 'new-dept-name',
@@ -755,11 +768,14 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 			}
 		});
 		
-		$(`#submit-${depStringTemplate}-btn`).click(function(e){
+		
+
+		$(`#submit-departmentID-1-btn`).click(function(e){
+			
 			
 			console.log('submit clicked');
-			console.log($(`#${depStringTemplate}-form`).form('validate form'));
-			//document.getElementById(`${stringTemplate}-form`).setAttribute('style', 'display: none');
+			console.log($('#departmentID-1-form').form('validate form'));
+			
 			if ($(`#${depStringTemplate}-form`).form('validate form')) {
 				$(`#${depStringTemplate}-form`).form('submit');
 				$(`#${depStringTemplate}-form`).form('reset');
@@ -768,14 +784,19 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 		});
 
 
-		$(`#${depStringTemplate}-form`).submit(function(event){
+		$(`#departmentID-1-form`).submit(function(event){
 			event.preventDefault();
 			console.log('submitted');
-			$(`#${depStringTemplate}-form`).form('set defaults');
+			$(`#departmentID-1-form`).form('set defaults');
 			//$(`#${depStringTemplate}-form`).form('set as clean');
 
 			$(`#departmentID-1-field`).attr('class', 'eight wide field dept-name-field');
 			$(`#input-departmentID-1-field`).attr('readonly','');
+			$(`#rename-${depStringTemplate}-btn`).attr('class', 'ui tiny button');
+			$(`#submit-departmentID-1-btn`).attr('class', 'ui tiny disabled button');
+			$(`#cancel-departmentID-1-btn`).attr('class', 'ui tiny disabled button');
+			$('#departmentID-1-field-container').attr('style', 'display: none');
+			
 
 			for (let e = 0; e < this.elements.length; e ++) {
 		
@@ -787,7 +808,8 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 					//$(`#${depStringTemplate}-form`).form('reset')
 					$(`#input-departmentID-1-field`).attr('value', this.elements[e].value);
 					$(`#input-departmentID-1-field`).attr('placeholder', this.elements[e].value);
-				
+					$(`#departmentID-1-title`).hide().html(this.elements[e].value).fadeIn(750); 
+
 				}
 	
 			}
@@ -796,10 +818,14 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 
 		$(`#cancel-${depStringTemplate}-btn`).click(function(e){
 
-			$(`#${depStringTemplate}-form`).form('reset');
+			console.log('cancel');
+			
+			$(`#departmentID-1-form`).form('reset');
 
 			$(`#input-departmentID-1-field`).attr('value',`${existingDepartmentName}`);
 			$(`#input-departmentID-1-field`).attr('placeholder',`${existingDepartmentName}`);
+
+			$('#departmentID-1-field-container').attr('style', 'display: none');
 			
 			//$(`#departmentID-1-field`).attr('class', 'field');
 
@@ -812,12 +838,14 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 		});
 
 		$(`#rename-${depStringTemplate}-btn`).click(function(e){
+
+			$('#departmentID-1-field-container').attr('style', 'display: flex');
 			
 			$(`#input-departmentID-1-field`).removeAttr('readonly');
 			$(`#submit-departmentID-1-btn`).attr('class', 'ui tiny button');
 			
 			$(`#input-departmentID-1-field`).attr('value','');
-			$(`#input-departmentID-1-field`).attr('placeholder','');
+			$(`#input-departmentID-1-field`).attr('placeholder','New Department Name');
 			$(`#departmentID-1-field`).attr('class', 'eight wide info field dept-name-field');
 			$(`#cancel-departmentID-1-btn`).attr('class', 'ui tiny button');
 		
@@ -828,6 +856,47 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 		$(`#delete-${depStringTemplate}-btn`).click(function(e){
 			
 			console.log('delete', this.getAttribute('deptID'));
+
+		});
+
+
+		$(`#locationID-1-new-dept-form`).form({
+			fields: {
+				name: {
+					identifier: 'new-department',
+					rules: departmentRules
+				}
+			}
+		});
+	
+
+		$(`#locationID-1-submit-new-dept-btn`).click(function(e){
+			
+			
+			console.log('submit clicked');
+			
+			
+			if ($(`#locationID-1-new-dept-form`).form('validate form')) {
+				$(`#locationID-1-new-dept-form`).form('submit');
+				$(`#locationID-1-new-dept-form`).form('reset');
+			}
+			
+
+		});
+
+		$(`#locationID-1-new-dept-form`).submit(function(event){
+			event.preventDefault();
+			console.log('submitted');
+
+			for (let e = 0; e < this.elements.length; e ++) {
+		
+				if (this.elements[e].tagName != 'BUTTON') {			
+	
+					console.log(`#locationID-1-new-dept-form`, this.elements[e].value);
+
+				}
+	
+			}
 
 		});
 
