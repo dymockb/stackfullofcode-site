@@ -814,6 +814,14 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 			
 			console.log('delete', this.getAttribute('deptID'));
 
+			//$('#departmentID-1-confirm-delete-msg').attr('class', 'ui floating message');
+
+			$('#alert-modal').modal(
+				{
+					title: '<i class="archive icon"></i>',
+					content: `Delete this department?`
+				}).modal('show');
+
 		});
 
 
