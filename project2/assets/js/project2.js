@@ -747,6 +747,8 @@ function createEmployeeRow(employeePropertiesObj) {
 };
 
 function renderEmployee(employeeProperties){
+
+	employeeProperties['jobTitle'] = employeeProperties['jobTitle'] == '' ? 'Job Title TBC' : employeeProperties['jobTitle'];
 	
 	for (const [key, value] of Object.entries(employeeProperties)) {
 					
@@ -780,6 +782,8 @@ function createCheckbox (checkboxName, department){
 
 function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){	
 
+  console.log('editorcreate', editOrCreate);
+  
 	let listOfIdentifiers = [];
 		
 	let uiForm = document.createElement('div');
@@ -826,9 +830,13 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 		input.setAttribute('name', fieldName);
 		listOfIdentifiers.push(fieldName);
 		
-		if (editOrCreate == 'edit'){
+		if (editOrCreate == 'edit') {
 			input.setAttribute('value', data);
-		}
+		} else if (editOrCreate == 'view') {
+      console.log('view readonly');
+      input.setAttribute('value', data);
+      input.setAttribute('readonly', '');
+    }
 		
 		input.setAttribute('fieldname', fieldName);
 		input.setAttribute('type', 'text');
@@ -848,7 +856,14 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 				outerNode.setAttribute('class', 'disabled field');
 				outerNode.setAttribute('id', 'departments-field')
 			}
-		}
+		} else if (editOrCreate == 'view') {
+      if (mainTitle.includes('epartment')) {
+				outerNode.setAttribute('class', 'disabled field');
+				outerNode.setAttribute('id', 'departments-field')
+			} else if (mainTitle.includes('ocation')) {
+				outerNode.setAttribute('class', 'disabled field');
+			}     
+    }
 
 		let heading = label.cloneNode(true);
 		heading.innerHTML = mainTitle;
@@ -888,7 +903,9 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 		
 		if(editOrCreate == 'create'){
 			input.setAttribute('value', '');
-		}
+		} else if (editOrCreate == 'view') {
+      input.setAttribute('value', '');
+    }
 
 		input.setAttribute('fieldname', fieldID);
 		input.setAttribute('fieldID', fieldID);
@@ -972,14 +989,19 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 		emailInput.setAttribute('placeholder', detailsForEditForm.email);
 		emailInput.setAttribute('value', detailsForEditForm.email);		
 	}
-	
+
+	let emailError = document.createElement('div');
+	emailError.setAttribute('class', 'ui error message')
+
 	emailField.appendChild(emailHeading);
 	emailField.appendChild(emailInput);
+	emailField.appendChild(emailError);
 		
 	uiForm.appendChild(twoCategories);
 	uiForm.appendChild(nameCategories);
 	uiForm.appendChild(jobTitleField);
 	uiForm.appendChild(emailField);
+
 
 	if (editOrCreate == 'edit'){
 		let idField = field.cloneNode(true);
@@ -993,6 +1015,7 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 		uiForm.appendChild(idField);
 	}
 	
+	console.log(uiForm);
 	document.getElementById(`employee-modal-${editOrCreate}-fields`).appendChild(uiForm);
 	
 	if (editOrCreate == 'edit') {
@@ -1100,7 +1123,13 @@ function createEmployeeModalContent(editOrCreate, detailsForEditForm){
 			for (let id = 0; id < listOfIdentifiers.length; id ++) {
 				let obj = {};
 				let rule = {};
-				rule['type'] = 'empty';
+				if (listOfIdentifiers[id] == 'email') {
+					rule['type'] = 'email';
+					rule['prompt'] = 'Please enter a valid email address';
+				} else {
+					rule['type'] = 'empty';
+					rule['prompt'] = '';
+				}
 
 				obj['identifier'] = listOfIdentifiers[id];
 				obj['rules'] = [rule]
@@ -1545,7 +1574,7 @@ function viewDetailsBtnFunctionality(){
 	$('.employee-modal-btn').click(function(event){	
 
 		let employeeProperties = JSON.parse($($(this).context.previousSibling.children[1]).attr('employee-properties'));
-		let employeeDetails = $($(this).context.previousSibling.children[1]).attr('employee-properties');
+		//let employeeDetails = $($(this).context.previousSibling.children[1]).attr('employee-properties');
 				
 		for (const [key, value] of Object.entries(employeeProperties)) {
 
@@ -1554,6 +1583,37 @@ function viewDetailsBtnFunctionality(){
 		}
 
 		employeePropertiesObj['jobTitle'] = employeePropertiesObj['jobTitle'] == 0 ? 'Job Title TBC' : employeePropertiesObj['jobTitle'];
+
+		console.log('employee properties',employeePropertiesObj);
+
+		//document.getElementById('employee-modal-view-fields').innerHTML = "";
+	
+		let employeeDetails = employeePropertiesObj;
+		
+		dropDownClicked = 0;
+		createEmployeeModalContent(editOrCreate = 'view', employeeDetails);	
+
+		document.getElementById('employee-modal-view-fields').setAttribute('style','display: inherit');
+		//document.getElementById('submit-edit-employee').setAttribute('style','display: inline');
+		document.getElementById('submit-edit-employee').setAttribute('employee-details', this.getAttribute('employee-details'));
+
+		$('.ui.modal.employee-details-modal').modal({
+			title: 'Employee details',
+			closable: false,
+			onDeny: function(){
+				console.log('deny');
+				//return false;
+			},
+			onApprove: function (){
+			console.log('approve');
+			},
+			onHidden: function(){	
+				console.log('close view employee modal');
+				closeModal();
+			}	
+		}).modal('show');
+
+		/*
 
 		document.getElementById('employee-modal-view-fields').setAttribute('style','display: inherit');
 		document.getElementById('close-employee-modal').setAttribute('style','display: inline');
@@ -1574,6 +1634,8 @@ function viewDetailsBtnFunctionality(){
 					closeModal();
 				}	
 			}).modal('show');
+
+		*/
 		
 		if (employeeDetailsVisibility == 0) {
 			renderEmployee(employeePropertiesObj);
@@ -1740,6 +1802,7 @@ function runSearch(orderBy, searchTerm){
 				if (employeeJustEdited) {
 					
 					renderEmployee(editedElement);
+					console.log('edited element', editedElement);
 
 					let employeeDetails = JSON.stringify(editedElement);
 
@@ -1787,11 +1850,13 @@ function closeModal(){
 	document.getElementById('employee-modal-create-fields').reset();
 	document.getElementById('employee-modal-edit-fields').reset();
 
+	document.getElementById('employee-modal-view-fields').setAttribute('style','display: none');
 	document.getElementById('employee-modal-edit-fields').setAttribute('style','display: none');
 	document.getElementById('employee-modal-create-fields').setAttribute('style','display: none');
 	document.getElementById('submit-create-employee').setAttribute('style','display: none');
 	document.getElementById('submit-edit-employee').setAttribute('style', 'display: none');
 
+	document.getElementById('employee-modal-view-fields').innerHTML = "";
 	document.getElementById('employee-modal-create-fields').innerHTML = "";
 	document.getElementById('employee-modal-edit-fields').innerHTML = "";
 	document.getElementById('manage-depts-and-locs').innerHTML = "";
