@@ -677,7 +677,7 @@
                 <div id="append-location-panels">
                 <div class="ui raised floating message location-message-panel">
                   <i id="close-locationID-1-panel" class="close icon display-none-field"></i>
-                  <div class="ui one top attached black disabled button"> Location 1 - 50 employees - 3 Departments </div>
+                  <div class="ui one top attached black disabled button"> Location 1 - <span id="locationID-1-employee-count">50</span> employees - <span id="locationID-1-dept-count">3</span> Departments </div>
                   <div class="ui attached segment">
                     <div id="locationID-1-form" class="ui form success">
                       <!--loading // success -->
@@ -686,12 +686,11 @@
                         <div class="ui stackable two column row">
                           <div class="ui column manage-dept-info">
                             <form id="departmentID-1-form" class="ui form rename-form">
+                                <h3>Department <span id="locationID-dept-count-0">1</span> - <span id="departmentID-1-employee-count">25</span> employees</h3>
                                 <div class="department-field-container">
-                                <div id="departmentID-1-field" class="eight wide field dept-name-field">
-                                  <input readonly="" name="new-dept-name" id="input-departmentID-1-field" value="DepartmentID-1-name" type="text" placeholder="DepartmentID-1 Name">
-                                </div>
-                                
-                                <div class="dept-employee-figure">25 employees</div>
+                                  <div id="departmentID-1-field" class="eight wide field dept-name-field">
+                                    <input readonly="" name="new-dept-name" id="input-departmentID-1-field" value="DepartmentID-1-name" type="text" placeholder="DepartmentID-1 Name">
+                                  </div>
                                 </div>
                                 
                               <div class="manage-dept-btns">
