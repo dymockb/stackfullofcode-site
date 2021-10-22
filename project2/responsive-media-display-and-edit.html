@@ -260,9 +260,11 @@
 		margin-bottom: 1rem;
 	}
 
+	/*
 	.department-segment {
 		margin-bottom: 1rem !important;
 	}
+	*/
 	
 	.location-message-panel {
     background-color: white !important;
@@ -858,22 +860,19 @@
 																</div>
 															</div>
 
-															<div class="ui message">
-																Are you sure you want to rename this department?
-															</div>
-
 															<div class="ui column">
 																<form id="departmentID-1-form" class="ui form rename-form" style="display: none">
 																	<div class="required field">														
-																		<input required="" id="input-departmentID-1-field" value="" type="text" placeholder="DeparmentID-1 Name">
+																		<input name="new-dept-name" id="input-departmentID-1-field" value="" type="text" placeholder="DeparmentID-1 Name">
 																		<!--
 																			$('#input-locationID-1-departmentID-1-field').on('input', function(e){
 																				console.log(e.target.value)
 																			});
 																		-->						
 																	</div>
-																	<button type="submit" class="ui mini button">Submit</button>
+																	<div id="submit-departmentID-1-btn" class="ui mini button">Submit</div> <!-- type="submit "-->
 																	<div id="cancel-departmentID-1-btn" class="ui mini button">Cancel</div>
+																	<!--<div class="ui error message"></div>-->
 																	        
 																	<!--
 																	$('#locationID-1-DepartmentID-1-form').submit(function(event){
@@ -892,7 +891,7 @@
 													Department Renamed
 												</div>
 
-												<div class="ui button">Create new department</div>
+												<div id="locationID-1-new-dept-btn" class="ui button">Create new department</div>
 
 												<div id="locationID-1-create-new-department-segment" class="ui floating message department-segment"> <!-- hidden -->
 													<div class="ui stackable two column row">
@@ -900,7 +899,7 @@
 														<i id="close-create-department-icon" class="close icon display-none-field"></i>
 															<div class="ui column">
 																<div class="field error disabled">	
-																	<label>Name of new department</label>													
+																											
 																	<input value="" type="text" placeholder="Create department">
 																	<label>Department already exists in this location</label>
 																</div>

@@ -265,7 +265,8 @@ $('#manage-depts-and-locs-btn').click(function(){
 	
 		document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: block')
 	
-		locAndDeptStringTemplate = 'departmentID-1';
+		deptStringTemplate = 'departmentID-1';
+		locStringTemplate = 'locationID-1';
 
 		$('.ui.modal.employee-details-modal').modal({
 
@@ -273,7 +274,7 @@ $('#manage-depts-and-locs-btn').click(function(){
 		closable: false,
 		onShow: function(){
 			$('.ui.accordion').accordion();
-			eventListenersInsideDeptsandLocsModal(locAndDeptStringTemplate);
+			eventListenersInsideDeptsandLocsModal(deptStringTemplate, locStringTemplate);
 		},
 		onDeny: function(){
 			console.log('deny');
@@ -535,14 +536,43 @@ $('#employee-modal-create-fields').submit(function(event) {
 
 //forms within Manage Depts and Locs Modal
 
-function eventListenersInsideDeptsandLocsModal(stringTemplate){
+function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTemplate){
 
 	for (let f = 0; f < 1; f++){
 
-		$(`#${stringTemplate}-form`).submit(function(event){
+		
+		$(`#${depStringTemplate}-form`).form({
+			fields: {
+				name: {
+					identifier: 'new-dept-name',
+					rules: [
+						{
+							type   : 'empty',
+							//prompt : 'Please enter a department name'
+						}
+					]
+				}
+			}
+		});
+		
+		$(`#submit-${depStringTemplate}-btn`).click(function(event){
+			
+			console.log('submit clicked');
+			//document.getElementById(`${stringTemplate}-form`).setAttribute('style', 'display: none');
+			if ($(`#${depStringTemplate}-form`).form('validate form')) {
+				$(`#${depStringTemplate}-form`).form('submit');
+				$(`#${depStringTemplate}-form`).form('reset');
+			}
+
+		});
+
+
+		$(`#${depStringTemplate}-form`).submit(function(event){
 			event.preventDefault();
 			console.log('submitted');
 
+			document.getElementById(`${depStringTemplate}-form`).setAttribute('style', 'display: none');
+			
 			editEmployeeDataObj = {
 				firstName: '', //
 				lastName: '',		//
@@ -559,30 +589,30 @@ function eventListenersInsideDeptsandLocsModal(stringTemplate){
 		
 				if (this.elements[e].tagName != 'BUTTON') {			
 	
-					console.log(`#${stringTemplate}-form`, this.elements[e].value);
+					console.log(`#${depStringTemplate}-form`, this.elements[e].value);
 
 				}
 	
 			}
 
-			console.log(`#cancel-${stringTemplate}-btn`);
 		});
 
-		$(`#cancel-${stringTemplate}-btn`).click(function(event){
+		$(`#cancel-${depStringTemplate}-btn`).click(function(event){
 			
 			console.log('cancel');
-			document.getElementById(`${stringTemplate}-form`).setAttribute('style', 'display: none');
+			document.getElementById(`${depStringTemplate}-form`).setAttribute('style', 'display: none');
+			
 
 		});
 
-		$(`#rename-${stringTemplate}-btn`).click(function(event){
+		$(`#rename-${depStringTemplate}-btn`).click(function(event){
 			
 			console.log('rename');
-			document.getElementById(`${stringTemplate}-form`).setAttribute('style', 'display: inline');
+			document.getElementById(`${depStringTemplate}-form`).setAttribute('style', 'display: inline');
 
 		});
 
-		$(`#delete-${stringTemplate}-btn`).click(function(event){
+		$(`#delete-${depStringTemplate}-btn`).click(function(event){
 			
 			console.log('delete', this.getAttribute('deptID'));
 
@@ -1779,7 +1809,7 @@ window.onload = (event) => {
 					sendRadioSelection(this.value);
 					console.log(this.name);
 				},	
-			});		
+			});
 
 			$('#order-by-first-name-mobile').checkbox('attach events', '#order-by-first-name', 'check');
 			$('#order-by-last-name-mobile').checkbox('attach events', '#order-by-last-name', 'check');
