@@ -685,35 +685,6 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 			departmentRules.push(newRule)
 		}
 		
-
-		$(`#locationID-1-new-dept-form`).form({
-			fields: {
-				name: {
-					identifier: 'new-dept-name',
-					rules: [
-						{
-							type   : 'empty',
-							prompt : 'Please enter a department name'
-						},
-						{
-							type   : `notExactly[${existingDepartmentName}]`,
-							prompt : 'That department already exists in this location.'
-						},						
-						{
-							//type   : 'regExp[/^[A-Z][a-z0-9_-]/]',
-							type   : 'regExp[/^[A-Z]/]',
-							prompt : 'First letter must be a capital.' 
-						},
-						{
-							type   : 'minLength[2]',
-							prompt : 'At least two characters are required.' 
-						}
-						
-					]
-				}
-			}
-		});	
-		
 		$(`#locationID-1-cancel-new-dept-btn`).click(function(e){
 
 			console.log('clicked cancel');
@@ -743,27 +714,8 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 		$(`#departmentID-1-form`).form({
 			fields: {
 				name: {
-					identifier: 'new-dept-name',
-					rules: [
-						{
-							type   : 'empty',
-							prompt : 'Please enter a department name'
-						},
-						{
-							type   : `notExactly[${existingDepartmentName}]`,
-							prompt : 'That department already exists in this location.'
-						},						
-						{
-							//type   : 'regExp[/^[A-Z][a-z0-9_-]/]',
-							type   : 'regExp[/^[A-Z]/]',
-							prompt : 'First letter must be a capital.' 
-						},
-						{
-							type   : 'minLength[2]',
-							prompt : 'At least two characters are required.' 
-						}
-						
-					]
+					identifier: 'dept-rename',
+					rules: departmentRules
 				}
 			}
 		});
@@ -795,7 +747,9 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 			$(`#rename-${depStringTemplate}-btn`).attr('class', 'ui tiny button');
 			$(`#submit-departmentID-1-btn`).attr('class', 'ui tiny disabled button');
 			$(`#cancel-departmentID-1-btn`).attr('class', 'ui tiny disabled button');
-			$('#departmentID-1-field-container').attr('style', 'display: none');
+			
+			$('#departmentID-1-accordion').click()
+			//$('#departmentID-1-field-container').attr('style', 'display: none');
 			
 
 			for (let e = 0; e < this.elements.length; e ++) {
@@ -822,10 +776,11 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 			
 			$(`#departmentID-1-form`).form('reset');
 
-			$(`#input-departmentID-1-field`).attr('value',`${existingDepartmentName}`);
-			$(`#input-departmentID-1-field`).attr('placeholder',`${existingDepartmentName}`);
+			//$(`#input-departmentID-1-field`).attr('value',`${existingDepartmentName}`);
+			//$(`#input-departmentID-1-field`).attr('placeholder',`${existingDepartmentName}`);
 
-			$('#departmentID-1-field-container').attr('style', 'display: none');
+			//$('#departmentID-1-field-container').attr('style', 'display: none');
+			$('#departmentID-1-accordion').click()
 			
 			//$(`#departmentID-1-field`).attr('class', 'field');
 
@@ -839,7 +794,9 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 
 		$(`#rename-${depStringTemplate}-btn`).click(function(e){
 
-			$('#departmentID-1-field-container').attr('style', 'display: flex');
+			//$('#departmentID-1-field-container').attr('style', 'display: flex');
+
+			$('#departmentID-1-accordion').click()
 			
 			$(`#input-departmentID-1-field`).removeAttr('readonly');
 			$(`#submit-departmentID-1-btn`).attr('class', 'ui tiny button');

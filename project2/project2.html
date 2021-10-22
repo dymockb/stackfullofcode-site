@@ -284,13 +284,6 @@
         text-align: left;
       }
 
-      #departmentID-1-field-container {
-        display: none;
-        flex-wrap: wrap;
-        margin: 0 !important;
-        margin-bottom: 0.8rem !important;
-      }
-
       .department-field-container {
         display: flex;
         flex-wrap: wrap;
@@ -692,13 +685,33 @@
                         <i id="close-departmentID-1-icon" class="close icon display-none-field"></i>
                         <div class="ui stackable two column row">
                           <div class="ui column manage-dept-info">
+
                             <form id="departmentID-1-form" class="ui form rename-form">
                               <h3><span id="departmentID-1-title">Department </span> - <span id="departmentID-1-employee-count">25</span> employees</h3>
+                              <div class="ui accordion field">
+                              <div class="title display-none-field">
+                                <i class="icon dropdown"></i>
+                                <div id="departmentID-1-accordion" class="ui tiny button">Create new department</div>
+                              </div>
+                              <div class="content field">
+                                <div class="content field transition hidden" id="department-checkboxes">
+
+                            
+
+
+
+                            
+
                               <div id="departmentID-1-field-container" class="department-field-container">
                                 <div id="departmentID-1-field" class="eight wide field dept-name-field">
-                                  <input readonly="" name="new-dept-name" id="input-departmentID-1-field" value="DepartmentID-1-name" type="text" placeholder="DepartmentID-1 Name">
+                                  <input readonly="" name="dept-rename" id="input-departmentID-1-field" value="DepartmentID-1-name" type="text" placeholder="DepartmentID-1 Name">
                                 </div>
                               </div>
+
+                            </div>
+                          </div>
+                        </div>
+
                                 
                               <div class="manage-dept-btns">
                                 <div>
