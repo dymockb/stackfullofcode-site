@@ -314,7 +314,7 @@ $('#edit-employee-fields-btn').click(function(){
 	
 	let employeeDetails = JSON.parse(this.getAttribute('employee-details'));
 
-	employeeDetails['jobTitle'] = 'TBC';
+	//employeeDetails['jobTitle'] = 'TBC';
 	
 	dropDownClicked = 0;
 	createEmployeeModalContent(editOrCreate = 'edit', employeeDetails);	
@@ -345,22 +345,29 @@ $('#edit-employee-fields-btn').click(function(){
 });
 
 //buttons on employee modal
+
+$('#submit-create-employee').click(function(event){
+			
+	console.log('create employee submit clicked');
+	console.log($(`#employee-modal-create-fields`).form('validate form'));
+
+	if ($('#employee-modal-create-fields').form('validate form')) {
+		$('#employee-modal-create-fields').form('submit');
+		$('#employee-modal-create-fields').form('reset');
+	}
+
+});
+
 $('#submit-edit-employee').click(function (){
-	console.log('what');
-	let employeeDetails = JSON.parse(this.getAttribute('employee-details'));
+
+	console.log('submit edit employee btn clicked');
+	console.log($(`#employee-modal-edit-fields`).form('validate form'));
+
+	if ($('#employee-modal-edit-fields').form('validate form')) {
+
+		$('#employee-modal-edit-fields').form('submit');
 	
-	document.getElementById('update-employee-modal-btn').setAttribute('style', 'display: inline');	
-	
-	$('#alert-modal').modal(
-	 {
-		 title: '<i class="archive icon"></i>',
-		 content: `${employeeDetails.firstName} ${employeeDetails.lastName}:  Update this employee?`,
-		 onHidden: function(){	
-			console.log('close edit employee');
-			closeModal();
-		}	
-	 }
-	).modal('show');
+	}
 	
 });
 
@@ -386,7 +393,7 @@ $('#delete-employee-modal-btn').click(function (){
 			document.getElementById('close-panel-icon').click();	
 			clearTimeout(deletedEmployeeTimer);
 		
-		}, 1000);
+		}, 750);
 
 	},
 	error: function (jqXHR, textStatus, errorThrown) {
@@ -474,7 +481,25 @@ $('#employee-modal-edit-fields').submit(function(event) {
 		}
 		
 		document.getElementById('update-employee-modal-btn').setAttribute('employee-details', JSON.stringify(editEmployeeDataObj));
+		
+		let employeeDetails = editEmployeeDataObj;
+		
+		document.getElementById('update-employee-modal-btn').setAttribute('style', 'display: inline');	
+		
+		$('#alert-modal').modal(
+		{
+			title: '<i class="archive icon"></i>',
+			content: `Update this employee?`,
+			//content: `${employeeDetails.firstName} ${employeeDetails.lastName}:  Update this employee?`,
+			onHidden: function(){	
+				console.log('close edit employee');
+				closeModal();
+			}	
+		}
+		).modal('show');
 
+		$('#employee-modal-edit-fields').form('reset');
+		
 	}	
 		
 });
@@ -509,6 +534,8 @@ $('#employee-modal-create-fields').submit(function(event) {
 		}
 
 	}
+
+	createEmployeeDataObj['jobTitle'] = 	createEmployeeDataObj['jobTitle'] == 0 ? 'Job Title TBC' : 	createEmployeeDataObj['jobTitle'];
 	
 	console.log(createEmployeeDataObj);
 	
@@ -752,6 +779,8 @@ function createCheckbox (checkboxName, department){
 // CREATE MODAL CONTENT
 
 function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){	
+
+	let listOfIdentifiers = [];
 		
 	let uiForm = document.createElement('div');
 	uiForm.setAttribute('class', 'ui form');
@@ -769,7 +798,7 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 	label.innerHTML = 'MENU';
 
 	let  selectionDropdown = document.createElement('div')
-	selectionDropdown.setAttribute('class', 'ui selection dropdown');
+	selectionDropdown.setAttribute('class', 'ui fluid selection dropdown');
 	
 	let defaultText = document.createElement('div');
 	defaultText.setAttribute('class', 'default text');
@@ -793,7 +822,9 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 		heading.innerHTML = mainTitle;
 		
 		let input = inputField.cloneNode(true);
-		input.setAttribute('required', '');
+		//input.setAttribute('required', '');
+		input.setAttribute('name', fieldName);
+		listOfIdentifiers.push(fieldName);
 		
 		if (editOrCreate == 'edit'){
 			input.setAttribute('value', data);
@@ -811,7 +842,7 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 	
 	function createDropDown(mainTitle, placeholder, listOfNames, listOfIDs, fieldName, fieldID, dropdownType){
 		
-		let outerNode = field.cloneNode(true);
+		let outerNode = requiredField.cloneNode(true);
 		if (editOrCreate == 'create') {
 			if (mainTitle.includes('epartment')) {
 				outerNode.setAttribute('class', 'disabled field');
@@ -833,6 +864,7 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 		
 		let icon = dropdownIcon.cloneNode(true);
 		let input = inputField.cloneNode(true);
+
 		if (editOrCreate == 'edit') {
 				if (mainTitle.includes('epartment')) {	
 					input.setAttribute('value', detailsForEditForm.departmentID);
@@ -857,10 +889,13 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 		if(editOrCreate == 'create'){
 			input.setAttribute('value', '');
 		}
+
 		input.setAttribute('fieldname', fieldID);
 		input.setAttribute('fieldID', fieldID);
 		input.setAttribute('type', 'hidden');
-		input.setAttribute('name', 'category');
+		//input.setAttribute('name', 'category');
+		input.setAttribute('name', fieldName);
+		listOfIdentifiers.push(fieldName);
 
 		if (editOrCreate == 'create'){
 			selected.innerHTML = placeholder;
@@ -912,8 +947,10 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 	if (editOrCreate == 'create') {
 		jobTitleInput.setAttribute('placeholder', 'Job Title');
 	} else {
-		jobTitleInput.setAttribute('placeholder', detailsForEditForm.jobTitle);
-		jobTitleInput.setAttribute('value', detailsForEditForm.jobTitle);
+		let jobTitlePlaceholder = detailsForEditForm.jobTitle == 0 ? 'Job Title' : detailsForEditForm.jobTitle;
+		jobTitleInput.setAttribute('placeholder', jobTitlePlaceholder);
+		let jobTitleValue = detailsForEditForm.jobTitle == 0 ? '' : detailsForEditForm.jobTitle;
+		//jobTitleInput.setAttribute('value', jobTitleValue);
 	}
 	
 	jobTitleField.appendChild(jobTitleHeading);
@@ -926,7 +963,9 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 	let emailInput = inputField.cloneNode(true);
 	emailInput.setAttribute('fieldname', 'email');
 	emailInput.setAttribute('type', 'email');
-	emailInput.setAttribute('required', '');
+	emailInput.setAttribute('name', 'email')
+	listOfIdentifiers.push('email')
+	//emailInput.setAttribute('required', '');
 	if (editOrCreate == 'create') {
 		emailInput.setAttribute('placeholder', 'employee@company.com');
 	} else {
@@ -936,28 +975,11 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 	
 	emailField.appendChild(emailHeading);
 	emailField.appendChild(emailInput);
-
-	let testSelect = document.createElement('select');
-	testSelect.setAttribute('class', 'ui selection');
-	testSelect.setAttribute('required', '')
-
-	let testOption = document.createElement('option');
-	testOption.setAttribute('value', 'test');
-	testOption.setAttribute('class', 'ui option');
-	testOption.innerHTML = 'test';
-
-	let disabledOption = document.createElement('option');
-	disabledOption.setAttribute('disabled', '');
-	disabledOption.setAttribute('selected', '')
-	
-	testSelect.appendChild(disabledOption);
-	testSelect.appendChild(testOption);
 		
 	uiForm.appendChild(twoCategories);
 	uiForm.appendChild(nameCategories);
 	uiForm.appendChild(jobTitleField);
 	uiForm.appendChild(emailField);
-	uiForm.appendChild(testSelect);
 
 	if (editOrCreate == 'edit'){
 		let idField = field.cloneNode(true);
@@ -1032,12 +1054,13 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 	}
 	
 	if (editOrCreate == 'create') {
+		console.log('locationDropDownClicked', locationDropDownClicked);
 		if (locationDropDownClicked == 0) {
 
 			$('#location-dropdown').click(function(){
-				$('.selection.dropdown').dropdown();	
+				//$('.selection.dropdown').dropdown();	
 				if (locationDropDownClicked == 0) {
-					document.getElementById('location-dropdown').click();
+					//document.getElementById('location-dropdown').click();
 					locationDropDownClicked ++;
 				}
 				
@@ -1046,13 +1069,14 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 			}
 	}
 
+	return listOfIdentifiers;
 }
 
 function createEmployeeModalContent(editOrCreate, detailsForEditForm){
 	
-	let newEmployeeFieldsObj = {};
+	//let newEmployeeFieldsObj = {};
 	let listOfLocationsUpdated = [];	
-	let listOfDepartmentsUpdated = [];
+	//let listOfDepartmentsUpdated = [];
 	let listOfLocationIDs = [];
 	
 	
@@ -1068,8 +1092,28 @@ function createEmployeeModalContent(editOrCreate, detailsForEditForm){
 				listOfLocationIDs.push(result.data[loc].id);
 			}
 			
-			buildForm(listOfLocationsUpdated, listOfLocationIDs, editOrCreate, detailsForEditForm);
-						
+			let listOfIdentifiers = buildForm(listOfLocationsUpdated, listOfLocationIDs, editOrCreate, detailsForEditForm);
+			console.log('listofIdentifiers', listOfIdentifiers);
+
+			let formValidateFields = {}
+			
+			for (let id = 0; id < listOfIdentifiers.length; id ++) {
+				let obj = {};
+				let rule = {};
+				rule['type'] = 'empty';
+
+				obj['identifier'] = listOfIdentifiers[id];
+				obj['rules'] = [rule]
+				formValidateFields[listOfIdentifiers[id]] = obj
+
+			}
+
+			$(`#employee-modal-${editOrCreate}-fields`).form({
+				fields: formValidateFields
+			});
+
+			//WASHERE
+
 			let locationDropDown = document.getElementById('location-dropdown');
 			
 			locationDropDown.addEventListener('change', function(e){
@@ -1123,6 +1167,7 @@ function createEmployeeModalContent(editOrCreate, detailsForEditForm){
 	
 };
 
+/*
 function editEmployeeModalContent(){
 	
 	let newEmployeeFieldsObj = {};
@@ -1303,6 +1348,7 @@ function editEmployeeModalContent(){
 	});
 	
 };
+*/
 
 
 // ** SET FUNCTIONALITY **
