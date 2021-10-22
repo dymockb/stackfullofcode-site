@@ -281,6 +281,10 @@
         text-align: left;
       }
 
+      .rename-form {
+        display: none;
+      }
+
       @media only screen and (max-width: 767.98px) {
 
         #employee-details-field,
@@ -646,45 +650,35 @@
                         <i id="close-departmentID-1-icon" class="close icon display-none-field"></i>
                         <div class="ui stackable two column row">
                           <div class="ui column manage-dept-info">
-                            <form id="departmentID-1-form" class="ui form rename-form">
-                                
-                                  <div id="departmentID-1-field" class="field">
-                                  <input readonly="" name="new-dept-name" id="input-departmentID-1-field" value="DepartmentID-1-name" type="text" placeholder="DepartmentID-1 Name">
-                                  <div class="ui error message">That department already exists in this location</div>
-                                </div>
-                                
-                                <span>25 employees</span>
-                              
-                              <div class="manage-dept-btns">
-                                <div id="delete-departmentID-1-btn" class="ui mini button">Delete department</div>
-                                <div id="rename-departmentID-1-btn" deptID="1" class="ui mini button">Rename department</div>
-                                <button id="cancel-departmentID-1-btn" form="departmentID-1-form" type="reset" deptID="1" class="ui mini disabled button">Cancel</button>
-                                <div id="submit-departmentID-1-btn" class="ui mini button">Submit</div>
-                              </div>
-                            </form>
+                            <div class="department-details">
+                              <h3 id="departmentID-1-title">DepartmentID-1-name</h3>
+                              <span>25 employees</span>
+                            </div>
+                            <div class="manage-dept-btns">
+                              <div id="rename-departmentID-1-btn" class="ui mini button">Rename department</div>
+                              <div id="delete-departmentID-1-btn" deptID="1" class="ui mini button">Delete department</div>
+                            </div>
                           </div>
                           <div class="ui column">
-                           
-                            <!--<form id="departmentID-1-form" class="ui form rename-form" style="display: none">-->
-                              
-                                <!--
-                                  <input name="new-dept-name" id="input-departmentID-1-field" value="" type="text" placeholder="DeparmentID-1 Name">                 
-                                 
+                            <form id="departmentID-1-form" class="ui form rename-form" style="display: none">
+                              <div id="departmentID-1-field" class="required field">
+                                <input name="new-dept-name" id="input-departmentID-1-field" value="" type="text" placeholder="DeparmentID-1 Name">                 
+                                <!-- 
 																			$('#input-locationID-1-departmentID-1-field').on('input', function(e){
 																				console.log(e.target.value)
 																			});
 																		-->
-                              
-                               <!-- type="submit "-->
+                              </div>
+                              <div id="submit-departmentID-1-btn" class="ui mini button">Submit</div> <!-- type="submit "-->
                               <div id="cancel-departmentID-1-btn" class="ui mini button">Cancel</div>
-                              
+                              <div class="ui error message">That department already exists in this location</div>
                               <!--
 																	$('#locationID-1-DepartmentID-1-form').submit(function(event){
 																		event.preventDefault();
 																		console.log('submitted');
 																		});
 																	-->
-                           <!-- </form> -->                             
+                            </form>
                           </div>
                         </div>
                       </div>
@@ -711,6 +705,26 @@
                               <div class="manage-dept-btns">
                                 <div class="ui mini button">Create new department</div>
                               </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+
+
+                      <div id="locationID-1-create-new-department-segment" class="ui floating message">
+                        <!-- hidden -->
+                        <div class="ui stackable two column row">
+                          <i id="close-create-department-icon" class="close icon display-none-field"></i>
+                          <div class="ui column">
+                            <div class="error field disabled">
+                              <input value="" type="text" placeholder="Create department">
+                              <label>Department already exists in this location</label>
+                            </div>
+                          </div>
+                          <div class="ui column manage-dept-info">
+                            <div class="manage-dept-btns">
+                              <div class="ui mini button disabled">Create department</div>
                             </div>
                           </div>
                         </div>

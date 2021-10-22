@@ -261,8 +261,7 @@ $('#create-employee-btn').click(function(){
 });
 
 $('#manage-depts-and-locs-btn').click(function(){
-	console.log('manage depts click');
-	
+		
 		document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: block')
 	
 		deptStringTemplate = 'departmentID-1';
@@ -289,6 +288,7 @@ $('#manage-depts-and-locs-btn').click(function(){
 			closeModal();
 		}	
 		}).modal('show');
+		
 	
 });
 
@@ -565,6 +565,8 @@ $('#employee-modal-create-fields').submit(function(event) {
 
 function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTemplate){
 
+	let existingDepartmentName = 'Sales'
+
 	for (let f = 0; f < 1; f++){
 
 		
@@ -575,8 +577,22 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 					rules: [
 						{
 							type   : 'empty',
-							//prompt : 'Please enter a department name'
+							prompt : 'Please enter a department name'
+						},
+						{
+							type   : `notExactly[${existingDepartmentName}]`,
+							prompt : 'That department already exists in this location.'
+						},						
+						{
+							//type   : 'regExp[/^[A-Z][a-z0-9_-]/]',
+							type   : 'regExp[/^[A-Z]/]',
+							prompt : 'First letter must be a capital.' 
+						},
+						{
+							type   : 'minLength[2]',
+							prompt : 'At least two characters are required.' 
 						}
+						
 					]
 				}
 			}
@@ -585,6 +601,7 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 		$(`#submit-${depStringTemplate}-btn`).click(function(event){
 			
 			console.log('submit clicked');
+			console.log($(`#${depStringTemplate}-form`).form('validate form'));
 			//document.getElementById(`${stringTemplate}-form`).setAttribute('style', 'display: none');
 			if ($(`#${depStringTemplate}-form`).form('validate form')) {
 				$(`#${depStringTemplate}-form`).form('submit');
@@ -617,27 +634,40 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 				if (this.elements[e].tagName != 'BUTTON') {			
 	
 					console.log(`#${depStringTemplate}-form`, this.elements[e].value);
-
-				}
+					//$(`#${depStringTemplate}-title`).html(this.elements[e].value);
+					$(`#${depStringTemplate}-title`).hide().html(this.elements[e].value).fadeIn(750);
+		}
 	
 			}
+
+			//$(`#${depStringTemplate}-renamed-message`).attr('class', 'ui floating message');
+
 
 		});
 
 		$(`#cancel-${depStringTemplate}-btn`).click(function(event){
 			
 			console.log('cancel');
-			document.getElementById(`${depStringTemplate}-form`).setAttribute('style', 'display: none');
-			
+			console.log(`${existingDepartmentName}`);
+
+			$(`#${depStringTemplate}-form`).form('reset');
+
+			$(`#cancel-departmentID-1-btn`).attr('class', 'ui mini disabled button');
+						
+			$(`#input-departmentID-1-field`).attr('readonly','');
 
 		});
 
 		$(`#rename-${depStringTemplate}-btn`).click(function(event){
 			
 			console.log('rename');
-			document.getElementById(`${depStringTemplate}-form`).setAttribute('style', 'display: inline');
+			console.log('dept String template', depStringTemplate, `#input-${depStringTemplate}-field`);
+			$(`#input-departmentID-1-field`).removeAttr('readonly');
+			$(`#departmentID-1-field`).attr('class', 'field info');
+			$(`#cancel-departmentID-1-btn`).attr('class', 'ui mini button');
+			//document.getElementById(`${depStringTemplate}-form`).setAttribute('style', 'display: inline');
 
-		});
+		});	
 
 		$(`#delete-${depStringTemplate}-btn`).click(function(event){
 			
