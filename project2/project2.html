@@ -259,10 +259,12 @@
       .manage-dept-btns {
         display: inline-flex;
         flex-wrap: wrap;
+        width: 100%;
+        justify-content: space-between;
       }
 
-      .manage-dept-info {
-        margin-bottom: 1rem;
+      .dept-action-button {
+        margin-bottom: 0.5rem !important;
       }
 
       /*
@@ -280,6 +282,32 @@
 
       .ui.one.top.attached.black.disabled.button {
         text-align: left;
+      }
+
+      .department-field-container {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 !important;
+        margin-bottom: 0.8rem !important;
+      }
+
+      .dept-employee-figure {
+        margin: 0 !important;
+        display: flex;
+        align-self: center;
+        font-weight: bold;
+        margin-left: 0.5rem !important;
+      } 
+
+      .dept-name-field {
+        display: flex;
+        min-width: 18rem;
+        margin: 0 !important;
+      }
+
+      .create-dept-btn {
+        display: flex;
+        padding: 0.5rem
       }
 
       @media only screen and (max-width: 767.98px) {
@@ -323,17 +351,8 @@
           padding-bottom: 0 !important;
         }
 
-        /*
-		.ui.grid > .column:not(.row) {
-			padding-top: 0.5rem; 
-			padding-bottom: 1rem;
-		}
-		
-		.ui.stackable.grid > .column:not(.row) {
-			padding: 0;
-		}
-		*/
       }
+
     </style>
     <style>
       .last.container {
@@ -648,20 +667,23 @@
                         <div class="ui stackable two column row">
                           <div class="ui column manage-dept-info">
                             <form id="departmentID-1-form" class="ui form rename-form">
-                                
-                                  <div id="departmentID-1-field" class="field">
+                                <div class="department-field-container">
+                                <div id="departmentID-1-field" class="eight wide field dept-name-field">
                                   <input readonly="" name="new-dept-name" id="input-departmentID-1-field" value="DepartmentID-1-name" type="text" placeholder="DepartmentID-1 Name">
-                                  <div class="ui error message">That department already exists in this location</div>
                                 </div>
                                 
-                                <div>25 employees</div>
-                              
+                                <div class="dept-employee-figure">25 employees</div>
+                                </div>
+                                
                               <div class="manage-dept-btns">
-                                <div id="delete-departmentID-1-btn" class="ui mini button">Delete department</div>
-                                <div id="rename-departmentID-1-btn" deptID="1" class="ui mini button">Rename department</div>
-                                <button id="cancel-departmentID-1-btn" form="departmentID-1-form" type="reset" deptID="1" class="ui mini disabled button">Cancel</button>
-                                <div id="submit-departmentID-1-btn" class="ui mini disabled button">Submit</div>
+                                <div>
+                                <div id="rename-departmentID-1-btn" deptID="1" class="ui tiny button dept-action-button">Rename department</div>
+                                <button id="cancel-departmentID-1-btn" form="departmentID-1-form" type="reset" class="ui tiny disabled button dept-action-button">Cancel</button>
+                                <div id="submit-departmentID-1-btn" class="ui tiny disabled button dept-action-button">Submit</div>
+                                </div>
+                                <div id="delete-departmentID-1-btn" deptID="1" class="ui tiny button dept-action-button">Delete department</div>
                               </div>
+                              <div class="ui error message"></div>
                             </form>
                           </div>
                           <div class="ui column">
@@ -697,31 +719,36 @@
                       <div class="ui accordion field">
                         <div class="title">
                           <i class="icon dropdown"></i>
-                          <div class="ui button">Create new department</div>
+                          <div id="locationID-1-new-dept-btn" class="ui tiny button">Create new department</div>
                         </div>
                         <div class="content field">
                           <div class="content field transition hidden" id="department-checkboxes">
-                            <div class="ui form">
-                              <div class="ui column">
-                                <div class="field error">
-                                  <input value="" type="text" placeholder="New department name">
+                            <form id="locationID-new-dept-form" class="ui form">
+                              
+                              <div class="department-field-container">
+                                <div class="eight wide field dept-name-field">
+                                  <input value="" type="text" name="new-dept-name" placeholder="New department name">
+                                </div>
+                                <div class="create-dept-btn">
+                                  <button class="ui mini button">Submit</button>
+                                </div>
+                                <div class="create-dept-btn">
+                                  <button id="locationID-1-cancel-new-dept-btn" type="reset" form="" class="ui mini button">Cancel</button>
                                 </div>
                               </div>
-                            </div>
-                            <div class="ui column manage-dept-info">
-                              <div class="manage-dept-btns">
-                                <div class="ui mini button">Create new department</div>
-                              </div>
-                            </div>
+                              <div class="ui error message">That department already exists in this location</div>
+                                                         
+                            </form>
                           </div>
                         </div>
                       </div>
-                      
+                      <!--
                       <div class="ui success floating message">
                         <i id="close-create-department-icon" class="close icon"></i>
                         <div class="header">Department Created</div>
                         <p>DepartementID-name add to LocationID-1-name</p>
                       </div>
+                      --> 
                     </div>
                   </div>
                 </div>
