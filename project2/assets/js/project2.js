@@ -267,9 +267,14 @@ $('#manage-depts-and-locs-btn').click(function(){
 		deptStringTemplate = 'departmentID-1';
 		locStringTemplate = 'locationID-1';
 
+		let buttonForModal = document.createElement('button')
+		buttonForModal.setAttribute('class', 'ui button');
+		buttonForModal.setAttribute('id', 'create-new-location-btn');
+		buttonForModal.innerHTML = 'Test'
+
 		$('.ui.modal.employee-details-modal').modal({
 
-		title: `Manage Departments and Locations`,
+		title: `Manage Departments and Locations` + buttonForModal.outerHTML,
 		closable: false,
 		onShow: function(){
 			$('.ui.accordion').accordion();
@@ -565,13 +570,111 @@ $('#employee-modal-create-fields').submit(function(event) {
 
 function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTemplate){
 
-	let existingDepartmentName = 'departmentID-1 Name'
+	let basicRules = []
+
+	let ruleOne = {}
+	ruleOne['type'] = 'empty';
+	ruleOne['prompt'] = 'Please enter a location name';
+
+	let ruleTwo = {}
+	ruleTwo['type'] = 'regExp[/^[A-Z]/]';
+	ruleTwo['prompt'] = 'First letter must be a capital';
+
+	let ruleThree = {};
+	ruleThree['type'] = 'minLength[2]';
+	ruleTwo['prompt'] = 'At least two characters are required.';
+
+	basicRules.push(ruleOne);
+	basicRules.push(ruleTwo);
+	basicRules.push(ruleThree);
+
+	let existingDepartmentName = 'Dept1'
+	let existingLocationName = 'Loc1'
+
+	let existingLocationNames = ['Loc1', 'Loc2'];
+
+	let locationRules = basicRules.slice();
+
+	for (let e = 0 ; e < existingLocationNames.length; e ++) {
+		let newRule = {}
+		newRule['type'] = `notExactly[${existingLocationNames[e]}]`;
+		newRule['prompt'] = 'That location already exists';
+		locationRules.push(newRule)
+	}
+
+	$('#create-new-location-btn').click(function(){
+
+		console.log('click');
+
+		$('#location-accordion-segment').attr('style', 'display: block')
+
+		$('#new-location-accordion-btn').click();
+
+	});
+
+	$(`#cancel-new-location-btn`).click(function(e){
+
+		console.log('clicked cancel');
+
+		$(`#new-location-form`).form('reset');
+		$('#new-location-accordion-btn').click();
+
+		let closeNewLocationTimer = setTimeout(function(){
+			$('#location-accordion-segment').attr('style', 'display: none');
+			clearTimeout(closeNewLocationTimer);
+		},250);		
+
+	});
+
+	$(`#new-location-form`).form({
+		fields: {
+			name: {
+				identifier: 'new-location',
+				rules: locationRules
+			}
+		}
+	});
+
+	$(`#submit-new-location-btn`).click(function(e){
+			
+		console.log('submit new location clicked');
+		console.log($(`#new-location-form`).form('validate form'));
+
+		if ($(`#new-location-form`).form('validate form')) {
+			$(`#new-location-form`).form('submit');
+			$(`#new-location-form`).form('reset');
+			$('#new-location-accordion-btn').click();
+	
+			let closeNewLocationTimer = setTimeout(function(){
+				$('#location-accordion-segment').attr('style', 'display: none');
+				clearTimeout(closeNewLocationTimer);
+			},250);		
+
+		}
+
+	});
+
+	$(`#new-location-form`).submit(function(event){
+		event.preventDefault();
+		console.log('new location submitted');
+
+		for (let e = 0; e < this.elements.length; e ++) {
+	
+			if (this.elements[e].tagName != 'BUTTON') {			
+
+				console.log(`#new-location-form`, this.elements[e].value);
+				
+			}
+
+		}
+
+	});
 
 	for (let f = 0; f < 1; f++){
 
 		
 
-		$(`#locationID-new-dept-form`).form({
+		$(`#locationID-1-new-dept-form`).form({
 			fields: {
 				name: {
 					identifier: 'new-dept-name',

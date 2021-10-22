@@ -652,29 +652,25 @@
                       <div id="new-location-accordion-btn" class="ui button">Create new location</div>
                     </div>
                     <div class="content field">
-                      <div class="content field transition hidden">              
-                        <form id="new-location-form" class="ui form rename-form">
-                          <div class="department-field-container">
-                          <div id="new-location-field" class="eight wide field dept-name-field">
-                            <input name="new-location" id="input-new-location-field" value="" type="text" placeholder="New Location">
-                          </div>
-                          </div>                   
-                        <div class="manage-dept-btns">
-                          <div>
-                          <button id="cancel-new-location-btn" form="new-location-form" type="reset" class="ui tiny button dept-action-button">Cancel</button>
-                          <div id="submit-new-location-btn" class="ui tiny button dept-action-button">Submit</div>
+                      <div class="content field transition hidden" id="department-checkboxes">
+                        <div class="ui form">
+                          <div class="ui column">
+                            <div class="field error">
+                              <input value="" type="text" placeholder="New location name">
+                              <label>A location already exists with that name</label>
+                            </div>
                           </div>
                         </div>
-                        <div class="ui error message"></div>
-                      </form>
-
+                        <div class="ui column manage-dept-info">
+                          <div class="manage-dept-btns">
+                            <div class="ui mini button">Create new location</div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
                 <!---->
-                <form id="locations-loading-form" class="ui form"> <!-- loading -->
-                <div id="append-location-panels">
                 <div class="ui raised floating message location-message-panel">
                   <i id="close-locationID-1-panel" class="close icon display-none-field"></i>
                   <div class="ui one top attached black disabled button"> Location 1 - 50 employees - 3 Departments </div>
@@ -742,7 +738,7 @@
                         </div>
                         <div class="content field">
                           <div class="content field transition hidden" id="department-checkboxes">
-                            <form id="locationID-1-new-dept-form" class="ui form">
+                            <form id="locationID-new-dept-form" class="ui form">
                               
                               <div class="department-field-container">
                                 <div class="eight wide field dept-name-field">
@@ -771,11 +767,6 @@
                     </div>
                   </div>
                 </div>
-
-              </div>
-            </form>
-
-
               </div> <!-- col div goes here -->
             </div>
           </div>
