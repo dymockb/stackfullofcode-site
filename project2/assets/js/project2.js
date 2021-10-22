@@ -651,6 +651,8 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 			console.log(`${existingDepartmentName}`);
 
 			$(`#${depStringTemplate}-form`).form('reset');
+			$(`#input-departmentID-1-field`).attr('value',`${existingDepartmentName}`);
+			$(`#departmentID-1-field`).attr('class', 'field');
 
 			$(`#cancel-departmentID-1-btn`).attr('class', 'ui mini disabled button');
 						
@@ -663,9 +665,12 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 			console.log('rename');
 			console.log('dept String template', depStringTemplate, `#input-${depStringTemplate}-field`);
 			$(`#input-departmentID-1-field`).removeAttr('readonly');
+			$(`#submit-departmentID-1-btn`).attr('class', 'ui mini button');
+			
+			$(`#input-departmentID-1-field`).attr('value','');
 			$(`#departmentID-1-field`).attr('class', 'field info');
 			$(`#cancel-departmentID-1-btn`).attr('class', 'ui mini button');
-			//document.getElementById(`${depStringTemplate}-form`).setAttribute('style', 'display: inline');
+		
 
 		});	
 

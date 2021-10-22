@@ -258,6 +258,7 @@
 
       .manage-dept-btns {
         display: inline-flex;
+        flex-wrap: wrap;
       }
 
       .manage-dept-info {
@@ -653,13 +654,13 @@
                                   <div class="ui error message">That department already exists in this location</div>
                                 </div>
                                 
-                                <span>25 employees</span>
+                                <div>25 employees</div>
                               
                               <div class="manage-dept-btns">
                                 <div id="delete-departmentID-1-btn" class="ui mini button">Delete department</div>
                                 <div id="rename-departmentID-1-btn" deptID="1" class="ui mini button">Rename department</div>
                                 <button id="cancel-departmentID-1-btn" form="departmentID-1-form" type="reset" deptID="1" class="ui mini disabled button">Cancel</button>
-                                <div id="submit-departmentID-1-btn" class="ui mini button">Submit</div>
+                                <div id="submit-departmentID-1-btn" class="ui mini disabled button">Submit</div>
                               </div>
                             </form>
                           </div>
@@ -676,7 +677,7 @@
 																		-->
                               
                                <!-- type="submit "-->
-                              <div id="cancel-departmentID-1-btn" class="ui mini button">Cancel</div>
+                             
                               
                               <!--
 																	$('#locationID-1-DepartmentID-1-form').submit(function(event){
