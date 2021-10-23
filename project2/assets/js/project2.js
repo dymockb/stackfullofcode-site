@@ -4,6 +4,7 @@
 let employeeDetailsVisibility = 0;
 let employeePropertiesObj = {};
 let blankEmployeeObj = {};
+let employeePropertiesStored;
 
 let lastSearch = "";
 let orderBy = 'lastName';
@@ -871,6 +872,8 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 			event.preventDefault();
 			console.log('submitted');
 
+			$('#locationID-1-new-dept-btn').click();
+
 			for (let e = 0; e < this.elements.length; e ++) {
 		
 				if (this.elements[e].tagName != 'BUTTON') {			
@@ -1035,6 +1038,7 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 		
 	let uiForm = document.createElement('div');
 	uiForm.setAttribute('class', 'ui form');
+	uiForm.setAttribute('id', 'employee-modal-form-fields')
 	
 	let twoFields = document.createElement('div');
 	twoFields.setAttribute('class', 'two fields');
@@ -1249,6 +1253,14 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 	uiForm.appendChild(jobTitleField);
 	uiForm.appendChild(emailField);
 
+	
+	//let testButton = document.createElement('div');
+	//testButton.setAttribute('class', 'ui button');
+	//testButton.setAttribute('id', 'mobile-modal-update-employee-btn');
+
+	//testButton.innerHTML = 'test'
+	//uiForm.appendChild(testButton);
+	
 
 	if (editOrCreate == 'edit'){
 		let idField = field.cloneNode(true);
@@ -1264,7 +1276,8 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 	
 	console.log(uiForm);
 	document.getElementById(`employee-modal-${editOrCreate}-fields`).appendChild(uiForm);
-	
+	//document.getElementById(`employee-modal-${editOrCreate}-fields`).appendChild(testButton);
+
 	if (editOrCreate == 'edit') {
 		
 		$.ajax({
@@ -1789,7 +1802,8 @@ function selectEmployeeFunctionality(){
 		});
 
 		$('td:not(#employee-details-field)').click(function(event){
-			let employeeDetails = this.firstChild.children[1].getAttribute('employee-properties');
+
+			let employeeDetails = this.firstChild.children[0].getAttribute('employee-properties');
 			employeePropertiesObj = JSON.parse(employeeDetails);
 
 			employeePropertiesObj['jobTitle'] = employeePropertiesObj['jobTitle'] == 0 ? 'Job Title TBC' : employeePropertiesObj['jobTitle'];
@@ -1819,11 +1833,13 @@ function selectEmployeeFunctionality(){
 function viewDetailsBtnFunctionality(){
 	
 	$('.employee-modal-btn').click(function(event){	
-		console.log(this);
+		
 		//let employeeProperties = JSON.parse($($(this).context.previousSibling.children[1]).attr('employee-properties'));
 
 		let employeeProperties = JSON.parse(this.getAttribute('employee-details'));
 		//let employeeDetails = $($(this).context.previousSibling.children[1]).attr('employee-properties');
+
+		employeePropertiesStored = employeeProperties;
 				
 		for (const [key, value] of Object.entries(employeeProperties)) {
 
@@ -1833,20 +1849,119 @@ function viewDetailsBtnFunctionality(){
 
 		employeePropertiesObj['jobTitle'] = employeePropertiesObj['jobTitle'] == 0 ? 'Job Title TBC' : employeePropertiesObj['jobTitle'];
 
-		console.log('employee properties',employeePropertiesObj);
-
+		
 		//document.getElementById('employee-modal-view-fields').innerHTML = "";
 	
 		let employeeDetails = employeePropertiesObj;
 		
 		dropDownClicked = 0;
-		createEmployeeModalContent(editOrCreate = 'view', employeeDetails);	
+		//createEmployeeModalContent(editOrCreate = 'view', employeeDetails);	
+		createEmployeeModalContent(editOrCreate = 'edit', employeeDetails);	
 
-		document.getElementById('employee-modal-view-fields').setAttribute('style','display: inherit');
+		//document.getElementById('employee-modal-view-fields').setAttribute('style','display: inherit');
 		//document.getElementById('submit-edit-employee').setAttribute('style','display: inline');
+		
 		document.getElementById('submit-edit-employee').setAttribute('employee-details', this.getAttribute('employee-details'));
 
 		
+		//if (employeeDetailsVisibility == 0) {
+			renderEmployee(employeePropertiesObj);
+			$('.employee-detail-fields').attr('style', 'visibility: visible');
+			document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
+			document.getElementById('delete-employee-btn').setAttribute('employee-details', employeeDetails);
+			document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', employeeDetails)
+			//employeeDetailsVisibility ++;
+		//}
+
+
+
+
+		
+		//renderEmployee(employeePropertiesObj);
+
+		let employeeModalPanel = document.getElementById('employee-segment').cloneNode(true)
+
+		//document.getElementById('employee-modal-view-fields').innerHTML = '',
+
+		console.log(employeeModalPanel.children[0].children[1].children[1]);
+		
+		employeeModalPanel.children[0].children[1].children[1].setAttribute('id', "delete-employee-mobile-modal-button");
+		employeeModalPanel.children[0].children[1].children[1].setAttribute('style', "display: inline !important");
+		employeeModalPanel.children[0].children[1].children[2].setAttribute('id', "edit-employee-mobile-modal-button");
+		employeeModalPanel.children[0].children[1].children[2].setAttribute('style', "display: none !important");
+		employeeModalPanel.children[0].setAttribute('class', 'ui message');
+		
+		console.log(employeeModalPanel.children[0].children[1].children[2]);
+
+		//document.getElementById('employee-modal-view-fields').appendChild(employeeModalPanel),
+		//document.getElementById('employee-modal-view-fields').setAttribute('style','display: inherit');
+
+		//document.getElementById('employee-modal-edit-fields').appendChild(employeeModalPanel);
+
+		let headingNode = document.createElement('h3');
+		headingNode.innerHTML = 'Update details'
+
+		document.getElementById('employee-modal-edit-fields').appendChild(employeeModalPanel);
+		document.getElementById('employee-modal-edit-fields').appendChild(headingNode);
+
+		let topDiv = document.createElement('div')
+		topDiv.appendChild(employeeModalPanel);
+		topDiv.appendChild(headingNode);
+		document.getElementById('employee-modal-edit-fields').appendChild(topDiv);
+
+		
+		let testButton = document.createElement('div');
+		testButton.setAttribute('class', 'ui button');
+		testButton.setAttribute('id', 'mobile-modal-update-employee-btn');
+
+		testButton.innerHTML = 'test'
+		document.getElementById('employee-modal-edit-fields').appendChild(testButton);
+		
+
+
+		document.getElementById('employee-modal-edit-fields').setAttribute('style','display: inherit');
+		
+		let waitForModal = setTimeout(function(){
+			document.getElementById('employee-modal-form-fields').setAttribute('style', 'display: none');			
+			clearTimeout(waitForModal);
+		},500);
+
+		
+		
+		console.log($('#employee-modal-form-fields'))
+
+		$('#edit-employee-mobile-modal-button').click(function(e){
+			e.preventDefault()
+			console.log('click')
+			document.getElementById('modal-deny-btn').click();
+			
+			//let openEditTimer = setTimeout(function(){
+			//	document.getElementById('edit-employee-fields-btn').click();
+			//	clearTimeout(openEditTimer);
+			//}, 300);
+
+		});
+
+		$('#delete-employee-mobile-modal-button').click(function(e){
+			e.preventDefault()
+			console.log('click');
+			console.log('employee Properties Stored',employeePropertiesStored);
+
+			$('#alert-modal').modal(
+				{
+					title: '<i class="archive icon"></i>',
+					content: `Delete this employee?`
+				}).modal('show');
+
+		});
+
+		$('#mobile-modal-update-employee-btn').click(function(e){
+			
+			console.log('update');
+			document.getElementById('submit-edit-employee').setAttribute('style', 'display: inline');
+			//document.getElementById('employee-modal-edit-fields').setAttribute('style', 'display: inherit');
+			document.getElementById('employee-modal-form-fields').setAttribute('style', 'display: inherit');
+		});
 
 		$('.ui.modal.employee-details-modal').modal({
 			title: 'Employee details',
@@ -1888,16 +2003,7 @@ function viewDetailsBtnFunctionality(){
 
 		*/
 		
-		if (employeeDetailsVisibility == 0) {
-			renderEmployee(employeePropertiesObj);
-			$('.employee-detail-fields').attr('style', 'visibility: visible');
-			document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
-			document.getElementById('delete-employee-btn').setAttribute('employee-details', employeeDetails);
-			document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', employeeDetails)
-			employeeDetailsVisibility ++;
-		}
 
-		renderEmployee(employeePropertiesObj);
 	
 	});
 	
@@ -2019,7 +2125,8 @@ function runSearch(orderBy, searchTerm){
 				if (newElem()) {
 				
 					console.log('creates newest employee on first search');
-					otherEmployees.appendChild(createEmployeeRow(JSON.parse(newElem().getElementsByTagName('td')[0].children[0].children[1].attributes[1].textContent)));
+					//otherEmployees.appendChild(createEmployeeRow(JSON.parse(newElem().getElementsByTagName('td')[0].children[0].children[1].attributes[1].textContent)));
+					otherEmployees.appendChild(createEmployeeRow(JSON.parse(newElem().getElementsByTagName('td')[0].children[0].children[0].attributes[1].textContent)));
 
 				}
 
@@ -2106,6 +2213,8 @@ function closeModal(){
 	document.getElementById('employee-modal-create-fields').setAttribute('style','display: none');
 	document.getElementById('submit-create-employee').setAttribute('style','display: none');
 	document.getElementById('submit-edit-employee').setAttribute('style', 'display: none');
+	document.getElementById('create-new-location-btn').setAttribute('style', 'display: none');
+	
 
 	document.getElementById('employee-modal-view-fields').innerHTML = "";
 	document.getElementById('employee-modal-create-fields').innerHTML = "";
