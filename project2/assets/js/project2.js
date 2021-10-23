@@ -756,11 +756,11 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 			$(`#departmentID-1-form`).form('set defaults');
 			//$(`#${depStringTemplate}-form`).form('set as clean');
 
-			$(`#departmentID-1-field`).attr('class', 'eight wide field dept-name-field');
+			$(`#departmentID-1-field`).attr('class', 'field dept-name-field');
 			$(`#input-departmentID-1-field`).attr('readonly','');
-			$(`#rename-${depStringTemplate}-btn`).attr('class', 'ui tiny button');
-			$(`#submit-departmentID-1-btn`).attr('class', 'ui tiny disabled button');
-			$(`#cancel-departmentID-1-btn`).attr('class', 'ui tiny disabled button');
+			//$(`#rename-${depStringTemplate}-btn`).attr('class', 'ui tiny button');
+			//$(`#submit-departmentID-1-btn`).attr('class', 'ui tiny disabled button');
+			//$(`#cancel-departmentID-1-btn`).attr('class', 'ui tiny disabled button');
 			
 			$('#departmentID-1-accordion').click()
 			//$('#departmentID-1-field-container').attr('style', 'display: none');
@@ -810,15 +810,18 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 
 			//$('#departmentID-1-field-container').attr('style', 'display: flex');
 
+			$('#departmentID-1-trash-warning').attr('style', 'display: inline !important');
+			$('#delete-departmentID-1-btn').attr('style', 'display: none');
+
 			$('#departmentID-1-accordion').click()
 			
 			$(`#input-departmentID-1-field`).removeAttr('readonly');
-			$(`#submit-departmentID-1-btn`).attr('class', 'ui tiny button');
+			//$(`#submit-departmentID-1-btn`).attr('class', 'ui tiny button');
 			
 			$(`#input-departmentID-1-field`).attr('value','');
 			$(`#input-departmentID-1-field`).attr('placeholder','New Department Name');
-			$(`#departmentID-1-field`).attr('class', 'eight wide info field dept-name-field');
-			$(`#cancel-departmentID-1-btn`).attr('class', 'ui tiny button');
+			//$(`#departmentID-1-field`).attr('class', 'eight wide info field dept-name-field');
+			//$(`#cancel-departmentID-1-btn`).attr('class', 'ui tiny button');
 		
 			//$(`#rename-${depStringTemplate}-btn`).attr('class', 'ui tiny disabled button');
 
@@ -853,8 +856,9 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 			
 			
 			console.log('submit clicked');
+
 			
-			
+				
 			if ($(`#locationID-1-new-dept-form`).form('validate form')) {
 				$(`#locationID-1-new-dept-form`).form('submit');
 				$(`#locationID-1-new-dept-form`).form('reset');

@@ -299,11 +299,25 @@
         text-align: left;
       }
 
+      /*
       .department-field-container {
         display: flex;
         flex-wrap: wrap;
         margin: 0 !important;
         margin-bottom: 0.8rem !important;
+      }
+      */
+
+      .department-field-container {
+        display: flex;
+        align-content: center;
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+
+      .rename-accordion-buttons {
+        display: flex;
+        padding: 0.3rem 0;
       }
 
       .dept-employee-figure {
@@ -316,8 +330,9 @@
 
       .dept-name-field {
         display: flex;
-        min-width: 18rem;
+        flex-grow: 1;
         margin: 0 !important;
+        margin-right: 0.2rem !important;
       }
 
       .create-dept-btn {
@@ -374,6 +389,16 @@
       #append-location-panels {
         padding-top: 1rem;
       }
+
+      .dept-icon-buttons {
+        text-align: center;
+      }
+      
+      .edit-dept-icon {
+        margin-right: 1rem;
+      }
+
+
 
       @media only screen and (max-width: 767.98px) {
 
@@ -758,7 +783,7 @@
                 <div id="append-location-panels">
                 <div class="ui raised floating message location-message-panel">
                   <i id="close-locationID-1-panel" class="close icon display-none-field"></i>
-                  <div class="ui one top attached black disabled button"> Location 1 - <span id="locationID-1-employee-count">50</span> employees - <span id="locationID-1-dept-count">3</span> Departments </div>
+                  <div class="ui one top attached black disabled button"> Location 1 with a very long name- <span id="locationID-1-employee-count">50</span> employees - <span id="locationID-1-dept-count">3</span> Departments </div>
                   <div class="ui attached segment">
                     <div id="locationID-1-form" class="ui form">
                       <!--loading // success -->
@@ -769,36 +794,18 @@
 
                             <form id="departmentID-1-form" class="ui form rename-form">
                               <h3>
-                                <span id="rename-departmentID-1-btn">
-                                  <i class="fas fa-edit pointer"></i>
-                                </span>
                                 <span id="departmentID-1-title">
-                                Department 
+                                Department with a very long name
                                 </span>
                                  - 
                                 <span id="departmentID-1-employee-count">
                                 25
                                 </span>
                                 employees
-                              
-                                <div id="delete-departmentID-1-btn" deptID="1" deptName="departmentID-1-name" class="ui icon button">
-                                  <i class="fas fa-trash-alt"></i>
-                                </div>
+                        
 
-                                <div class="ui icon button" data-tooltip="Only empty departments can be deleted" data-inverted="">
-                                  <i class="fas fa-trash-alt"></i>
-                                </div>
+                          </h3>
 
-                              </h3>
-                              <h3>
-                                <span>
-                                  <i class="fas fa-edit pointer"></i>
-                                </span>
-                                <div deptID="1" deptName="departmentID-1-name" class="ui icon button">
-                                  <i class="fas fa-trash-alt"></i>
-                                </div>
-
-                                </h3>
                               <div class="ui accordion field">
                               <div class="title display-none-field">
                                 <i class="icon dropdown"></i>
@@ -814,23 +821,39 @@
                             
 
                               <div id="departmentID-1-field-container" class="department-field-container">
-                                <div id="departmentID-1-field" class="eight wide field dept-name-field">
+                                <div id="departmentID-1-field" class="field dept-name-field">
                                   <input readonly="" name="dept-rename" id="input-departmentID-1-field" value="DepartmentID-1-name" type="text" placeholder="DepartmentID-1 Name">
                                 </div>
-                                <button id="cancel-departmentID-1-btn" form="departmentID-1-form" type="reset" class="ui tiny disabled button dept-action-button">Cancel</button>
-                                <div id="submit-departmentID-1-btn" class="ui tiny disabled button dept-action-button">Submit</div>
+                                <div class="rename-accordion-buttons">
+                                <button id="cancel-departmentID-1-btn" form="departmentID-1-form" type="reset" class="ui tiny button dept-action-button">Cancel</button>
+                                <div id="submit-departmentID-1-btn" class="ui tiny button dept-action-button">Submit</div>
+                                </div>
                               </div>
 
                             </div>
                           </div>
                         </div>
 
+                            <div class="ui error message"></div>
                               <div>
+                                <h3 class="dept-icon-buttons">
+                                  <div class="ui icon button">
+                                    <i id="rename-departmentID-1-btn" class="fas fa-edit pointer"></i>
+                                  </div>
+                                  <div id="delete-departmentID-1-btn" deptID="1" deptName="departmentID-1-name" class="ui icon button">
+                                    <i class="fas fa-trash-alt"></i>
+                                  </div>
+
+                                  <div id="departmentID-1-trash-warning" class="ui icon button display-none-field" data-tooltip="Only empty departments can be deleted" data-inverted="">
+                                    <i class="fas fa-trash-alt"></i>
+                                  </div>
+  
+                                  </h3>
 
 
                               </div>                           
      
-                              <div class="ui error message"></div>
+                              
                             </form>
                           </div>
                           <div class="ui column">
