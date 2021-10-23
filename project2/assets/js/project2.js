@@ -323,7 +323,8 @@ $('#delete-employee-btn').click(function (){
  	$('#alert-modal').modal(
  		{
 	 		title: '<i class="archive icon"></i>',
-	 		content: `Delete this employee?  ${employeeDetails.firstName} ${employeeDetails.lastName}`
+			content: `<div class="alert-modal-text">Delete this employee? <br> <h3> ${employeeDetails.firstName} ${employeeDetails.lastName} </h3></div>`,
+	 		//content: `Delete this employee?  ${employeeDetails.firstName} ${employeeDetails.lastName}`
  		}).modal('show');
 
 	});
@@ -466,6 +467,12 @@ $('#delete-department-modal-btn').click(function (){
 	console.log(`delete deparment ${this.getAttribute('deptID')}`)
 });
 
+$('#alert-modal-no-btn').click(function(){
+
+	closeAlertModal();
+
+});
+
 // linked mobile buttons
 
 $('#create-employee-btn-mobile').click(function(){
@@ -518,8 +525,10 @@ $('#employee-modal-edit-fields').submit(function(event) {
 		
 		$('#alert-modal').modal(
 		{
-			title: '<i class="archive icon"></i>',
-			content: `Update this employee?`,
+			//title: '<i class="archive icon"></i>',
+			title: '<i class="fas fa-user-edit"></i>',
+			//content: `Update this employee?`,
+			content: `<div class="alert-modal-text">Update this employee? <br> <h3> ${employeeDetails.firstName} ${employeeDetails.lastName} </h3></div>`,
 			//content: `${employeeDetails.firstName} ${employeeDetails.lastName}:  Update this employee?`,
 			onHidden: function(){	
 				console.log('close edit employee');
@@ -1952,15 +1961,16 @@ function viewDetailsBtnFunctionality(){
 
 			document.getElementById('submit-edit-employee').setAttribute('style', 'display: inline');
 			//document.getElementById('employee-modal-edit-fields').setAttribute('style', 'display: inherit');
-			document.getElementById('employee-modal-form-fields').setAttribute('style', 'display: inherit');
+	
 
 			document.getElementById('close-mobile-employee-panel').click();
 			//document.getElementById('modal-deny-btn').click();
 			
-			//let openEditTimer = setTimeout(function(){
-			//	document.getElementById('edit-employee-fields-btn').click();
-			//	clearTimeout(openEditTimer);
-			//}, 300);
+			let closeModalMsgTimer = setTimeout(function(){
+				document.getElementById('employee-modal-form-fields').setAttribute('style', 'display: inherit');
+				//document.getElementById('edit-employee-fields-btn').click();
+				clearTimeout(closeModalMsgTimer);
+			}, 200);
 
 		});
 

@@ -385,6 +385,10 @@
       i.fas.fa-users-cog {
         display: none;
       }
+
+      i.fas.fa-user-edit {
+        font-size: 4rem;
+      }
  
 
       .employee-row-content {
@@ -750,7 +754,7 @@
                         <h3><span>Job Title: </span><span id="employee-jobTitle-field"></span></h3>
                         <h3><span>Contact: </span></h3>
 
-                        <a href="#" class="email-address">
+                        <a href="#" target="_blank" class="email-address">
                           <h5><span>Email: </span><span id="employee-email-field"></span><h5>
                         </a>
 
@@ -1008,10 +1012,9 @@
         <i class="archive icon"></i> Archive Old Messages
       </div>
       <div class="content">
-        <p>Your inbox is getting full, would you like us to enable automatic archiving of old messages?</p>
       </div>
       <div class="actions">
-        <div class="ui red basic cancel inverted button">
+        <div id="alert-modal-no-btn" class="ui red basic cancel inverted button">
           <i class="remove icon"></i> No
         </div>
         <div id="delete-employee-modal-btn" class="ui green ok inverted button">
