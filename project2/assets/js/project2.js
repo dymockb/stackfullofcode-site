@@ -798,10 +798,10 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 			
 			//$(`#departmentID-1-field`).attr('class', 'field');
 
-			$(`#submit-departmentID-1-btn`).attr('class', 'ui tiny disabled button');
-			$(`#cancel-departmentID-1-btn`).attr('class', 'ui tiny disabled button');
+			//$(`#submit-departmentID-1-btn`).attr('class', 'ui tiny disabled button');
+			//$(`#cancel-departmentID-1-btn`).attr('class', 'ui tiny disabled button');
 			//$(`#rename-${depStringTemplate}-btn`).attr('class', 'ui tiny button');
-			$(`#departmentID-1-field`).attr('class', 'eight wide field dept-name-field');			
+			//$(`#departmentID-1-field`).attr('class', 'eight wide field dept-name-field');			
 			$(`#input-departmentID-1-field`).attr('readonly','');
 
 		});
