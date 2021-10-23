@@ -52,11 +52,26 @@
         padding: 0;
       }
 
+      /*
       #top-nav-items {
         display: flex;
         padding-top: 0.5rem;
         flex-direction: column;
         align-items: center;
+      }
+      */
+      
+      #top-nav-items {
+        
+        padding-top: 0.5rem;
+
+      }
+      
+
+      #search-box {
+        max-width: 23rem;
+        margin-left: auto;
+        margin-right: auto;
       }
 
       #company-logo {
@@ -208,13 +223,13 @@
       #delete-employee-modal-btn,
       #update-employee-modal-btn,
       #create-employee-btn-mobile,
-      #submit-depts-and-locs {
+      #submit-depts-and-locs,
+      #create-new-location-btn {
         display: none;
       }
 
       .employee-modal-btn {
         display: none !important;
-        float: right;
       }
 
       #delete-employee-btn {
@@ -316,6 +331,7 @@
 
       #location-accordion-segment {
         margin-top: 0;
+        margin-bottom: 0;
         display: none
       }
 
@@ -327,7 +343,55 @@
         float: right
       }
 
+      i.fas.fa-info-circle {
+        float: right;
+        font-size: 2rem;
+        margin-right: 2rem;
+      }
+
+
+      i.fas.fa-user-plus {
+        display: none;
+      }
+
+      i.fas.fa-users-cog {
+        display: none;
+      }
+ 
+
+      .employee-row-content {
+        width: 100%;
+      }
+
+      .pointer {
+        cursor: pointer;
+      }
+
+      #scrolling-modal-pane {
+        background-color: #d4d4d5;
+      }
+
+      #append-location-panels {
+        padding-top: 1rem;
+      }
+
       @media only screen and (max-width: 767.98px) {
+
+     
+        i.fas.fa-user-plus {
+          display: inline;
+          float: right;
+          font-size: 2rem;
+          margin-right: 2rem;
+        }
+
+        i.fas.fa-users-cog {
+          display: inline;
+          font-size: 2rem;
+          vertical-align: baseline;
+        }
+
+
 
         #employee-details-field,
         #employee-details-column,
@@ -336,8 +400,8 @@
           display: none !important;
         }
 
-        #create-employee-btn-mobile {
-          display: block;
+        #create-employee-btn-mobile, #manage-depts-and-locs-btn {
+          display: none;
           float: right;
         }
 
@@ -358,6 +422,9 @@
 
         .employee-modal-btn {
           display: inherit !important;
+          max-width: 10rem;
+          margin-left: auto !important;
+          margin-right: auto !important;
         }
 
         hr {
@@ -367,6 +434,7 @@
         .ui.column {
           padding-bottom: 0 !important;
         }
+
 
       }
 
@@ -432,13 +500,22 @@
     <!-- <div class="ui stackable container menu"> -->
     <!--	<div id="preloader"></div> -->
     <div id="top-nav" class="ui segment">
-      <div id="top-nav-items" class="ui fluid form">
+      <div id="top-nav-items" class="ui fluid container">
+        
+        <i id="mobile-create-employee-btn" class="fas fa-user-plus pointer"></i>  
+            
+
         <div id="search-box" class="item">
+          
+          <i id="mobile-manage-cog" class="fas fa-users-cog pointer"></i>
+          
           <div id="search-box-icon" class="ui icon input">
             <!-- add loading to input  -->
             <input id="search-input" placeholder="Search employees" type="text">
             <i class="search icon"></i>
           </div>
+          
+
         </div>
         <div id="mobile-search-options-wrapper">
           <div id="mobile-search-options" class="ui accordion field">
@@ -506,7 +583,11 @@
 							</div><div class="ui checkbox"><input type="checkbox" name="1"><label>One</label></div><div class="ui checkbox"><input type="checkbox" name="2"><label>Two</label></div><div class="ui form"></div>
 							
 							-->
-        <button id="manage-depts-and-locs-btn" class="ui button">Manage <br /> Departments and Locations </button>
+
+        
+              <button id="manage-depts-and-locs-btn" class="ui button">Manage <br /> Departments and Locations </button>
+        
+        
         <!-- for testing linking
 							<div class="item"><div class="inline fields"><label for="order">Order by:</label><div class="field"><div class="ui radio checkbox"><input type="radio" name="order-by" tabindex="0" class="hidden" value="firstName"><label>First Name</label></div></div><div class="field"><div class="ui radio checkbox checked"><input type="radio" name="order-by" checked="" tabindex="0" class="hidden" value="lastName"><label>Last Name</label></div></div></div></div>
 
@@ -687,7 +768,28 @@
                           <div class="ui column manage-dept-info">
 
                             <form id="departmentID-1-form" class="ui form rename-form">
-                              <h3><span id="departmentID-1-title">Department </span> - <span id="departmentID-1-employee-count">25</span> employees</h3>
+                              <h3>
+                                <span id="rename-departmentID-1-btn">
+                                  <i class="fas fa-edit pointer"></i>
+                                </span>
+                                <span id="departmentID-1-title">
+                                Department 
+                                </span>
+                                 - 
+                                <span id="departmentID-1-employee-count">
+                                25
+                                </span>
+                                employees
+                              
+                                <div id="delete-departmentID-1-btn" deptID="1" deptName="departmentID-1-name" class="ui icon button">
+                                  <i class="fas fa-trash-alt"></i>
+                                </div>
+
+                                <div class="ui icon button" data-tooltip="Only empty departments can be deleted" data-inverted="">
+                                  <i class="fas fa-trash-alt"></i>
+                                </div>
+
+                              </h3>
                               <div class="ui accordion field">
                               <div class="title display-none-field">
                                 <i class="icon dropdown"></i>
@@ -706,6 +808,8 @@
                                 <div id="departmentID-1-field" class="eight wide field dept-name-field">
                                   <input readonly="" name="dept-rename" id="input-departmentID-1-field" value="DepartmentID-1-name" type="text" placeholder="DepartmentID-1 Name">
                                 </div>
+                                <button id="cancel-departmentID-1-btn" form="departmentID-1-form" type="reset" class="ui tiny disabled button dept-action-button">Cancel</button>
+                                <div id="submit-departmentID-1-btn" class="ui tiny disabled button dept-action-button">Submit</div>
                               </div>
 
                             </div>
@@ -713,14 +817,7 @@
                         </div>
 
                                 
-                              <div class="manage-dept-btns">
-                                <div>
-                                  <div id="rename-departmentID-1-btn" deptID="1" class="ui tiny button dept-action-button">Rename department</div>
-                                  <button id="cancel-departmentID-1-btn" form="departmentID-1-form" type="reset" class="ui tiny disabled button dept-action-button">Cancel</button>
-                                  <div id="submit-departmentID-1-btn" class="ui tiny disabled button dept-action-button">Submit</div>
-                                </div>
-                                <div id="delete-departmentID-1-btn" deptID="1" deptName="departmentID-1-name" class="ui tiny button dept-action-button">Delete department</div>
-                              </div>
+     
                               <div class="ui error message"></div>
                             </form>
                           </div>
@@ -756,12 +853,14 @@
                         <p>Are you sure you want to delete this department?</p>
                         <button class="ui primary button">Confirm</button>
                       </div>
+
+                      <!--
                       <div class="ui floating message">
                         <i id="close-create-department-icon" class="close icon"></i>
                         <div class="header">Error</div>
                         <p>Only empty departments can be deleted</p>
                       </div>
-                      
+                      -->
 
                       <div class="ui accordion field">
                         <div class="title">
@@ -814,6 +913,9 @@
         <button id="submit-create-employee" class="ui primary button">
           <!-- form="employee-modal-create-fields"--> Create employee
         </button>
+        <button id="create-new-location-btn" class="ui primary button">
+          <!-- form="employee-modal-create-fields"--> Add new location
+        </button>
         <button class="ui deny button"> Cancel </button>
         <button id="close-employee-modal" class="ui primary approve button"> Close <i class="right chevron icon"></i>
         </button>
@@ -848,6 +950,8 @@
     <script src="assets/library/jquery.min.js"></script>
     <script src="dist/semantic.js"></script>
     <script type="text/javascript" src="dist/components/accordion.js"></script>
+    <script src="https://kit.fontawesome.com/ac327db264.js">
+    </script> 
     <script src='assets/js/project2.js' type="text/javascript"></script>
   </body>
 </html>

@@ -262,7 +262,8 @@ $('#create-employee-btn').click(function(){
 
 $('#manage-depts-and-locs-btn').click(function(){
 		
-		document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: block')
+		document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: block');
+		document.getElementById('create-new-location-btn').setAttribute('style', 'display: inline');
 	
 		deptStringTemplate = 'departmentID-1';
 		locStringTemplate = 'locationID-1';
@@ -274,7 +275,8 @@ $('#manage-depts-and-locs-btn').click(function(){
 
 		$('.ui.modal.employee-details-modal').modal({
 
-		title: `Manage Departments and Locations` + buttonForModal.outerHTML,
+		title: `Manage Departments and Locations`,
+		// + buttonForModal.outerHTML,
 		closable: false,
 		onShow: function(){
 			$('.ui.accordion').accordion();
@@ -295,6 +297,18 @@ $('#manage-depts-and-locs-btn').click(function(){
 		}).modal('show');
 		
 	
+});
+
+$('#mobile-manage-cog').click(function (){
+
+	$('#manage-depts-and-locs-btn').click();
+
+});
+
+$('#mobile-create-employee-btn').click(function (){
+
+	$('#create-employee-btn').click();
+
 });
 
 //buttons on employee panel
@@ -786,7 +800,7 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 
 			$(`#submit-departmentID-1-btn`).attr('class', 'ui tiny disabled button');
 			$(`#cancel-departmentID-1-btn`).attr('class', 'ui tiny disabled button');
-			$(`#rename-${depStringTemplate}-btn`).attr('class', 'ui tiny button');
+			//$(`#rename-${depStringTemplate}-btn`).attr('class', 'ui tiny button');
 			$(`#departmentID-1-field`).attr('class', 'eight wide field dept-name-field');			
 			$(`#input-departmentID-1-field`).attr('readonly','');
 
@@ -806,7 +820,7 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 			$(`#departmentID-1-field`).attr('class', 'eight wide info field dept-name-field');
 			$(`#cancel-departmentID-1-btn`).attr('class', 'ui tiny button');
 		
-			$(`#rename-${depStringTemplate}-btn`).attr('class', 'ui tiny disabled button');
+			//$(`#rename-${depStringTemplate}-btn`).attr('class', 'ui tiny disabled button');
 
 		});	
 
@@ -876,13 +890,16 @@ function createEmployee(employeePropertiesObj){
 	
 	let employeeH4 = document.createElement('h4');
 	employeeH4.setAttribute('class', 'ui image header');
+
+	//let employeeImg = document.createElement('i')
+	//employeeImg.setAttribute('class', 'fas fa-user-circle')
 	
-	let employeeImg = document.createElement('img');
-	employeeImg.setAttribute('src', 'assets/images/wireframe/square-image.png');
-	employeeImg.setAttribute('class', 'ui mini rounded image');
+	//let employeeImg = document.createElement('img');
+	//employeeImg.setAttribute('src', 'assets/images/wireframe/square-image.png');
+	//employeeImg.setAttribute('class', 'ui mini rounded image');
 		
 	let employeeDiv = document.createElement('div');
-	employeeDiv.setAttribute('class', 'content');
+	employeeDiv.setAttribute('class', 'content employee-row-content');
 
 	for (const [key, value] of Object.entries(employeePropertiesObj)) {
 
@@ -910,9 +927,15 @@ function createEmployee(employeePropertiesObj){
 	employeeSubHeader.setAttribute('class', 'sub header');
 	employeeSubHeader.innerHTML = `${employeePropertiesObj.department} | ${employeePropertiesObj.locationName}`;
 	
+	let empInfo = document.createElement('i');
+	empInfo.setAttribute('class', 'fas fa-info-circle employee-modal-btn pointer');
+	empInfo.setAttribute('employee-details', JSON.stringify(employeePropertiesObj));
+
+	employeeDiv.appendChild(empInfo);
+
 	employeeDiv.appendChild(employeeSubHeader);
 	
-	employeeH4.appendChild(employeeImg);
+	//employeeH4.appendChild(employeeImg);
 	employeeH4.appendChild(employeeDiv);	
 		
 	let employeeModalBtn = document.createElement('div');
@@ -926,7 +949,7 @@ function createEmployee(employeePropertiesObj){
 function appendEmployee(elementToAppend, employeeElements){
 	elementToAppend.innerHTML = '';
 	elementToAppend.appendChild(employeeElements[0]);
-	elementToAppend.appendChild(employeeElements[1]);
+	//elementToAppend.appendChild(employeeElements[1]);
 };
 
 function createEmployeeRow(employeePropertiesObj) {
@@ -959,7 +982,7 @@ function createEmployeeRow(employeePropertiesObj) {
 	let employeeElements = createEmployee(employeePropertiesObj);
 					
 	tableData.appendChild(employeeElements[0]);
-	tableData.appendChild(employeeElements[1]);
+	//tableData.appendChild(employeeElements[1]);
 	
 	tableRow.appendChild(tableData);
 
@@ -1792,8 +1815,10 @@ function selectEmployeeFunctionality(){
 function viewDetailsBtnFunctionality(){
 	
 	$('.employee-modal-btn').click(function(event){	
+		console.log(this);
+		//let employeeProperties = JSON.parse($($(this).context.previousSibling.children[1]).attr('employee-properties'));
 
-		let employeeProperties = JSON.parse($($(this).context.previousSibling.children[1]).attr('employee-properties'));
+		let employeeProperties = JSON.parse(this.getAttribute('employee-details'));
 		//let employeeDetails = $($(this).context.previousSibling.children[1]).attr('employee-properties');
 				
 		for (const [key, value] of Object.entries(employeeProperties)) {
@@ -1816,6 +1841,8 @@ function viewDetailsBtnFunctionality(){
 		document.getElementById('employee-modal-view-fields').setAttribute('style','display: inherit');
 		//document.getElementById('submit-edit-employee').setAttribute('style','display: inline');
 		document.getElementById('submit-edit-employee').setAttribute('employee-details', this.getAttribute('employee-details'));
+
+		
 
 		$('.ui.modal.employee-details-modal').modal({
 			title: 'Employee details',
