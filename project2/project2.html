@@ -172,6 +172,14 @@
         visibility: hidden;
       }
 
+      h1 {
+        margin: 0 !important
+      }
+
+      .employee-panel-name {
+        display: flex;
+        flex-wrap: wrap;
+      }
       /*
 	td#employee-details-field {
 		border-left: none;
@@ -191,13 +199,17 @@
       }
 
       .email-address {
-        word-break: break-all
+        word-break: keep-all
       }
 
       .employee-panel-btn {
         display: block !important;
         margin-left: auto !important;
         margin-bottom: 1rem !important;
+      }
+
+      .alert-modal-text {
+        text-align: center;
       }
 
       .display-none-field {
@@ -221,6 +233,7 @@
       #submit-edit-employee,
       #edit-employee-modal-btn,
       #delete-employee-modal-btn,
+      #delete-department-modal-btn,
       #update-employee-modal-btn,
       #create-employee-btn-mobile,
       #submit-depts-and-locs,
@@ -402,6 +415,16 @@
         margin-bottom: 0.5rem;
       }
 
+      #icon-block {
+        width: 2rem;
+        display: inline-block;
+      }
+
+      .employee-count-icon {
+        float: right;
+      }
+
+      
 
 
       @media only screen and (max-width: 767.98px) {
@@ -412,12 +435,17 @@
           float: right;
           font-size: 2rem;
           margin-right: 2rem;
+          padding-top: 0.3rem;
         }
 
         i.fas.fa-users-cog {
           display: inline;
           font-size: 2rem;
           vertical-align: baseline;
+          position: absolute;
+          z-index: 30;
+          left: 1.5rem;
+          top: 1rem;
         }
 
 
@@ -537,7 +565,7 @@
         <div id="search-box" class="item">
           
           <i id="mobile-manage-cog" class="fas fa-users-cog pointer"></i>
-          
+          <span id="icon-block"></span>
           <div id="search-box-icon" class="ui icon input">
             <!-- add loading to input  -->
             <input id="search-input" placeholder="Search employees" type="text">
@@ -712,15 +740,22 @@
                     <i id="close-panel-icon" class="close icon"></i>
                     <div class="content employee-detail-fields">
                       <div class="ui segment">
+                        <div class="employee-panel-name">
                         <h1 id="employee-firstName-field">placeholder</h1>
+                        <h1>&nbsp;</h1>
                         <h1 id="employee-lastName-field">placeholder</h1>
+                        </div>
+                        <h3><span>Department: </span><span id="employee-department-field"></span></h3>
+                        <h3><span>Location: </span><span id="employee-locationName-field"></span></h3>
+                        <h3><span>Job Title: </span><span id="employee-jobTitle-field"></span></h3>
+                        <h3><span>Contact: </span></h3>
+
                         <a href="#" class="email-address">
-                          <h3 id="employee-email-field">placeholder <h3>
+                          <h5><span>Email: </span><span id="employee-email-field"></span><h5>
                         </a>
-                        <h2 id="employee-jobTitle-field">placeholder</h2>
-                        <h2 id="employee-department-field">placeholder</h2>
+
                         <p class="display-none-field" id="employee-departmentID-field">placeholder</p>
-                        <h3 id="employee-locationName-field">placeholder</h3>
+                        
                         <p class="display-none-field" id="employee-locationID-field">placeholder</p>
                         <p class="display-none-field" id="employee-id-field">placeholder</p>
                       </div>
@@ -801,12 +836,13 @@
                                 <span id="departmentID-1-title">
                                 Department with a very long name
                                 </span>
-                                 - 
+                                
+                                <span class="employee-count-icon">
                                 <span id="departmentID-1-employee-count">
                                 25
                                 </span>
-                                employees
-                        
+                                <i class="fas fa-users"></i>
+                                </span>
 
                           </h3>
 
@@ -979,6 +1015,9 @@
           <i class="remove icon"></i> No
         </div>
         <div id="delete-employee-modal-btn" class="ui green ok inverted button">
+          <i class="checkmark icon"></i> Yes
+        </div>
+        <div id="delete-department-modal-btn" class="ui green ok inverted button">
           <i class="checkmark icon"></i> Yes
         </div>
         <div id="update-employee-modal-btn" class="ui green ok inverted button">
