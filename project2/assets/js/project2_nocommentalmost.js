@@ -78,6 +78,8 @@ function getAllDepartments(){
 				}
 			}
 
+			listOfDepts.sort();
+
 			countOfDepts = listOfDepts.length;
 			countOfCheckedDepts = listOfDepts.length;
 
@@ -114,6 +116,8 @@ function getAllLocations(){
 					listOfLocations.push(result.data[l].name);
 				}
 			}
+
+			listOfLocations.sort();
 
 			countOfLocations = listOfLocations.length;
 			countOfCheckedLocations = listOfLocations.length;
