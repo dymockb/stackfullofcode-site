@@ -41,9 +41,12 @@ body {
 	padding-top: 0.5rem;
 }
 
+#cogs-and-search {
+	display: flex;
+}
+
 
 #search-box {
-	max-width: 23rem;
 	margin-left: auto;
 	margin-right: auto;
 }
@@ -432,21 +435,16 @@ h3.ui.center.header {
 
 
 	i.fas.fa-user-plus {
-		display: inline;
-		float: right;
+		display: flex;
 		font-size: 2rem;
 		margin-right: 2rem;
 		padding-top: 0.3rem;
 	}
 
 	i.fas.fa-users-cog {
-		display: inline;
-		font-size: 2rem;
-		vertical-align: baseline;
-		position: absolute;
-		z-index: 30;
-		left: 1.5rem;
-		top: 1rem;
+		display: flex;
+		font-size: 2.3rem;
+		margin-left: 1rem;
 	}
 
 	#employee-details-field,
