@@ -863,11 +863,11 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 
 			$('#departmentID-1-accordion').click()
 			
-			//$(`#input-departmentID-1-field`).removeAttr('readonly');
+			$(`#input-departmentID-1-field`).removeAttr('readonly');
 			//$(`#submit-departmentID-1-btn`).attr('class', 'ui tiny button');
 			
 			$(`#input-departmentID-1-field`).attr('value','');
-			//$(`#input-departmentID-1-field`).attr('placeholder','New Department Name');
+			$(`#input-departmentID-1-field`).attr('placeholder','New Department Name');
 			//$(`#departmentID-1-field`).attr('class', 'eight wide info field dept-name-field');
 			//$(`#cancel-departmentID-1-btn`).attr('class', 'ui tiny button');
 		
