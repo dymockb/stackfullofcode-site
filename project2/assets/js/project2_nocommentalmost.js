@@ -798,6 +798,16 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 
 		});
 
+		$(`#departmentID-1-trash-warning`).click(function(e){
+
+			$('#alert-modal').modal(
+				{
+					title: '<i class="archive icon"></i>',
+					content: `<div class="alert-modal-text">Cannot delete department. Remove all employees and try again.</div>`
+				}).modal('show');
+
+		});
+
 		$(`#locationID-1-new-dept-form`).form({
 			fields: {
 				name: {
@@ -838,7 +848,7 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 		$(`#locationID-1-cancel-new-dept-btn`).click(function(e){
 
 			$(`#locationID-1-new-dept-form`).form('reset');
-			$('#locationID-1-new-dept-btn').click();
+			$('#locationID-1-new-dept-accordion-btn').click();
 
 		});
 

@@ -1,5 +1,5 @@
 html {
-	font-size: 0.75rem;
+	font-size: 1rem;
 }
 
 body {
@@ -276,6 +276,16 @@ h4.ui.image.header {
 	padding: 0 !important;
 }
 
+.department-title-row {
+	display: flex;
+	justify-content: space-between;
+	font-size: 1rem;
+	align-items: center;
+}
+.employee-count-icon {
+	margin-right: 0.5rem;
+}
+
 .ui.one.top.attached.black.disabled.button {
 	text-align: left;
 }
@@ -366,12 +376,17 @@ i.fas.fa-user-edit {
 	padding-top: 1rem;
 }
 
-.dept-icon-buttons {
-	text-align: center;
-}
-
 .edit-dept-icon {
 	margin-right: 1rem;
+}
+
+.new-dept-accordion {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.department-segment {
+	padding-bottom: 0.2rem !important;
 }
 
 #input-new-location-field {
@@ -381,10 +396,6 @@ i.fas.fa-user-edit {
 #icon-block {
 	width: 2rem;
 	display: inline-block;
-}
-
-.employee-count-icon {
-	float: right;
 }
 
 .mobile-category {
@@ -432,6 +443,10 @@ h3.ui.center.header {
 }
 
 @media only screen and (max-width: 767.98px) {
+
+	html {
+		font-size: 0.75rem;
+	}
 
 
 	i.fas.fa-user-plus {

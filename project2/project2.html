@@ -414,15 +414,33 @@
                         <div class="ui stackable two column row">
                           <div class="ui column manage-dept-info">
                             <form class="ui form rename-form" id="departmentID-1-form" name="departmentID-1-form">
-                              <h3>
-																<span id="departmentID-1-title">Department with a very long name</span> <span class="employee-count-icon">
-																	<span id="departmentID-1-employee-count">25</span>
-																	<i class="fas fa-users"></i>
-																</span>
-															</h3>
+                              <div class="department-title-row">
+                                <span id="departmentID-1-title">Department with a very long name</span> 
+                                <div>
+
+                                  <span class="employee-count-icon">
+                                    <span id="departmentID-1-employee-count">25</span>
+                                    <i class="fas fa-users"></i>
+                                  </span>
+
+                                  <div class="ui icon button" id="rename-departmentID-1-btn">
+                                    <i class="fas fa-edit pointer"></i> 
+                                  </div>
+
+                                  <div class="ui icon button" deptid="1" deptname="departmentID-1-name" id="delete-departmentID-1-btn">
+                                    <i class="fas fa-trash-alt"></i> 
+                                  </div>
+
+                                  <div class="ui icon button display-none-field" id="departmentID-1-trash-warning">
+                                    <i class="fas fa-trash-alt"></i> 
+                                  </div>
+
+                                </div>
+															
+                              </div>
 
 
-                              <div class="ui accordion field">
+                              <div class="ui accordion field new-dept-accordion">
                                 <div class="title display-none-field">
                                   <i class="icon dropdown"></i>
 
@@ -452,33 +470,9 @@
                               </div>
 
 
-                              <div class="ui error message">
-                              </div>
-
-
-                              <div>
-                                <h3 class="dept-icon-buttons">
-   
-                                  <div class="ui icon button" id="rename-departmentID-1-btn">
-                                    <i class="fas fa-edit pointer"></i> 
-                                  </div>
-
-                                  <div class="ui icon button" deptid="1" deptname="departmentID-1-name" id="delete-departmentID-1-btn">
-                                    <i class="fas fa-trash-alt"></i> 
-                                  </div>
-
-                                  <div class="ui icon button display-none-field" data-inverted="" data-tooltip="Only empty departments can be deleted" id="departmentID-1-trash-warning">
-                                    <i class="fas fa-trash-alt"></i> 
-                                  </div>
-                                  
-                                 </h3>  
-
-                              </div>
+                              <div class="ui error message"></div>
+             
                             </form>
-                          </div>
-
-
-                          <div class="ui column">
                           </div>
                         </div>
                       </div>
@@ -511,7 +505,7 @@
 
 
                                 <div class="create-dept-btn">
-                                  <button class="ui mini button" form="" id="locationID-1-cancel-new-dept-btn" type="reset">Cancel</button>
+                                  <button class="ui mini button" id="locationID-1-cancel-new-dept-btn" type="reset">Cancel</button>
                                 </div>
                               </div>
 
