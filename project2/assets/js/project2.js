@@ -88,6 +88,8 @@ function getAllDepartments(){
 
 			departmentCheckboxFunctionality();
 
+			departmentCheckboxFunctionalityMobile();
+
 	},
 	error: function (jqXHR, textStatus, errorThrown) {
 			console.log('error');
@@ -131,6 +133,8 @@ function getAllLocations(){
 			*/
 
 			locationCheckboxFunctionality();
+
+			locationCheckboxFunctionalityMobile();
 		
 	},
 	error: function (jqXHR, textStatus, errorThrown) {
@@ -245,6 +249,12 @@ function delay(callback, ms) {
 }
 
 //BUTTONS
+
+$('#close-mobile-accordion-options').click(function(){
+
+	$('#search-accordion').click();
+
+})
 
 //top level buttons
 
@@ -1873,26 +1883,26 @@ function departmentCheckboxFunctionalityMobile() {
 		if (countOfCheckedDepts < countOfDepts) {
 			console.log('countofcheckeddepts',countOfCheckedDepts);
 			if (countOfCheckedDepts == 0) {
-			 $('#select-none-departments').checkbox('set checked');
 			 $('#select-none-departments-mobile').checkbox('set checked');
+			// $('#select-none-departments-mobile').checkbox('set checked');
 			} else {
-			 $('#select-none-departments').checkbox('set unchecked');
-			 $('#select-none-departments-mobile').checkbox('set unchecked');					
+			 $('#select-none-departments-mobile').checkbox('set unchecked');
+			// $('#select-none-departments-mobile').checkbox('set unchecked');					
 			}
 
-			$('#select-all-departments').checkbox('set unchecked');
 			$('#select-all-departments-mobile').checkbox('set unchecked');
+			//$('#select-all-departments-mobile').checkbox('set unchecked');
 
 		} else if (countOfCheckedDepts == countOfDepts) {
-			$('#select-all-departments').checkbox('set checked');
-			$('#select-none-departments').checkbox('set unchecked');
-
 			$('#select-all-departments-mobile').checkbox('set checked');
 			$('#select-none-departments-mobile').checkbox('set unchecked');
+
+			//$('#select-all-departments-mobile').checkbox('set checked');
+			//$('#select-none-departments-mobile').checkbox('set unchecked');
 		}
 	}
 
-	$('.department-checkbox').checkbox({
+	$('.department-mobile-checkbox').checkbox({
 		onChecked: function(){
 			activeDepartmentsObj[this.name] = this.checked;
 			countOfCheckedDepts ++;
@@ -1928,22 +1938,17 @@ function departmentCheckboxFunctionalityMobile() {
 		},				
 	});
 	
-	$('#select-none-departments').checkbox({
+	$('#select-none-departments-mobile').checkbox({
 		onChecked: function(){
-			console.log('1');
 			howManyDeptsSelected = 'None';
-			$('.department-checkbox').checkbox('uncheck');
-			console.log('here');
-			$('#select-none-departments-mobile').checkbox('set checked');
-			console.log('up to here');
-			$('.department-mobile-checkbox').checkbox('set unchecked');
+			$('.department-mobile-checkbox').checkbox('uncheck');
 		},
 	});
 
-	$('#select-all-departments').checkbox({
+	$('#select-all-departments-mobile').checkbox({
 		onChecked: function(){
 			howManyDeptsSelected = 'All';
-			$('.department-checkbox').checkbox('check');
+			$('.department-mobile-checkbox').checkbox('check');
 		},
 	});
 
@@ -1954,20 +1959,20 @@ function locationCheckboxFunctionalityMobile() {
 	function setSelectAllCheckBox(){
 		if (countOfCheckedLocations < countOfLocations) {
 			if (countOfCheckedLocations == 0) {
-			 $('#select-none-locations').checkbox('set checked');
+			 $('#select-none-locations-mobile').checkbox('set checked');
 			} else {
-			 $('#select-none-locations').checkbox('set unchecked');					
+			 $('#select-none-locations-mobile').checkbox('set unchecked');					
 			}
 
-			$('#select-all-locations').checkbox('set unchecked');
+			$('#select-all-locations-mobile').checkbox('set unchecked');
 
 		} else if (countOfCheckedLocations == countOfLocations) {
-			$('#select-all-locations').checkbox('set checked');
-			$('#select-none-locations').checkbox('set unchecked');
+			$('#select-all-locations-mobile').checkbox('set checked');
+			$('#select-none-locations-mobile').checkbox('set unchecked');
 		}
 	}
 
-	$('.location-checkbox').checkbox({
+	$('.location-mobile-checkbox').checkbox({
 		onChecked: function(){
 
 			activeLocationsObj[this.name] = this.checked;
@@ -2011,19 +2016,19 @@ function locationCheckboxFunctionalityMobile() {
 	//$('.department-checkbox').checkbox('attach events', '#select-none-departments', 'uncheck');
 	
 	
-	$('#select-none-locations').checkbox({
+	$('#select-none-locations-mobile').checkbox({
 		onChecked: function(){
 			howManyLocationsSelected = 'None';
 			//$('.department-checkbox').checkbox('set checked');
-			$('.location-checkbox').checkbox('uncheck');
+			$('.location-mobile-checkbox').checkbox('uncheck');
 		},
 	});
 
-	$('#select-all-locations').checkbox({
+	$('#select-all-locations-mobile').checkbox({
 		onChecked: function(){
 			howManyLocationsSelected = 'All';
 			//$('.department-checkbox').checkbox('set checked');
-			$('.location-checkbox').checkbox('check');
+			$('.location-mobile-checkbox').checkbox('check');
 		},
 	});
 	
