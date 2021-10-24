@@ -12,6 +12,9 @@ let orderBy = 'lastName';
 let locationsObj = {};
 let departmentsObj = {};
 
+let listOfLocations = [];
+let listOfDepts = [];
+
 let activeDepartmentsObj = {};
 let countOfDepts;
 let countOfCheckedDepts;
@@ -42,6 +45,23 @@ let locAndDeptStringTemplate;
 
 // ** PAGE LOAD FUNCTIONS **
 
+function renderCheckboxes(checkboxItems, category){
+
+	for (cbi = 0; cbi < checkboxItems.length; cbi ++) {
+		let cbName = checkboxItems[cbi];
+		let checkedStatus = createCheckbox(cbName, category, false).getAttribute('class').includes('checked');
+		document.getElementById(`${category}-checkboxes`).appendChild(createCheckbox(cbName, category, false));
+		document.getElementById(`${category}-checkboxes-mobile`).appendChild(createCheckbox(cbName, category, true));
+
+		if(category == 'department') {
+			activeDepartmentsObj[cbName] = checkedStatus;
+		} else if (category == 'location') {
+			activeLocationsObj[cbName] = checkedStatus;
+		}
+	}
+
+}
+
 function getAllDepartments(){
 	$.ajax({
 	url: "assets/php/getAllDepartments.php",
@@ -52,7 +72,7 @@ function getAllDepartments(){
 		
 			console.log('getAllDepartments ',result);
 
-			let listOfDepts = [];
+			listOfDepts = [];
 			
 			for (let d = 0; d < result.data.length; d++) {
 				departmentsObj[result.data[d].id] = result.data[d].name;
@@ -64,12 +84,7 @@ function getAllDepartments(){
 			countOfDepts = listOfDepts.length;
 			countOfCheckedDepts = listOfDepts.length;
 
-			for (lod = 0; lod < listOfDepts.length; lod ++) {
-				let deptName = listOfDepts[lod];
-				let checkedStatus = createCheckbox(deptName, 'department').getAttribute('class').includes('checked');
-				document.getElementById('department-checkboxes').appendChild(createCheckbox(deptName, 'department'));
-				activeDepartmentsObj[deptName] = checkedStatus;
-			}
+			renderCheckboxes(listOfDepts, 'department');
 
 			departmentCheckboxFunctionality();
 
@@ -92,7 +107,7 @@ function getAllLocations(){
 		
 			console.log('getAllLocations ', result);
 			
-			let listOfLocations = [];
+			listOfLocations = [];
 			
 			for (let l = 0; l < result.data.length; l++) {
 				locationsObj[result.data[l].id] = result.data[l].name;
@@ -104,15 +119,18 @@ function getAllLocations(){
 			countOfLocations = listOfLocations.length;
 			countOfCheckedLocations = listOfLocations.length;
 
+			renderCheckboxes(listOfLocations, 'location');
+
+			/*
 			for (lol = 0; lol < listOfLocations.length; lol ++) {
 				let locName = listOfLocations[lol];
 				let checkedStatus = createCheckbox(locName, 'location').getAttribute('class').includes('checked');
 				document.getElementById('location-checkboxes').appendChild(createCheckbox(locName, 'location'));
 				activeLocationsObj[locName] = checkedStatus;
 			}
+			*/
 
 			locationCheckboxFunctionality();
-
 		
 	},
 	error: function (jqXHR, textStatus, errorThrown) {
@@ -171,7 +189,7 @@ function getAllEmployees(){
 					
 					}
 
-					otherEmployees.appendChild(createEmployeeRow(employeePropertiesObj));
+					otherEmployees.appendChild(createEmployeeRow(employeePropertiesObj, true));
 					
 				}
 				
@@ -981,34 +999,42 @@ function appendEmployee(elementToAppend, employeeElements){
 	//elementToAppend.appendChild(employeeElements[1]);
 };
 
-function createEmployeeRow(employeePropertiesObj) {
+function createEmployeeRow(employeePropertiesObj, visibility) {
 
 	
 	let setMax = false;
 	if (employeePropertiesObj.id == finalMaxID) {
 
 		setMax = true;
-		console.log('THIS IS THE NEWEST EMPLOYEE',employeePropertiesObj);
 		newestElement = employeePropertiesObj;
 	}
 
 	let tableRow = document.createElement('tr');
 	tableRow.setAttribute('class', 'result-row');
+
+	if (!visibility) {
+		tableRow.setAttribute('style', 'display: none')
+	}
+
 	if (employeePropertiesObj.firstName == 'First name') {
 	  tableRow.setAttribute('style', 'visibility: hidden');
 	} 
-	
+
+	/*
 	if (setMax) {
+		console.log('setMax true')
 		if (!document.getElementById('newest-employee')) {
+			console.log('no newest employee');
 			tableRow.setAttribute('id', 'newest-employee');
 		}
 	}
+	*/
 	
 	maxNewEmployeeID = employeePropertiesObj.id > maxNewEmployeeID ? employeePropertiesObj.id : maxNewEmployeeID; 
 
 	let tableData = document.createElement('td');
 
-	let employeeElements = createEmployee(employeePropertiesObj);
+	let employeeElements = createEmployee(employeePropertiesObj, visibility);
 					
 	tableData.appendChild(employeeElements[0]);
 	//tableData.appendChild(employeeElements[1]);
@@ -1031,9 +1057,27 @@ function renderEmployee(employeeProperties){
 };
 
 // CREATE CHECKBOXES
-function createCheckbox (checkboxName, department){
+function createCheckbox(checkboxName, category, mobile){
 	let checkboxDiv = document.createElement('div');
-	checkboxDiv.setAttribute('class', `ui checkbox ${department}-checkbox checked`);
+
+	if(mobile) {
+		checkboxDiv.setAttribute('class', `ui checkbox ${category}-mobile-checkbox checked`);		
+	} else {
+		checkboxDiv.setAttribute('class', `ui checkbox ${category}-checkbox checked`);
+	}
+
+	let checkboxNameStr = checkboxName.replace(/\s+/g, '-').toLowerCase();
+	let categoryStr = category.replace(/\s+/g, '-').toLowerCase();
+
+	if (mobile) {
+		checkboxDiv.setAttribute('id', `${checkboxNameStr}-${categoryStr}-mobile-checkbox`);
+	} else {
+		checkboxDiv.setAttribute('id', `${checkboxNameStr}-${categoryStr}-checkbox`);
+	} 
+
+	//if (mobile) {
+	//	checkboxDiv.setAttribute('class', `ui checkbox ${category}-checkbox checked mobile-checkbox`);
+	//}
 
 	let checkboxInput = document.createElement('input');
 	checkboxInput.setAttribute('type', 'checkbox');
@@ -1669,17 +1713,24 @@ function departmentCheckboxFunctionality() {
 	
 		function setSelectAllCheckBox(){
 			if (countOfCheckedDepts < countOfDepts) {
+				console.log('countofcheckeddepts',countOfCheckedDepts);
 				if (countOfCheckedDepts == 0) {
 				 $('#select-none-departments').checkbox('set checked');
+				 $('#select-none-departments-mobile').checkbox('set checked');
 				} else {
-				 $('#select-none-departments').checkbox('set unchecked');					
+				 $('#select-none-departments').checkbox('set unchecked');
+				 $('#select-none-departments-mobile').checkbox('set unchecked');					
 				}
 
 				$('#select-all-departments').checkbox('set unchecked');
+				$('#select-all-departments-mobile').checkbox('set unchecked');
 
 			} else if (countOfCheckedDepts == countOfDepts) {
 				$('#select-all-departments').checkbox('set checked');
 				$('#select-none-departments').checkbox('set unchecked');
+
+				$('#select-all-departments-mobile').checkbox('set checked');
+				$('#select-none-departments-mobile').checkbox('set unchecked');
 			}
 		}
 
@@ -1692,7 +1743,8 @@ function departmentCheckboxFunctionality() {
 					howManyDeptssSelected = 'Some';
 				}
 				
-				setSelectAllCheckBox(countOfDepts);
+				//setSelectAllCheckBox(countOfDepts);
+				setSelectAllCheckBox();
 				if (howManyDeptsSelected == 'All') {
 					if (countOfCheckedDepts == countOfDepts) {
 						runSearch(orderBy, lastSearch);						
@@ -1705,7 +1757,8 @@ function departmentCheckboxFunctionality() {
 			onUnchecked: function(){
 				activeDepartmentsObj[this.name] = this.checked;
 				countOfCheckedDepts --;
-				setSelectAllCheckBox(countOfDepts);
+				//setSelectAllCheckBox(countOfDepts);
+				setSelectAllCheckBox();
 				if (howManyDeptsSelected == 'None') {
 					if (countOfCheckedDepts == 0) {
 						runSearch(orderBy, lastSearch);						
@@ -1761,7 +1814,8 @@ function locationCheckboxFunctionality() {
 					howManyLocationsSelected = 'Some';
 				}
 
-				setSelectAllCheckBox(countOfLocations);
+				//setSelectAllCheckBox(countOfLocations);
+				setSelectAllCheckBox();
 
 				if (howManyLocationsSelected == 'All') {
 					if (countOfCheckedLocations == countOfLocations) {
@@ -1776,7 +1830,8 @@ function locationCheckboxFunctionality() {
 			onUnchecked: function(){
 				activeLocationsObj[this.name] = this.checked;
 				countOfCheckedLocations --;
-				setSelectAllCheckBox(countOfLocations);
+				//setSelectAllCheckBox(countOfLocations);
+				setSelectAllCheckBox();
 				if (howManyLocationsSelected == 'None') {
 					if (countOfCheckedLocations == 0) {
 						runSearch(orderBy, lastSearch);						
@@ -1811,6 +1866,170 @@ function locationCheckboxFunctionality() {
 		
 
 };
+
+function departmentCheckboxFunctionalityMobile() {
+	
+	function setSelectAllCheckBox(){
+		if (countOfCheckedDepts < countOfDepts) {
+			console.log('countofcheckeddepts',countOfCheckedDepts);
+			if (countOfCheckedDepts == 0) {
+			 $('#select-none-departments').checkbox('set checked');
+			 $('#select-none-departments-mobile').checkbox('set checked');
+			} else {
+			 $('#select-none-departments').checkbox('set unchecked');
+			 $('#select-none-departments-mobile').checkbox('set unchecked');					
+			}
+
+			$('#select-all-departments').checkbox('set unchecked');
+			$('#select-all-departments-mobile').checkbox('set unchecked');
+
+		} else if (countOfCheckedDepts == countOfDepts) {
+			$('#select-all-departments').checkbox('set checked');
+			$('#select-none-departments').checkbox('set unchecked');
+
+			$('#select-all-departments-mobile').checkbox('set checked');
+			$('#select-none-departments-mobile').checkbox('set unchecked');
+		}
+	}
+
+	$('.department-checkbox').checkbox({
+		onChecked: function(){
+			activeDepartmentsObj[this.name] = this.checked;
+			countOfCheckedDepts ++;
+			
+			if ((countOfCheckedDepts < countOfDepts) && (countOfCheckedDepts > 0)){
+				howManyDeptssSelected = 'Some';
+			}
+			
+			//setSelectAllCheckBox(countOfDepts);
+			setSelectAllCheckBox();
+			if (howManyDeptsSelected == 'All') {
+				if (countOfCheckedDepts == countOfDepts) {
+					runSearch(orderBy, lastSearch);						
+				}
+			} else {
+				runSearch(orderBy,lastSearch);
+			}
+			
+		},
+		onUnchecked: function(){
+			activeDepartmentsObj[this.name] = this.checked;
+			countOfCheckedDepts --;
+			//setSelectAllCheckBox(countOfDepts);
+			setSelectAllCheckBox();
+			if (howManyDeptsSelected == 'None') {
+				if (countOfCheckedDepts == 0) {
+					runSearch(orderBy, lastSearch);						
+				}
+			} else {
+				runSearch(orderBy,lastSearch);
+			}
+
+		},				
+	});
+	
+	$('#select-none-departments').checkbox({
+		onChecked: function(){
+			console.log('1');
+			howManyDeptsSelected = 'None';
+			$('.department-checkbox').checkbox('uncheck');
+			console.log('here');
+			$('#select-none-departments-mobile').checkbox('set checked');
+			console.log('up to here');
+			$('.department-mobile-checkbox').checkbox('set unchecked');
+		},
+	});
+
+	$('#select-all-departments').checkbox({
+		onChecked: function(){
+			howManyDeptsSelected = 'All';
+			$('.department-checkbox').checkbox('check');
+		},
+	});
+
+};
+
+function locationCheckboxFunctionalityMobile() {
+
+	function setSelectAllCheckBox(){
+		if (countOfCheckedLocations < countOfLocations) {
+			if (countOfCheckedLocations == 0) {
+			 $('#select-none-locations').checkbox('set checked');
+			} else {
+			 $('#select-none-locations').checkbox('set unchecked');					
+			}
+
+			$('#select-all-locations').checkbox('set unchecked');
+
+		} else if (countOfCheckedLocations == countOfLocations) {
+			$('#select-all-locations').checkbox('set checked');
+			$('#select-none-locations').checkbox('set unchecked');
+		}
+	}
+
+	$('.location-checkbox').checkbox({
+		onChecked: function(){
+
+			activeLocationsObj[this.name] = this.checked;
+			countOfCheckedLocations ++;
+			
+			if ((countOfCheckedLocations < countOfLocations) && (countOfCheckedLocations > 0)){
+				howManyLocationsSelected = 'Some';
+			}
+
+			//setSelectAllCheckBox(countOfLocations);
+			setSelectAllCheckBox();
+
+			if (howManyLocationsSelected == 'All') {
+				if (countOfCheckedLocations == countOfLocations) {
+					runSearch(orderBy, lastSearch);						
+				}
+			} else {
+				console.log('run search');
+				runSearch(orderBy,lastSearch);
+			}
+			
+		},
+		onUnchecked: function(){
+			activeLocationsObj[this.name] = this.checked;
+			countOfCheckedLocations --;
+			//setSelectAllCheckBox(countOfLocations);
+			setSelectAllCheckBox();
+			if (howManyLocationsSelected == 'None') {
+				if (countOfCheckedLocations == 0) {
+					runSearch(orderBy, lastSearch);						
+				}
+			} else {
+				runSearch(orderBy,lastSearch);
+			}
+
+		},				
+	});
+	
+	//$('.department-checkbox').checkbox('attach events', '#select-all-departments', 'check');
+
+	//$('.department-checkbox').checkbox('attach events', '#select-none-departments', 'uncheck');
+	
+	
+	$('#select-none-locations').checkbox({
+		onChecked: function(){
+			howManyLocationsSelected = 'None';
+			//$('.department-checkbox').checkbox('set checked');
+			$('.location-checkbox').checkbox('uncheck');
+		},
+	});
+
+	$('#select-all-locations').checkbox({
+		onChecked: function(){
+			howManyLocationsSelected = 'All';
+			//$('.department-checkbox').checkbox('set checked');
+			$('.location-checkbox').checkbox('check');
+		},
+	});
+	
+
+};
+
 
 // EMPLOYEE ROW
 function selectEmployeeFunctionality(){
@@ -2096,7 +2315,7 @@ function runSearch(orderBy, searchTerm){
 		
 		for (let e = 0; e < 20; e ++) {
 
-			otherEmployees.appendChild(createEmployeeRow(blankEmployeeObj));
+			otherEmployees.appendChild(createEmployeeRow(blankEmployeeObj, true));
 
 		}
 		
@@ -2148,14 +2367,14 @@ function runSearch(orderBy, searchTerm){
 						
 						}
 						
-						newestEmployeeObj[JSON.parse(createEmployeeRow(employeePropertiesObj).getElementsByTagName('div')[0].attributes[1].textContent).id] = createEmployeeRow(employeePropertiesObj);
+						newestEmployeeObj[JSON.parse(createEmployeeRow(employeePropertiesObj, true).getElementsByTagName('div')[0].attributes[1].textContent).id] = createEmployeeRow(employeePropertiesObj, true);
 						
-						otherEmployees.appendChild(createEmployeeRow(employeePropertiesObj));
+						otherEmployees.appendChild(createEmployeeRow(employeePropertiesObj, true));
 					
 					
 					} else {
 						
-						otherEmployees.appendChild(createEmployeeRow(blankEmployeeObj));
+						otherEmployees.appendChild(createEmployeeRow(blankEmployeeObj, true));
 						
 					}
 				}
@@ -2167,9 +2386,7 @@ function runSearch(orderBy, searchTerm){
 
 				if (newElem()) {
 				
-					console.log('creates newest employee on first search');
-					//otherEmployees.appendChild(createEmployeeRow(JSON.parse(newElem().getElementsByTagName('td')[0].children[0].children[1].attributes[1].textContent)));
-					otherEmployees.appendChild(createEmployeeRow(JSON.parse(newElem().getElementsByTagName('td')[0].children[0].children[0].attributes[1].textContent)));
+					otherEmployees.appendChild(createEmployeeRow(JSON.parse(newElem().getElementsByTagName('td')[0].children[0].children[0].attributes[1].textContent), false));
 
 				}
 
@@ -2182,7 +2399,6 @@ function runSearch(orderBy, searchTerm){
 					renderEmployee(newestElement);
 
 					let employeeDetails = JSON.stringify(newestElement);
-					console.log('test', employeeDetails);
 
 					if (employeeDetailsVisibility == 0) {
 						$('.employee-detail-fields').attr('style', 'visibility: visible');
@@ -2203,7 +2419,6 @@ function runSearch(orderBy, searchTerm){
 				if (employeeJustEdited) {
 					
 					renderEmployee(editedElement);
-					console.log('edited element', editedElement);
 
 					let employeeDetails = JSON.stringify(editedElement);
 
@@ -2304,6 +2519,16 @@ selectEmployeeFunctionality()
 
 }
 
+function attachRadioEvents(){
+
+	$('#order-by-first-name-mobile').checkbox('attach events', '#order-by-first-name', 'check');
+	$('#order-by-last-name-mobile').checkbox('attach events', '#order-by-last-name', 'check');
+
+	$('#order-by-first-name').checkbox('attach events', '#order-by-first-name-mobile', 'check');
+	$('#order-by-last-name').checkbox('attach events', '#order-by-last-name-mobile', 'check');	
+
+}
+
 window.onload = (event) => {	
 		
 		$(document).ready(function () {
@@ -2334,17 +2559,14 @@ window.onload = (event) => {
 				},	
 			});
 
-			$('#order-by-first-name-mobile').checkbox('attach events', '#order-by-first-name', 'check');
-			$('#order-by-last-name-mobile').checkbox('attach events', '#order-by-last-name', 'check');
-
-			$('#order-by-first-name').checkbox('attach events', '#order-by-first-name-mobile', 'check');
-			$('#order-by-last-name').checkbox('attach events', '#order-by-last-name-mobile', 'check');		
+			attachRadioEvents();	
 			
 			getAllEmployees();
 
 			getAllDepartments();
 
 			getAllLocations();
+
 
 		});
 

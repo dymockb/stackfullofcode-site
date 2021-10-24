@@ -428,7 +428,27 @@
         float: right;
       }
 
-      
+      .mobile-category {
+        display: flex
+      }
+
+      .mobile-checkbox {
+        margin-bottom: 0.4rem
+      }
+
+      .mobile-checkbox-spacer {
+        visibility: hidden;
+      }
+
+      .active-radio-checkbox {
+        margin-top: 0.5rem;
+      }
+
+      #manage-depts-and-locs-btn {
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+      }
 
 
       @media only screen and (max-width: 767.98px) {
@@ -486,10 +506,6 @@
           max-width: 10rem;
           margin-left: auto !important;
           margin-right: auto !important;
-        }
-
-        hr {
-          margin-top: 2rem;
         }
 
         .ui.column {
@@ -622,13 +638,42 @@
                     </div>
                   </div>
                 </div>
-                <div class="ui checkbox">
-                  <input type="checkbox" name="example">
-                  <label>Make my profile visible</label>
+                <div class="content field">
+                  <div class="content field mobile-category">
+                    <div>
+                      <div class="item">Departments</div>
+                      <div class="ui checkbox checked" id="select-all-departments-mobile">
+                        <input type="checkbox" name="select-all-departments-mobile" checked="">
+                        <label>Select All</label>
+                      </div>
+                      <div class="ui checkbox" id="select-none-departments-mobile">
+                        <input type="checkbox" name="select-none-departments-mobile">
+                        <label>Select None</label>
+                      </div>
+                    </div>
+                    <div class="item mobile-checkbox-spacer">Test</div>
+                    <div id="department-checkboxes-mobile" class="item">
+                    </div>
+                  </div>
                 </div>
-                <div class="ui checkbox">
-                  <input type="checkbox" name="example">
-                  <label>Make my profile visible</label>
+                <hr>
+                <div class="content field">
+                  <div class="content field mobile-category">
+                    <div>
+                      <div class="item">Locations</div>
+                      <div class="ui checkbox checked" id="select-all-locations-mobile">
+                        <input type="checkbox" name="select-all-locations-mobile" checked="">
+                        <label>Select All</label>
+                      </div>
+                      <div class="ui checkbox" id="select-none-locations-mobile">
+                        <input type="checkbox" name="select-none-locations-mobile">
+                        <label>Select None</label>
+                      </div>
+                    </div>
+                    <div class="item mobile-checkbox-spacer">Test</div>
+                    <div id="location-checkboxes-mobile" class="item">                     
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -645,17 +690,13 @@
 							
 							-->
 
-        
-              <button id="manage-depts-and-locs-btn" class="ui button">Manage <br /> Departments and Locations </button>
-        
-        
-        <!-- for testing linking
-							<div class="item"><div class="inline fields"><label for="order">Order by:</label><div class="field"><div class="ui radio checkbox"><input type="radio" name="order-by" tabindex="0" class="hidden" value="firstName"><label>First Name</label></div></div><div class="field"><div class="ui radio checkbox checked"><input type="radio" name="order-by" checked="" tabindex="0" class="hidden" value="lastName"><label>Last Name</label></div></div></div></div>
 
-							-->
+              <button id="manage-depts-and-locs-btn" class="ui button"><i class="fas fa-edit"></i> Departments & Locations </button>
+              <h4>Search results:</h4> 				
+
         <div class="ui segment">
           <div class="grouped fields">
-            <label for="order">Order by:</label>
+            <div>Order by:</div>
             <div class="field">
               <div id="order-by-first-name" class="ui radio checkbox active-radio-checkbox">
                 <input type="radio" name="order-by-2" tabindex="0" class="hidden" value="firstName">
