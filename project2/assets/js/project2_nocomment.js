@@ -1,3 +1,5 @@
+let firstload = 0;
+
 let employeeDetailsVisibility = 0;
 let employeePropertiesObj = {};
 let blankEmployeeObj = {};
@@ -67,15 +69,6 @@ let createNewDeptNeedsToBeValidated = false;
 
 /*
 let locsAndDeptsObj = {
-	1: {'locname': 'Loc1',
-			'departments': [{'depname': 'Dept1', 'depid': 'dept1ID', 'loaded': false}, {'depname': 'Dept2', 'depid': 'dept2ID', 'loaded': true}],
-			'loaded': false
-			},
-}
-
-*/
-
-let locsAndDeptsObj = {
 	1: {
 			'departments': {
 										1: {'depname': 'Dept1', 
@@ -86,11 +79,12 @@ let locsAndDeptsObj = {
 			'loaded': false
 			},
 }
+*/
 
-
-//let locsAndDeptsObj = {};
+let locsAndDeptsObj = {};
 
 let updateLoadedDepts = [];
+let updateLoadedLocs = [];
 
 function updateLoadedDeptsFunc(){
 	
@@ -106,6 +100,24 @@ function updateLoadedDeptsFunc(){
 					
 				}
 			
+			}
+		
+		}
+		
+	}
+
+}
+
+function updateLoadedLocsFunc(){
+	
+	for (let ull = 0; ull < updateLoadedLocs.length; ull ++){
+		
+		for (let [key, value] of Object.entries(locsAndDeptsObj)){
+		
+			if (updateLoadedLocs[ull] == key) {
+				
+				value.loaded = true;
+				
 			}
 		
 		}
@@ -169,7 +181,7 @@ function getAllDepartments(){
 			
 			}	
 			
-			/*
+			
 			for (let lob = 0; lob < locationsForObj.length; lob ++) {
 				
 				let locationObj = {};
@@ -190,8 +202,7 @@ function getAllDepartments(){
 				locsAndDeptsObj[result.data[d2].locationID]['departments'][result.data[d2].id] = deptObj;
 				
 			}
-			
-			*/
+				
 			
 			listOfDepts.sort();
 
@@ -226,6 +237,7 @@ function getAllLocations(){
 			listOfLocations = [];
 			
 			for (let l = 0; l < result.data.length; l++) {
+				
 				locationsObj[result.data[l].id] = result.data[l].name;
 				
 				if (!listOfLocations.includes(result.data[l].name)) {
@@ -405,9 +417,6 @@ $('#manage-depts-and-locs-btn').click(function(){
 		
 		document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: block');
 		document.getElementById('create-new-location-btn').setAttribute('style', 'display: inline');
-	
-		deptStringTemplate = 'departmentID-1';
-		locStringTemplate = 'locationID-1';
 
 		$('.ui.modal.employee-details-modal').modal({
 
@@ -419,7 +428,7 @@ $('#manage-depts-and-locs-btn').click(function(){
 				$('.ui.accordion').accordion();
 			//}
 			manageDeptsAndLocsOpened++;
-			eventListenersInsideDeptsandLocsModal(deptStringTemplate, locStringTemplate);
+			eventListenersInsideDeptsandLocsModal();
 		},
 		onDeny: function(){
 			console.log('deny');
@@ -430,7 +439,8 @@ $('#manage-depts-and-locs-btn').click(function(){
 		},
 		onHidden: function(){	
 			console.log('close manage dept and locs modal');
-			updateLoadedDeptsFunc();			
+			updateLoadedDeptsFunc();
+			updateLoadedLocsFunc();
 			console.log('the obj on close', locsAndDeptsObj);
 			closeModal();
 		}	
@@ -832,7 +842,32 @@ $('#create-new-location-btn').click(function(){
 		
 			console.log('new location result',result);
 
-			refreshPage();
+			//refreshPage();
+			
+				/*
+				let newDeptObj = {};
+				newDeptObj['name'] = newDeptName;
+				newDeptObj['locationID'] = locationID;
+				
+				$.ajax({
+				url: "assets/php/insertDepartment.php",
+				type: "GET",
+				dataType: "json",
+				data: newDeptObj,
+				success: function (result) {
+					
+						console.log('new dept result',result);
+
+						refreshPage();
+
+				},
+				error: function (jqXHR, textStatus, errorThrown) {
+						console.log('error');
+						console.log(textStatus);
+						console.log(errorThrown);
+					},
+				});
+				*/
 
 	},
 	error: function (jqXHR, textStatus, errorThrown) {
@@ -881,25 +916,25 @@ $(`#submit-new-location-btn`).click(function(e){
 
 //$(`#new-location-form`).submit(function(event){
 
-function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTemplate) {
+function eventListenersInsideDeptsandLocsModal() {
 	
-	let existingLocationNames = [];
+	let existingLocationIDs = [];
 
 	for (let [key, value] of Object.entries(locsAndDeptsObj)){
 		
 		let locID = key;
 		
-		existingLocationNames.push(value.locname);
+		existingLocationIDs.push(key);
 	
 		if (!value.loaded) {
 
-		let existingDepartmentNames = []
+		updateLoadedLocs.push(key);
 
-	for (let [k, val] of Object.entries(value.departments)	){	
+		let existingDepartmentNames = [];
+
+		for (let [k, val] of Object.entries(value.departments)){	
 		
-		if (val.loaded) {
-			existingDepartmentNames.push(val.depname);
-		}
+			existingDepartmentNames.push(val.depname);	
 
 		if(!val.loaded) {
 			
@@ -948,7 +983,7 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 				
 						if (this.elements[e].tagName != 'BUTTON') {			
 
-							console.log(`#${depStringTemplate}-form`, this.elements[e].value);
+							console.log(`#departmentID-1-form-form`, this.elements[e].value);
 							updatedDeptName = this.elements[e].value;
 							updatedDeptID = this.elements[e].getAttribute('deptID');
 
@@ -1063,15 +1098,19 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 	} // end of loop through departments
 	
 		departmentRules = basicRules.slice();
+		
+		console.log('locID', key, 'existing dept names', existingDepartmentNames)
 
 		for (let r = 0 ; r < existingDepartmentNames.length; r ++) {
 		
-		let newRule = {}
-			newRule['type'] = `notExactly[${existingDepartmentNames[r]}]`;
-			newRule['prompt'] = 'That department already exists';
-			departmentRules.push(newRule)
+			let newRule = {}
+				newRule['type'] = `notExactly[${existingDepartmentNames[r]}]`;
+				newRule['prompt'] = 'That department already exists in this location.';
+				departmentRules.push(newRule)
 		
 		}
+		
+		console.log('departmentRules',departmentRules);
 		
 	// for each dept do this so that all depts have an up-to-date rename form
 		
@@ -1183,14 +1222,22 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 	
 	locationRules = basicRules.slice();
 	
-	for (let e = 0 ; e < existingLocationNames.length; e ++) {
+	console.log('location obj', locationsObj);
+	console.log('existing loc IDs', existingLocationIDs)
+
+	for (let e = 0 ; e < existingLocationIDs.length; e ++) {
+		
+		let nameRequired = locationsObj[existingLocationIDs[e]]
 		
 		let newRule = {}
-		newRule['type'] = `notExactly[${existingLocationNames[e]}]`;
+		//newRule['type'] = `notExactly[${existingLocationNames[e]}]`;
+		newRule['type'] = `notExactly[${nameRequired}]`;
 		newRule['prompt'] = 'That location already exists';
 		locationRules.push(newRule)
 	
 	}
+	
+	console.log('location rules', locationRules);
 	
 		$(`#new-location-form`).form({
 		fields: {
