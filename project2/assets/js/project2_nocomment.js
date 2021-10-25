@@ -333,6 +333,8 @@ $('#manage-depts-and-locs-btn').click(function(){
 	
 		manageDeptsAndLocsOpened++;
 		
+		console.log('the obj ', locsAndDeptsObj);
+		
 		document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: block');
 		document.getElementById('create-new-location-btn').setAttribute('style', 'display: inline');
 	
@@ -733,8 +735,6 @@ $('#employee-modal-create-fields').submit(function(event) {
 $('#create-new-location-btn').click(function(){
 
 	console.log('click blue create new location');
-	
-	console.log('the ojb', locsAndDeptsObj);
 
 	$('#location-accordion-segment').attr('style', 'display: block')
 
@@ -846,17 +846,15 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 		
 		}
 
-		console.log(key, value);
-		console.log(value.loaded);
+		console.log('the obj key', key, 'the obj value', value);
 	
 		if (!value.loaded) {
 
 		let existingDepartmentNames = []
 
 	for (let [k, val] of Object.entries(value.departments)	){	
-	//for (let exd = 0 ; exd < value.departments.length; exd ++){
 		
-		console.log(k, val);
+		console.log('department ID', k, 'department data', val);
 		if (val.loaded) {
 			existingDepartmentNames.push(val.depname);
 		}
@@ -865,9 +863,7 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 			
 			$(`#delete-locationID-1-icon`).click(function(e){
 				
-				//for (locsAndDeptsObj[key][departments]){
-				//	
-				//}
+				//locsAndDeptsObj[key]['departments'][k].loaded = true;
 				
 				document.getElementById('delete-location-modal-btn').setAttribute('style', 'display: inline !important');
 				document.getElementById('delete-location-modal-btn').setAttribute('locid', `${this.getAttribute('locid')}`);
@@ -883,6 +879,8 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 			$(`#submit-rename-departmentID-1-btn`).click(function(e){
 				
 				console.log('submit dept rename clicked');
+				
+				//locsAndDeptsObj[key]['departments'][k].loaded = true;
 				
 				$(`#departmentID-1-form`).one('submit', function(event){
 					event.preventDefault();
@@ -944,6 +942,8 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 			});
 
 			$(`#cancel-departmentID-1-btn`).click(function(e){
+	
+				//locsAndDeptsObj[key]['departments'][k].loaded = true;
 
 				console.log('cancel');
 				
@@ -955,6 +955,8 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 		
 
 			$(`#rename-departmentID-1-btn`).click(function(e){
+				
+				//locsAndDeptsObj[key]['departments'][k].loaded = true;
 
 				$('#departmentID-1-trash-warning').attr('style', 'display: inline !important');
 				$('#delete-departmentID-1-btn').attr('style', 'display: none');
@@ -968,6 +970,8 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 
 			$(`#delete-departmentID-1-btn`).click(function(e){
 				
+				//locsAndDeptsObj[key]['departments'][k].loaded = true;
+				
 				document.getElementById('delete-department-modal-btn').setAttribute('style', 'display: inline !important');
 				document.getElementById('delete-department-modal-btn').setAttribute('deptid', `${this.getAttribute('deptid')}`);
 
@@ -980,6 +984,8 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 			});
 
 			$(`#departmentID-1-trash-warning`).click(function(e){
+				
+				//locsAndDeptsObj[key]['departments'][k].loaded = true;
 
 				$('#alert-modal').modal(
 					{
@@ -988,6 +994,8 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 					}).modal('show');
 
 			});
+			
+			//locsAndDeptsObj[key]['departments'][k].loaded = true;
 
 		}  // end of IF dept not loaded, apply listeners
 		
@@ -1014,6 +1022,7 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 				}
 			}
 		});
+		// so that all depts have an up-to-date rename form
 
 		console.log('dep rules',departmentRules);
 
