@@ -844,10 +844,10 @@ $('#create-new-location-btn').click(function(){
 
 			//refreshPage();
 			
-				/*
+				
 				let newDeptObj = {};
-				newDeptObj['name'] = newDeptName;
-				newDeptObj['locationID'] = locationID;
+				newDeptObj['name'] = 'New Department';
+				newDeptObj['locationID'] = result.data.id;
 				
 				$.ajax({
 				url: "assets/php/insertDepartment.php",
@@ -867,7 +867,7 @@ $('#create-new-location-btn').click(function(){
 						console.log(errorThrown);
 					},
 				});
-				*/
+				
 
 	},
 	error: function (jqXHR, textStatus, errorThrown) {
