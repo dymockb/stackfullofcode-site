@@ -62,6 +62,8 @@ basicRules.push(ruleOne);
 basicRules.push(ruleTwo);
 basicRules.push(ruleThree);
 
+let renameDeptSubmitted = false;
+
 /*
 let locsAndDeptsObj = {
 	1: {'locname': 'Loc1',
@@ -71,8 +73,9 @@ let locsAndDeptsObj = {
 }
 
 */
+
 let locsAndDeptsObj = {
-	1: {'locname': 'Loc1',
+	1: {
 			'departments': {
 										1: {'depname': 'Dept1', 
 												'loaded': false}, 
@@ -82,6 +85,9 @@ let locsAndDeptsObj = {
 			'loaded': false
 			},
 }
+
+
+//let locsAndDeptsObj = {};
 
 let updateLoadedDepts = [];
 
@@ -146,13 +152,46 @@ function getAllDepartments(){
 
 			listOfDepts = [];
 			
+			let locationsForObj = [];
+
 			for (let d = 0; d < result.data.length; d++) {
+
 				departmentsObj[result.data[d].id] = result.data[d].name;
+				
 				if (!listOfDepts.includes(result.data[d].name)) {
 					listOfDepts.push(result.data[d].name);
 				}
-			}
 
+				if(!locationsForObj.includes(result.data[d].locationID)) {
+					locationsForObj.push(result.data[d].locationID);
+				}
+			
+			}	
+			
+			/*
+			for (let lob = 0; lob < locationsForObj.length; lob ++) {
+				
+				let locationObj = {};
+				locationObj['loaded'] = false;
+				locationObj['departments'] = {};
+				
+				locsAndDeptsObj[locationsForObj[lob]] = locationObj;
+				
+			}
+			
+			
+			for (let d2 = 0; d2 < result.data.length; d2++) {
+					
+				let deptObj = {};
+				deptObj['loaded'] = false;
+				deptObj['depname'] = result.data[d2].name;
+			
+				locsAndDeptsObj[result.data[d2].locationID]['departments'][result.data[d2].id] = deptObj;
+				
+			}
+			
+			*/
+			
 			listOfDepts.sort();
 
 			countOfDepts = listOfDepts.length;
@@ -187,9 +226,11 @@ function getAllLocations(){
 			
 			for (let l = 0; l < result.data.length; l++) {
 				locationsObj[result.data[l].id] = result.data[l].name;
+				
 				if (!listOfLocations.includes(result.data[l].name)) {
 					listOfLocations.push(result.data[l].name);
 				}
+				
 			}
 
 			listOfLocations.sort();
@@ -366,11 +407,6 @@ $('#manage-depts-and-locs-btn').click(function(){
 	
 		deptStringTemplate = 'departmentID-1';
 		locStringTemplate = 'locationID-1';
-
-		//let buttonForModal = document.createElement('button')
-		//buttonForModal.setAttribute('class', 'ui button');
-		//buttonForModal.setAttribute('id', 'create-new-location-btn');
-		//buttonForModal.innerHTML = 'Add new location';
 
 		$('.ui.modal.employee-details-modal').modal({
 
@@ -767,15 +803,6 @@ $('#create-new-location-btn').click(function(){
 	$('#location-accordion-segment').attr('style', 'display: block')
 
 	$('#new-location-accordion-btn').click();
-	
-	$(`#new-location-form`).form({
-		fields: {
-			name: {
-				identifier: 'new-location',
-				rules: locationRules
-			}
-		}
-		});
 		
 	$(`#new-location-form`).one('submit', function(event){
 	event.preventDefault();
@@ -862,19 +889,6 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 		let locID = key;
 		
 		existingLocationNames.push(value.locname);
-
-		locationRules = basicRules.slice();
-
-		for (let e = 0 ; e < existingLocationNames.length; e ++) {
-			
-			let newRule = {}
-			newRule['type'] = `notExactly[${existingLocationNames[e]}]`;
-			newRule['prompt'] = 'That location already exists';
-			locationRules.push(newRule)
-		
-		}
-
-		console.log('the obj key', key, 'the obj value', value);
 	
 		if (!value.loaded) {
 
@@ -908,10 +922,15 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 			});
 
 			$(`#submit-rename-departmentID-1-btn`).click(function(e){
-				
+				e.preventDefault();
 				console.log('submit dept rename clicked');
 				
 				//locsAndDeptsObj[key]['departments'][k].loaded = true;
+				console.log('renameDeptSubmitted', renameDeptSubmitted)				
+				
+				if (!renameDeptSubmitted) {
+					
+					console.log('add submit event listener');
 				
 				$(`#departmentID-1-form`).one('submit', function(event){
 					event.preventDefault();
@@ -942,33 +961,46 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 					
 					updateDepartmentDataObj['department'] = updatedDeptName;
 					updateDepartmentDataObj['departmentID'] = updatedDeptID;	
+					
+					$.ajax({
+					url: "assets/php/updateDepartment.php",
+					type: "GET",
+					dataType: "json",
+					data: updateDepartmentDataObj,
+					success: function (result) {
 						
-						$.ajax({
-						url: "assets/php/updateDepartment.php",
-						type: "GET",
-						dataType: "json",
-						data: updateDepartmentDataObj,
-						success: function (result) {
-							
-								console.log('updateDept ',result.data);
+							console.log('updateDept ',result.data);
 
-								refreshPage();
+							refreshPage();
 
+					},
+					error: function (jqXHR, textStatus, errorThrown) {
+							console.log('error');
+							console.log(textStatus);
+							console.log(errorThrown);
 						},
-						error: function (jqXHR, textStatus, errorThrown) {
-								console.log('error');
-								console.log(textStatus);
-								console.log(errorThrown);
-							},
-						});
+					});
 
 				});
 				
+				} // end of IF renameDeptSubmitted == false
 				
-				if ($(`#departmentID-1-form`).form('validate form')) {
-					$(`#departmentID-1-form`).form('submit');
-					$(`#departmentID-1-form`).form('reset');
+
+				
+				if (!$(`#departmentID-1-form`).form('validate form')) {
+					console.log('not validated')
+					renameDeptSubmitted = true;
+				} else if ($(`#departmentID-1-form`).form('validate form')){
+					console.log('validated')
+					renameDeptSubmitted = false;
 				}
+
+					if ($(`#departmentID-1-form`).form('validate form')) {
+						$(`#departmentID-1-form`).form('submit');
+						$(`#departmentID-1-form`).form('reset');
+					}
+
+				
 
 			});
 
@@ -1034,7 +1066,6 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 					
 	} // end of loop through departments
 	
-	
 		departmentRules = basicRules.slice();
 
 		for (let r = 0 ; r < existingDepartmentNames.length; r ++) {
@@ -1044,18 +1075,6 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 			departmentRules.push(newRule)
 		}
 		
-		// for each loaded dept do this so that all depts have an up-to-date rename form
-		$(`#departmentID-1-form`).form({
-			fields: {
-				name: {
-					identifier: 'dept-rename',
-					rules: departmentRules
-				}
-			}
-		});
-
-
-
 		$(`#locationID-1-new-dept-form`).form({
 			fields: {
 				name: {
@@ -1064,7 +1083,16 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 				}
 			}
 		});
-	
+		
+		// for each loaded dept do this so that all depts have an up-to-date rename form
+		$(`#departmentID-1-form`).form({
+			fields: {
+				name: {
+					identifier: 'dept-rename',
+					rules: departmentRules
+				}
+			}
+		});	
 
 		$(`#locationID-1-submit-new-dept-btn`).click(function(e){
 	
@@ -1128,11 +1156,31 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 
 		});
 
+	} // end of location loop if loaded == false
+	
+	} //end of loop through the Obj
+	
+	locationRules = basicRules.slice();
+	
+	for (let e = 0 ; e < existingLocationNames.length; e ++) {
+		
+		let newRule = {}
+		newRule['type'] = `notExactly[${existingLocationNames[e]}]`;
+		newRule['prompt'] = 'That location already exists';
+		locationRules.push(newRule)
+	
 	}
 	
-	} // end of location loop if loaded == false
+		$(`#new-location-form`).form({
+		fields: {
+			name: {
+				identifier: 'new-location',
+				rules: locationRules
+			}
+		}
+		});
 
-} //end of loop through the Obj
+} //END OF ADDING EVENT LISTENERS FUNCTION;
 
 
 
