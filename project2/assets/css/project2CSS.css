@@ -285,6 +285,12 @@ h4.ui.image.header {
 }
 .employee-count-icon {
 	margin-right: 0.5rem;
+	font-size: 1.5rem;
+}
+
+.dept-employee-info-icons {
+	display: flex;
+	align-items: center;
 }
 
 .ui.one.top.attached.black.disabled.button {

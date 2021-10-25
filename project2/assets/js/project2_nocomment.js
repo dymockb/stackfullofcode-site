@@ -109,7 +109,7 @@ function updateLoadedDeptsFunc(){
 }
 
 function updateLoadedLocsFunc(){
-	
+
 	for (let ull = 0; ull < updateLoadedLocs.length; ull ++){
 		
 		for (let [key, value] of Object.entries(locsAndDeptsObj)){
@@ -264,6 +264,119 @@ function getAllLocations(){
 			console.log(errorThrown);
 		},
 	});	
+}
+
+function getAllLocationsAndDepartments(){
+
+	$.ajax({
+		url: "assets/php/getAllLocations.php",
+		type: "GET",
+		dataType: "json",
+		data: {},
+		success: function (result) {
+			
+				console.log('getAllLocations ', result);
+				
+				listOfLocations = [];
+				
+				for (let l = 0; l < result.data.length; l++) {
+					
+					locationsObj[result.data[l].id] = result.data[l].name;
+					
+					if (!listOfLocations.includes(result.data[l].name)) {
+						listOfLocations.push(result.data[l].name);
+					}
+					
+				}
+	
+				listOfLocations.sort();
+	
+				countOfLocations = listOfLocations.length;
+				countOfCheckedLocations = listOfLocations.length;
+	
+				renderCheckboxes(listOfLocations, 'location');
+	
+				locationCheckboxFunctionality();
+	
+				locationCheckboxFunctionalityMobile();
+
+				$.ajax({
+					url: "assets/php/getAllDepartments.php",
+					type: "GET",
+					dataType: "json",
+					data: {},
+					success: function (result) {
+						
+							console.log('getAllDepartments ',result);
+				
+							listOfDepts = [];
+							
+							let locationsForObj = [];
+				
+							for (let d = 0; d < result.data.length; d++) {
+				
+								departmentsObj[result.data[d].id] = result.data[d].name;
+								
+								if (!listOfDepts.includes(result.data[d].name)) {
+									listOfDepts.push(result.data[d].name);
+								}
+				
+								if(!locationsForObj.includes(result.data[d].locationID)) {
+									locationsForObj.push(result.data[d].locationID);
+								}
+							
+							}	
+							
+							
+							for (let lob = 0; lob < locationsForObj.length; lob ++) {
+								
+								let locationObj = {};
+								locationObj['loaded'] = false;
+								locationObj['departments'] = {};
+								
+								locsAndDeptsObj[locationsForObj[lob]] = locationObj;
+								
+							}
+							
+							
+							for (let d2 = 0; d2 < result.data.length; d2++) {
+									
+								let deptObj = {};
+								deptObj['loaded'] = false;
+								deptObj['depname'] = result.data[d2].name;
+							
+								locsAndDeptsObj[result.data[d2].locationID]['departments'][result.data[d2].id] = deptObj;
+								
+							}
+								
+							
+							listOfDepts.sort();
+				
+							countOfDepts = listOfDepts.length;
+							countOfCheckedDepts = listOfDepts.length;
+				
+							renderCheckboxes(listOfDepts, 'department');
+				
+							departmentCheckboxFunctionality();
+				
+							departmentCheckboxFunctionalityMobileIncludesRunSearch();
+				
+					},
+					error: function (jqXHR, textStatus, errorThrown) {
+							console.log('error');
+							console.log(textStatus);
+							console.log(errorThrown);
+						},
+					});
+			
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+				console.log('error');
+				console.log(textStatus);
+				console.log(errorThrown);
+			},
+		});
+
 }
 
 function getAllEmployees(){
@@ -727,7 +840,7 @@ $('#employee-modal-edit-fields').submit(function(event) {
 		
 		document.getElementById('update-employee-modal-btn').setAttribute('employee-details', JSON.stringify(editEmployeeDataObj));
 		
-		let employeeDetails = editEmployeeDataObj;
+		//let employeeDetails = editEmployeeDataObj;
 		
 		document.getElementById('update-employee-modal-btn').setAttribute('style', 'display: inline');	
 		
@@ -858,6 +971,9 @@ $('#create-new-location-btn').click(function(){
 					
 						console.log('new dept result',result);
 
+						updateLoadedDeptsFunc();
+						updateLoadedLocsFunc();
+
 						refreshPage();
 
 				},
@@ -921,8 +1037,6 @@ function eventListenersInsideDeptsandLocsModal() {
 	let existingLocationIDs = [];
 
 	for (let [key, value] of Object.entries(locsAndDeptsObj)){
-		
-		let locID = key;
 		
 		existingLocationIDs.push(key);
 	
@@ -1054,6 +1168,7 @@ function eventListenersInsideDeptsandLocsModal() {
 		
 			$(`#rename-departmentID-1-btn`).click(function(e){
 				
+				console.log('rename dept 1 btn clicked');
 
 				$('#departmentID-1-trash-warning').attr('style', 'display: inline !important');
 				$('#delete-departmentID-1-btn').attr('style', 'display: none');
@@ -1965,6 +2080,82 @@ function locationCheckboxFunctionality() {
 
 };
 
+function departmentCheckboxFunctionalityMobileIncludesRunSearch() {
+	
+	function setSelectAllCheckBox(){
+		if (countOfCheckedDepts < countOfDepts) {
+			console.log('countofcheckeddepts',countOfCheckedDepts);
+			if (countOfCheckedDepts == 0) {
+			 $('#select-none-departments-mobile').checkbox('set checked');
+			
+			} else {
+			 $('#select-none-departments-mobile').checkbox('set unchecked');
+								
+			}
+
+			$('#select-all-departments-mobile').checkbox('set unchecked');
+			
+
+		} else if (countOfCheckedDepts == countOfDepts) {
+			$('#select-all-departments-mobile').checkbox('set checked');
+			$('#select-none-departments-mobile').checkbox('set unchecked');
+
+		}
+	}
+
+	$('.department-mobile-checkbox').checkbox({
+		onChecked: function(){
+			activeDepartmentsObj[this.name] = this.checked;
+			countOfCheckedDepts ++;
+			
+			if ((countOfCheckedDepts < countOfDepts) && (countOfCheckedDepts > 0)){
+				howManyDeptssSelected = 'Some';
+			}
+			
+			setSelectAllCheckBox();
+			if (howManyDeptsSelected == 'All') {
+				if (countOfCheckedDepts == countOfDepts) {
+					runSearch(orderBy, lastSearch);						
+				}
+			} else {
+				runSearch(orderBy,lastSearch);
+			}
+			
+		},
+		onUnchecked: function(){
+			activeDepartmentsObj[this.name] = this.checked;
+			countOfCheckedDepts --;
+		
+			setSelectAllCheckBox();
+			if (howManyDeptsSelected == 'None') {
+				if (countOfCheckedDepts == 0) {
+					runSearch(orderBy, lastSearch);						
+				}
+			} else {
+				runSearch(orderBy,lastSearch);
+			}
+
+		},				
+	});
+	
+	$('#select-none-departments-mobile').checkbox({
+		onChecked: function(){
+			howManyDeptsSelected = 'None';
+			$('.department-mobile-checkbox').checkbox('uncheck');
+		},
+	});
+
+	$('#select-all-departments-mobile').checkbox({
+		onChecked: function(){
+			howManyDeptsSelected = 'All';
+			$('.department-mobile-checkbox').checkbox('check');
+		},
+	});
+
+	runSearch(orderBy, lastSearch);
+
+};
+
 function departmentCheckboxFunctionalityMobile() {
 	
 	function setSelectAllCheckBox(){
@@ -2459,8 +2650,7 @@ function runSearch(orderBy, searchTerm){
 
 				employeeJustCreated = false;
 				employeeJustEdited = false;
-				document.getElementById('search-box-icon').setAttribute('class', 'ui icon input');				
-				
+				document.getElementById('search-box-icon').setAttribute('class', 'ui icon input');		
 
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
@@ -2553,12 +2743,14 @@ function refreshPage(){
 	
 	getAllEmployees();
 
-	getAllDepartments();
+	//getAllDepartments();
 
-	getAllLocations();
+	//getAllLocations();
 	
-	runSearch(orderBy, lastSearch);
+	//runSearch(orderBy, lastSearch);
 	
+	getAllLocationsAndDepartments();
+
 }
 
 window.onload = (event) => {	
