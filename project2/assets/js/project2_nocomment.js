@@ -83,6 +83,30 @@ let locsAndDeptsObj = {
 			},
 }
 
+let updateLoadedDepts = [];
+
+function updateLoadedDeptsFunc(){
+	
+	for (let uld = 0; uld < updateLoadedDepts.length; uld ++){
+		
+		for (let [key, value] of Object.entries(locsAndDeptsObj)){
+		
+			for (let [k, val] of Object.entries(value.departments)){
+			
+				if (updateLoadedDepts[uld] == k) {
+					
+					val.loaded = true;
+					
+				}
+			
+			}
+		
+		}
+		
+	}
+
+}
+
 // ** PAGE LOAD FUNCTIONS **
 
 function renderCheckboxes(checkboxItems, category){
@@ -333,6 +357,8 @@ $('#manage-depts-and-locs-btn').click(function(){
 	
 		manageDeptsAndLocsOpened++;
 		
+		updateLoadedLocsAndDeps = [];
+		
 		console.log('the obj ', locsAndDeptsObj);
 		
 		document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: block');
@@ -367,6 +393,8 @@ $('#manage-depts-and-locs-btn').click(function(){
 		},
 		onHidden: function(){	
 			console.log('close manage dept and locs modal');
+			updateLoadedDeptsFunc();			
+			console.log('the obj on close', locsAndDeptsObj);
 			closeModal();
 		}	
 		}).modal('show');
@@ -854,12 +882,15 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 
 	for (let [k, val] of Object.entries(value.departments)	){	
 		
-		console.log('department ID', k, 'department data', val);
 		if (val.loaded) {
 			existingDepartmentNames.push(val.depname);
 		}
 
 		if(!val.loaded) {
+			
+				console.log(val, val.loaded, ' adding event listeners')
+				
+				updateLoadedDepts.push(k);
 			
 			$(`#delete-locationID-1-icon`).click(function(e){
 				
@@ -1013,7 +1044,7 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 			departmentRules.push(newRule)
 		}
 		
-		// for each loaded dept do this:
+		// for each loaded dept do this so that all depts have an up-to-date rename form
 		$(`#departmentID-1-form`).form({
 			fields: {
 				name: {
@@ -1022,9 +1053,8 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 				}
 			}
 		});
-		// so that all depts have an up-to-date rename form
 
-		console.log('dep rules',departmentRules);
+
 
 		$(`#locationID-1-new-dept-form`).form({
 			fields: {
