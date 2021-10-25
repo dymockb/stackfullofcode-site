@@ -59,6 +59,14 @@ function renderCheckboxes(checkboxItems, category){
 
 }
 
+function removeCheckBoxes(category){
+	
+	document.getElementById(`${category}-checkboxes`).innerHTML = '';
+	document.getElementById(`${category}-checkboxes-mobile`).innerHTML = '';
+	
+};
+
+
 function getAllDepartments(){
 	$.ajax({
 	url: "assets/php/getAllDepartments.php",
@@ -476,7 +484,36 @@ $('#update-employee-modal-btn').click(function (){
 $('#delete-department-modal-btn').click(function (){
 
 	closeAlertModal();
-	console.log(`delete deparment ${this.getAttribute('deptID')}`)
+	
+	console.log(`delete deparment ${this.getAttribute('deptid')}`)
+	
+	let deleteDepartmentID = this.getAttribute('deptid');
+	
+	$.ajax({
+	url: "assets/php/deleteDepartmentByID.php",
+	type: "GET",
+	dataType: "json",
+	data: {
+		departmentID: deleteDepartmentID
+	},
+	success: function (result) {
+		
+			console.log('deleteDept ',result);
+			if (result['status'].description != 'dependency error') {
+				console.log('refresh page');
+				refreshPage();				
+			}
+
+
+
+	},
+	error: function (jqXHR, textStatus, errorThrown) {
+			console.log('error');
+			console.log(textStatus);
+			console.log(errorThrown);
+		},
+	});
+	
 });
 
 $('#alert-modal-no-btn').click(function(){
@@ -701,17 +738,43 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 
 	$(`#new-location-form`).submit(function(event){
 		event.preventDefault();
-		console.log('new location submitted');
+		console.log('new location submitted')
+		
+		let newLocationName;
 
 		for (let e = 0; e < this.elements.length; e ++) {
 	
 			if (this.elements[e].tagName != 'BUTTON') {			
 
 				console.log(`#new-location-form`, this.elements[e].value);
+				newLocationName = this.elements[e].value;
 				
 			}
 
 		}
+		
+		$.ajax({
+		url: "assets/php/insertLocation.php",
+		type: "GET",
+		dataType: "json",
+		data: {
+			name: newLocationName
+		},
+		success: function (result) {
+			
+				console.log('new location result',result);
+
+				refreshPage();
+
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+				console.log('error');
+				console.log(textStatus);
+				console.log(errorThrown);
+			},
+		});
+		
+		
 
 	});
 
@@ -750,21 +813,53 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 
 			$(`#departmentID-1-form`).form('set defaults');
 			
-			$('#departmentID-1-accordion').click()			
+			$('#departmentID-1-accordion').click()	
+
+			let updatedDeptName;
+			let updatedDeptID;
+			let updateDepartmentDataObj = {};
 
 			for (let e = 0; e < this.elements.length; e ++) {
 		
 				if (this.elements[e].tagName != 'BUTTON') {			
 	
 					console.log(`#${depStringTemplate}-form`, this.elements[e].value);
+					updatedDeptName = this.elements[e].value;
+					updatedDeptID = this.elements[e].getAttribute('deptID');
 
 					$(`#input-departmentID-1-field`).attr('value', this.elements[e].value);
 					$(`#input-departmentID-1-field`).attr('placeholder', this.elements[e].value);
 					$(`#departmentID-1-title`).hide().html(this.elements[e].value).fadeIn(750); 
 
-				}
-	
-			}
+					}
+				
+			}	
+			
+			updateDepartmentDataObj['department'] = updatedDeptName;
+			updateDepartmentDataObj['departmentID'] = updatedDeptID;
+				
+			console.log('update dept data obj', updateDepartmentDataObj);
+				
+				
+				
+				$.ajax({
+				url: "assets/php/updateDepartment.php",
+				type: "GET",
+				dataType: "json",
+				data: updateDepartmentDataObj,
+				success: function (result) {
+					
+						console.log('updateDept ',result.data);
+
+						refreshPage();
+
+				},
+				error: function (jqXHR, textStatus, errorThrown) {
+						console.log('error');
+						console.log(textStatus);
+						console.log(errorThrown);
+					},
+				});
 
 		});
 
@@ -792,7 +887,7 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 		$(`#delete-departmentID-1-btn`).click(function(e){
 			
 			document.getElementById('delete-department-modal-btn').setAttribute('style', 'display: inline !important');
-			document.getElementById('delete-department-modal-btn').setAttribute('deptID', `${this.getAttribute('deptID')}`);
+			document.getElementById('delete-department-modal-btn').setAttribute('deptid', `${this.getAttribute('deptid')}`);
 
 			$('#alert-modal').modal(
 				{
@@ -837,15 +932,43 @@ function eventListenersInsideDeptsandLocsModal(depStringTemplate, locStringTempl
 
 			$('#locationID-1-new-dept-accordion-btn').click();
 
+			let newDeptName;
+			let locationID = document.getElementById('locationID-1-submit-new-dept-btn').getAttribute('locid');
+			
 			for (let e = 0; e < this.elements.length; e ++) {
 		
 				if (this.elements[e].tagName != 'BUTTON') {			
 	
 					console.log(`#locationID-1-new-dept-form`, this.elements[e].value);
-
+					newDeptName = this.elements[e].value;
+					
 				}
 	
 			}
+			
+			let newDeptObj = {};
+			newDeptObj['name'] = newDeptName;
+			newDeptObj['locationID'] = locationID;
+			
+			$.ajax({
+			url: "assets/php/insertDepartment.php",
+			type: "GET",
+			dataType: "json",
+			data: newDeptObj,
+			success: function (result) {
+				
+					console.log('new dept result',result);
+
+					refreshPage();
+
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+					console.log('error');
+					console.log(textStatus);
+					console.log(errorThrown);
+				},
+			});
+			
 
 		});
 
@@ -2147,6 +2270,21 @@ function attachRadioEvents(){
 	$('#order-by-first-name').checkbox('attach events', '#order-by-first-name-mobile', 'check');
 	$('#order-by-last-name').checkbox('attach events', '#order-by-last-name-mobile', 'check');	
 
+}
+
+function refreshPage(){
+	
+	removeCheckBoxes('department');
+	removeCheckBoxes('location');
+	
+	getAllEmployees();
+
+	getAllDepartments();
+
+	getAllLocations();
+	
+	runSearch(orderBy, lastSearch);
+	
 }
 
 window.onload = (event) => {	

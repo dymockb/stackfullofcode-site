@@ -188,22 +188,19 @@
 
 
           <div class="content field">
-            <div class="content field" id="department-checkboxes">
+            <div class="content field">
               <div class="item">
                 Departments
               </div>
-
-
               <div class="ui checkbox checked" id="select-all-departments">
                 <input checked name="select-all-departments" type="checkbox"> <label>Select All</label>
               </div>
-
-
               <div class="ui checkbox" id="select-none-departments">
                 <input name="select-none-departments" type="checkbox"> <label>Select None</label>
               </div>
-
               <hr>
+							<div id="department-checkboxes">
+							</div>
             </div>
           </div>
         </div>
@@ -218,7 +215,7 @@
 
 
           <div class="content field">
-            <div class="content field" id="location-checkboxes">
+            <div class="content field">
               <div class="item">
                 Locations
               </div>
@@ -234,6 +231,8 @@
               </div>
 
               <hr>
+							<div id="location-checkboxes">
+							</div>
             </div>
           </div>
         </div>
@@ -401,8 +400,8 @@
                 <div class="ui raised floating message location-message-panel">
                   <i class="close icon display-none-field" id="close-locationID-1-panel"></i>
 
-                  <div class="ui one top attached black disabled button">
-                    Location 1 with a very long name- <span id="locationID-1-employee-count">50</span> employees - <span id="locationID-1-dept-count">3</span> Departments
+                  <div class="ui one top attached segment"> <!-- black disabled button -->
+                    Location 1 with a very long name- <span id="locationID-1-employee-count">50</span> employees - <span id="locationID-1-dept-count">3</span> Departments <span class="location-trash-icon pointer"><i id="locationID-1-trash-icon" class="fas fa-trash-alt"></i></span>
                   </div>
 
 
@@ -427,7 +426,7 @@
                                     <i class="fas fa-edit pointer"></i> 
                                   </div>
 
-                                  <div class="ui icon button" deptid="1" deptname="departmentID-1-name" id="delete-departmentID-1-btn">
+                                  <div class="ui icon button" deptid="3" deptname="departmentID-1-name" id="delete-departmentID-1-btn">
                                     <i class="fas fa-trash-alt"></i> 
                                   </div>
 
@@ -454,7 +453,7 @@
                                   <div class="content field transition hidden" id="department-checkboxes">
                                     <div class="department-field-container" id="departmentID-1-field-container">
                                       <div class="field dept-name-field" id="departmentID-1-field">
-                                        <input id="rename-departmentID-1-input-field" name="dept-rename" placeholder="Rename department" type="text" value="">
+                                        <input id="rename-departmentID-1-input-field" name="dept-rename" placeholder="Rename department" deptid="1" type="text" value="">
                                       </div>
 
 
@@ -498,7 +497,7 @@
 
 
                                 <div class="create-dept-btn">
-                                  <div class="ui mini button" id="locationID-1-submit-new-dept-btn">
+                                  <div class="ui mini button" locid="1" id="locationID-1-submit-new-dept-btn">
                                     Submit
                                   </div>
                                 </div>
@@ -573,7 +572,7 @@
   </script> 
   <script src="https://kit.fontawesome.com/ac327db264.js">
   </script> 
-  <script src='assets/js/project2_nocommentalmost.js' type="text/javascript">
+  <script src='assets/js/project2_nocomment.js' type="text/javascript">
   </script>
 </body>
 </html>

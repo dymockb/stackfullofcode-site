@@ -38,7 +38,7 @@
 	
 	$check = $conn->prepare('SELECT COUNT(*) FROM department WHERE id = ?');
 
-	$check->bind_param("i", $_REQUEST['id']);
+	$check->bind_param("i", $_REQUEST['departmentID']);
 	
 	$check->execute();
 	
@@ -61,20 +61,44 @@
 	} else {
 		$message =  'Department Does Not Exist';		
 	}
-	
-	$checkDependency = $conn->prepare('SELECT COUNT(*) FROM department WHERE id = ?');
+		
+	$checkDependency = $conn->prepare('SELECT COUNT(*) FROM personnel WHERE departmentID = ?');
 
-	$checkDependency->bind_param("i", $_REQUEST['id']);
+	$checkDependency->bind_param("i", $_REQUEST['departmentID']);
 	
 	$checkDependency->execute();
 	
-	$dependencyResult = $checkcheckDependency->get_result();
+	$dependencyResult = $checkDependency->get_result();
 
+	$dependencyData;
 	
+	while ($row = mysqli_fetch_assoc($dependencyResult)) {
+		
+		//echo 'row ' . json_encode($row);
+		//array_push($data, $row['COUNT(*)']);
+		$dependencyData = $row['COUNT(*)'];
+
+	}	
+	
+	if ($dependencyData != 0) {
+
+		$output['status']['code'] = "400";
+		$output['status']['name'] = "executed";
+		$output['status']['description'] = "dependency error";	
+		$output['data'] = [];
+
+		mysqli_close($conn);
+
+		echo json_encode($output); 
+
+		exit;
+
+	}
+
 	// 
 	$query = $conn->prepare('DELETE FROM department WHERE id = ?');
 	
-	$query->bind_param("i", $_REQUEST['id']);
+	$query->bind_param("i", $_REQUEST['departmentID']);
 
 	$query->execute();
 	
