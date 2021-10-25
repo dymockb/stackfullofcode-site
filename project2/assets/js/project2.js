@@ -1048,6 +1048,7 @@ $(`#submit-new-location-btn`).click(function(e){
 
 function eventListenersInsideDeptsandLocsModal() {
 	
+  //can probably remove when names are checked against DB
 	let existingLocationIDs = [];
 
 	for (let [key, value] of Object.entries(locsAndDeptsObj)){
@@ -1058,6 +1059,7 @@ function eventListenersInsideDeptsandLocsModal() {
 
 		updateLoadedLocs.push(key);
 
+    //can probably remove when names are checked against DB
 		let existingDepartmentNames = [];
 
 		for (let [k, val] of Object.entries(value.departments)){	
@@ -1069,21 +1071,6 @@ function eventListenersInsideDeptsandLocsModal() {
 				console.log(val, val.loaded, ' adding event listeners')
 				
 				updateLoadedDepts.push(k);
-			
-			$(`#delete-locationID-${k}-icon`).click(function(e){
-				
-				//locsAndDeptsObj[key]['departments'][k].loaded = true;
-				
-				document.getElementById('delete-location-modal-btn').setAttribute('style', 'display: inline !important');
-				document.getElementById('delete-location-modal-btn').setAttribute('locid', `${this.getAttribute('locid')}`);
-
-				$('#alert-modal').modal(
-					{
-						title: '<i class="archive icon"></i>',
-						content: `<div class="alert-modal-text">Delete this location? <h3> ${this.getAttribute('locname')} </h3></div>`
-					}).modal('show');
-
-			});
 
 			$(`#submit-rename-departmentID-${k}-btn`).click(function(e){
 				e.preventDefault();
@@ -1279,7 +1266,7 @@ function eventListenersInsideDeptsandLocsModal() {
 				$(`#locationID-${key}-new-dept-accordion-btn`).click();
 
 				let newDeptName;
-				let locationID = document.getElementById('locationID-1-submit-new-dept-btn').getAttribute('locid');
+				let locationID = document.getElementById(`locationID-${key}-submit-new-dept-btn`).getAttribute('locid');
 				
 				for (let e = 0; e < this.elements.length; e ++) {
 			
@@ -1336,14 +1323,31 @@ function eventListenersInsideDeptsandLocsModal() {
 
 		});
 
-
-
 		$(`#locationID-${key}-cancel-new-dept-btn`).click(function(e){
 
 			$(`#locationID-${key}-new-dept-form`).form('reset');
 			$(`#locationID-${key}-new-dept-accordion-btn`).click();
 
 		});
+
+    $(`#delete-locationID-${key}-icon`).click(function(e){
+
+      // might have to set element properties if key not stored in the event listener
+      //document.getElementById(`delete-locationID-${key}-icon`).setAttribute('locid', key);
+      //document.getElementById(`delete-locationID-${key}-icon`).setAttribute('locname', locationsObj[key]);
+      
+      document.getElementById('delete-location-modal-btn').setAttribute('style', 'display: inline !important');
+      //document.getElementById('delete-location-modal-btn').setAttribute('locid', `${this.getAttribute('locid')}`);
+      document.getElementById('delete-location-modal-btn').setAttribute('locid', key);
+      document.getElementById('delete-location-modal-btn').setAttribute('locname', locationsObj[key]);
+
+      $('#alert-modal').modal(
+        {
+          title: '<i class="archive icon"></i>',
+          content: `<div class="alert-modal-text">Delete this location? <h3> ${locationsObj[key]} </h3></div>`
+        }).modal('show');
+
+    });
 
     locsAndDeptsObj[key]['loaded'] = true;
 

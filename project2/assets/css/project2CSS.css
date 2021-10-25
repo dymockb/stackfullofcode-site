@@ -100,6 +100,11 @@ body {
 	width: 40%;
 }
 
+.search-option-segment {
+	width: 97%;
+}
+
+
 .ui.checkbox {
 	display: block;
 }
@@ -457,6 +462,10 @@ h2.ui.center.header {
 h3.ui.center.header {
 	margin-top: 2em;
 	padding: 2em 0em;
+}
+
+#employee-details-column {
+	border-left: none;
 }
 
 @media only screen and (max-width: 767.98px) {
