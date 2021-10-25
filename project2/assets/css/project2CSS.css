@@ -207,6 +207,7 @@ td#employee-details-field {
 #edit-employee-modal-btn,
 #delete-employee-modal-btn,
 #delete-department-modal-btn,
+#delete-location-modal-btn,
 #update-employee-modal-btn,
 #create-employee-btn-mobile,
 #submit-depts-and-locs,
@@ -290,6 +291,11 @@ h4.ui.image.header {
 	text-align: left;
 }
 
+.location-trash-icon {
+	float: right;
+	font-size: 1.5rem
+}
+
 .department-field-container {
 	display: flex;
 	align-content: center;
@@ -365,7 +371,7 @@ i.fas.fa-user-edit {
 }
 
 .pointer {
-	cursor: pointer;
+	cursor: pointer !important;
 }
 
 #scrolling-modal-pane {

@@ -36,9 +36,9 @@
 	// SQL statement accepts parameters and so is prepared to avoid SQL injection.
 	// $_REQUEST used for development / debugging. Remember to change to $_POST for production
 	
-	$check = $conn->prepare('SELECT COUNT(*) FROM department WHERE id = ?');
+	$check = $conn->prepare('SELECT COUNT(*) FROM location WHERE id = ?');
 
-	$check->bind_param("i", $_REQUEST['departmentID']);
+	$check->bind_param("i", $_REQUEST['locationID']);
 	
 	$check->execute();
 	
@@ -57,14 +57,14 @@
 	$message;
 	
 	if ($data != 0) {
-		$message =  'Department Deleted';
+		$message =  'Location Deleted';
 	} else {
-		$message =  'Department Does Not Exist';		
+		$message =  'Location Does Not Exist';		
 	}
 		
-	$checkDependency = $conn->prepare('SELECT COUNT(*) FROM personnel WHERE departmentID = ?');
+	$checkDependency = $conn->prepare('SELECT COUNT(*) FROM department WHERE locationID = ?');
 
-	$checkDependency->bind_param("i", $_REQUEST['departmentID']);
+	$checkDependency->bind_param("i", $_REQUEST['locationID']);
 	
 	$checkDependency->execute();
 	
@@ -96,9 +96,9 @@
 	}
 
 	// 
-	$query = $conn->prepare('DELETE FROM department WHERE id = ?');
+	$query = $conn->prepare('DELETE FROM location WHERE id = ?');
 	
-	$query->bind_param("i", $_REQUEST['departmentID']);
+	$query->bind_param("i", $_REQUEST['locationID']);
 
 	$query->execute();
 	
