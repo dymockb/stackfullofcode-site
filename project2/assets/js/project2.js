@@ -66,6 +66,7 @@ basicRules.push(ruleThree);
 
 let renameDeptNeedsToBeValidated = false;
 let createNewDeptNeedsToBeValidated = false;
+let locationNameNeedsToBeValidated = false;
 
 /*
 let locsAndDeptsObj = {
@@ -940,6 +941,30 @@ $('#create-new-location-btn').click(function(){
 	console.log('click blue create new location');
 
 	$('#location-accordion-segment').attr('style', 'display: block')
+	
+	
+	for (let [key, value] of Object.entries(locationsObj)) {
+		
+		let nameRequired = value;
+		
+		let newRule = {}
+		//newRule['type'] = `notExactly[${existingLocationNames[e]}]`;
+		newRule['type'] = `notExactly[${nameRequired}]`;
+		newRule['prompt'] = 'That location already exists';
+		locationRules.push(newRule)
+	
+	}
+		
+	console.log('location rules', locationRules);
+	
+		$(`#new-location-form`).form({
+		fields: {
+			name: {
+				identifier: 'new-location',
+				rules: locationRules
+			}
+		}
+		});
 
 	$('#new-location-accordion-btn').click();
 
@@ -963,6 +988,8 @@ $(`#submit-new-location-btn`).click(function(e){
 		
 	console.log('submit new location clicked');
 
+	if (!locationNameNeedsToBeValidated) { //needs to be validated
+		
 	$(`#new-location-form`).one('submit', function(event){
 	  event.preventDefault();
 
@@ -1028,6 +1055,18 @@ $(`#submit-new-location-btn`).click(function(e){
     });
 
   });	
+	
+	} // end of IF locationNameNeedsToBeValidated == false
+				
+
+				
+				if (!$(`#new-location-form`).form('validate form')) {
+					console.log('not validated')
+					locationNameNeedsToBeValidated = true;
+				} else if ($(`#new-location-form`).form('validate form')){
+					console.log('validated')
+					locationNameNeedsToBeValidated = false;
+				}
 
 
 	if ($(`#new-location-form`).form('validate form')) {
@@ -1050,6 +1089,10 @@ function eventListenersInsideDeptsandLocsModal() {
 	
   //can probably remove when names are checked against DB
 	let existingLocationIDs = [];
+	
+	departmentRules = basicRules.slice();
+		
+	//console.log('locID', key, 'existing dept names', existingDepartmentNames)
 
 	for (let [key, value] of Object.entries(locsAndDeptsObj)){
 		
@@ -1067,6 +1110,15 @@ function eventListenersInsideDeptsandLocsModal() {
 			existingDepartmentNames.push(val.depname);	
 
 		if(!val.loaded) {
+			
+				$(`#departmentID-${k}-form`).form({
+					fields: {
+						name: {
+							identifier: 'dept-rename',
+							rules: departmentRules
+						}
+					}
+				});	
 			
 				console.log(val, val.loaded, ' adding event listeners')
 				
@@ -1213,10 +1265,12 @@ function eventListenersInsideDeptsandLocsModal() {
 							
 	} // end of loop through departments
 	
-		departmentRules = basicRules.slice();
 		
-		console.log('locID', key, 'existing dept names', existingDepartmentNames)
+		//departmentRules = basicRules.slice();
+		
+		//console.log('locID', key, 'existing dept names', existingDepartmentNames)
 
+		/*
 		for (let r = 0 ; r < existingDepartmentNames.length; r ++) {
 		
 			let newRule = {}
@@ -1225,11 +1279,13 @@ function eventListenersInsideDeptsandLocsModal() {
 				departmentRules.push(newRule)
 		
 		}
+		*/
 		
-		console.log('departmentRules',departmentRules);
+		//console.log('departmentRules',departmentRules);
 		
 	// for each dept do this so that all depts have an up-to-date rename form
 		
+		/*
 		for (let [k, val] of Object.entries(value.departments)){	
 				
 			$(`#departmentID-${k}-form`).form({
@@ -1242,6 +1298,7 @@ function eventListenersInsideDeptsandLocsModal() {
 			});	
 			
 		}
+		*/
 	
 		$(`#locationID-${key}-new-dept-form`).form({
 		
@@ -1360,6 +1417,7 @@ function eventListenersInsideDeptsandLocsModal() {
 	console.log('location obj', locationsObj);
 	console.log('existing loc IDs', existingLocationIDs)
 
+	/*
 	for (let e = 0 ; e < existingLocationIDs.length; e ++) {
 		
 		let nameRequired = locationsObj[existingLocationIDs[e]]
@@ -1371,6 +1429,7 @@ function eventListenersInsideDeptsandLocsModal() {
 		locationRules.push(newRule)
 	
 	}
+	*/
 	
 	console.log('location rules', locationRules);
 	

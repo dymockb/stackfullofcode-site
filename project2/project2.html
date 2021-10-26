@@ -31,6 +31,15 @@
       </div>
 
       <div id="mobile-search-options-wrapper">
+				<div class="ui info message floating-error" id="floating-info-message">
+					<i class="close icon"></i>
+					<div class="header">
+						An error occurred.
+					</div>
+					<div>
+						The location name already exists please try again.
+					</div>
+				</div>
         <div class="ui accordion field" id="mobile-search-options">
           <div class="title" id="search-accordion">
             <i class="icon dropdown"></i> Search options
@@ -152,10 +161,6 @@
 
   <div class="ui segment" id="pc-search">
     <div class="content field">
-      <button class="ui button" id="manage-depts-and-locs-btn"><i class="fas fa-edit"></i> Departments & Locations</button>
-
-      <h4>Search options:</h4>
-
 
       <div class="ui segment search-option-segment">
         <div class="grouped fields">
@@ -250,10 +255,18 @@
       <table class="ui celled table" id="pc-table">
         <thead>
           <tr>
-            <th>Employee Directory <button class="ui button" id="create-employee-btn-mobile">Create Employee</button></th>
+            <th>Employee Directory	<i class="fas fa-users-cog pointer" id="manage-depts-and-locs-btn" ></i>
+							<button class="ui button" id="create-employee-btn-mobile">Create Employee</button>
+						</th>
 
-            <th id="employee-details-column"><button class="ui button" id="create-employee-btn">Create Employee</button>
-            </th>
+            <th id="employee-details-column">
+							<button class="ui button" id="create-employee-btn">Create Employee</button>
+
+							<!-- 
+							<i class="fas fa-users-cog pointer" id="manage-depts-and-locs-btn" ></i>							
+							<button class="ui button" id="manage-depts-and-locs-btn"><i class="fas fa-edit"></i> Departments & Locations</button>
+							-->
+						</th>
           </tr>
         </thead>
 
