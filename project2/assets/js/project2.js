@@ -15,8 +15,8 @@ let listOfLocations = [];
 let listOfDepts = [];
 
 let manageDeptsAndLocsOpened = 0
-let locationRules;
-let departmentRules;
+let locationRules = [];
+let departmentRules = [];
 
 let activeDepartmentsObj = {};
 let countOfDepts;
@@ -543,6 +543,8 @@ $('#manage-depts-and-locs-btn').click(function(){
 		updateLoadedLocsAndDeps = [];
 		
 		console.log('the obj ', locsAndDeptsObj);
+		
+		//manageDepartmentsAndLocationsModal();
 		
 		document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: block');
 		document.getElementById('create-new-location-btn').setAttribute('style', 'display: inline');
@@ -2016,12 +2018,13 @@ function createEmployeeModalContent(editOrCreate, detailsForEditForm){
 
 /*
 
-let locationPanel = document.createElement(div);
+let locationPanel = document.createElement(div); //LOCATION PANEL
 	let panelCloser = document.createElement(i);
-	let locationHeader = document.createElement('div') "London - 2 Departments - 50 employees"
+	let locationHeader = document.createElement('div') 
 		let departmentdetails etc.
-	let locationContent = document.createElement('div')
-		let departmentSegment = document.createElement('div');
+	let locationContent = document.createElement('div'); // Location Content - created in function
+	
+		let departmentSegment = document.createElement('div'); // Department Segment
 			let departmentCloser = document.createElement('i');
 			let departmentRow = document.createElement('div');
 				let departmentDetails = document.createElement('div');
@@ -2029,7 +2032,7 @@ let locationPanel = document.createElement(div);
 						let departmentTitleRow = document.createElement('div');
 							let departmentTitle = document.createElement('span');
 							let departmentEmployees = document.createElement('div');
-								let departmentEmployeeInfo = document.createElement('div');
+								let departmentEmployeeInfo = document.createElement('div');				
 									let deparmentEmployeeCount = document.createElement('span');
 									let employeesIcon = document.createElement('i');
 								let departmentButtons = document.createElement('div');
@@ -2037,12 +2040,37 @@ let locationPanel = document.createElement(div);
 									let editIcon = document.createElement('i');
 									let deleteDepartmentBtn = document.createElement('span');
 									let binIcon = document.createElement('i');
-					let renameDeptAccordion = document.createElement('div');
-						let renameDeptAccordionTitle = document.createElement('div');
-							let renameDeptAccordionDropdown = document.createElement('i');
-							let renameDeptAccordionBtn = document.createElement('div');
-							
-							
+						let renameDeptAccordion = document.createElement('div');
+							let renameDeptAccordionTitle = document.createElement('div');
+								let renameDeptAccordionDropdown = document.createElement('i');
+								let renameDeptAccordionBtn = document.createElement('div');
+								
+							let	renameDeptAccordionContent = document.createElement('div');
+								let	renameDeptAccordionTransition = document.createElement('div'); 		
+									let	renameDeptAccordionContainer = document.createElement('div');		renameDeptAccordionTransition.appendChild(renameDeptAccordionContainer)
+										let	renameDeptAccordionField = document.createElement('div');			renameDeptAccordionContainer.appendChild(renameDeptAccordionField)
+											let	renameDeptAccordionInput = document.createElement('input'); renameDeptAccordionField.appendChild(renameDeptAccordionInput)
+										let renameDeptAccordionButtons - document.createElement('div');  	renameDeptAccordionContainer.appendChild(renameDeptAccordionButtons)
+											let submitRenameDeptBtn = document.createElement('div');				renameDeptAccordionButtons.appendChild(submitRenameDeptBtn);
+											let cancelRenameDeptBtn = document.createElement('button');			renameDeptAccordionButtons.appendChild(cancelRenameDeptBtn)
+						let renameDeptErrorMsg = document.createElement('div');
+						
+		let newDeptAccordion = document.createElement('div');  // New Dept Accordion
+			let newDeptAccordionTitle = document.createElement('div');
+				let newDeptAccordionDropDown = document.createElement('i');
+				let newDeptAccordionBtn = document.createElement('div'); 
+			
+			let newDeptAccordionContent = document.createElement('div');
+				let newDeptAccordionTransition = document.createElement('div');
+					let newDeptForm = document.createElement('form');
+						let newDeptAccordionContainer = document.createElement('div');
+							let newDeptAccordionField = document.createElement('div');
+								let newDeptAccordionInput = document.createElement('input');
+							let createDeptDiv = document.createElement('div');
+								let createNewDeptBtn = document.createElement('div');
+							let cancelCreateDeptDiv = document.createElement('div');
+								let cancelNewDeptBtn = document.createElement('button');
+						let createDeptErrorMsg = document.createElement('div');	
 						
 
 <div class="ui raised floating message location-message-panel"> //locationPanel
@@ -2053,7 +2081,7 @@ let locationPanel = document.createElement(div);
 	</div>
 
 
-	<div class="ui attached segment"> // locationContent
+	<div class="ui attached segment"> // locationContent - APPEND DEPARTMENT SEGMENTS HERE
 		<div class="ui floating message department-segment"> //departmentSegment
 			<i class="close icon display-none-field" id="close-departmentID-1-icon"></i> //departmentCloser
 
@@ -2093,8 +2121,7 @@ let locationPanel = document.createElement(div);
 								<div class="ui tiny button" id="departmentID-1-accordion"> // renameDeptAccordionBtn
 									Create new department
 								</div>
-							</div>
-
+							</div>								
 
 							<div class="content field"> // renameDeptAccordionContent
 								<div class="content field transition hidden"> // renameDeptAccordionTransition
@@ -2122,7 +2149,6 @@ let locationPanel = document.createElement(div);
 				</div>
 			</div>
 		</div>
-
 
 		<div class="ui accordion field"> // newDeptAccordion
 			<div class="title"> // newDeptAccordionTitle
@@ -2166,12 +2192,65 @@ let locationPanel = document.createElement(div);
 	</div>
 </div>
 
-*/
 
-function manageDepartmentsAndLocationsModal(){
+
+function createLocationPanel(name, id){
 	
+	let locationPanel = ...
+	return locationPanel
+}
+
+function createDepartmentSegment(id, name){
+	
+	let departmentSegment = document.createElement('div');
+	
+	return departmentSegment
 	
 }
+
+function createNewDeptAccordion(id){
+	
+	let newDeptAccordion = document.createElement('div');
+	
+	return newDeptAccordion
+	
+}
+
+
+function manageDepartmentsAndLocationsModal(locsAndDeptsObj){
+	
+	for (let [key,value] of Object.entries(locsAndDeptsObj)) {
+		
+		let locationName = locationsObj[key];
+		
+		let locationPanel = createLocationPanel(locationName, key);
+		let locationContent = document.createElement('div');
+		locationContent.setAttribute('class', 'ui attached segment');
+	
+			for (let [k, val] of Object.entries(value['departments'])){
+				
+				let deptName = val.depname;
+				
+				locationContent.appendChild(createDepartmentSegment(k, deptName));
+				locationContent.appendChild(createDepartmentSegment(k, deptName));
+				
+				//ajax for count of employees?
+				
+			}
+
+		locationContent.appendChild(createNewDeptAccordion(key));
+		
+		locationPanel.appendChild(locationContent);
+		
+		document.getElementById('manage-depts-and-locs').appendChild(locationPanel);
+		
+	}
+	
+	document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: block');
+	
+}
+
+*/
 
 // ** SET FUNCTIONALITY **
 
