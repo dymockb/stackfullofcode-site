@@ -1807,6 +1807,11 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 
 	let emailError = document.createElement('div');
 	emailError.setAttribute('class', 'ui error message')
+	
+	let blankInput = inputField.cloneNode(true);
+	blankInput.setAttribute('style', 'display: none');
+	blankInput.setAttribute('type', 'text');
+	blankInput.setAttribute('autofocus', '');
 
 	emailField.appendChild(emailHeading);
 	emailField.appendChild(emailInput);
@@ -1816,6 +1821,7 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 	uiForm.appendChild(nameCategories);
 	uiForm.appendChild(jobTitleField);
 	uiForm.appendChild(emailField);	
+	uiForm.appendChild(blankInput);
 
 	if (editOrCreate == 'edit'){
 		let idField = field.cloneNode(true);
@@ -2007,6 +2013,165 @@ function createEmployeeModalContent(editOrCreate, detailsForEditForm){
 	});
 	
 };
+
+/*
+
+let locationPanel = document.createElement(div);
+	let panelCloser = document.createElement(i);
+	let locationHeader = document.createElement('div') "London - 2 Departments - 50 employees"
+		let departmentdetails etc.
+	let locationContent = document.createElement('div')
+		let departmentSegment = document.createElement('div');
+			let departmentCloser = document.createElement('i');
+			let departmentRow = document.createElement('div');
+				let departmentDetails = document.createElement('div');
+					let departmentForm = document.createElement('form');
+						let departmentTitleRow = document.createElement('div');
+							let departmentTitle = document.createElement('span');
+							let departmentEmployees = document.createElement('div');
+								let departmentEmployeeInfo = document.createElement('div');
+									let deparmentEmployeeCount = document.createElement('span');
+									let employeesIcon = document.createElement('i');
+								let departmentButtons = document.createElement('div');
+									let renameDepartmentBtn = document.createElement('span');
+									let editIcon = document.createElement('i');
+									let deleteDepartmentBtn = document.createElement('span');
+									let binIcon = document.createElement('i');
+					let renameDeptAccordion = document.createElement('div');
+						let renameDeptAccordionTitle = document.createElement('div');
+							let renameDeptAccordionDropdown = document.createElement('i');
+							let renameDeptAccordionBtn = document.createElement('div');
+							
+							
+						
+
+<div class="ui raised floating message location-message-panel"> //locationPanel
+	<i class="close icon display-none-field" id="close-locationID-1-panel"></i> //panelCloser
+
+	<div class="ui one top attached segment"> <!-- black disabled button --> //locationHeader
+		Location 1 with a very long name&nbsp;-&nbsp;<span id="locationID-1-employee-count">50</span>&nbsp;employees&nbsp;-&nbsp;<span id="locationID-1-dept-count">3</span>&nbsp;Departments&nbsp;<span locid="6" locname="Rio" id="delete-locationID-1-icon" class="location-trash-icon pointer"><i class="fas fa-trash-alt"></i></span>
+	</div>
+
+
+	<div class="ui attached segment"> // locationContent
+		<div class="ui floating message department-segment"> //departmentSegment
+			<i class="close icon display-none-field" id="close-departmentID-1-icon"></i> //departmentCloser
+
+			<div class="ui row"> //departmentRow
+				<div class="ui column manage-dept-info"> //departmentDetails
+					<form class="ui form rename-form" id="departmentID-1-form" name="departmentID-1-form"> //departmentForm
+						<div class="department-title-row"> //departmentTitleRow
+							<span id="departmentID-1-title"><h4>Department with a very long name</h4></span> //departmentTitle
+							
+							<div class="dept-employee-info-icons"> // departmentEmployees
+
+								<div class="employee-count-icon"> //departmentEmployeeInfo
+									<span id="departmentID-1-employee-count">25</span>  // departmentEmployeeCount
+									<i class="fas fa-users"></i> //employeesIcon
+								</div>
+								
+
+								<div class="dept-delete-edit-btns"> // departmentButtons
+									<span class="ui icon button" id="rename-departmentID-1-btn"> // renameDepartmentBtn
+										<i class="fas fa-edit pointer"></i> // editIcon
+									</span>
+
+									<span class="ui icon button" deptid="1" deptname="departmentID-1-name" id="delete-departmentID-1-btn"> //deleteDepartmentBtn
+										<i class="fas fa-trash-alt"></i> // binIcon
+									</span>
+
+								</div>
+							</div>
+						
+						</div>
+
+
+						<div class="ui accordion field new-dept-accordion"> // renameDeptAccordion
+							<div class="title display-none-field"> //renameDeptAccordionTitle
+								<i class="icon dropdown"></i> // renameDeptAccordionDropdown
+
+								<div class="ui tiny button" id="departmentID-1-accordion"> // renameDeptAccordionBtn
+									Create new department
+								</div>
+							</div>
+
+
+							<div class="content field"> // renameDeptAccordionContent
+								<div class="content field transition hidden"> // renameDeptAccordionTransition
+									<div class="department-field-container" id="departmentID-1-field-container"> // renameDeptAccordionContainer
+										<div class="field dept-name-field" id="departmentID-1-field"> //renameDeptAccordionField
+											<input id="rename-departmentID-1-input-field" name="dept-rename" placeholder="Rename department" deptid="1" type="text" value=""> //renameDeptAccordionInput
+										</div>
+
+
+										<div class="rename-accordion-buttons"> // renameDeptAccordionButtons
+											<div class="ui tiny button dept-action-button" id="submit-rename-departmentID-1-btn"> //submitRenameDeptBtn
+												Submit
+											</div>
+											<button class="ui tiny button dept-action-button" form="departmentID-1-form" id="cancel-departmentID-1-btn" type="reset">Cancel</button> // cancelRenameDeptBtn
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+
+						<div class="ui error message"></div> // renameDeptErrorMsg
+
+					</form>
+				</div>
+			</div>
+		</div>
+
+
+		<div class="ui accordion field"> // newDeptAccordion
+			<div class="title"> // newDeptAccordionTitle
+				<i class="icon dropdown"></i> // newDeptAccordionDropDown
+
+				<div class="ui tiny button" id="locationID-1-new-dept-accordion-btn"> // newDeptAccordionBtn
+					Create new department
+				</div>
+			</div>
+
+
+			<div class="content field"> // newDeptAccordionContent
+				<div class="content field transition hidden" id="department-checkboxes"> newDeptAccordionTransition
+					<form class="ui form" id="locationID-1-new-dept-form" name="locationID-1-new-dept-form"> newDeptForm
+						<div class="department-field-container"> newDeptAccordionContainer
+							<div class="eight wide field dept-name-field"> newDeptAccordionField
+								<input name="new-department" placeholder="New department name" type="text" value="">  newDeptAccordionInput
+							</div>
+
+
+							<div class="create-dept-btn">  // createDeptDiv
+								<div class="ui mini button" locid="1" id="locationID-1-submit-new-dept-btn">  createNewDeptBtn
+									Submit
+								</div>
+							</div>
+
+
+							<div class="create-dept-btn">  cancelCreateDeptDiv
+								<button class="ui mini button" id="locationID-1-cancel-new-dept-btn" type="reset">Cancel</button>  cancelNewDeptBtn
+							</div>
+						</div>
+
+
+						<div class="ui error message">  createDeptErrorMsg
+							That department already exists in this location
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+*/
+
+function manageDepartmentsAndLocationsModal(){
+	
+	
+}
 
 // ** SET FUNCTIONALITY **
 

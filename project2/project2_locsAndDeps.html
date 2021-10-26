@@ -415,17 +415,17 @@
                 <div class="ui raised floating message location-message-panel">
                   <i class="close icon display-none-field" id="close-locationID-1-panel"></i>
 
-                  <div class="ui one top attached segment"> <!-- black disabled button -->
+                  <div class="ui one top attached segment"> <!--  floating message black disabled button -->
                     Location 1 with a very long name&nbsp;-&nbsp;<span id="locationID-1-employee-count">50</span>&nbsp;employees&nbsp;-&nbsp;<span id="locationID-1-dept-count">3</span>&nbsp;Departments&nbsp;<span locid="6" locname="Rio" id="delete-locationID-1-icon" class="location-trash-icon pointer"><i class="fas fa-trash-alt"></i></span>
                   </div>
 
 
                   <div class="ui attached segment">
-                    <!-- <div class="ui form" id="locationID-1-form"> </div> -->
+                    <div class="ui form" id="locationID-1-form">
                       <div class="ui floating message department-segment">
                         <i class="close icon display-none-field" id="close-departmentID-1-icon"></i>
 
-                        <div class="ui row">
+                        <div class="ui stackable two column row">
                           <div class="ui column manage-dept-info">
                             <form class="ui form rename-form" id="departmentID-1-form" name="departmentID-1-form">
                               <div class="department-title-row">
@@ -468,7 +468,7 @@
 
 
                                 <div class="content field">
-                                  <div class="content field transition hidden">
+                                  <div class="content field transition hidden" id="department-checkboxes">
                                     <div class="department-field-container" id="departmentID-1-field-container">
                                       <div class="field dept-name-field" id="departmentID-1-field">
                                         <input id="rename-departmentID-1-input-field" name="dept-rename" placeholder="Rename department" deptid="1" type="text" value="">
@@ -506,7 +506,7 @@
 
 
                         <div class="content field">
-                          <div class="content field transition hidden">
+                          <div class="content field transition hidden" id="department-checkboxes">
                             <form class="ui form" id="locationID-1-new-dept-form" name="locationID-1-new-dept-form">
                               <div class="department-field-container">
                                 <div class="eight wide field dept-name-field">
@@ -534,7 +534,7 @@
                           </div>
                         </div>
                       </div>
-                     <!-- form div ended here -->
+                    </div>
                   </div>
                 </div>
               </div>
