@@ -400,6 +400,10 @@ i.fas.fa-user-edit {
 	width: 100%;
 }
 
+.employee-count-number {
+	margin-right: 0.6rem
+}
+
 .pointer {
 	cursor: pointer !important;
 }

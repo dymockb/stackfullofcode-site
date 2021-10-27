@@ -173,7 +173,8 @@ function getAllDepartments(){
 
 			for (let d = 0; d < result.data.length; d++) {
 
-				departmentsObj[result.data[d].id] = result.data[d].name;
+				departmentsObj[result.data[d].id] = {};
+				departmentsObj[result.data[d].id]['name'] = result.data[d].name;
 				
 				if (!listOfDepts.includes(result.data[d].name)) {
 					listOfDepts.push(result.data[d].name);
@@ -218,6 +219,33 @@ function getAllDepartments(){
 			departmentCheckboxFunctionality();
 
 			departmentCheckboxFunctionalityMobile();
+			
+			for (let ed = 0; ed < result.data.length; ed ++){
+				
+				let did = result.data[ed].id;
+				
+					$.ajax({
+					url: "assets/php/countPersonnelByDept.php",
+					type: "GET",
+					dataType: "json",
+					data: {
+						deptID: did
+					},
+					success: function (result) {
+						
+							console.log('dept id count of emps ', result.data.personnel);
+							
+							departmentsObj[did]['employees'] = result.data.personnel; 
+						
+					},
+					error: function (jqXHR, textStatus, errorThrown) {
+							console.log('error');
+							console.log(textStatus);
+							console.log(errorThrown);
+						},
+					});	
+				
+			}
 
 	},
 	error: function (jqXHR, textStatus, errorThrown) {
@@ -271,6 +299,8 @@ function getAllLocations(){
 			console.log(errorThrown);
 		},
 	});	
+	
+	
 }
 
 
@@ -326,7 +356,7 @@ function getAllLocationsAndDepartments(){
 				
 							for (let d = 0; d < result.data.length; d++) {
 				
-								departmentsObj[result.data[d].id] = result.data[d].name;
+								departmentsObj[result.data[d].id]['name'] = result.data[d].name;
 								
 								if (!listOfDepts.includes(result.data[d].name)) {
 									listOfDepts.push(result.data[d].name);
@@ -888,7 +918,7 @@ $('#employee-modal-edit-fields').submit(function(event) {
 
 				if (this.elements[e].getAttribute('fieldname') == 'departmentID') {
 					editEmployeeDataObj[this.elements[e].getAttribute('fieldname')] = this.elements[e].value;
-					editEmployeeDataObj['department'] = departmentsObj[this.elements[e].value];
+					editEmployeeDataObj['department'] = departmentsObj[this.elements[e].value]['name'];
 				} else if (this.elements[e].getAttribute('fieldname') == 'locationID'){
 					editEmployeeDataObj[this.elements[e].getAttribute('fieldname')] = this.elements[e].value;
 					editEmployeeDataObj['locationName'] = locationsObj[this.elements[e].value];
@@ -1318,7 +1348,7 @@ function eventListenersInsideDeptsandLocsModal() {
 				document.getElementById('delete-department-modal-btn').setAttribute('deptid', `${this.getAttribute('deptid')}`);
 				
 				let deptID = this.getAttribute('deptid');
-				let deptName = departmentsObj[deptID];
+				let deptName = departmentsObj[deptID]['name'];
 				
 				$.ajax({
 				url: "assets/php/checkIfLastDepartment.php",
@@ -2188,7 +2218,7 @@ function createLocationPanel(name, id){
 
 }
 
-function createDepartmentSegment(id, name){
+function createDepartmentSegment(id, name, emps){
 	
 	let departmentSegment = document.createElement('div'); // Department Segment
 	let departmentCloser = document.createElement('i');															departmentSegment.appendChild(departmentCloser);
@@ -2230,8 +2260,8 @@ function createDepartmentSegment(id, name){
 					departmentTitle.setAttribute('id', `departmentID-${id}-title`);
 						departmentTitleText.innerHTML = name;
 					departmentEmployees.setAttribute('class', 'dept-employee-info-icons');						
-						departmentEmployeeInfo.setAttribute('class', 'employee-count-icon display-none-field'); //hidden with display-none-field
-							departmentEmployeeCount.setAttribute('id', `departmentID-${id}-employee-count`); departmentEmployeeCount.innerHTML = 'X';
+						departmentEmployeeInfo.setAttribute('class', 'employee-count-icon'); //hide with display-none-field display-none-field
+							departmentEmployeeCount.setAttribute('id', `departmentID-${id}-employee-count`); departmentEmployeeCount.innerHTML = `${emps}`; departmentEmployeeCount.setAttribute('class', 'employee-count-number');
 							employeesIcon.setAttribute('class', 'fas fa-users');
 						departmentButtons.setAttribute('class', 'dept-delete-edit-btns');
 							renameDepartmentBtn.setAttribute('class', 'ui icon button');  renameDepartmentBtn.setAttribute('id', `rename-departmentID-${id}-btn`);
@@ -2331,6 +2361,8 @@ function manageDepartmentsAndLocationsModal(locsAndDeptsObj){
 		for (let [k, val] of Object.entries(locsAndDeptsObj[locationID]['departments'])){		
 		
 				countOfDepts++;
+				
+				let employeeCount = departmentsObj[k]['employees'];
 
 				if (!val.loaded) {
 	
@@ -2353,7 +2385,7 @@ function manageDepartmentsAndLocationsModal(locsAndDeptsObj){
 					
 					let deptName = val.depname;
 					
-					locationContent.appendChild(createDepartmentSegment(k, deptName));
+					locationContent.appendChild(createDepartmentSegment(k, deptName, employeeCount));
 					
 					//ajax for count of employees?
 					
