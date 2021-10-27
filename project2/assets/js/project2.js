@@ -232,8 +232,6 @@ function getAllDepartments(){
 						deptID: did
 					},
 					success: function (result) {
-						
-							console.log('dept id count of emps ', result.data.personnel);
 							
 							departmentsObj[did]['employees'] = result.data.personnel; 
 						
@@ -303,6 +301,19 @@ function getAllLocations(){
 	
 }
 
+function refreshDeptsAndLocsModal(){
+	
+	locsAndDeptsObj = {};
+	locationsObj = {};
+	departmentsObj = {};
+	listOfLocations = [];
+	listOfDepts = [];
+
+	getAllDepartments();
+	getAllLocations();
+	
+}
+
 
 function getAllLocationsAndDepartments(){
 
@@ -349,13 +360,16 @@ function getAllLocationsAndDepartments(){
 					success: function (result) {
 						
 							console.log('getAllDepartments ',result);
+							
+							console.log('fresh locandDept Obj', locsAndDeptsObj);
 				
 							listOfDepts = [];
 							
 							let locationsForObj = [];
 				
 							for (let d = 0; d < result.data.length; d++) {
-				
+								
+								departmentsObj[result.data[d].id] = {};
 								departmentsObj[result.data[d].id]['name'] = result.data[d].name;
 								
 								if (!listOfDepts.includes(result.data[d].name)) {
@@ -404,6 +418,31 @@ function getAllLocationsAndDepartments(){
 							departmentCheckboxFunctionality();
 
 							departmentCheckboxFunctionalityMobileIncludesRunSearch();
+							
+							for (let ed = 0; ed < result.data.length; ed ++){
+				
+								let did = result.data[ed].id;
+								
+									$.ajax({
+									url: "assets/php/countPersonnelByDept.php",
+									type: "GET",
+									dataType: "json",
+									data: {
+										deptID: did
+									},
+									success: function (result) {
+											
+											departmentsObj[did]['employees'] = result.data.personnel; 
+										
+									},
+									error: function (jqXHR, textStatus, errorThrown) {
+											console.log('error');
+											console.log(textStatus);
+											console.log(errorThrown);
+										},
+									});	
+							
+							}
 
               //eventListenersInsideDeptsandLocsModal();
 		
@@ -729,6 +768,8 @@ $('#delete-employee-modal-btn').click(function (){
 			clearTimeout(deletedEmployeeTimer);
 		
 		}, 750);
+		
+		refreshPage();
 
 	},
 	error: function (jqXHR, textStatus, errorThrown) {
@@ -997,7 +1038,9 @@ $('#employee-modal-create-fields').submit(function(event) {
 			console.log('insertEmployee ',result.data);
 			console.log('orderby', orderBy, 'lastSearch', lastSearch);
 			employeeJustCreated = true;
-			runSearch(orderBy,'');
+			//runSearch(orderBy,'');
+			refreshPage();
+			//refreshDeptsAndLocsModal();
 
 	},
 	error: function (jqXHR, textStatus, errorThrown) {
@@ -3095,13 +3138,15 @@ function runSearch(orderBy, searchTerm){
 
 					if (employeeDetailsVisibility == 0) {
 						$('.employee-detail-fields').attr('style', 'visibility: visible');
-						$('.message').attr('class', 'ui floating message');
+						$('#employee-panel-message').attr('class', 'ui floating message');
+						//$('.message').attr('class', 'ui floating message');
 						document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
 						document.getElementById('delete-employee-btn').setAttribute('employee-details', employeeDetails);
 						document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', employeeDetails)
 						employeeDetailsVisibility ++;
 					} else {
-						$('.message').attr('class', 'ui floating message');
+						$('#employee-panel-message').attr('class', 'ui floating message');
+						//$('.message').attr('class', 'ui floating message');
 						document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
 						document.getElementById('delete-employee-btn').setAttribute('employee-details', employeeDetails);
 						document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', employeeDetails)
@@ -3221,6 +3266,21 @@ function attachRadioEvents(){
 }
 
 function refreshPage(){
+	
+	for (let prop in locsAndDeptsObj){
+		delete locsAndDeptsObj[prop];
+	}
+	
+	for (let prop in locationsObj){
+		delete locationsObj[prop];
+	}
+	
+	for (let prop in departmentsObj){
+		delete departmentsObj[prop];
+	}
+
+	listOfLocations = [];
+	listOfDepts = [];
 	
 	getAllEmployees();
 
