@@ -1043,7 +1043,7 @@ $(`#submit-new-location-btn`).click(function(e){
 							
 							document.getElementById('modal-deny-btn').click();
 							
-							document.getElementById('floating-info-messag').setAttribute('class', 'ui info floating-error message');
+							document.getElementById('floating-info-message').setAttribute('class', 'ui info floating-error message');
 							document.getElementById('floating-info-header').innerHTML = 'New Location created';
 							document.getElementById('floating-info-text').innerHTML = '';
 
@@ -2067,14 +2067,15 @@ function createLocationPanel(name, id){
 		let trashIcon = document.createElement('i');
 		trashIcon.setAttribute('class', 'fas fa-trash-alt');
 		
+		deleteLocationIcon.appendChild(trashIcon);
+		
 		let locationHeaderText = document.createElement('h4');
 		locationHeaderText.innerHTML = `${name}`; 
 		locationHeaderText.setAttribute('class', 'location-header-text')
 		
 		locationHeader.appendChild(locationHeaderText); 
 		
-		deleteLocationIcon.appendChild(trashIcon);
-		locationHeader.appendChild(deleteLocationIcon);
+		//locationHeader.appendChild(deleteLocationIcon);
 
 		locationPanel.appendChild(panelCloser);
 		locationPanel.appendChild(locationHeader);
@@ -2193,19 +2194,49 @@ function createNewDeptAccordion(id){
 
 function manageDepartmentsAndLocationsModal(locsAndDeptsObj){
 	
-	for (let [key,value] of Object.entries(locsAndDeptsObj)) {
+	listOfLocations.sort();		
+	
+	console.log('locsAndDeptsObj',locsAndDeptsObj);
+	console.log('listOfLocations', listOfLocations);
+	
+	for (let loc = 0; loc < listOfLocations.length; loc ++) {
 		
-		//if (!value.loaded) {
+		locationName = listOfLocations[loc];
 		
-			let locationName = locationsObj[key];
+		let locationID;;
+		
+		for (let [key, value] of Object.entries(locationsObj)) {
 			
-			let locationPanel = createLocationPanel(locationName, key);
-			let locationContent = document.createElement('div');
-			locationContent.setAttribute('class', 'ui attached segment');
+			if (value == locationName) {
+				locationID = key;
+			}
+		}
 		
-				for (let [k, val] of Object.entries(value['departments'])){
-					
-					//if (!val.loaded) {
+		let locationPanel = createLocationPanel(locationName, locationID);
+		let locationContent = document.createElement('div');
+		locationContent.setAttribute('class', 'ui attached segment');
+		
+		console.log('locationID', locationID);
+		
+		for (let [k, val] of Object.entries(locsAndDeptsObj[locationID]['departments'])){		
+
+	
+		/*
+		
+		for (let [key,value] of Object.entries(locsAndDeptsObj)) {
+			
+			//if (!value.loaded) {
+			
+				let locationName = locationsObj[key];
+				
+				let locationPanel = createLocationPanel(locationName, key);
+				let locationContent = document.createElement('div');
+				locationContent.setAttribute('class', 'ui attached segment');
+		
+		
+					for (let [k, val] of Object.entries(value['departments'])){
+		*/				
+						//if (!val.loaded) {
 					
 					let deptName = val.depname;
 					
@@ -2217,7 +2248,8 @@ function manageDepartmentsAndLocationsModal(locsAndDeptsObj){
 					
 				}
 
-			locationContent.appendChild(createNewDeptAccordion(key));
+			//locationContent.appendChild(createNewDeptAccordion(key));
+			locationContent.appendChild(createNewDeptAccordion(locationID));
 			
 			locationPanel.appendChild(locationContent);
 			
@@ -2225,7 +2257,7 @@ function manageDepartmentsAndLocationsModal(locsAndDeptsObj){
 			
 		//} !value.loaded
 		
-	}
+	} // end of locations loop
 	
 	//document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: block');
 	document.getElementById('create-new-location-btn').setAttribute('style', 'display: inline');
@@ -2990,7 +3022,7 @@ function closeModal(){
 	document.getElementById('employee-modal-view-fields').innerHTML = "";
 	document.getElementById('employee-modal-create-fields').innerHTML = "";
 	document.getElementById('employee-modal-edit-fields').innerHTML = "";
-	document.getElementById('append-location-panels').innerHTML = "";
+	//document.getElementById('append-location-panels').innerHTML = "";
 	document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: none');
 
 

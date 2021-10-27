@@ -21,8 +21,8 @@
     <div class="ui fluid container" id="top-nav-items">
       <div id="cogs-and-search">
         
-        <i class="fas fa-users-cog pointer" id="mobile-manage-cog" ></i> <!-- <span id="icon-block"></span> -->
-				<button class="ui button" id="manage-depts-and-locs-btn"><i class="fas fa-edit"></i> Departments & Locations</button>
+        <i class="fas fa-users-cog pointer" id="manage-depts-and-locs-btn"></i> <!-- id="mobile-manage-cog" <span id="icon-block"></span> 
+				<button class="ui button" id="manage-depts-and-locs-btn"><i class="fas fa-edit"></i> Departments & Locations</button> -->
         <div class="item" id="search-box">    
           <div class="ui icon input" id="search-box-icon">
             <input id="search-input" placeholder="Search employees" type="text"> <i class="search icon"></i>
@@ -35,10 +35,10 @@
 			
 				<div class="ui info hidden message" id="floating-info-message"> <!-- floating-error -->
 					<i class="close icon"></i>
-					<div class="header">
+					<div id="floating-info-header" class="header">
 						An error occurred.
 					</div>
-					<div>
+					<div id="floating-info-text">
 						The location name already exists please try again.
 					</div>
 				</div>
@@ -258,15 +258,16 @@
       <table class="ui celled table" id="pc-table">
         <thead>
           <tr>
-            <th>Employee Directory	<i class="fas fa-users-cog pointer" id="manage-depts-and-locs-btn"></i>
+            <th>Employee Directory	
 							<button class="ui button" id="create-employee-btn-mobile">Create Employee</button>
 						</th>
 
             <th id="employee-details-column">
 							<button class="ui button" id="create-employee-btn">Create Employee</button>
-							<i class="fas fa-users-cog pointer"  ></i>
-							<!-- 
 							
+							<!-- 
+							<i class="fas fa-users-cog pointer"  ></i>
+							<i class="fas fa-users-cog pointer" id="manage-depts-and-locs-btn"></i>
 							<button class="ui button" id="manage-depts-and-locs-btn"><i class="fas fa-edit"></i> Departments & Locations</button>
 							-->
 						</th>
