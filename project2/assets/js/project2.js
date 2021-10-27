@@ -375,7 +375,7 @@ function getAllLocationsAndDepartments(){
 
 							departmentCheckboxFunctionalityMobileIncludesRunSearch();
 
-              eventListenersInsideDeptsandLocsModal();
+              //eventListenersInsideDeptsandLocsModal();
 		
 					},
 					error: function (jqXHR, textStatus, errorThrown) {
@@ -668,6 +668,12 @@ $('#submit-edit-employee').click(function (){
 	
 });
 
+$('#modal-deny-btn').click(function(){
+	
+	location.reload();
+	
+})
+
 //buttons on alert modal
 $('#delete-employee-modal-btn').click(function (){
 	
@@ -780,6 +786,9 @@ $('#delete-department-modal-btn').click(function (){
 	console.log(`delete deparment ${this.getAttribute('deptid')}`)
 	
 	let deleteDepartmentID = this.getAttribute('deptid');
+	let emptyLocID = this.getAttribute('emptyLocID');
+	
+	console.log('emptyLocID', emptyLocID);
 	
 	$.ajax({
 	url: "assets/php/deleteDepartmentByID.php",
@@ -791,11 +800,43 @@ $('#delete-department-modal-btn').click(function (){
 	success: function (result) {
 		
 			console.log('deleteDept ',result);
+			
 			if (result['status'].description != 'dependency error') {
-				console.log('refresh page');
-				refreshPage();				
-			}
+				//console.log('refresh page');
+				//refreshPage();	
 
+				if (emptyLocID != 0) {
+						
+					$.ajax({
+					url: "assets/php/deleteLocationByID.php",
+					type: "GET",
+					dataType: "json",
+					data: {
+						locationID: emptyLocID
+					},
+					success: function (result) {
+							
+							console.log('delete location result ', result);
+							console.log('Location deleted. ID: ', emptyLocID);
+							
+							document.getElementById('modal-deny-btn').click();
+
+					},
+					error: function (jqXHR, textStatus, errorThrown) {
+							console.log('error');
+							console.log(textStatus);
+							console.log(errorThrown);
+						},
+					});
+				
+				} else {
+		
+						document.getElementById('modal-deny-btn').click();
+					
+				}
+
+			
+			}
 
 
 	},
@@ -1038,6 +1079,9 @@ $(`#submit-new-location-btn`).click(function(e){
 
               updateLoadedDeptsFunc();
               updateLoadedLocsFunc();
+							
+							//console.log('the obj when new location done', locsAndDeptsObj);
+							console.log('updateLoadedLocs', updateLoadedLocs);
 
               refreshPage();
 							
@@ -1045,7 +1089,7 @@ $(`#submit-new-location-btn`).click(function(e){
 							
 							document.getElementById('floating-info-message').setAttribute('class', 'ui info floating-error message');
 							document.getElementById('floating-info-header').innerHTML = 'New Location created';
-							document.getElementById('floating-info-text').innerHTML = '';
+							document.getElementById('floating-info-text').innerHTML = newLocationName;
 
           },
           error: function (jqXHR, textStatus, errorThrown) {
@@ -1272,12 +1316,72 @@ function eventListenersInsideDeptsandLocsModal() {
 				
 				document.getElementById('delete-department-modal-btn').setAttribute('style', 'display: inline !important');
 				document.getElementById('delete-department-modal-btn').setAttribute('deptid', `${this.getAttribute('deptid')}`);
+				
+				let deptID = this.getAttribute('deptid');
+				let deptName = departmentsObj[deptID];
+				
+				$.ajax({
+				url: "assets/php/checkIfLastDepartment.php",
+				type: "GET",
+				dataType: "json",
+				data: {
+					departmentID: deptID
+				},
+				success: function (result) {
+					
+						console.log('delete Location? ',result.data);
+						
+						let locName = locationsObj[result.data.locID];
+											
+						if (result.data.msg == "Delete location") {
+							
+							document.getElementById('delete-department-modal-btn').setAttribute('emptyLocID', result.data.locID);
+							
+							$('#alert-modal').modal(
+							{
+								title: '<i class="archive icon"></i>',
+								content: `<div class="alert-modal-text">Delete this department? 
+								
+												<h3> ${deptName} </h3>
+												<h4> The location ${locName} will also be deleted. </h4>
+												</div>`
+							}).modal('show');
+							
+							
+						}	else {
+							
+							document.getElementById('delete-department-modal-btn').setAttribute('emptyLocID', 0);
+							
+							
 
-				$('#alert-modal').modal(
-					{
-						title: '<i class="archive icon"></i>',
-						content: `<div class="alert-modal-text">Delete this department? <h3> ${this.getAttribute('deptName')} </h3></div>`
-					}).modal('show');
+							$('#alert-modal').modal(
+							{
+								title: '<i class="archive icon"></i>',
+								content: `<div class="alert-modal-text">Delete this department? <h3> ${deptName} </h3></div>`
+							}).modal('show');
+												
+							
+							
+						}
+						
+
+						/*
+
+						$('#alert-modal').modal(
+							{
+								title: '<i class="archive icon"></i>',
+								content: `<div class="alert-modal-text">Delete this department? <h3> ${this.getAttribute('deptName')} </h3></div>`
+							}).modal('show');
+
+						*/
+						
+				},
+				error: function (jqXHR, textStatus, errorThrown) {
+						console.log('error');
+						console.log(textStatus);
+						console.log(errorThrown);
+					},
+				});
 
 			});
 
@@ -2199,11 +2303,15 @@ function manageDepartmentsAndLocationsModal(locsAndDeptsObj){
 	console.log('locsAndDeptsObj',locsAndDeptsObj);
 	console.log('listOfLocations', listOfLocations);
 	
+	
+	
 	for (let loc = 0; loc < listOfLocations.length; loc ++) {
 		
 		locationName = listOfLocations[loc];
 		
 		let locationID;;
+		
+		console.log(locationName);
 		
 		for (let [key, value] of Object.entries(locationsObj)) {
 			
@@ -2212,14 +2320,19 @@ function manageDepartmentsAndLocationsModal(locsAndDeptsObj){
 			}
 		}
 		
+		if (!locsAndDeptsObj[locationID]['loaded']) {
+
 		let locationPanel = createLocationPanel(locationName, locationID);
 		let locationContent = document.createElement('div');
 		locationContent.setAttribute('class', 'ui attached segment');
 		
-		console.log('locationID', locationID);
+		countOfDepts = 0;
 		
 		for (let [k, val] of Object.entries(locsAndDeptsObj[locationID]['departments'])){		
+		
+				countOfDepts++;
 
+				if (!val.loaded) {
 	
 		/*
 		
@@ -2244,9 +2357,10 @@ function manageDepartmentsAndLocationsModal(locsAndDeptsObj){
 					
 					//ajax for count of employees?
 					
-					//} !val.loaded
+					} // !val.loaded
 					
-				}
+				} // end of DeptsLoops
+	
 
 			//locationContent.appendChild(createNewDeptAccordion(key));
 			locationContent.appendChild(createNewDeptAccordion(locationID));
@@ -2255,7 +2369,7 @@ function manageDepartmentsAndLocationsModal(locsAndDeptsObj){
 			
 			document.getElementById('append-location-panels').appendChild(locationPanel);
 			
-		//} !value.loaded
+		} // ! location ID .loaded
 		
 	} // end of locations loop
 	
