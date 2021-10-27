@@ -14,7 +14,7 @@ let departmentsObj = {};
 let listOfLocations = [];
 let listOfDepts = [];
 
-let manageDeptsAndLocsOpened = 0
+let manageDeptsAndLocsOpened = 0;
 let locationRules = [];
 let departmentRules = [];
 
@@ -537,16 +537,18 @@ $('#create-employee-btn').click(function(){
 });
 
 $('#manage-depts-and-locs-btn').click(function(){
-	
-		manageDeptsAndLocsOpened++;
-		
+			
 		updateLoadedLocsAndDeps = [];
 		
 		console.log('the obj ', locsAndDeptsObj);
 		
-		manageDepartmentsAndLocationsModal(locsAndDeptsObj);
+		//if (manageDeptsAndLocsOpened == 0) {
 		
-		//document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: block');
+			manageDepartmentsAndLocationsModal(locsAndDeptsObj);
+		
+		//}
+		
+		document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: block');
 		//document.getElementById('create-new-location-btn').setAttribute('style', 'display: inline');
 
 		$('.ui.modal.employee-details-modal').modal({
@@ -1038,6 +1040,12 @@ $(`#submit-new-location-btn`).click(function(e){
               updateLoadedLocsFunc();
 
               refreshPage();
+							
+							document.getElementById('modal-deny-btn').click();
+							
+							document.getElementById('floating-info-messag').setAttribute('class', 'ui info floating-error message');
+							document.getElementById('floating-info-header').innerHTML = 'New Location created';
+							document.getElementById('floating-info-text').innerHTML = '';
 
           },
           error: function (jqXHR, textStatus, errorThrown) {
@@ -1389,7 +1397,7 @@ function eventListenersInsideDeptsandLocsModal() {
 
 			});
 			
-			} // end of createNewDeptSubmitted == false
+			} // end of createNewDeptNeedsToBeValidated == false
 			
 			if (!$(`#locationID-${key}-new-dept-form`).form('validate form')) {
 				console.log('not validated')
@@ -1439,12 +1447,13 @@ function eventListenersInsideDeptsandLocsModal() {
 	
 	} //end of loop through the Obj
 	
+	/*
 	locationRules = basicRules.slice();
 	
 	console.log('location obj', locationsObj);
 	console.log('existing loc IDs', existingLocationIDs)
 
-	/*
+	
 	for (let e = 0 ; e < existingLocationIDs.length; e ++) {
 		
 		let nameRequired = locationsObj[existingLocationIDs[e]]
@@ -1456,7 +1465,7 @@ function eventListenersInsideDeptsandLocsModal() {
 		locationRules.push(newRule)
 	
 	}
-	*/
+	
 	
 	console.log('location rules', locationRules);
 	
@@ -1468,6 +1477,7 @@ function eventListenersInsideDeptsandLocsModal() {
 			}
 		}
 		});
+	*/
 
 } //END OF ADDING EVENT LISTENERS FUNCTION;
 
@@ -2045,13 +2055,30 @@ function createLocationPanel(name, id){
 	
 	let locationPanel = document.createElement('div'); //LOCATION PANEL
 		let panelCloser = document.createElement('i');
+		
 		let locationHeader = document.createElement('div');
 		locationHeader.setAttribute('class', 'ui one top attached segment');
-		locationHeader.innerHTML = `${name} ${id}`;
+		let deleteLocationIcon = document.createElement('span');
+		deleteLocationIcon.setAttribute('locid', id);
+		deleteLocationIcon.setAttribute('locname', locationsObj[id]);
+		deleteLocationIcon.setAttribute('id', `delete-locationID-${id}-icon`);
+		deleteLocationIcon.setAttribute('class', 'location-trash-icon pointer');
+		
+		let trashIcon = document.createElement('i');
+		trashIcon.setAttribute('class', 'fas fa-trash-alt');
+		
+		let locationHeaderText = document.createElement('h4');
+		locationHeaderText.innerHTML = `${name}`; 
+		locationHeaderText.setAttribute('class', 'location-header-text')
+		
+		locationHeader.appendChild(locationHeaderText); 
+		
+		deleteLocationIcon.appendChild(trashIcon);
+		locationHeader.appendChild(deleteLocationIcon);
 
-	locationPanel.appendChild(panelCloser);
-	locationPanel.appendChild(locationHeader);
-
+		locationPanel.appendChild(panelCloser);
+		locationPanel.appendChild(locationHeader);
+	
 	return locationPanel;
 
 }
@@ -2098,7 +2125,7 @@ function createDepartmentSegment(id, name){
 					departmentTitle.setAttribute('id', `departmentID-${id}-title`);
 						departmentTitleText.innerHTML = name;
 					departmentEmployees.setAttribute('class', 'dept-employee-info-icons');						
-						departmentEmployeeInfo.setAttribute('class', 'employee-count-icon');
+						departmentEmployeeInfo.setAttribute('class', 'employee-count-icon display-none-field'); //hidden with display-none-field
 							departmentEmployeeCount.setAttribute('id', `departmentID-${id}-employee-count`); departmentEmployeeCount.innerHTML = 'X';
 							employeesIcon.setAttribute('class', 'fas fa-users');
 						departmentButtons.setAttribute('class', 'dept-delete-edit-btns');
@@ -2168,31 +2195,39 @@ function manageDepartmentsAndLocationsModal(locsAndDeptsObj){
 	
 	for (let [key,value] of Object.entries(locsAndDeptsObj)) {
 		
-		let locationName = locationsObj[key];
+		//if (!value.loaded) {
 		
-		let locationPanel = createLocationPanel(locationName, key);
-		let locationContent = document.createElement('div');
-		locationContent.setAttribute('class', 'ui attached segment');
-	
-			for (let [k, val] of Object.entries(value['departments'])){
-				
-				let deptName = val.depname;
-				
-				locationContent.appendChild(createDepartmentSegment(k, deptName));
-				
-				//ajax for count of employees?
-				
-			}
+			let locationName = locationsObj[key];
+			
+			let locationPanel = createLocationPanel(locationName, key);
+			let locationContent = document.createElement('div');
+			locationContent.setAttribute('class', 'ui attached segment');
+		
+				for (let [k, val] of Object.entries(value['departments'])){
+					
+					//if (!val.loaded) {
+					
+					let deptName = val.depname;
+					
+					locationContent.appendChild(createDepartmentSegment(k, deptName));
+					
+					//ajax for count of employees?
+					
+					//} !val.loaded
+					
+				}
 
-		locationContent.appendChild(createNewDeptAccordion(key));
-		
-		locationPanel.appendChild(locationContent);
-		
-		document.getElementById('append-location-panels').appendChild(locationPanel);
+			locationContent.appendChild(createNewDeptAccordion(key));
+			
+			locationPanel.appendChild(locationContent);
+			
+			document.getElementById('append-location-panels').appendChild(locationPanel);
+			
+		//} !value.loaded
 		
 	}
 	
-	document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: block');
+	//document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: block');
 	document.getElementById('create-new-location-btn').setAttribute('style', 'display: inline');
 
 	eventListenersInsideDeptsandLocsModal();
@@ -2952,7 +2987,6 @@ function closeModal(){
 	document.getElementById('submit-edit-employee').setAttribute('style', 'display: none');
 	document.getElementById('create-new-location-btn').setAttribute('style', 'display: none');
 
-
 	document.getElementById('employee-modal-view-fields').innerHTML = "";
 	document.getElementById('employee-modal-create-fields').innerHTML = "";
 	document.getElementById('employee-modal-edit-fields').innerHTML = "";
@@ -2967,6 +3001,7 @@ function closeAlertModal(){
 	document.getElementById('delete-employee-modal-btn').setAttribute('style', 'display: none');
 	document.getElementById('update-employee-modal-btn').setAttribute('style', 'display: none');
 	document.getElementById('delete-department-modal-btn').setAttribute('style', 'display: none');
+	document.getElementById('delete-location-modal-btn').setAttribute('style', 'display: none');
 
 }
 

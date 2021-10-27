@@ -288,6 +288,11 @@ h4.ui.image.header {
 	padding: 0 !important;
 }
 
+.location-header-text {
+	display: inline
+}
+
+
 .department-title-row {
 	display: flex;
 	justify-content: space-between;
