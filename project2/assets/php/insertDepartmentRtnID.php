@@ -56,13 +56,41 @@
 
 	}
 
+	$queryForID = $conn->prepare('SELECT id FROM department WHERE name = ? AND locationID = ?');
+	$queryForID->bind_param("si", $_REQUEST['name'], $_REQUEST['locationID']);
+	$queryForID->execute();
 	
+	if (false === $queryForID) {
+
+		$output['status']['code'] = "400";
+		$output['status']['name'] = "executed";
+		$output['status']['description'] = "queryForID failed";	
+		$output['data'] = [];
+
+		echo json_encode($output); 
+	
+		mysqli_close($conn);
+		exit;
+
+	}
+
+	$resultForID = $queryForID->get_result();
+
+  //$dataForID = [];
+  $dataForID;
+
+	while ($row = mysqli_fetch_assoc($resultForID)) {
+
+		//array_push($dataForID, $row);
+		$dataForID = $row;
+
+	}
 
 	$output['status']['code'] = "200";
 	$output['status']['name'] = "ok";
 	$output['status']['description'] = "success";
 	$output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000 . " ms";
-	$output['data'] = [];
+	$output['data'] = $dataForID;
 	
 	mysqli_close($conn);
 
