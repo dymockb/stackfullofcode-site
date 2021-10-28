@@ -3335,6 +3335,8 @@ function viewDetailsBtnFunctionality(){
 			;
 		});
 		
+		document.getElementById('close-only-btn').setAttribute('style', 'display: inline');
+		
 
 		$('.ui.modal.employee-details-modal').modal({
 			title: 'Employee details',
