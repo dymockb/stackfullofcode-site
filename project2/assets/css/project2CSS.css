@@ -51,6 +51,10 @@ body {
 	margin-right: auto;
 }
 
+#search-box-icon {
+	margin-left: -4rem
+}
+
 #company-logo {
 	width: 30%;
 	text-align: center;
@@ -414,6 +418,10 @@ i.fas.fa-user-edit {
 	cursor: pointer !important;
 }
 
+.default-cursor {
+	cursor: default !important;
+}
+
 #scrolling-modal-pane {
 	background-color: #d4d4d5;
 }
@@ -500,6 +508,10 @@ h3.ui.center.header {
 }
 
 @media only screen and (max-width: 767.98px) {
+	
+	#search-box-icon {
+		margin-left: 0
+	}
 
 	html {
 		font-size: 0.75rem;

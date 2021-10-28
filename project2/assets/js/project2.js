@@ -2641,7 +2641,7 @@ function createDepartmentSegment(id, name, emps){
 						departmentTitleText.innerHTML = name;
 					departmentEmployees.setAttribute('class', 'dept-employee-info-icons');						
 						departmentEmployeeInfo.setAttribute('class', 'employee-count-icon'); //hide with display-none-field display-none-field
-							departmentEmployeeCount.setAttribute('id', `departmentID-${id}-employee-count`); departmentEmployeeCount.innerHTML = `${emps}`; departmentEmployeeCount.setAttribute('class', 'employee-count-number');
+							departmentEmployeeCount.setAttribute('id', `departmentID-${id}-employee-count`); departmentEmployeeCount.innerHTML = `${emps}`; departmentEmployeeCount.setAttribute('class', 'employee-count-number default-cursor');
 							employeesIcon.setAttribute('class', 'fas fa-users');
 						departmentButtons.setAttribute('class', 'dept-delete-edit-btns');
 							renameDepartmentBtn.setAttribute('class', 'ui icon button');  renameDepartmentBtn.setAttribute('id', `rename-departmentID-${id}-btn`);
