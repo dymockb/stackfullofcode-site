@@ -97,7 +97,7 @@ function updateLoadedDeptsFunc(){
 			
 				if (updateLoadedDepts[uld] == k) {
 					
-					//val.loaded = true;
+					val.loaded = true;
 					
 				}
 			
@@ -117,7 +117,7 @@ function updateLoadedLocsFunc(){
 		
 			if (updateLoadedLocs[ull] == key) {
 				
-				//value.loaded = true;
+				value.loaded = true;
 				
 			}
 		
@@ -207,8 +207,6 @@ function getAllDepartments(){
 				locsAndDeptsObj[result.data[d2].locationID]['departments'][result.data[d2].id] = deptObj;
 				
 			}
-			
-			console.log('the obj at end of depts ajax', locsAndDeptsObj);
 				
 			
 			listOfDepts.sort();
@@ -222,12 +220,8 @@ function getAllDepartments(){
 
 			departmentCheckboxFunctionalityMobile();
 			
-			console.log('departments obj', departmentsObj);
-			
-			let finaled = result.data.length;
-
 			for (let ed = 0; ed < result.data.length; ed ++){
-					
+				
 				let did = result.data[ed].id;
 				
 					$.ajax({
@@ -240,7 +234,7 @@ function getAllDepartments(){
 					success: function (result) {
 							
 							departmentsObj[did]['employees'] = result.data.personnel; 
-							
+						
 					},
 					error: function (jqXHR, textStatus, errorThrown) {
 							console.log('error');
@@ -248,13 +242,6 @@ function getAllDepartments(){
 							console.log(errorThrown);
 						},
 					});	
-				
-			if (ed == finaled-1) {
-			
-				console.log('here');
-				manageDepartmentsAndLocationsModal(locsAndDeptsObj);
-			
-			}
 				
 			}
 
@@ -316,23 +303,14 @@ function getAllLocations(){
 
 function refreshDeptsAndLocsModal(){
 	
-	for (let prop in locsAndDeptsObj){
-		delete locsAndDeptsObj[prop];
-	}
-	
-	for (let prop in locationsObj){
-		delete locationsObj[prop];
-	}
-	
-	for (let prop in departmentsObj){
-		delete departmentsObj[prop];
-	}
-	
-	//locsAndDeptsObj = {};
-	//locationsObj = {};
-	//departmentsObj = {};
+	locsAndDeptsObj = {};
+	locationsObj = {};
+	departmentsObj = {};
+	listOfLocations = [];
+	listOfDepts = [];
 
-	getAllLocationsAndDepartments();
+	getAllDepartments();
+	getAllLocations();
 	
 }
 
@@ -441,10 +419,6 @@ function getAllLocationsAndDepartments(){
 
 							departmentCheckboxFunctionalityMobileIncludesRunSearch();
 							
-							let finaled = result.data.length;
-							
-							console.log('departmentsObj', departmentsObj);
-							
 							for (let ed = 0; ed < result.data.length; ed ++){
 				
 								let did = result.data[ed].id;
@@ -459,17 +433,6 @@ function getAllLocationsAndDepartments(){
 									success: function (result) {
 											
 											departmentsObj[did]['employees'] = result.data.personnel; 
-											
-											if (ed == finaled-1) {
-			
-												console.log('here');
-												let catchUpTimer = setTimeout(function(){
-													manageDepartmentsAndLocationsModal(locsAndDeptsObj);
-													clearTimeout(catchUpTimer);
-												},200);
-
-											
-											}
 										
 									},
 									error: function (jqXHR, textStatus, errorThrown) {
@@ -478,8 +441,6 @@ function getAllLocationsAndDepartments(){
 											console.log(errorThrown);
 										},
 									});	
-									
-
 							
 							}
 
@@ -645,8 +606,24 @@ $('#create-employee-btn').click(function(){
 	
 });
 
-function showManageModal(){
-	
+$('#manage-depts-and-locs-btn').click(function(){
+			
+		updateLoadedLocsAndDeps = [];
+		
+		console.log('the obj ', locsAndDeptsObj);
+		
+		//if (manageDeptsAndLocsOpened == 0) {
+			
+		
+		
+		manageDepartmentsAndLocationsModal(locsAndDeptsObj);
+		
+		//}
+		
+		document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: block');
+		document.getElementById('modal-deny-btn').setAttribute('style', 'display: inline');
+		//document.getElementById('create-new-location-btn').setAttribute('style', 'display: inline');
+
 		$('.ui.modal.employee-details-modal').modal({
 
 		title: `Manage Departments and Locations`,
@@ -654,6 +631,7 @@ function showManageModal(){
 		onShow: function(){
 			//console.log('open count',manageDeptsAndLocsOpened);
 			//if (manageDeptsAndLocsOpened == 0) {
+				$('.ui.accordion').accordion();
 			//}
 			manageDeptsAndLocsOpened++;
 			//eventListenersInsideDeptsandLocsModal();
@@ -673,30 +651,6 @@ function showManageModal(){
 			closeModal();
 		}	
 		}).modal('show');
-		
-}
-
-$('#manage-depts-and-locs-btn').click(function(){
-			
-		updateLoadedLocsAndDeps = [];
-		
-		console.log('the obj ', locsAndDeptsObj);
-		
-		if (manageDeptsAndLocsOpened != 0) {
-
-			refreshDeptsAndLocsModal();
-
-		}		
-		
-		//manageDepartmentsAndLocationsModal(locsAndDeptsObj);
-		
-
-		
-		document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: block');
-		document.getElementById('modal-deny-btn').setAttribute('style', 'display: inline');
-		//document.getElementById('create-new-location-btn').setAttribute('style', 'display: inline');
-
-		showManageModal();
 		
 	
 });
@@ -799,7 +753,7 @@ $('#submit-edit-employee').click(function (){
 
 $('#modal-deny-btn').click(function(){
 	
-	//location.reload();
+	location.reload();
 	
 })
 
@@ -1519,15 +1473,13 @@ function oneLocationEventListeners(deptsParam, locKey){
 
 		});
 		
-		//locsAndDeptsObj[locKey]['departments'][k]['loaded'] = true;
+		locsAndDeptsObj[locKey]['departments'][k]['loaded'] = true;
 
 	}  // end of IF dept loaded == false, apply listeners
 						
 } // end of loop through departments
 
-				console.log('add accordions');
-				$('.ui.accordion').accordion();
-	
+
 }
 
 
@@ -1721,14 +1673,6 @@ function eventListenersInsideDeptsandLocsModal() {
 					document.getElementById(`departmentID-${k}-warning`).setAttribute('class','ui floating warning message');
 					document.getElementById(`departmentID-${k}-warning-text`).innerHTML = 'Only empty departments can be deleted';
 					
-					$(`#departmentID-${k}-close-icon`)
-					.on('click', function() {
-						$(this)
-							.closest('.message')
-							.transition('fade')
-						;
-					});
-					
 				} else {
 				
 				$.ajax({
@@ -1815,7 +1759,7 @@ function eventListenersInsideDeptsandLocsModal() {
 
 			});
 			
-			//locsAndDeptsObj[key]['departments'][k]['loaded'] = true;
+			locsAndDeptsObj[key]['departments'][k]['loaded'] = true;
 
 		}  // end of IF dept loaded == false, apply listeners
 							
@@ -1994,14 +1938,11 @@ function eventListenersInsideDeptsandLocsModal() {
 
     });
 
-    //locsAndDeptsObj[key]['loaded'] = true;
+    locsAndDeptsObj[key]['loaded'] = true;
 
 	} // end of location loop if loaded == false
 	
 	} //end of loop through the Obj
-	
-				console.log('add accordions');
-				$('.ui.accordion').accordion();
 	
 	/*
 	locationRules = basicRules.slice();
@@ -2694,7 +2635,7 @@ function createDepartmentSegment(id, name, emps){
 	departmentRow.setAttribute('class', 'ui row');
 		departmentDetails.setAttribute('class', 'ui column manage-dept-info');
 		departmentWarning.setAttribute('class', 'ui hidden warning message'); departmentWarning.setAttribute('id', `departmentID-${id}-warning`);
-			closeWarningIcon.setAttribute('class', 'close icon'); closeWarningIcon.setAttribute('id', `departmentID-${id}-close-icon`);
+			closeWarningIcon.setAttribute('class', 'close icon');
 			departmentWarningText.setAttribute('id', `departmentID-${id}-warning-text`);
 			departmentForm.setAttribute('class', 'ui form rename-form'); departmentForm.setAttribute('id',`departmentID-${id}-form`); departmentForm.setAttribute('name',`departmentID-${id}-form`);
 				departmentTitleRow.setAttribute('class', 'department-title-row');
@@ -2771,31 +2712,11 @@ function manageDepartmentsAndLocationsModal(locsAndDeptsObj){
 	
 	listOfLocations.sort();		
 	
-
-	
 	console.log('locsAndDeptsObj',locsAndDeptsObj);
 	console.log('listOfLocations', listOfLocations);
-
-	if (manageDeptsAndLocsOpened != 0) {
-		
-		//document.getElementById('append-location-panels').innerHTML = '';
-		
-		let el = document.getElementById('append-location-panels');
-		let elClone = el.cloneNode(true);
-		
-		el.parentNode.replaceChild(elClone, el);
-		
-		console.log(elClone);
-		
-		document.getElementById('append-location-panels').innerHTML = '';
-		//let dl = document.getElementById('floating-info-message');
-		//let dlClone = dl.cloneNode(true);
-		
-		//dl.parentNode.replaceChild(dlClone, dl);
 	
-	}
 	
-	console.log('dep b4 loop', departmentsObj);
+	
 	for (let loc = 0; loc < listOfLocations.length; loc ++) {
 		
 		locationName = listOfLocations[loc];
@@ -2820,14 +2741,11 @@ function manageDepartmentsAndLocationsModal(locsAndDeptsObj){
 		
 		countOfDepts = 0;
 		
-		//console.log('deptobh again', departmentsObj);
-		
 		for (let [k, val] of Object.entries(locsAndDeptsObj[locationID]['departments'])){		
 		
 				countOfDepts++;
 				
 				let employeeCount = departmentsObj[k]['employees'];
-				console.log('dept view', departmentsObj[k]);
 
 				if (!val.loaded) {
 	
@@ -2849,8 +2767,6 @@ function manageDepartmentsAndLocationsModal(locsAndDeptsObj){
 						//if (!val.loaded) {
 					
 					let deptName = val.depname;
-					
-					console.log('empcount', employeeCount);
 					
 					locationContent.appendChild(createDepartmentSegment(k, deptName, employeeCount));
 					
@@ -2877,7 +2793,6 @@ function manageDepartmentsAndLocationsModal(locsAndDeptsObj){
 
 	eventListenersInsideDeptsandLocsModal();
 	
-	/*
 	$('.message .close')
 	.on('click', function() {
 		$(this)
@@ -2885,8 +2800,6 @@ function manageDepartmentsAndLocationsModal(locsAndDeptsObj){
 			.transition('fade')
 		;
 	});
-	*/	
-	
 	
 }
 
@@ -3724,14 +3637,8 @@ function refreshPage(){
 	
 	getAllEmployees();
 
-	//getAllLocations();
-	//getAllDepartments();
-
 	getAllLocationsAndDepartments();	
   // includes runSearch at the end
-
-
-
 
 }
 
@@ -3769,13 +3676,11 @@ window.onload = (event) => {
 			
 			getAllEmployees();
 
-			//getAllDepartments();
+			getAllDepartments();
 
-			//getAllLocations();
+			getAllLocations();
 
-      getAllLocationsAndDepartments();
-			
-			firstload++;
+      firstload++;
 
 
 		});
