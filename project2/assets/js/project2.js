@@ -57,8 +57,8 @@ ruleTwo['type'] = 'regExp[/^[A-Z]/]';
 ruleTwo['prompt'] = 'First letter must be a capital';
 
 let ruleThree = {};
-ruleThree['type'] = 'minLength[2]';
-ruleThree['prompt'] = 'At least two characters are required.';
+ruleThree['type'] = 'minLength[3]';
+ruleThree['prompt'] = 'At least three characters are required.';
 
 basicRules.push(ruleOne);
 basicRules.push(ruleTwo);
@@ -582,6 +582,7 @@ $('#create-employee-btn').click(function(){
 	
 	document.getElementById('employee-modal-create-fields').setAttribute('style','display: inherit');
 	document.getElementById('submit-create-employee').setAttribute('style', 'display: inline');
+	document.getElementById('close-only-btn').setAttribute('style', 'display: inline');
 
 
 	$('.ui.modal.employee-details-modal').modal({
@@ -618,6 +619,7 @@ $('#manage-depts-and-locs-btn').click(function(){
 		//}
 		
 		document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: block');
+		document.getElementById('modal-deny-btn').setAttribute('style', 'display: inline');
 		//document.getElementById('create-new-location-btn').setAttribute('style', 'display: inline');
 
 		$('.ui.modal.employee-details-modal').modal({
@@ -690,6 +692,7 @@ $('#edit-employee-fields-btn').click(function(){
 
 	document.getElementById('employee-modal-edit-fields').setAttribute('style','display: inherit');
 	document.getElementById('submit-edit-employee').setAttribute('style','display: inline');
+	document.getElementById('close-only-btn').setAttribute('style', 'display: inline');
 	document.getElementById('submit-edit-employee').setAttribute('employee-details', this.getAttribute('employee-details'));
 
 	$('.ui.modal.employee-details-modal').modal({
@@ -732,7 +735,7 @@ $('#submit-edit-employee').click(function (){
 	if ($('#employee-modal-edit-fields').form('validate form')) {
 
 		$('#employee-modal-edit-fields').form('submit');
-	
+		$('#employee-modal-create-fields').form('reset');	
 	}
 	
 });
@@ -800,7 +803,8 @@ $('#update-employee-modal-btn').click(function (){
 			console.log('orderby', orderBy, 'lastSearch', lastSearch);
 			employeeJustEdited = true;
 			editedElement = updateEmployeeDataObj;
-			runSearch(orderBy,'');
+			document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', JSON.stringify(updateEmployeeDataObj));
+			runSearch(orderBy,lastSearch);
 
 	},
 	error: function (jqXHR, textStatus, errorThrown) {
@@ -1375,6 +1379,10 @@ function oneLocationEventListeners(deptsParam, locKey){
 			let deptID = this.getAttribute('deptid');
 			let deptName = departmentsObj[deptID]['name'];
 			
+			
+			
+			
+			
 			$.ajax({
 			url: "assets/php/checkIfLastDepartment.php",
 			type: "GET",
@@ -1420,15 +1428,15 @@ function oneLocationEventListeners(deptsParam, locKey){
 					}
 					
 
-					/*
+					
 
-					$('#alert-modal').modal(
-						{
-							title: '<i class="archive icon"></i>',
-							content: `<div class="alert-modal-text">Delete this department? <h3> ${this.getAttribute('deptName')} </h3></div>`
-						}).modal('show');
+					//$('#alert-modal').modal(
+					//	{
+				//			title: '<i class="archive icon"></i>',
+					//		content: `<div class="alert-modal-text">Delete this department? <h3> ${this.getAttribute('deptName')} </h3></div>`
+					//	}).modal('show');
 
-					*/
+					
 					
 			},
 			error: function (jqXHR, textStatus, errorThrown) {
@@ -1437,6 +1445,8 @@ function oneLocationEventListeners(deptsParam, locKey){
 					console.log(errorThrown);
 				},
 			});
+			
+			
 
 		});
 
@@ -1644,6 +1654,15 @@ function eventListenersInsideDeptsandLocsModal() {
 				
 				let deptID = this.getAttribute('deptid');
 				let deptName = departmentsObj[deptID]['name'];
+
+				console.log(this);	
+
+				if (this.getAttribute('employees') != 0) {
+					
+					document.getElementById(`departmentID-${k}-warning`).setAttribute('class','ui floating warning message');
+					document.getElementById(`departmentID-${k}-warning-text`).innerHTML = 'Only empty departments can be deleted';
+					
+				} else {
 				
 				$.ajax({
 				url: "assets/php/checkIfLastDepartment.php",
@@ -1690,15 +1709,15 @@ function eventListenersInsideDeptsandLocsModal() {
 						}
 						
 
-						/*
+						
 
-						$('#alert-modal').modal(
-							{
-								title: '<i class="archive icon"></i>',
-								content: `<div class="alert-modal-text">Delete this department? <h3> ${this.getAttribute('deptName')} </h3></div>`
-							}).modal('show');
+						//$('#alert-modal').modal(
+						//	{
+						//		title: '<i class="archive icon"></i>',
+						//		content: `<div class="alert-modal-text">Delete this department? <h3> ${this.getAttribute('deptName')} </h3></div>`
+						//	}).modal('show');
 
-						*/
+						
 						
 				},
 				error: function (jqXHR, textStatus, errorThrown) {
@@ -1707,8 +1726,15 @@ function eventListenersInsideDeptsandLocsModal() {
 						console.log(errorThrown);
 					},
 				});
+				
+				
+
+				
+				}
 
 			});
+
+			
 
 			$(`#departmentID-${k}-trash-warning`).click(function(e){
 				
@@ -2049,6 +2075,18 @@ function renderEmployee(employeeProperties){
 	for (const [key, value] of Object.entries(employeeProperties)) {
 					
 		document.getElementById(`employee-${key}-field`).innerHTML = value;
+		if (value == 'Job Title TBC') {
+			document.getElementById(`employee-${key}-field`).setAttribute('style', 'color: gray; font-size: 1rem; font-style: italic');
+		} else {
+			document.getElementById(`employee-${key}-field`).setAttribute('style', '');
+		}
+		
+		if (key == 'email'){
+			
+			document.getElementById('email-mail-to').setAttribute('href', `mailto:${value}`);
+			
+		}
+		
 
 	}
 	
@@ -2549,6 +2587,9 @@ function createDepartmentSegment(id, name, emps){
 	let departmentSegment = document.createElement('div'); // Department Segment
 	let departmentCloser = document.createElement('i');															departmentSegment.appendChild(departmentCloser);
 	let departmentRow = document.createElement('div');															departmentSegment.appendChild(departmentRow);
+		let departmentWarning = document.createElement('div');												departmentRow.appendChild(departmentWarning);
+			let closeWarningIcon = document.createElement('i');													departmentWarning.appendChild(closeWarningIcon);
+			let departmentWarningText = document.createElement('span');									departmentWarning.appendChild(departmentWarningText);
 		let departmentDetails = document.createElement('div');												departmentRow.appendChild(departmentDetails);
 			let departmentForm = document.createElement('form');												departmentDetails.appendChild(departmentForm);
 				let departmentTitleRow = document.createElement('div');										departmentForm.appendChild(departmentTitleRow);
@@ -2581,6 +2622,9 @@ function createDepartmentSegment(id, name, emps){
 	departmentCloser.setAttribute('class', 'close icon display-none-field'); departmentCloser.setAttribute('id', `close-departmentID-${id}-icon`);
 	departmentRow.setAttribute('class', 'ui row');
 		departmentDetails.setAttribute('class', 'ui column manage-dept-info');
+		departmentWarning.setAttribute('class', 'ui hidden warning message'); departmentWarning.setAttribute('id', `departmentID-${id}-warning`);
+			closeWarningIcon.setAttribute('class', 'close icon');
+			departmentWarningText.setAttribute('id', `departmentID-${id}-warning-text`);
 			departmentForm.setAttribute('class', 'ui form rename-form'); departmentForm.setAttribute('id',`departmentID-${id}-form`); departmentForm.setAttribute('name',`departmentID-${id}-form`);
 				departmentTitleRow.setAttribute('class', 'department-title-row');
 					departmentTitle.setAttribute('id', `departmentID-${id}-title`);
@@ -2592,7 +2636,7 @@ function createDepartmentSegment(id, name, emps){
 						departmentButtons.setAttribute('class', 'dept-delete-edit-btns');
 							renameDepartmentBtn.setAttribute('class', 'ui icon button');  renameDepartmentBtn.setAttribute('id', `rename-departmentID-${id}-btn`);
 							editIcon.setAttribute('class', 'fas fa-edit pointer');
-							deleteDepartmentBtn.setAttribute('class', 'ui icon button'); deleteDepartmentBtn.setAttribute('deptid', id); deleteDepartmentBtn.setAttribute('deptname', name); deleteDepartmentBtn.setAttribute('id', `delete-departmentID-${id}-btn`);
+							deleteDepartmentBtn.setAttribute('class', 'ui icon button'); deleteDepartmentBtn.setAttribute('deptid', id); deleteDepartmentBtn.setAttribute('deptname', name); deleteDepartmentBtn.setAttribute('id', `delete-departmentID-${id}-btn`); deleteDepartmentBtn.setAttribute('employees', `${emps}`);// also add emps as property to button
 							binIcon.setAttribute('class', 'fas fa-trash-alt');
 				renameDeptAccordion.setAttribute('class', 'ui accordion field new-dept-accordion');	renameDeptAccordion.setAttribute('id', `rename-dept-${id}-accordion`);
 					renameDeptAccordionTitle.setAttribute('class', 'title display-none-field');
@@ -2736,6 +2780,14 @@ function manageDepartmentsAndLocationsModal(locsAndDeptsObj){
 	document.getElementById('create-new-location-btn').setAttribute('style', 'display: inline');
 
 	eventListenersInsideDeptsandLocsModal();
+	
+	$('.message .close')
+	.on('click', function() {
+		$(this)
+			.closest('.message')
+			.transition('fade')
+		;
+	});
 	
 }
 
@@ -3229,6 +3281,7 @@ function viewDetailsBtnFunctionality(){
 			e.preventDefault()
 
 			document.getElementById('submit-edit-employee').setAttribute('style', 'display: inline');
+			document.getElementById('close-only-btn').setAttribute('style', 'display: inline');
 
 			document.getElementById('close-mobile-employee-panel').click();
 			
@@ -3493,6 +3546,8 @@ function closeModal(){
 	document.getElementById('submit-create-employee').setAttribute('style','display: none');
 	document.getElementById('submit-edit-employee').setAttribute('style', 'display: none');
 	document.getElementById('create-new-location-btn').setAttribute('style', 'display: none');
+	document.getElementById('modal-deny-btn').setAttribute('style', 'display: none');
+	document.getElementById('close-only-btn').setAttribute('style', 'display: none');
 
 	document.getElementById('employee-modal-view-fields').innerHTML = "";
 	document.getElementById('employee-modal-create-fields').innerHTML = "";

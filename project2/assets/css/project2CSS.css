@@ -208,6 +208,8 @@ td#employee-details-field {
 	min-width: 330px;
 }
 
+#modal-deny-btn,
+#close-only-btn,
 #manage-depts-and-locs,
 #employee-modal-create-fields,
 #employee-modal-edit-fields,
@@ -389,6 +391,7 @@ i.fas.fa-users-cog {
 	display: flex;
 	font-size: 2.3rem;
 	margin-left: 2rem;
+	padding-top: 0.5rem;
 }
 
 i.fas.fa-user-edit {
