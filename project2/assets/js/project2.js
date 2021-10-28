@@ -694,10 +694,19 @@ $('#edit-employee-fields-btn').click(function(){
 	document.getElementById('submit-edit-employee').setAttribute('style','display: inline');
 	document.getElementById('close-only-btn').setAttribute('style', 'display: inline');
 	document.getElementById('submit-edit-employee').setAttribute('employee-details', this.getAttribute('employee-details'));
+	
+
 
 	$('.ui.modal.employee-details-modal').modal({
 		title: 'Edit Employee',
 		closable: false,
+		onShow: function (){
+			let blurTimer = setTimeout(function(){
+				document.getElementById('location-dropdown').blur();
+				document.getElementById('focus-field').focus();
+				clearTimeout(blurTimer);
+			},400)			
+		},
 		onDeny: function(){
 			console.log('deny');
 			//return false;
@@ -2346,7 +2355,8 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 	let blankInput = inputField.cloneNode(true);
 	blankInput.setAttribute('style', 'display: none');
 	blankInput.setAttribute('type', 'text');
-	blankInput.setAttribute('autofocus', '');
+	blankInput.setAttribute('id', 'focus-field');
+	//blankInput.setAttribute('autofocus', '');
 
 	emailField.appendChild(emailHeading);
 	emailField.appendChild(emailInput);

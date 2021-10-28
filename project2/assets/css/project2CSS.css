@@ -303,7 +303,10 @@ h4.ui.image.header {
 }
 .employee-count-icon {
 	margin-right: 0.5rem;
-	font-size: 1.5rem;
+	font-size: 1.2rem;
+	display: flex;
+	align-items: center;
+	flex-wrap: nowrap
 }
 
 .dept-employee-info-icons {
@@ -526,6 +529,10 @@ h3.ui.center.header {
 		display: flex;
 		flex-direction: column;
 		flex-wrap: wrap;
+	}
+	
+	.employee-count-icon {
+		font-size: 0.9rem;
 	}
 
 	#pc-table {
