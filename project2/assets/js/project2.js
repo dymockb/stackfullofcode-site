@@ -3665,6 +3665,9 @@ function closeAlertModal(){
 	document.getElementById('update-employee-modal-btn').setAttribute('style', 'display: none');
 	document.getElementById('delete-department-modal-btn').setAttribute('style', 'display: none');
 	document.getElementById('delete-location-modal-btn').setAttribute('style', 'display: none');
+	document.getElementById('create-new-location-btn').setAttribute('style', 'display: none');
+	
+	
 
 }
 
