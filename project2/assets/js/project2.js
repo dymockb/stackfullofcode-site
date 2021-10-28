@@ -694,7 +694,7 @@ $('#manage-depts-and-locs-btn').click(function(){
 		
 		document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: block');
 		document.getElementById('modal-deny-btn').setAttribute('style', 'display: inline');
-		//document.getElementById('create-new-location-btn').setAttribute('style', 'display: inline');
+		document.getElementById('create-new-location-btn').setAttribute('style', 'display: inline');
 
 		showManageModal();
 		
@@ -2873,7 +2873,6 @@ function manageDepartmentsAndLocationsModal(locsAndDeptsObj){
 	} // end of locations loop
 	
 	//document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: block');
-	document.getElementById('create-new-location-btn').setAttribute('style', 'display: inline');
 
 	eventListenersInsideDeptsandLocsModal();
 	
@@ -3314,7 +3313,7 @@ function selectEmployeeFunctionality(){
 function viewDetailsBtnFunctionality(){
 	
 	$('.employee-modal-btn').click(function(event){	
-		
+
 		
 
 		let employeeProperties = JSON.parse(this.getAttribute('employee-details'));
@@ -3372,9 +3371,9 @@ function viewDetailsBtnFunctionality(){
 		document.getElementById('employee-modal-edit-fields').setAttribute('style','display: inherit');
 		
 		let waitForModal = setTimeout(function(){
-			document.getElementById('employee-modal-form-fields').setAttribute('style', 'display: none');			
-			clearTimeout(waitForModal);
-		},150);
+			document.getElementById('employee-modal-form-fields').setAttribute('style', 'display: none');		
+			clearTimeout(waitForModal);			
+		},450);
 
 		$('#edit-employee-mobile-modal-button').click(function(e){
 			e.preventDefault()
