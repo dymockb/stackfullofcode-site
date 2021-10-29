@@ -1594,7 +1594,7 @@ function eventListenersInsideDeptsandLocsModal() {
 				if (this.getAttribute('employees') != 0) {
 					
 					document.getElementById(`departmentID-${k}-warning`).setAttribute('class','ui floating warning message');
-					document.getElementById(`departmentID-${k}-warning-text`).innerHTML = 'Only empty departments can be deleted';
+					document.getElementById(`departmentID-${k}-warning-text`).innerHTML = `<i class="fas fa-exclamation-circle">&nbsp;</i>  Only empty departments can be deleted.`;
 					
 					$(`#departmentID-${k}-close-icon`)
 					.on('click', function() {
