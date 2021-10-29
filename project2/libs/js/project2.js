@@ -596,6 +596,7 @@ $('#create-employee-btn').click(function(){
 		
 		title: 'Create Employee',
 		closable: false,
+		autofocus: false,
 		onDeny: function(){
 			console.log('deny');
 			//return false;
@@ -706,6 +707,7 @@ $('#edit-employee-fields-btn').click(function(){
 	$('.ui.modal.employee-details-modal').modal({
 		title: 'Edit Employee',
 		closable: false,
+		autofocus: false,
 		onShow: function (){
 			//tried to stop location drop down from opening			
 		},
@@ -3122,6 +3124,7 @@ function viewDetailsBtnFunctionality(){
 		$('.ui.modal.employee-details-modal').modal({
 			title: 'Employee details',
 			closable: false,
+			autofocus: false,
 			onDeny: function(){
 				console.log('deny');
 				//return false;
