@@ -9,20 +9,20 @@
 
 
   <title>Project 2</title>
-  <link href="dist/my-semantic.css" rel="stylesheet" type="text/css">
-  <link href="assets/css/project2CSS.css" rel="stylesheet">
+  <link href="vendors/fomantic/semantic.css" rel="stylesheet" type="text/css">
+  <link href="libs/css/project2.css" rel="stylesheet">
 </head>
 
 <body id="body-tag">
-  <!--    <div id="preloader"></div> -->
+  <div id="preloader"></div> 
 
 
   <div class="ui segment" id="top-nav">
     <div class="ui fluid container" id="top-nav-items">
       <div id="cogs-and-search">
         
-        <i class="fas fa-users-cog pointer" id="mobile-manage-cog" ></i> <!-- <span id="icon-block"></span> -->
-				<button class="ui button" id="manage-depts-and-locs-btn"><i class="fas fa-edit"></i> Departments & Locations</button>
+        <i class="fas fa-users-cog pointer" id="manage-depts-and-locs-btn"></i> <!-- id="mobile-manage-cog" <span id="icon-block"></span> 
+				<button class="ui button" id="manage-depts-and-locs-btn"><i class="fas fa-edit"></i> Departments & Locations</button> -->
         <div class="item" id="search-box">    
           <div class="ui icon input" id="search-box-icon">
             <input id="search-input" placeholder="Search employees" type="text"> <i class="search icon"></i>
@@ -32,15 +32,17 @@
       </div>
 
       <div id="mobile-search-options-wrapper">
-				<div class="ui info message floating-error" id="floating-info-message">
+			
+				<div class="ui info hidden message" id="floating-info-message"> <!-- floating-error -->
 					<i class="close icon"></i>
-					<div class="header">
+					<div id="floating-info-header" class="header">
 						An error occurred.
 					</div>
-					<div>
+					<div id="floating-info-text">
 						The location name already exists please try again.
 					</div>
 				</div>
+				
         <div class="ui accordion field" id="mobile-search-options">
           <div class="title" id="search-accordion">
             <i class="icon dropdown"></i> Search options
@@ -256,15 +258,16 @@
       <table class="ui celled table" id="pc-table">
         <thead>
           <tr>
-            <th>Employee Directory	<i class="fas fa-users-cog pointer" id="manage-depts-and-locs-btn"></i>
+            <th id="employee-directory">Employee Directory	
 							<button class="ui button" id="create-employee-btn-mobile">Create Employee</button>
 						</th>
 
             <th id="employee-details-column">
 							<button class="ui button" id="create-employee-btn">Create Employee</button>
-							<i class="fas fa-users-cog pointer"  ></i>
-							<!-- 
 							
+							<!-- 
+							<i class="fas fa-users-cog pointer"  ></i>
+							<i class="fas fa-users-cog pointer" id="manage-depts-and-locs-btn"></i>
 							<button class="ui button" id="manage-depts-and-locs-btn"><i class="fas fa-edit"></i> Departments & Locations</button>
 							-->
 						</th>
@@ -275,9 +278,10 @@
         <tbody id="table-body">
           <tr id="first-employee-row">
             <td id="first-employee">
+              <!--
               <h4 class="ui image header"><img class="ui mini rounded image" src="assets/images/wireframe/square-image.png">
-              </h4>
-
+              </h4>-->
+              <h4></h4>
 
               <div class="content">
                 <h4 class="ui image header">Employee 1</h4>
@@ -294,7 +298,7 @@
               </div>
             </td>
 
-            <td id="employee-details-field" rowspan="10">
+            <td id="employee-details-field" rowspan="12">
               <div class="segment" id="employee-segment">
                 <div id="employee-panel-message" class="ui hidden message">
                   <i class="close icon" id="close-panel-icon"></i>
@@ -312,19 +316,13 @@
                       </div>
 
 
-                      <h3><span>Department:</span> <span id="employee-department-field"></span></h3>
-
-
-                      <h3><span>Location:</span> <span id="employee-locationName-field"></span></h3>
-
+                      <h3> <span id="employee-department-field"></span>,&nbsp;<span id="employee-locationName-field"></span></h3>
 
                       <h3><span>Job Title:</span> <span id="employee-jobTitle-field"></span></h3>
 
-
-                      <h3><span>Contact:</span>
                       </h3>
-                      <a class="email-address" href="#" target="_blank">
-                      <h5><span>Email:</span> <span id="employee-email-field"></span></h5></a>
+                      <a id="email-mail-to" class="email-address" href="#" target="_blank">
+                      <h4><i class="far fa-envelope"></i> <span id="employee-email-field"></span></h4></a>
 
                       <p class="display-none-field" id="employee-departmentID-field"></p>
 
@@ -367,6 +365,9 @@
 
 
         <div id="manage-depts-and-locs">
+
+          
+
           <div class="ui stackable one column grid">
             <div class="ui column" id="container-column">
               <div class="ui segment" id="location-accordion-segment">
@@ -410,23 +411,22 @@
                 </div>
               </div>
 
-
+              
               <div id="append-location-panels">
+                <!--
                 <div class="ui raised floating message location-message-panel">
                   <i class="close icon display-none-field" id="close-locationID-1-panel"></i>
 
-                  <div class="ui one top attached segment"> <!--  floating message black disabled button -->
-                    Location 1 with a very long name&nbsp;-&nbsp;<span id="locationID-1-employee-count">50</span>&nbsp;employees&nbsp;-&nbsp;<span id="locationID-1-dept-count">3</span>&nbsp;Departments&nbsp;
-										<span locid="6" locname="Rio" id="delete-locationID-1-icon" class="location-trash-icon pointer"><i class="fas fa-trash-alt"></i></span>
+                  <div class="ui one top attached segment"> <!-- black disabled button 
+                    Location 1 with a very long name&nbsp;-&nbsp;<span id="locationID-1-employee-count">50</span>&nbsp;employees&nbsp;-&nbsp;<span id="locationID-1-dept-count">3</span>&nbsp;Departments&nbsp;<span locid="6" locname="Rio" id="delete-locationID-1-icon" class="location-trash-icon pointer"><i class="fas fa-trash-alt"></i></span>
                   </div>
 
-
-                  <div class="ui attached segment">
-                    <div class="ui form" id="locationID-1-form">
+                  <div class="ui attached segment">  <!-- append departments 
+                    <!-- <div class="ui form" id="locationID-1-form"> </div> 
                       <div class="ui floating message department-segment">
                         <i class="close icon display-none-field" id="close-departmentID-1-icon"></i>
 
-                        <div class="ui stackable two column row">
+                        <div class="ui row">
                           <div class="ui column manage-dept-info">
                             <form class="ui form rename-form" id="departmentID-1-form" name="departmentID-1-form">
                               <div class="department-title-row">
@@ -463,13 +463,13 @@
                                   <i class="icon dropdown"></i>
 
                                   <div class="ui tiny button" id="departmentID-1-accordion">
-                                    Create new department
+                                    Rename department
                                   </div>
                                 </div>
 
 
                                 <div class="content field">
-                                  <div class="content field transition hidden" id="department-checkboxes">
+                                  <div class="content field transition hidden">
                                     <div class="department-field-container" id="departmentID-1-field-container">
                                       <div class="field dept-name-field" id="departmentID-1-field">
                                         <input id="rename-departmentID-1-input-field" name="dept-rename" placeholder="Rename department" deptid="1" type="text" value="">
@@ -494,8 +494,7 @@
                           </div>
                         </div>
                       </div>
-
-
+											
                       <div class="ui accordion field">
                         <div class="title">
                           <i class="icon dropdown"></i>
@@ -507,7 +506,7 @@
 
 
                         <div class="content field">
-                          <div class="content field transition hidden" id="department-checkboxes">
+                          <div class="content field transition hidden">
                             <form class="ui form" id="locationID-1-new-dept-form" name="locationID-1-new-dept-form">
                               <div class="department-field-container">
                                 <div class="eight wide field dept-name-field">
@@ -535,19 +534,30 @@
                           </div>
                         </div>
                       </div>
-                    </div>
+                     <!-- form div ended here 
                   </div>
                 </div>
+                -->
               </div>
             </div>
           </div>
-        </div>
+        </div>  <!-- close MANAGE DEPTS AND LOCS -->
+      
+      
+      
       </div>
     </div>
 
 
     <div class="actions">
-      <button class="ui primary button" id="submit-edit-employee">Edit Details <i class="right chevron icon"></i></button> <button class="ui primary button" id="submit-create-employee">Create employee</button> <button class="ui primary button" id="create-new-location-btn">Add new location</button> <button class="ui deny button" id="modal-deny-btn">Close</button> <button class="ui primary approve button" id="close-employee-modal">Close<i class="right chevron icon"></i></button>
+
+
+			<button class="ui primary button" id="create-new-location-btn">Add new location</button> 
+			<button class="ui deny button" id="close-only-btn">Close</button> 
+			<button class="ui deny button" id="modal-deny-btn">Close</button> 
+			<button class="ui primary approve button" id="close-employee-modal">Close<i class="right chevron icon"></i></button>
+			</button> <button class="ui primary button" id="submit-create-employee">Create employee</button> 
+      <button class="ui primary button" id="submit-edit-employee">Edit Details <i class="right chevron icon"></i>
     </div>
   </div>
 
@@ -587,15 +597,16 @@
       </div>
     </div>
   </div>
-  <script src="assets/library/jquery.min.js">
+  <script src="libs/jquery/jquery.min.js">
   </script> 
-  <script src="dist/semantic.js">
+  <script src="vendors/fomantic/semantic.js">
   </script> 
+  <!--
   <script src="dist/components/accordion.js" type="text/javascript">
-  </script> 
+  </script> --> 
   <script src="https://kit.fontawesome.com/ac327db264.js">
   </script> 
-  <script src='assets/js/project2.js' type="text/javascript">
+  <script src='libs/js/project2.js' type="text/javascript">
   </script>
 </body>
 </html>

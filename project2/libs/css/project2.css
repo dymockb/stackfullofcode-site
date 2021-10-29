@@ -140,11 +140,13 @@ thead {
 th,
 td {
 	width: 50%;
+	border-right: none;
+	/*
 	border-right: 1px solid rgba(34, 36, 38, 0.1);
 	border-right-width: 1px;
 	border-right-style: solid;
 	border-right-color: rgba(34, 36, 38, 0.1);
-}
+	*/
 }
 
 .break {
@@ -174,11 +176,9 @@ h1 {
 }
 
 td#employee-details-field {
-	border-left: none;
 	position: sticky;
 	z-index: 1;
-	top: 9rem;
-	border-left: none;
+	top: 8.4rem;
 	vertical-align: top;
 }
 
@@ -505,7 +505,10 @@ h3.ui.center.header {
 }
 
 #employee-details-column {
-	border-left: none;
+	border-left: 1px solid #2224261a;
+	border-left-width: 1px;
+	border-left-style: solid;
+	border-left-color: #2224261a;
 }
 
 @media only screen and (max-width: 767.98px) {
