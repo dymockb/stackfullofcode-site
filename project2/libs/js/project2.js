@@ -1154,7 +1154,8 @@ $(`#submit-new-location-btn`).click(function(e){
           newDeptObj['locationID'] = result.data.id;
           
           $.ajax({
-          url: "libs/php/insertDepartment.php",
+          url: "libs/php/insertDepartmentRtnID.php",  // CHECK
+          //url: "libs/php/insertDepartment.php",
           type: "GET",
           dataType: "json",
           data: newDeptObj,
