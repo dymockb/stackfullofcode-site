@@ -1076,8 +1076,8 @@ $('#employee-modal-create-fields').submit(function(event) {
 
 $('#create-new-location-btn').click(function(){
 
-	$('#location-accordion-segment').attr('style', 'display: block')
-	
+	$('#location-accordion-segment').attr('style', 'display: block');
+
 	locationRules = basicRules.slice();
 
 	for (let [key, value] of Object.entries(locationsObj)) {
@@ -1101,6 +1101,7 @@ $('#create-new-location-btn').click(function(){
 		});
 
 	$('#new-location-accordion-btn').click();
+	document.getElementById('location-accordion-segment').scrollIntoView({behavior: "smooth"});
 
 });
 
