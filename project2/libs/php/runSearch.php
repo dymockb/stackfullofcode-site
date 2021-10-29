@@ -30,9 +30,7 @@
 
 		exit;
 
-	}	
-
-	#$query = "SELECT * FROM `companydirectory`.`personnel` WHERE (CONVERT(`id` USING utf8) LIKE '%tam%' OR CONVERT(`firstName` USING utf8) LIKE '%tam%' OR CONVERT(`lastName` USING utf8) LIKE '%tam%' OR CONVERT(`jobTitle` USING utf8) LIKE '%tam%' OR CONVERT(`email` USING utf8) LIKE '%tam%' OR CONVERT(`departmentID` USING utf8) LIKE '%tam%')";
+	}
 
   $startOfQueryString = "SELECT p.lastName, p.firstName, p.jobTitle, p.email, p.id, d.name as department, d.id as departmentID, l.id as locationID, l.name as locationName FROM personnel p LEFT JOIN department d ON (d.id = p.departmentID) LEFT JOIN location l ON (l.id = d.locationID) WHERE ";
 
@@ -54,37 +52,36 @@
     $deptString = "(d.name = ";
   
     for ($i = 0; $i < count($departmentsArray); $i ++) {
-      #$deptString = $deptString . "'" . $departmentsArray[$i] . "'";
+
       $deptString = $deptString . "?";
+
       if ($i != count($departmentsArray)-1) {
+
         $deptString = $deptString . " OR d.name = ";
+
       } elseif ($i == count($departmentsArray)-1) {
-        #$deptString = $deptString . " AND l.name = 'Paris') AND ";
-        #$deptString = $deptString . " ) AND (l.name = 'Paris' OR l.name = 'New York') AND ";
+
         $deptString = $deptString . " ) AND "; 
+
      }
     };
 
 		$locationsArray = explode(',',$_REQUEST['locations']);
 
 		$locString = "(l.id = "; 
-		//$locString = "(l.name = "; 
 
 		for ($i = 0; $i < count($locationsArray); $i ++) {
       $locString = $locString . "?";
       if ($i != count($locationsArray)-1) {
-        //$locString = $locString . " OR l.name = ";
+ 
         $locString = $locString . " OR l.id = ";
       } elseif ($i == count($locationsArray)-1) {
-        #$deptString = $deptString . " AND l.name = 'Paris') AND ";
-        #$deptString = $deptString . " ) AND (l.name = 'Paris' OR l.name = 'New York') AND ";
+
         $locString = $locString . " ) AND "; 
      }
     };
 
 		$queryStringIncDeptsAndLocs = $startOfQueryString . $deptString . $locString . $searchParamString;
-    
-    #echo $queryStringIncDepts;
 
     $outputQueryString = $queryStringIncDeptsAndLocs;
   
@@ -94,40 +91,20 @@
 	if ($_REQUEST['orderBy'] == 'lastName') {
 	
 		$orderByQueryString = " ORDER BY p.lastName, p.firstName, d.name, l.name";
-
-		#$query = $conn->prepare("SELECT p.lastName, p.firstName, p.jobTitle, p.email, p.id, d.name as department, d.id as departmentID, l.id as locationID, l.name as locationName FROM personnel p LEFT JOIN department d ON (d.id = p.departmentID) LEFT JOIN location l ON (l.id = d.locationID) WHERE (CONVERT(`firstName` USING utf8) LIKE ? OR CONVERT(`lastName` USING utf8) LIKE ? OR CONVERT(`email` USING utf8) LIKE ?) ORDER BY p.lastName, p.firstName, d.name, l.name");
 	
 	} elseif ($_REQUEST['orderBy'] == 'firstName') {
 
 		$orderByQueryString = " ORDER BY p.firstName, p.lastName, d.name, l.name";
 	
-		#$query = $conn->prepare("SELECT p.lastName, p.firstName, p.jobTitle, p.email, p.id, d.name as department, d.id as departmentID, l.id as locationID, l.name as locationName FROM personnel p LEFT JOIN department d ON (d.id = p.departmentID) LEFT JOIN location l ON (l.id = d.locationID) WHERE (CONVERT(`firstName` USING utf8) LIKE ? OR CONVERT(`lastName` USING utf8) LIKE ? OR CONVERT(`email` USING utf8) LIKE ?) ORDER BY p.firstName, p.lastName, d.name, l.name");
-	
 	}
 	
-	#$query = $conn->prepare($startOfQueryString . $orderByQueryString);
-
-  #$query = $conn->prepare($queryStringIncDepts . $orderByQueryString);
 	$query = $conn->prepare($outputQueryString . $orderByQueryString);
 
-	//$locationsIntegers = [];
-
-	//for ($li = 0; $li < count($locationsArray); $li ++) {
-	
-	//	array_push($locationsIntegers, $locationsArray[$li]);
-
-	//}
-
-
-  #$requestArray = array_merge($departmentsArray, array($_REQUEST['searchTerm'], $_REQUEST['searchTerm'], $_REQUEST['searchEmail']));
   $requestArray = array_merge($departmentsArray, $locationsArray, array($_REQUEST['searchTerm'], $_REQUEST['searchTerm'], $_REQUEST['searchEmail']));
-
-  #echo $requestArray;
 
   $types = str_repeat('s', count($requestArray));
 	$query->bind_param($types, ...$requestArray);	
-	
-	#$query->bind_param("sss", $_REQUEST['searchTerm'], $_REQUEST['searchTerm'], $_REQUEST['searchEmail']);
+
 	
 	$query->execute();
 	
@@ -155,34 +132,6 @@
 		array_push($data, $row);
 
 	}
-	
-	/*
-	$result = $conn->query($query);
-	
-	if (!$result) {
-
-		$output['status']['code'] = "400";
-		$output['status']['name'] = "executed";
-		$output['status']['description'] = "query failed";	
-		$output['data'] = [];
-
-		mysqli_close($conn);
-
-		echo json_encode($output); 
-
-		exit;
-
-	}
-   
-  $data = [];
-
-	while ($row = mysqli_fetch_assoc($result)) {
-
-		array_push($data, $row);
-
-	}
-	
-	*/
 
 	$output['status']['code'] = "200";
 	$output['status']['name'] = "ok";

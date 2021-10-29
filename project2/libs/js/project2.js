@@ -11,6 +11,8 @@ let departmentsObj = {};
 
 let listOfLocations = [];
 let listOfDepts = [];
+let listOfLocationIDs = [];
+let listOfDeptIDs = [];
 
 let manageDeptsAndLocsOpened = 0;
 let locationRules = [];
@@ -74,18 +76,31 @@ let updateLoadedLocs = [];
 
 // ** PAGE LOAD FUNCTIONS **
 
-function renderCheckboxes(checkboxItems, category){
+function renderCheckboxes(checkboxItems, checkboxIDs, category){
 
 	for (cbi = 0; cbi < checkboxItems.length; cbi ++) {
 		let cbName = checkboxItems[cbi];
-		let checkedStatus = createCheckbox(cbName, category, false).getAttribute('class').includes('checked');
+		//let checkedStatus = createCheckbox(cbName, category, false).getAttribute('class').includes('checked');
 		document.getElementById(`${category}-checkboxes`).appendChild(createCheckbox(cbName, category, false));
 		document.getElementById(`${category}-checkboxes-mobile`).appendChild(createCheckbox(cbName, category, true));
 
+		/*
 		if(category == 'department') {
 			activeDepartmentsObj[cbName] = checkedStatus;
 		} else if (category == 'location') {
 			activeLocationsObj[cbName] = checkedStatus;
+		}
+		*/
+	}
+
+	for (cbid = 0; cbid < checkboxIDs.length; cbid ++) {
+		
+		let cbID = checkboxIDs[cbid];
+
+		if(category == 'department') {
+			activeDepartmentsObj[departmentsObj[cbID]['name']] = true;
+		} else if (category == 'location') {
+			activeLocationsObj[cbID] = true;
 		}
 	}
 
@@ -292,6 +307,7 @@ function getAllLocationsAndDepartments(){
 				console.log('getAllLocations ', result);
 				
 				listOfLocations = [];
+				listOfLocationIDs = [];
 				
 				for (let l = 0; l < result.data.length; l++) {
 					
@@ -300,15 +316,23 @@ function getAllLocationsAndDepartments(){
 					if (!listOfLocations.includes(result.data[l].name)) {
 						listOfLocations.push(result.data[l].name);
 					}
+
+					if (!listOfLocationIDs.includes(result.data[l].id)) {
+						listOfLocationIDs.push(result.data[l].id);
+					}
 					
 				}
 	
 				listOfLocations.sort();
-	
-				countOfLocations = listOfLocations.length;
-				countOfCheckedLocations = listOfLocations.length;
-	
-				renderCheckboxes(listOfLocations, 'location');
+
+				//countOfLocations = listOfLocations.length;
+				//countOfCheckedLocations = listOfLocations.length;
+
+				countOfLocations = listOfLocationIDs.length;
+				countOfCheckedLocations = listOfLocationIDs.length;
+
+				//renderCheckboxes(listOfLocationIDs, 'location');
+				renderCheckboxes(listOfLocations, listOfLocationIDs, 'location');
 	
 				locationCheckboxFunctionality();
 	
@@ -324,6 +348,7 @@ function getAllLocationsAndDepartments(){
 							console.log('getAllDepartments ',result);
 										
 							listOfDepts = [];
+							listOfDeptIDs = [];
 							
 							let locationsForObj = [];
 				
@@ -334,6 +359,10 @@ function getAllLocationsAndDepartments(){
 								
 								if (!listOfDepts.includes(result.data[d].name)) {
 									listOfDepts.push(result.data[d].name);
+								}
+
+								if (!listOfDeptIDs.includes(result.data[d].id)) {
+									listOfDeptIDs.push(result.data[d].id);
 								}
 				
 								if(!locationsForObj.includes(result.data[d].locationID)) {
@@ -373,15 +402,13 @@ function getAllLocationsAndDepartments(){
 							countOfDepts = listOfDepts.length;
 							countOfCheckedDepts = listOfDepts.length;
 				
-							renderCheckboxes(listOfDepts, 'department');
+							renderCheckboxes(listOfDepts, listOfDeptIDs, 'department');
 				
 							departmentCheckboxFunctionality();
 
 							departmentCheckboxFunctionalityMobileIncludesRunSearch();
 							
 							let finaled = result.data.length;
-							
-							console.log('departmentsObj', departmentsObj);
 							
 							for (let ed = 0; ed < result.data.length; ed ++){
 				
@@ -401,6 +428,13 @@ function getAllLocationsAndDepartments(){
 											
 											if (ed == finaled-1) {
 												//manageDepartmentsAndLocationsModal(locsAndDeptsObj);
+
+												if ($('#preloader').length) {
+													$('#preloader').delay(1000).fadeOut('slow', function () {
+														$(this).remove();
+														//console.log("Window loaded");		
+													});
+												}
 												
 												
 												let catchUpTimer = setTimeout(function(){
@@ -496,13 +530,6 @@ function getAllEmployees(){
 				viewDetailsBtnFunctionality()
 				
 				selectEmployeeFunctionality()
-				
-				if ($('#preloader').length) {
-					$('#preloader').delay(1000).fadeOut('slow', function () {
-						$(this).remove();
-						console.log("Window loaded");		
-					});
-				}
 
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
@@ -1409,18 +1436,14 @@ function oneLocationEventListeners(deptsParam, locKey){
 
 function eventListenersInsideDeptsandLocsModal() {
 
-	departmentRules = basicRules.slice();
-		
-	console.log('the obj ', locsAndDeptsObj)
-
+	
+	
 	for (let [key, value] of Object.entries(locsAndDeptsObj)){
-		
 	
 		if (!value.loaded) {
 
 		updateLoadedLocs.push(key);
 
-    //can probably remove when names are checked against DB
 		let existingDepartmentNames = [];
 
 		for (let [k, val] of Object.entries(value.departments)){	
@@ -1657,10 +1680,10 @@ function eventListenersInsideDeptsandLocsModal() {
 		}  // end of IF dept loaded == false, apply listeners
 							
 	} // end of loop through departments
-	
-		
+			
 		departmentRules = basicRules.slice();
 
+		//get all current dept names for rules
 		for (let r = 0 ; r < existingDepartmentNames.length; r ++) {
 		
 			let newRule = {}
@@ -1670,7 +1693,7 @@ function eventListenersInsideDeptsandLocsModal() {
 		
 		}
 			
-		
+		// each department for the current location gets the same rules - for renaming
 		for (let [k, val] of Object.entries(value.departments)){	
 				
 			$(`#departmentID-${k}-form`).form({
@@ -1683,8 +1706,8 @@ function eventListenersInsideDeptsandLocsModal() {
 			});	
 			
 		}
-		
 	
+		// the new dept field also gets the same rules
 		$(`#locationID-${key}-new-dept-form`).form({
 		
 			fields: {
@@ -3130,9 +3153,10 @@ function runSearch(orderBy, searchTerm){
 
 	let departments = "";
 
-	for (const [key, value] of Object.entries(activeDepartmentsObj)) {
+	for (const [key, value] of Object.entries(activeDepartmentsObj)) { 
 						
 		if (value == true) {
+			//departments += `${key},`;
 			departments += `${key},`;
 		}
 	}
@@ -3168,7 +3192,8 @@ function runSearch(orderBy, searchTerm){
 
 	$.ajax({
 		
-		url: "libs/php/searchAllBuildInLocations.php",
+		//url: "libs/php/searchAllBuildInLocations.php",
+		url: "libs/php/runSearch.php",
 		type: "GET",
 		dataType: "json",
 		data: {
