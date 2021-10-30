@@ -79,10 +79,18 @@ let updateLoadedLocs = [];
 function renderCheckboxes(checkboxItems, checkboxIDs, category){
 
 	for (cbi = 0; cbi < checkboxItems.length; cbi ++) {
-		let cbName = checkboxItems[cbi];
+		let cbName, cbInputID;
+		if (category == 'department') {
+			cbName = checkboxItems[cbi];
+			cbInputID = checkboxIDs[cbi];
+		} else if (category == 'location'){
+			cbName = checkboxItems[cbi];			
+			cbInputID = checkboxIDs[cbi];
+		}
+		
 		//let checkedStatus = createCheckbox(cbName, category, false).getAttribute('class').includes('checked');
-		document.getElementById(`${category}-checkboxes`).appendChild(createCheckbox(cbName, category, false));
-		document.getElementById(`${category}-checkboxes-mobile`).appendChild(createCheckbox(cbName, category, true));
+		document.getElementById(`${category}-checkboxes`).appendChild(createCheckbox(cbName, cbInputID, category, false));
+		document.getElementById(`${category}-checkboxes-mobile`).appendChild(createCheckbox(cbName, cbInputID, category, true));
 
 		/*
 		if(category == 'department') {
@@ -602,7 +610,6 @@ $('#create-employee-btn').click(function(){
 			//return false;
 		},
 		onApprove: function (){
-		console.log('approve');
 		},
 		onHidden: function(){	
 			console.log('close view employee modal');
@@ -625,15 +632,12 @@ function showManageModal(){
 			
 		},
 		onDeny: function(){
-			console.log('deny');
 			//return false;
 		},
 		onApprove: function (){
 		console.log('approve');
 		},
 		onHidden: function(){	
-			console.log('close manage dept and locs modal');
-			console.log('the obj on close', locsAndDeptsObj);
 			closeModal();
 		}	
 		}).modal('show');
@@ -729,9 +733,6 @@ $('#edit-employee-fields-btn').click(function(){
 //buttons on employee modal
 
 $('#submit-create-employee').click(function(event){
-			
-	console.log('create employee submit clicked');
-	console.log($(`#employee-modal-create-fields`).form('validate form'));
 
 	if ($('#employee-modal-create-fields').form('validate form')) {
 		$('#employee-modal-create-fields').form('submit');
@@ -867,12 +868,8 @@ $('#delete-department-modal-btn').click(function (){
 
 	closeAlertModal();
 	
-	console.log(`delete deparment ${this.getAttribute('deptid')}`)
-	
 	let deleteDepartmentID = this.getAttribute('deptid');
 	let emptyLocID = this.getAttribute('emptyLocID');
-	
-	console.log('emptyLocID', emptyLocID);
 	
 	$.ajax({
 	url: "libs/php/deleteDepartmentByID.php",
@@ -882,8 +879,6 @@ $('#delete-department-modal-btn').click(function (){
 		departmentID: deleteDepartmentID
 	},
 	success: function (result) {
-		
-			console.log('deleteDept ',result);
 			
 			if (result['status'].description != 'dependency error') {
 
@@ -897,9 +892,6 @@ $('#delete-department-modal-btn').click(function (){
 						locationID: emptyLocID
 					},
 					success: function (result) {
-							
-							console.log('delete location result ', result);
-							console.log('Location deleted. ID: ', emptyLocID);
 							
 							document.getElementById('modal-deny-btn').click();
 
@@ -1046,8 +1038,6 @@ $('#employee-modal-create-fields').submit(function(event) {
 
 	createEmployeeDataObj['jobTitle'] = 	createEmployeeDataObj['jobTitle'] == 0 ? 'Job Title TBC' : 	createEmployeeDataObj['jobTitle'];
 	
-	console.log(createEmployeeDataObj);
-	
 	$.ajax({
 	url: "libs/php/insertEmployee.php",
 	type: "GET",
@@ -1055,8 +1045,6 @@ $('#employee-modal-create-fields').submit(function(event) {
 	data: createEmployeeDataObj,
 	success: function (result) {
 		
-			console.log('insertEmployee ',result.data);
-			console.log('orderby', orderBy, 'lastSearch', lastSearch);
 			employeeJustCreated = true;
 			
 			refreshPage();
@@ -1160,6 +1148,8 @@ $(`#submit-new-location-btn`).click(function(e){
           dataType: "json",
           data: newDeptObj,
           success: function (result) {
+						
+							console.log('new loction result', result);
 							
 							document.getElementById('modal-deny-btn').click();
 							
@@ -1469,11 +1459,8 @@ function eventListenersInsideDeptsandLocsModal() {
 
 			$(`#submit-rename-departmentID-${k}-btn`).click(function(e){
 				e.preventDefault();
-				console.log('submit dept rename clicked');			
 				
 				if (!renameDeptNeedsToBeValidated) {
-					
-					console.log('add submit event listener');
 				
 				$(`#departmentID-${k}-form`).one('submit', function(event){
 					event.preventDefault();
@@ -1490,7 +1477,6 @@ function eventListenersInsideDeptsandLocsModal() {
 				
 						if (this.elements[e].tagName != 'BUTTON') {			
 
-							console.log(`#departmentID-${k}-form-form`, this.elements[e].value);
 							updatedDeptName = this.elements[e].value;
 							updatedDeptID = this.elements[e].getAttribute('deptID');
 
@@ -1511,8 +1497,6 @@ function eventListenersInsideDeptsandLocsModal() {
 					dataType: "json",
 					data: updateDepartmentDataObj,
 					success: function (result) {
-						
-							console.log('updateDept ',result.data);
 
               refreshPage();
 
@@ -1534,7 +1518,7 @@ function eventListenersInsideDeptsandLocsModal() {
 					console.log('not validated')
 					renameDeptNeedsToBeValidated = true;
 				} else if ($(`#departmentID-${k}-form`).form('validate form')){
-					console.log('validated')
+					
 					renameDeptNeedsToBeValidated = false;
 				}
 
@@ -1576,8 +1560,6 @@ function eventListenersInsideDeptsandLocsModal() {
 						}
 					}
 				});	
-				
-				console.log(`department id ${k} Rules`,departmentRules);
 
 				$(`#departmentID-${k}-accordion`).click()
 				
@@ -1592,8 +1574,6 @@ function eventListenersInsideDeptsandLocsModal() {
 				
 				let deptID = this.getAttribute('deptid');
 				let deptName = departmentsObj[deptID]['name'];
-
-				console.log(this);	
 
 				if (this.getAttribute('employees') != 0) {
 					
@@ -1618,8 +1598,6 @@ function eventListenersInsideDeptsandLocsModal() {
 					departmentID: deptID
 				},
 				success: function (result) {
-					
-						console.log('delete Location? ',result.data);
 						
 						let locName = locationsObj[result.data.locID];
 											
@@ -1725,7 +1703,6 @@ function eventListenersInsideDeptsandLocsModal() {
 
 		$(`#locationID-${key}-submit-new-dept-btn`).click(function(e){
 			e.preventDefault();
-			console.log('submit new dept clicked');
 			
 			if(!createNewDeptNeedsToBeValidated){
 			
@@ -1741,7 +1718,6 @@ function eventListenersInsideDeptsandLocsModal() {
 			
 					if (this.elements[e].tagName != 'BUTTON') {			
 		
-						console.log(`#locationID-${key}-new-dept-form`, this.elements[e].value);
 						newDeptName = this.elements[e].value;
 						
 					}
@@ -1792,7 +1768,7 @@ function eventListenersInsideDeptsandLocsModal() {
 				console.log('not validated')
 				createNewDeptNeedsToBeValidated = true;
 			} else if ($(`#locationID-${key}-new-dept-form`).form('validate form')){
-				console.log('validated')
+			
 				createNewDeptNeedsToBeValidated = false;
 			}
 			
@@ -1961,7 +1937,7 @@ function renderEmployee(employeeProperties){
 };
 
 // CREATE CHECKBOXES
-function createCheckbox(checkboxName, category, mobile){
+function createCheckbox(checkboxName, checkboxInputID, category, mobile){
 	let checkboxDiv = document.createElement('div');
 
 	if(mobile) {
@@ -1982,6 +1958,7 @@ function createCheckbox(checkboxName, category, mobile){
 	let checkboxInput = document.createElement('input');
 	checkboxInput.setAttribute('type', 'checkbox');
 	checkboxInput.setAttribute('name', `${checkboxName}`);
+	checkboxInput.setAttribute('category-id', `${checkboxInputID}`);
 	checkboxInput.setAttribute('checked', "");
 
 	let checkboxLabel =document.createElement('label');
@@ -1997,8 +1974,6 @@ function createCheckbox(checkboxName, category, mobile){
 // CREATE MODAL CONTENT
 
 function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){	
-
-  console.log('editorcreate', editOrCreate);
   
 	let listOfIdentifiers = [];
 		
@@ -2237,7 +2212,6 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 		uiForm.appendChild(idField);
 	}
 	
-	console.log(uiForm);
 	document.getElementById(`employee-modal-${editOrCreate}-fields`).appendChild(uiForm);
 
 	if (editOrCreate == 'edit') {
@@ -2300,8 +2274,7 @@ function createEmployeeModalContent(editOrCreate, detailsForEditForm){
 			}
 			
 			let listOfIdentifiers = buildForm(listOfLocationsUpdated, listOfLocationIDs, editOrCreate, detailsForEditForm);
-			console.log('listofIdentifiers', listOfIdentifiers);
-
+			
 			let formValidateFields = {}
 			
 			for (let id = 0; id < listOfIdentifiers.length; id ++) {
@@ -2595,8 +2568,7 @@ function departmentCheckboxFunctionality() {
 	
 		function setSelectAllCheckBox(){
 			if (countOfCheckedDepts < countOfDepts) {
-				console.log('countofcheckeddepts',countOfCheckedDepts);
-				console.log('countOfDepts', countOfDepts);
+
 				if (countOfCheckedDepts == 0) {
 				 $('#select-none-departments').checkbox('set checked');
 				 $('#select-none-departments-mobile').checkbox('set checked');
@@ -2689,7 +2661,8 @@ function locationCheckboxFunctionality() {
 		$('.location-checkbox').checkbox({
 			onChecked: function(){
 
-				activeLocationsObj[this.name] = this.checked;
+				//activeLocationsObj[this.name] = this.checked;
+				activeLocationsObj[this.getAttribute('category-id')] = this.checked;
 				countOfCheckedLocations ++;
 				
 				if ((countOfCheckedLocations < countOfLocations) && (countOfCheckedLocations > 0)){
@@ -2703,13 +2676,14 @@ function locationCheckboxFunctionality() {
 						runSearch(orderBy, lastSearch);						
 					}
 				} else {
-					console.log('run search');
+
 					runSearch(orderBy,lastSearch);
 				}
 				
 			},
 			onUnchecked: function(){
-				activeLocationsObj[this.name] = this.checked;
+				//activeLocationsObj[this.name] = this.checked;
+				activeLocationsObj[this.getAttribute('category-id')] = this.checked;
 				countOfCheckedLocations --;
 				setSelectAllCheckBox();
 				if (howManyLocationsSelected == 'None') {
@@ -2717,6 +2691,7 @@ function locationCheckboxFunctionality() {
 						runSearch(orderBy, lastSearch);						
 					}
 				} else {
+					console.log('run seach uncheck location', activeLocationsObj);
 					runSearch(orderBy,lastSearch);
 				}
 
@@ -2744,7 +2719,7 @@ function departmentCheckboxFunctionalityMobileIncludesRunSearch() {
 	
 	function setSelectAllCheckBox(){
 		if (countOfCheckedDepts < countOfDepts) {
-			console.log('countofcheckeddepts',countOfCheckedDepts);
+
 			if (countOfCheckedDepts == 0) {
 			 $('#select-none-departments-mobile').checkbox('set checked');
 			
@@ -2811,6 +2786,8 @@ function departmentCheckboxFunctionalityMobileIncludesRunSearch() {
 			$('.department-mobile-checkbox').checkbox('check');
 		},
 	});
+	
+	console.log('run search at end of deptscheckboxmobilefunctionality');
 
 	runSearch(orderBy, lastSearch);
 
@@ -2820,7 +2797,7 @@ function departmentCheckboxFunctionalityMobile() {
 	
 	function setSelectAllCheckBox(){
 		if (countOfCheckedDepts < countOfDepts) {
-			console.log('countofcheckeddepts',countOfCheckedDepts);
+
 			if (countOfCheckedDepts == 0) {
 			 $('#select-none-departments-mobile').checkbox('set checked');
 			
@@ -2910,8 +2887,9 @@ function locationCheckboxFunctionalityMobile() {
 
 	$('.location-mobile-checkbox').checkbox({
 		onChecked: function(){
-
-			activeLocationsObj[this.name] = this.checked;
+			
+			activeLocationsObj[this.getAttribute('category-id')] = this.checked;
+			//activeLocationsObj[this.name] = this.checked;
 			countOfCheckedLocations ++;
 			
 			if ((countOfCheckedLocations < countOfLocations) && (countOfCheckedLocations > 0)){
@@ -2925,13 +2903,16 @@ function locationCheckboxFunctionalityMobile() {
 					runSearch(orderBy, lastSearch);						
 				}
 			} else {
-				console.log('run search');
+
 				runSearch(orderBy,lastSearch);
 			}
 			
 		},
 		onUnchecked: function(){
-			activeLocationsObj[this.name] = this.checked;
+
+			activeLocationsObj[this.getAttribute('category-id')] = this.checked;
+			
+			//activeLocationsObj[this.name] = this.checked;
 			countOfCheckedLocations --;
 			
 			setSelectAllCheckBox();
@@ -3335,8 +3316,6 @@ function runSearch(orderBy, searchTerm){
 // CLOSE MODAL
 
 function closeModal(){	
-
-	console.log('closeModal func run');
 
 	document.getElementById('employee-modal-create-fields').reset();
 	document.getElementById('employee-modal-edit-fields').reset();
