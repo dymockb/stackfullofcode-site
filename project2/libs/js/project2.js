@@ -2,6 +2,7 @@ let employeeDetailsVisibility = 0;
 let employeePropertiesObj = {};
 let blankEmployeeObj = {};
 let employeePropertiesStored;
+let employeeBeforeEdit;
 
 let lastSearch = "";
 let orderBy = 'firstName';
@@ -78,14 +79,29 @@ let updateLoadedLocs = [];
 
 function renderCheckboxes(checkboxItems, checkboxIDs, category){
 
+	let checkboxesObj = {};
+
+	for (cbo = 0; cbo < checkboxItems.length; cbo ++) {
+		
+		checkboxesObj[checkboxItems[cbo]] = checkboxIDs[cbo]
+	
+	}
+
+	checkboxItems.sort()
+
+	console.log('checkbox items', checkboxItems);
+	console.log('checkboxIDs', checkboxIDs);
+
 	for (cbi = 0; cbi < checkboxItems.length; cbi ++) {
 		let cbName, cbInputID;
 		if (category == 'department') {
 			cbName = checkboxItems[cbi];
-			cbInputID = checkboxIDs[cbi];
+			//cbInputID = checkboxIDs[cbi];
+			cbInputID = checkboxesObj[checkboxItems[cbi]];
 		} else if (category == 'location'){
 			cbName = checkboxItems[cbi];			
-			cbInputID = checkboxIDs[cbi];
+			cbInputID = checkboxesObj[checkboxItems[cbi]];
+			//cbInputID = checkboxIDs[cbi];
 		}
 		
 		//let checkedStatus = createCheckbox(cbName, category, false).getAttribute('class').includes('checked');
@@ -331,7 +347,7 @@ function getAllLocationsAndDepartments(){
 					
 				}
 	
-				listOfLocations.sort();
+				//listOfLocations.sort();
 
 				//countOfLocations = listOfLocations.length;
 				//countOfCheckedLocations = listOfLocations.length;
@@ -569,7 +585,7 @@ $('#search-input').on('input', delay(function () {
 function delay(callback, ms) {
 	var timer = 0;
   return function() {
-    console.log('start typing');
+    //console.log('start typing');
 		document.getElementById('search-box-icon').setAttribute('class', 'ui icon input loading');
 		var context = this, args = arguments;
     clearTimeout(timer);
@@ -606,13 +622,11 @@ $('#create-employee-btn').click(function(){
 		closable: false,
 		autofocus: false,
 		onDeny: function(){
-			console.log('deny');
 			//return false;
 		},
 		onApprove: function (){
 		},
 		onHidden: function(){	
-			console.log('close view employee modal');
 			document.getElementById('employee-modal-create-fields').innerHTML = "";
 			closeModal();
 		}	
@@ -697,6 +711,8 @@ $('#edit-employee-fields-btn').click(function(){
 	document.getElementById('employee-modal-edit-fields').innerHTML = "";
 	
 	let employeeDetails = JSON.parse(this.getAttribute('employee-details'));
+
+	employeeBeforeEdit = employeeDetails;
 	
 	dropDownClicked = 0;
 	createEmployeeModalContent(editOrCreate = 'edit', employeeDetails);	
@@ -798,7 +814,7 @@ $('#update-employee-modal-btn').click(function (){
 	
 	let updateEmployeeDataObj = JSON.parse(this.getAttribute('employee-details'));
 
-	document.getElementById('update-employee-modal-btn').setAttribute('style', 'display: none');
+	//document.getElementById('update-employee-modal-btn').setAttribute('style', 'display: none');
 
 	$.ajax({
 	url: "libs/php/updateEmployee.php",
