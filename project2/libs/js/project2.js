@@ -832,7 +832,11 @@ $('#delete-location-modal-btn').click(function (){
 	
 	console.log(`delete location ${this.getAttribute('locid')}, ${this.getAttribute('locname')}`)
 	
+	//document.getElementById(`delete-departmentID-${locid}-btn`).click();
+	
+	/*
 	let deleteLocationID = this.getAttribute('locid');
+	let deleteLocationName = this.getAttribute('locname');
 	
 	$.ajax({
 	url: "libs/php/deleteLocationByID.php",
@@ -845,6 +849,10 @@ $('#delete-location-modal-btn').click(function (){
 		
 			console.log('delete Location ',result);
 			if (result['status'].description != 'dependency error') {
+				
+				document.getElementById('floating-info-message').setAttribute('class', 'ui info floating-error message');
+				document.getElementById('floating-info-header').innerHTML = 'Location Deleted';
+				document.getElementById('floating-info-text').innerHTML = deleteLocationName;				
 
 				refreshPage();
 								
@@ -861,6 +869,8 @@ $('#delete-location-modal-btn').click(function (){
 			console.log(errorThrown);
 		},
 	});
+	
+	*/
 	
 });
 
@@ -897,7 +907,7 @@ $('#delete-department-modal-btn').click(function (){
 
 							document.getElementById('floating-info-message').setAttribute('class', 'ui info floating-error message');
 							document.getElementById('floating-info-header').innerHTML = 'Department  and Location Deleted';
-							document.getElementById('floating-info-text').innerHTML = departmentsObj[deleteDepartmentID]['name'] + ', ' + locationsObj[emptyLocID];
+							document.getElementById('floating-info-text').innerHTML = locationsObj[emptyLocID] + ', ' + departmentsObj[deleteDepartmentID]['name'];
 							refreshPage();
 
 					},
@@ -1371,10 +1381,9 @@ function oneLocationEventListeners(deptsParam, locKey){
 						$('#alert-modal').modal(
 						{
 							title: '<i class="archive icon"></i>',
-							content: `<div class="alert-modal-text">Delete this department? 
-							
-											<h3> ${deptName} </h3>
-											<h4> The location ${locName} will also be deleted. </h4>
+							content: `<div class="alert-modal-text">
+											<h3>Delete department and location?</h3> 
+											<h4> The location ${locName} and the department ${deptName} with both be deleted. </h4>
 											</div>`
 						}).modal('show');
 						
@@ -1608,10 +1617,9 @@ function eventListenersInsideDeptsandLocsModal() {
 							$('#alert-modal').modal(
 							{
 								title: '<i class="archive icon"></i>',
-								content: `<div class="alert-modal-text">Delete this department? 
+								content: `<div class="alert-modal-text">Delete this department and location? 
 								
-												<h3> ${deptName} </h3>
-												<h4> The location ${locName} will also be deleted. </h4>
+												<h4> The location ${locName} and department ${deptName} will both be deleted. </h4>
 												</div>`
 							}).modal('show');
 							
@@ -1789,16 +1797,37 @@ function eventListenersInsideDeptsandLocsModal() {
 
     $(`#delete-locationID-${key}-icon`).click(function(e){
       
-      document.getElementById('delete-location-modal-btn').setAttribute('style', 'display: inline !important');
-      document.getElementById('delete-location-modal-btn').setAttribute('locid', key);
-      document.getElementById('delete-location-modal-btn').setAttribute('locname', locationsObj[key]);
+      //document.getElementById('delete-location-modal-btn').setAttribute('style', 'display: inline !important');
+      //document.getElementById('delete-location-modal-btn').setAttribute('locid', key);
+      //document.getElementById('delete-location-modal-btn').setAttribute('locname', locationsObj[key]);
+			
+			let onlyDeptID;
+			let checkDeptObj = locsAndDeptsObj[key]['departments'];
+			let checkDeptCount = 0;
+			
+			for (let [check_key, check_val] of Object.entries(checkDeptObj)){
+				
+				checkDeptCount++;
+				onlyDeptID = check_key;
+			
+			}		
+			
+			if (checkDeptCount == 1) {
+				document.getElementById(`delete-departmentID-${onlyDeptID}-btn`).click();				
+			} else {
+				console.log('error finding last department ID');
+			}
+			
 
+
+			/*
       $('#alert-modal').modal(
         {
           title: '<i class="archive icon"></i>',
           content: `<div class="alert-modal-text">Delete this location? <h3> ${locationsObj[key]} </h3></div>`
         }).modal('show');
-
+			*/
+			
     });
 
     //locsAndDeptsObj[key]['loaded'] = true;
@@ -2351,7 +2380,7 @@ function createEmployeeModalContent(editOrCreate, detailsForEditForm){
 	
 };
 
-function createLocationPanel(name, id){
+function createLocationPanel(name, id, deptsCount){
 	
 	let locationPanel = document.createElement('div'); //LOCATION PANEL
 		let panelCloser = document.createElement('i');
@@ -2373,8 +2402,14 @@ function createLocationPanel(name, id){
 		locationHeaderText.innerHTML = `${name}`; 
 		locationHeaderText.setAttribute('class', 'location-header-text')
 		
-		locationHeader.appendChild(locationHeaderText); 
-
+		locationHeader.appendChild(locationHeaderText);
+		
+		if (deptsCount == 1){
+		
+			locationHeader.appendChild(deleteLocationIcon);	
+		
+		}
+		
 		locationPanel.appendChild(panelCloser);
 		locationPanel.appendChild(locationHeader);
 	
@@ -2527,13 +2562,23 @@ function manageDepartmentsAndLocationsModal(locsAndDeptsObj){
 		}
 		
 		if (!locsAndDeptsObj[locationID]['loaded']) {
+		
+		let numberOfDepts = 0; 
 
-		let locationPanel = createLocationPanel(locationName, locationID);
+		for (let [count_k, count_val] of Object.entries(locsAndDeptsObj[locationID]['departments'])){	
+				
+			numberOfDepts ++;
+		
+		}
+
+		let locationPanel = createLocationPanel(locationName, locationID, numberOfDepts);
 		let locationContent = document.createElement('div');
 		locationContent.setAttribute('class', 'ui attached segment');
 		locationContent.setAttribute('id', `location-${locationID}-append-dept`);
 		
-		for (let [k, val] of Object.entries(locsAndDeptsObj[locationID]['departments'])){		
+
+		
+		for (let [k, val] of Object.entries(locsAndDeptsObj[locationID]['departments'])){	
 				
 				let employeeCount = departmentsObj[k]['employees'];
 
@@ -2545,13 +2590,13 @@ function manageDepartmentsAndLocationsModal(locsAndDeptsObj){
 					
 					} // !val.loaded
 					
-				} // end of DeptsLoops
+		} // end of DeptsLoops
 	
-			locationContent.appendChild(createNewDeptAccordion(locationID));
-			
-			locationPanel.appendChild(locationContent);
-			
-			document.getElementById('append-location-panels').appendChild(locationPanel);
+		locationContent.appendChild(createNewDeptAccordion(locationID));
+		
+		locationPanel.appendChild(locationContent);
+		
+		document.getElementById('append-location-panels').appendChild(locationPanel);
 			
 		} // ! location ID .loaded
 		
