@@ -162,10 +162,10 @@ function getAllLocationsAndDepartments(){
   removeCheckBoxes('department');
 
 	$.ajax({
-		url: "libs/post-php/getAllLocations.php",
-		type: "POST",
-		//url: "libs/php/getAllLocations.php",
-		//type: "GET",
+		//url: "libs/post-php/getAllLocations.php",
+		//type: "POST",
+		url: "libs/php/getAllLocations.php",
+		type: "GET",
 		dataType: "json",
 		data: {},
 		success: function (result) {
@@ -205,10 +205,10 @@ function getAllLocationsAndDepartments(){
 				locationCheckboxFunctionalityMobile();
 
 				$.ajax({
-					url: "libs/post-php/getAllDepartments.php",
-					type: "POST",
-					//url: "libs/php/getAllDepartments.php",
-					//type: "GET",
+					//url: "libs/post-php/getAllDepartments.php",
+					//type: "POST",
+					url: "libs/php/getAllDepartments.php",
+					type: "GET",
 					dataType: "json",
 					data: {},
 					success: function (result) {
@@ -284,10 +284,10 @@ function getAllLocationsAndDepartments(){
 								let dlid = result.data[ed].locationID;
 								
 									$.ajax({
-									url: "libs/post-php/countPersonnelByDept.php",
-									type: "POST",
-									//url: "libs/php/countPersonnelByDept.php",
-									//type: "GET",
+									//url: "libs/post-php/countPersonnelByDept.php",
+									//type: "POST",
+									url: "libs/php/countPersonnelByDept.php",
+									type: "GET",
 									dataType: "json",
 									data: {
 										deptID: did
@@ -341,7 +341,7 @@ function getAllLocationsAndDepartments(){
 			
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
-				console.log('error');
+				console.log('error', jqXHR);
 				console.log(textStatus);
 				console.log(errorThrown);
 			},
@@ -352,10 +352,10 @@ function getAllLocationsAndDepartments(){
 function getAllEmployees(){
 
 	$.ajax({
-		//url: "libs/php/getAll.php",
-		//type: "GET",
-		url: "libs/post-php/getAll.php",
-		type: "POST",
+		url: "libs/php/getAll.php",
+		type: "GET",
+		//url: "libs/post-php/getAll.php",
+		//type: "POST",
 		dataType: "json",
 		data: {},
 		success: function (result) {
@@ -631,10 +631,10 @@ $('#delete-employee-modal-btn').click(function (){
 	document.getElementById('delete-employee-modal-btn').setAttribute('style', 'display: none');
 
 	$.ajax({
-	url: "libs/post-php/deleteEmployeeByID.php",
-	type: "POST",
-	//url: "libs/php/deleteEmployeeByID.php",
-	//type: "GET",
+	//url: "libs/post-php/deleteEmployeeByID.php",
+	//type: "POST",
+	url: "libs/php/deleteEmployeeByID.php",
+	type: "GET",
 	dataType: "json",
 	data: {
 		id: employeeID
@@ -670,10 +670,10 @@ $('#update-employee-modal-btn').click(function (){
 	//document.getElementById('update-employee-modal-btn').setAttribute('style', 'display: none');
 
 	$.ajax({
-	//url: "libs/php/updateEmployee.php",
-	//type: "GET",
-	url: "libs/post-php/updateEmployee.php",
-	type: "POST",
+	url: "libs/php/updateEmployee.php",
+	type: "GET",
+	//url: "libs/post-php/updateEmployee.php",
+	//type: "POST",
 	dataType: "json",
 	data: updateEmployeeDataObj,
 	success: function (result) {
@@ -753,10 +753,10 @@ $('#delete-department-modal-btn').click(function (){
 	let emptyLocID = this.getAttribute('emptyLocID');
 	
 	$.ajax({
-	url: "libs/post-php/deleteDepartmentByID.php",
-	type: "POST",
-	//url: "libs/php/deleteDepartmentByID.php",
-	//type: "GET",
+	//url: "libs/post-php/deleteDepartmentByID.php",
+	//type: "POST",
+	url: "libs/php/deleteDepartmentByID.php",
+	type: "GET",
 	dataType: "json",
 	data: {
 		departmentID: deleteDepartmentID
@@ -770,10 +770,10 @@ $('#delete-department-modal-btn').click(function (){
 				if (emptyLocID != 0) {
 						
 					$.ajax({
-					url: "libs/post-php/deleteLocationByID.php",
-					type: "POST",
-					//url: "libs/php/deleteLocationByID.php",
-					//type: "GET",
+					//url: "libs/post-php/deleteLocationByID.php",
+					//type: "POST",
+					url: "libs/php/deleteLocationByID.php",
+					type: "GET",
 					dataType: "json",
 					data: {
 						locationID: emptyLocID
@@ -930,10 +930,10 @@ $('#employee-modal-create-fields').submit(function(event) {
 	createEmployeeDataObj['jobTitle'] = 	createEmployeeDataObj['jobTitle'] == 0 ? 'Job Title TBC' : 	createEmployeeDataObj['jobTitle'];
 	
 	$.ajax({
-	url: "libs/post-php/insertEmployee.php",
-	type: "POST",
-	//url: "libs/php/insertEmployee.php",
-	//type: "GET",
+	//url: "libs/post-php/insertEmployee.php",
+	//type: "POST",
+	url: "libs/php/insertEmployee.php",
+	type: "GET",
 	dataType: "json",
 	data: createEmployeeDataObj,
 	success: function (result) {
@@ -1022,10 +1022,10 @@ $(`#submit-new-location-btn`).click(function(e){
     }
 
     $.ajax({
-		//url: "libs/php/insertLocation.php",
-		//type: "GET",
-		url: "libs/post-php/insertLocation.php",
-    type: "POST",
+		url: "libs/php/insertLocation.php",
+		type: "GET",
+		//url: "libs/post-php/insertLocation.php",
+    //type: "POST",
     dataType: "json",
     data: {
       name: newLocationName
@@ -1037,11 +1037,11 @@ $(`#submit-new-location-btn`).click(function(e){
           newDeptObj['locationID'] = result.data.id;
           
           $.ajax({
-          //url: "libs/php/insertDepartmentRtnID.php",  // CHECK
-          //url: "libs/php/insertDepartment.php",
-          //type: "GET",
-          url: "libs/post-php/insertDepartmentRtnID.php",  // CHECK
-          type: "POST",
+          url: "libs/php/insertDepartmentRtnID.php",  
+          //url: "libs/php/insertDepartment.php", //not used
+          type: "GET",
+          //url: "libs/post-php/insertDepartmentRtnID.php",
+          //type: "POST",
           dataType: "json",
           data: newDeptObj,
           success: function (result) {
@@ -1161,10 +1161,10 @@ function oneLocationEventListeners(deptsParam, locKey){
 				updateDepartmentDataObj['departmentID'] = updatedDeptID;	
 				
 				$.ajax({
-				//url: "libs/php/updateDepartment.php",
-				//type: "GET",
-				url: "libs/post-php/updateDepartment.php",
-				type: "POST",
+				url: "libs/php/updateDepartment.php",
+				type: "GET",
+				//url: "libs/post-php/updateDepartment.php",
+				//type: "POST",
 				dataType: "json",
 				data: updateDepartmentDataObj,
 				success: function (result) {
@@ -1248,10 +1248,10 @@ function oneLocationEventListeners(deptsParam, locKey){
 			let deptName = departmentsObj[deptID]['name'];
 
 			$.ajax({
-			//url: "libs/php/checkIfLastDepartment.php",
-			//type: "GET",
-			url: "libs/post-php/checkIfLastDepartment.php",
-			type: "POST",
+			url: "libs/php/checkIfLastDepartment.php",
+			type: "GET",
+			//url: "libs/post-php/checkIfLastDepartment.php",
+			//type: "POST",
 			dataType: "json",
 			data: {
 				departmentID: deptID
@@ -1270,8 +1270,8 @@ function oneLocationEventListeners(deptsParam, locKey){
 						{
 							title: '<i class="archive icon"></i>',
 							content: `<div class="alert-modal-text">
-											<h3>Delete department and location?</h3> 
-											<h4> The location ${locName} and the department ${deptName} with both be deleted. </h4>
+											<h3>Delete location and department?</h3> 
+											<h4> The location ${locName} and the department ${deptName} will both be deleted. </h4>
 											</div>`
 						}).modal('show');
 						
@@ -1389,10 +1389,10 @@ function eventListenersInsideDeptsandLocsModal() {
 					updateDepartmentDataObj['departmentID'] = updatedDeptID;	
 					
 					$.ajax({
-					//url: "libs/php/updateDepartment.php",
-					//type: "GET",
-					url: "libs/post-php/updateDepartment.php",
-					type: "POST",
+					url: "libs/php/updateDepartment.php",
+					type: "GET",
+					//url: "libs/post-php/updateDepartment.php",
+					//type: "POST",
 					dataType: "json",
 					data: updateDepartmentDataObj,
 					success: function (result) {
@@ -1490,10 +1490,10 @@ function eventListenersInsideDeptsandLocsModal() {
 				} else {
 				
 				$.ajax({
-				url: "libs/post-php/checkIfLastDepartment.php",
-				type: "POST",
-				//url: "libs/php/checkIfLastDepartment.php",
-				//type: "GET",
+				//url: "libs/post-php/checkIfLastDepartment.php",
+				//type: "POST",
+				url: "libs/php/checkIfLastDepartment.php",
+				type: "GET",
 				dataType: "json",
 				data: {
 					departmentID: deptID
@@ -1511,7 +1511,7 @@ function eventListenersInsideDeptsandLocsModal() {
 							$('#alert-modal').modal(
 							{
 								title: '<i class="archive icon"></i>',
-								content: `<div class="alert-modal-text">Delete this department and location? 
+								content: `<div class="alert-modal-text">Delete this location and department? 
 								
 												<h4> The location ${locName} and department ${deptName} will both be deleted. </h4>
 												</div>`
@@ -1632,10 +1632,10 @@ function eventListenersInsideDeptsandLocsModal() {
 				newDeptObj['locationID'] = locationID;
 				
 				$.ajax({
-				url: "libs/post-php/insertDepartmentRtnID.php",
-				type: "POST",
-				//url: "libs/php/insertDepartmentRtnID.php",
-				//type: "GET",
+				//url: "libs/post-php/insertDepartmentRtnID.php",
+				//type: "POST",
+				url: "libs/php/insertDepartmentRtnID.php",
+				type: "GET",
 				dataType: "json",
 				data: newDeptObj,
 				success: function (result) {
@@ -2143,10 +2143,10 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 	if (editOrCreate == 'edit') {
 		
 		$.ajax({
-		//url: "libs/php/departmentsChange.php",
-		//type: "GET",
-		url: "libs/post-php/departmentsChange.php",
-		type: "POST",
+		url: "libs/php/departmentsChange.php",
+		type: "GET",
+		//url: "libs/post-php/departmentsChange.php",
+		//type: "POST",
 		dataType: "json",
 		data: {
 			locationID: detailsForEditForm.locationID
@@ -2190,10 +2190,10 @@ function createEmployeeModalContent(editOrCreate, detailsForEditForm){
 	
 	
 	$.ajax({
-	url: "libs/post-php/getAllLocations.php",
-	type: "POST",
-	//url: "libs/php/getAllLocations.php",
-	//type: "GET",
+	//url: "libs/post-php/getAllLocations.php",
+	//type: "POST",
+	url: "libs/php/getAllLocations.php",
+	type: "GET",
 	dataType: "json",
 	data: {},
 	success: function (result) {
@@ -2233,10 +2233,10 @@ function createEmployeeModalContent(editOrCreate, detailsForEditForm){
 			locationDropDown.addEventListener('change', function(e){
 				
 						$.ajax({
-						//url: "libs/php/departmentsChange.php",
-						//type: "GET",
-						url: "libs/post-php/departmentsChange.php",
-						type: "POST",
+						url: "libs/php/departmentsChange.php",
+						type: "GET",
+						//url: "libs/post-php/departmentsChange.php",
+						//type: "POST",
 						dataType: "json",
 						data: {
 							locationID: e.target.value
@@ -3231,10 +3231,10 @@ function runSearch(orderBy, searchTerm){
 	$.ajax({
 		
 		//url: "libs/php/searchAllBuildInLocations.php",
-		//url: "libs/php/runSearch.php",
-		//type: "GET",
-		url: "libs/post-php/runSearch.php",
-		type: "POST",
+		url: "libs/php/runSearch.php",
+		type: "GET",
+		//url: "libs/post-php/runSearch.php",
+		//type: "POST",
 		dataType: "json",
 		data: {
 			searchTerm: `${searchTerm}%`,
