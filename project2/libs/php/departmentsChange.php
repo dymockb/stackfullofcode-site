@@ -31,18 +31,6 @@
 		exit;
 
 	}	
-
-	//$query = 'SELECT id, name, locationID FROM department WHERE locationID = 4';
-
-	//$result = $conn->query($query);
-
-
-	#$query = $conn->prepare('SELECT id, name, locationID FROM department WHERE locationID = ?)');
-
-	#$query->bind_param("i", $_REQUEST['locationID']);
-
-	#$query->execute();
-	
 	
 	$query = $conn->prepare('SELECT id, name, locationID FROM department WHERE locationID =  ?');
 

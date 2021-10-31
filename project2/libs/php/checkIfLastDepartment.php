@@ -58,19 +58,11 @@
 	}
 	
 	$result = $check->get_result();
-	
-	//echo gettype(mysqli_fetch_assoc($result));
 
   $data;
 
 	while ($row = mysqli_fetch_assoc($result)) {
-		
-		//echo 'row ' . json_encode($row);
-		//array_push($data, $row);
-		
-		//echo json_encode($row);
-		//echo is_array($row);
-		
+				
 		$data = $row['locationID'];
 
 	}
@@ -89,8 +81,6 @@
 
 	}
 	
-	//echo 'count result' . json_encode($countData);
-	
 	$locationStatusMsg = 'Keep location';
 	
 	
@@ -105,12 +95,10 @@
 		}
 	
 	}
-	
-	/*
-	
+
 	$checkDependency = $conn->prepare('SELECT COUNT(*) FROM personnel WHERE departmentID = ?');
 
-	$checkDependency->bind_param("i", $_REQUEST['departmentID']);
+	$checkDependency->bind_param("i", $_POST['departmentID']);
 	
 	$checkDependency->execute();
 	
@@ -120,8 +108,6 @@
 	
 	while ($row = mysqli_fetch_assoc($dependencyResult)) {
 		
-		//echo 'row ' . json_encode($row);
-		//array_push($data, $row['COUNT(*)']);
 		$dependencyData = $row['COUNT(*)'];
 
 	}	
@@ -141,37 +127,14 @@
 
 	}
 
-	// 
-	$query = $conn->prepare('DELETE FROM department WHERE id = ?');
-	
-	$query->bind_param("i", $_REQUEST['departmentID']);
-
-	$query->execute();
-	
-	if (false === $query) {
-
-		$output['status']['code'] = "400";
-		$output['status']['name'] = "executed";
-		$output['status']['description'] = "query failed";	
-		$output['data'] = [];
-
-		mysqli_close($conn);
-
-		echo json_encode($output); 
-
-		exit;
-
-	}
-	
-	*/
-
 	$output['status']['code'] = "200";
 	$output['status']['name'] = "ok";
 	$output['status']['description'] = "success";
 	$output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000 . " ms";
-	//$output['data'] = $locationStatusMsg;
 	$output['data']['msg'] = $locationStatusMsg;
 	$output['data']['locID'] = $locID;
+	$output['data']['deptEmployeeCount'] = $dependencyData;
+	$output['data']['countOfDepartmnents'] = count($countData);
 	
 	mysqli_close($conn);
 

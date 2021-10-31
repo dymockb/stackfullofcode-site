@@ -48,8 +48,6 @@
 
 	while ($row = mysqli_fetch_assoc($result)) {
 		
-		//echo 'row ' . json_encode($row);
-		//array_push($data, $row['COUNT(*)']);
 		$data = $row['COUNT(*)'];
 
 	}
@@ -74,8 +72,6 @@
 	
 	while ($row = mysqli_fetch_assoc($dependencyResult)) {
 		
-		//echo 'row ' . json_encode($row);
-		//array_push($data, $row['COUNT(*)']);
 		$dependencyData = $row['COUNT(*)'];
 
 	}	

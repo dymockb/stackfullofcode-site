@@ -49,8 +49,6 @@
 
 	while ($row = mysqli_fetch_assoc($result)) {
 		
-		//echo 'row ' . json_encode($row);
-		//array_push($data, $row['COUNT(*)']);
 		$data = $row['COUNT(*)'];
 
 	}
@@ -103,9 +101,6 @@
 	
 	/*  this will get the new location ID back to return to ajax */
 	
-	//$queryForID = "SELECT id FROM location WHERE name = 'London'";
-	//$resultForID = $conn->query($queryForID);
-	
 	$queryForID = $conn->prepare('SELECT id FROM location WHERE name =  ?');
 	$queryForID->bind_param("s", $_REQUEST['name']);
 	$queryForID->execute();
@@ -126,12 +121,10 @@
 
 	$resultForID = $queryForID->get_result();
 
-  //$dataForID = [];
   $dataForID;
 
 	while ($row = mysqli_fetch_assoc($resultForID)) {
 
-		//array_push($dataForID, $row);
 		$dataForID = $row;
 
 	}
@@ -141,7 +134,6 @@
 	$output['status']['name'] = "ok";
 	$output['status']['description'] = "success";
 	$output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000 . " ms";
-	//$output['data'] = [$resultForID];
 	$output['data'] = $dataForID;
 	
 	mysqli_close($conn);

@@ -59,11 +59,9 @@
 	$result = $query->get_result();
 
   $personnel;
-  //$personnel = [];
 
 	while ($row = mysqli_fetch_assoc($result)) {
 
-		//array_push($personnel, $row);
 		$personnel = $row['COUNT(*)'];
 
 	}

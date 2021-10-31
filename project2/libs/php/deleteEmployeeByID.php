@@ -48,8 +48,6 @@
 
 	while ($row = mysqli_fetch_assoc($result)) {
 		
-		//echo 'row ' . json_encode($row);
-		//array_push($data, $row['COUNT(*)']);
 		$data = $row['COUNT(*)'];
 
 	}
@@ -62,16 +60,6 @@
 		$message =  'Employee Does Not Exist';		
 	}
 	
-	#$checkDependency = $conn->prepare('SELECT COUNT(*) FROM personnel WHERE id = ?');
-
-	#$checkDependency->bind_param("i", $_REQUEST['id']);
-	
-	#$checkDependency->execute();
-	
-	#$dependencyResult = $checkcheckDependency->get_result();
-
-	
-	// 
 	$query = $conn->prepare('DELETE FROM personnel WHERE id = ?');
 	
 	$query->bind_param("i", $_REQUEST['id']);

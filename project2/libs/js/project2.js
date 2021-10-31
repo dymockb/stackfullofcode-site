@@ -548,7 +548,6 @@ $('#delete-employee-btn').click(function (){
 
 	document.getElementById('update-employee-modal-btn').setAttribute('style', 'display: none');
 	document.getElementById('delete-department-modal-btn').setAttribute('style', 'display: none');
-	document.getElementById('delete-location-modal-btn').setAttribute('style', 'display: none');
 
 	
  	$('#alert-modal').modal(
@@ -697,54 +696,6 @@ $('#update-employee-modal-btn').click(function (){
 
 });
 
-$('#delete-location-modal-btn').click(function (){
-
-	closeAlertModal();
-	
-	console.log(`delete location ${this.getAttribute('locid')}, ${this.getAttribute('locname')}`)
-	
-	//document.getElementById(`delete-departmentID-${locid}-btn`).click();
-	
-	/*
-	let deleteLocationID = this.getAttribute('locid');
-	let deleteLocationName = this.getAttribute('locname');
-	
-	$.ajax({
-	url: "libs/php/deleteLocationByID.php",
-	type: "GET",
-	dataType: "json",
-	data: {
-		locationID: deleteLocationID
-	},
-	success: function (result) {
-		
-			console.log('delete Location ',result);
-			if (result['status'].description != 'dependency error') {
-				
-				document.getElementById('floating-info-message').setAttribute('class', 'ui info floating-error message');
-				document.getElementById('floating-info-header').innerHTML = 'Location Deleted';
-				document.getElementById('floating-info-text').innerHTML = deleteLocationName;				
-
-				refreshPage();
-								
-			} else {
-				
-				console.log('ERROR: Location not deleted, dependency error')
-
-			}
-
-	},
-	error: function (jqXHR, textStatus, errorThrown) {
-			console.log('error');
-			console.log(textStatus);
-			console.log(errorThrown);
-		},
-	});
-	
-	*/
-	
-});
-
 $('#delete-department-modal-btn').click(function (){
 
 	closeAlertModal();
@@ -876,8 +827,7 @@ $('#employee-modal-edit-fields').submit(function(event) {
 		document.getElementById('update-employee-modal-btn').setAttribute('style', 'display: inline');	
 
 		document.getElementById('delete-employee-modal-btn').setAttribute('style', 'display: none');
-		document.getElementById('delete-department-modal-btn').setAttribute('style', 'display: none');
-		document.getElementById('delete-location-modal-btn').setAttribute('style', 'display: none');		
+		document.getElementById('delete-department-modal-btn').setAttribute('style', 'display: none');		
 		
 		$('#alert-modal').modal(
 		{
@@ -1693,10 +1643,6 @@ function eventListenersInsideDeptsandLocsModal() {
 		});
 
     $(`#delete-locationID-${key}-icon`).click(function(e){
-      
-      //document.getElementById('delete-location-modal-btn').setAttribute('style', 'display: inline !important');
-      //document.getElementById('delete-location-modal-btn').setAttribute('locid', key);
-      //document.getElementById('delete-location-modal-btn').setAttribute('locname', locationsObj[key]);
 			
 			let onlyDeptID;
 			let checkDeptObj = locsAndDeptsObj[key]['departments'];
@@ -1710,20 +1656,14 @@ function eventListenersInsideDeptsandLocsModal() {
 			}		
 			
 			if (checkDeptCount == 1) {
+
 				document.getElementById(`delete-departmentID-${onlyDeptID}-btn`).click();				
 			} else {
+
 				console.log('error finding last department ID');
-			}
 			
+			}
 
-
-			/*
-      $('#alert-modal').modal(
-        {
-          title: '<i class="archive icon"></i>',
-          content: `<div class="alert-modal-text">Delete this location? <h3> ${locationsObj[key]} </h3></div>`
-        }).modal('show');
-			*/
 			
     });
 
@@ -3397,10 +3337,7 @@ function closeAlertModal(){
 	document.getElementById('delete-employee-modal-btn').setAttribute('style', 'display: none');
 	document.getElementById('update-employee-modal-btn').setAttribute('style', 'display: none');
 	document.getElementById('delete-department-modal-btn').setAttribute('style', 'display: none');
-	document.getElementById('delete-location-modal-btn').setAttribute('style', 'display: none');
 	document.getElementById('create-new-location-btn').setAttribute('style', 'display: none');
-	
-	
 
 }
 

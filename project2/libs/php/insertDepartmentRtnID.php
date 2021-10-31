@@ -76,12 +76,10 @@
 
 	$resultForID = $queryForID->get_result();
 
-  //$dataForID = [];
   $dataForID;
 
 	while ($row = mysqli_fetch_assoc($resultForID)) {
 
-		//array_push($dataForID, $row);
 		$dataForID = $row;
 
 	}
