@@ -38,7 +38,7 @@
 
   $departmentsArray = [];
 
-  if ($_REQUEST['departments'] == "") {
+  if ($_POST['departments'] == "") {
 
 	 $queryStringIncDepts = $startOfQueryString;
    $deptString = "";
@@ -47,7 +47,7 @@
 
   } else {
 
-  $departmentsArray = explode(',',$_REQUEST['departments']);
+  $departmentsArray = explode(',',$_POST['departments']);
 	
     $deptString = "(d.name = ";
   
@@ -66,7 +66,7 @@
      }
     };
 
-		$locationsArray = explode(',',$_REQUEST['locations']);
+		$locationsArray = explode(',',$_POST['locations']);
 
 		$locString = "(l.id = "; 
 
@@ -88,11 +88,11 @@
   }
   
 
-	if ($_REQUEST['orderBy'] == 'lastName') {
+	if ($_POST['orderBy'] == 'lastName') {
 	
 		$orderByQueryString = " ORDER BY p.lastName, p.firstName, d.name, l.name";
 	
-	} elseif ($_REQUEST['orderBy'] == 'firstName') {
+	} elseif ($_POST['orderBy'] == 'firstName') {
 
 		$orderByQueryString = " ORDER BY p.firstName, p.lastName, d.name, l.name";
 	
@@ -100,7 +100,7 @@
 	
 	$query = $conn->prepare($outputQueryString . $orderByQueryString);
 
-  $requestArray = array_merge($departmentsArray, $locationsArray, array($_REQUEST['searchTerm'], $_REQUEST['searchTerm'], $_REQUEST['searchEmail']));
+  $requestArray = array_merge($departmentsArray, $locationsArray, array($_POST['searchTerm'], $_POST['searchTerm'], $_POST['searchEmail']));
 
   $types = str_repeat('s', count($requestArray));
 	$query->bind_param($types, ...$requestArray);	

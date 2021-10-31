@@ -162,8 +162,10 @@ function getAllLocationsAndDepartments(){
   removeCheckBoxes('department');
 
 	$.ajax({
-		url: "libs/php/getAllLocations.php",
-		type: "GET",
+		url: "libs/post-php/getAllLocations.php",
+		type: "POST",
+		//url: "libs/php/getAllLocations.php",
+		//type: "GET",
 		dataType: "json",
 		data: {},
 		success: function (result) {
@@ -203,8 +205,10 @@ function getAllLocationsAndDepartments(){
 				locationCheckboxFunctionalityMobile();
 
 				$.ajax({
-					url: "libs/php/getAllDepartments.php",
-					type: "GET",
+					url: "libs/post-php/getAllDepartments.php",
+					type: "POST",
+					//url: "libs/php/getAllDepartments.php",
+					//type: "GET",
 					dataType: "json",
 					data: {},
 					success: function (result) {
@@ -348,8 +352,10 @@ function getAllLocationsAndDepartments(){
 function getAllEmployees(){
 
 	$.ajax({
-		url: "libs/php/getAll.php",
-		type: "GET",
+		//url: "libs/php/getAll.php",
+		//type: "GET",
+		url: "libs/post-php/getAll.php",
+		type: "POST",
 		dataType: "json",
 		data: {},
 		success: function (result) {
@@ -2184,8 +2190,10 @@ function createEmployeeModalContent(editOrCreate, detailsForEditForm){
 	
 	
 	$.ajax({
-	url: "libs/php/getAllLocations.php",
-	type: "GET",
+	url: "libs/post-php/getAllLocations.php",
+	type: "POST",
+	//url: "libs/php/getAllLocations.php",
+	//type: "GET",
 	dataType: "json",
 	data: {},
 	success: function (result) {
@@ -3223,8 +3231,10 @@ function runSearch(orderBy, searchTerm){
 	$.ajax({
 		
 		//url: "libs/php/searchAllBuildInLocations.php",
-		url: "libs/php/runSearch.php",
-		type: "GET",
+		//url: "libs/php/runSearch.php",
+		//type: "GET",
+		url: "libs/post-php/runSearch.php",
+		type: "POST",
 		dataType: "json",
 		data: {
 			searchTerm: `${searchTerm}%`,
