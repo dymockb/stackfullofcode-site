@@ -437,6 +437,7 @@ function getAllLocationsAndDepartments(){
 							for (let ed = 0; ed < result.data.length; ed ++){
 				
 								let did = result.data[ed].id;
+								let dlid = result.data[ed].locationID;
 								
 									$.ajax({
 									url: "libs/php/countPersonnelByDept.php",
@@ -448,7 +449,7 @@ function getAllLocationsAndDepartments(){
 									success: function (result) {
 											
 											departmentsObj[did]['employees'] = result.data.personnel; 
-											
+											departmentsObj[did]['locationID'] = dlid;
 											
 											if (ed == finaled-1) {
 												//manageDepartmentsAndLocationsModal(locsAndDeptsObj);
@@ -697,6 +698,10 @@ $('#delete-employee-btn').click(function (){
 
 	$('#delete-employee-modal-btn').attr('style', 'display: inline');
 
+	document.getElementById('update-employee-modal-btn').setAttribute('style', 'display: none');
+	document.getElementById('delete-department-modal-btn').setAttribute('style', 'display: none');
+	document.getElementById('delete-location-modal-btn').setAttribute('style', 'display: none');
+
 	
  	$('#alert-modal').modal(
  		{
@@ -720,6 +725,7 @@ $('#edit-employee-fields-btn').click(function(){
 	document.getElementById('employee-modal-edit-fields').setAttribute('style','display: inherit');
 	document.getElementById('submit-edit-employee').setAttribute('style','display: inline');
 	document.getElementById('close-only-btn').setAttribute('style', 'display: inline');
+
 	document.getElementById('submit-edit-employee').setAttribute('employee-details', this.getAttribute('employee-details'));
 	
 
@@ -758,9 +764,6 @@ $('#submit-create-employee').click(function(event){
 });
 
 $('#submit-edit-employee').click(function (){
-
-	console.log('submit edit employee btn clicked');
-	console.log($(`#employee-modal-edit-fields`).form('validate form'));
 
 	if ($('#employee-modal-edit-fields').form('validate form')) {
 
@@ -1013,6 +1016,10 @@ $('#employee-modal-edit-fields').submit(function(event) {
 		document.getElementById('update-employee-modal-btn').setAttribute('employee-details', JSON.stringify(editEmployeeDataObj));
 		
 		document.getElementById('update-employee-modal-btn').setAttribute('style', 'display: inline');	
+
+		document.getElementById('delete-employee-modal-btn').setAttribute('style', 'display: none');
+		document.getElementById('delete-department-modal-btn').setAttribute('style', 'display: none');
+		document.getElementById('delete-location-modal-btn').setAttribute('style', 'display: none');		
 		
 		$('#alert-modal').modal(
 		{
@@ -1431,6 +1438,7 @@ function oneLocationEventListeners(deptsParam, locKey){
 			
 		});
 
+		/*
 		$(`#departmentID-${k}-trash-warning`).click(function(e){
 			
 
@@ -1441,6 +1449,7 @@ function oneLocationEventListeners(deptsParam, locKey){
 				}).modal('show');
 
 		});
+		*/
 		
 		locsAndDeptsObj[locKey]['departments'][k]['loaded'] = true;
 
@@ -1606,7 +1615,7 @@ function eventListenersInsideDeptsandLocsModal() {
 					document.getElementById(`departmentID-${k}-warning-text`).innerHTML = `<i class="fas fa-exclamation-circle">&nbsp;</i>  Only empty departments can be deleted.`;
 					
 					$(`#departmentID-${k}-close-icon`)
-					.on('click', function() {
+					.one('click', function() {
 						$(this)
 							.closest('.message')
 							.transition('fade')
@@ -1670,7 +1679,7 @@ function eventListenersInsideDeptsandLocsModal() {
 			});
 
 			
-
+			/*
 			$(`#departmentID-${k}-trash-warning`).click(function(e){
 				
 				$('#alert-modal').modal(
@@ -1680,7 +1689,8 @@ function eventListenersInsideDeptsandLocsModal() {
 					}).modal('show');
 
 			});
-			
+			*/
+
 			locsAndDeptsObj[key]['departments'][k]['loaded'] = true;
 
 		}  // end of IF dept loaded == false, apply listeners
@@ -2396,7 +2406,7 @@ function createEmployeeModalContent(editOrCreate, detailsForEditForm){
 	
 };
 
-function createLocationPanel(name, id, deptsCount){
+function createLocationPanel(name, id, deptsCount, totalEmployees){
 	
 	let locationPanel = document.createElement('div'); //LOCATION PANEL
 		let panelCloser = document.createElement('i');
@@ -2420,7 +2430,7 @@ function createLocationPanel(name, id, deptsCount){
 		
 		locationHeader.appendChild(locationHeaderText);
 		
-		if (deptsCount == 1){
+		if (deptsCount == 1 && totalEmployees == 0){
 		
 			locationHeader.appendChild(deleteLocationIcon);	
 		
@@ -2552,7 +2562,6 @@ function manageDepartmentsAndLocationsModal(locsAndDeptsObj){
 	listOfLocations.sort();		
 
 	if (manageDeptsAndLocsOpened != 0) {
-		
 	
 		let el = document.getElementById('append-location-panels');
 		let elClone = el.cloneNode(true);
@@ -2566,7 +2575,7 @@ function manageDepartmentsAndLocationsModal(locsAndDeptsObj){
 	
 	for (let loc = 0; loc < listOfLocations.length; loc ++) {
 		
-		locationName = listOfLocations[loc];
+		let locationName = listOfLocations[loc];
 		
 		let locationID;;
 		
@@ -2575,24 +2584,31 @@ function manageDepartmentsAndLocationsModal(locsAndDeptsObj){
 			if (value == locationName) {
 				locationID = key;
 			}
+
 		}
 		
 		if (!locsAndDeptsObj[locationID]['loaded']) {
 		
 		let numberOfDepts = 0; 
+		let totalNumberOfEmployees = 0;
 
-		for (let [count_k, count_val] of Object.entries(locsAndDeptsObj[locationID]['departments'])){	
-				
-			numberOfDepts ++;
-		
+		//for (let [count_k, count_val] of Object.entries(locsAndDeptsObj[locationID]['departments'])){	
+		for (let [count_k, count_val] of Object.entries(departmentsObj)){	
+			
+			if(count_val['locationID'] == locationID) {
+				numberOfDepts ++;
+				totalNumberOfEmployees += count_val['employees'];
+			}
+	
 		}
 
-		let locationPanel = createLocationPanel(locationName, locationID, numberOfDepts);
+		let locationPanel = createLocationPanel(locationName, locationID, numberOfDepts, totalNumberOfEmployees );
 		let locationContent = document.createElement('div');
 		locationContent.setAttribute('class', 'ui attached segment');
 		locationContent.setAttribute('id', `location-${locationID}-append-dept`);
 		
-
+		let deptAppendObj = {};
+		let deptSegmentNameList = []
 		
 		for (let [k, val] of Object.entries(locsAndDeptsObj[locationID]['departments'])){	
 				
@@ -2600,13 +2616,24 @@ function manageDepartmentsAndLocationsModal(locsAndDeptsObj){
 
 				if (!val.loaded) {
 	
-					let deptName = val.depname;				
+					let deptName = val.depname;	
 					
-					locationContent.appendChild(createDepartmentSegment(k, deptName, employeeCount));
+					deptSegmentNameList.push(deptName);
+					deptAppendObj[deptName] = createDepartmentSegment(k, deptName, employeeCount);
+					
+					//locationContent.appendChild(createDepartmentSegment(k, deptName, employeeCount));
 					
 					} // !val.loaded
 					
 		} // end of DeptsLoops
+
+		deptSegmentNameList.sort();
+
+		for (let ds = 0; ds < deptSegmentNameList.length; ds ++) {
+
+			locationContent.appendChild(deptAppendObj[deptSegmentNameList[ds]]);	
+
+		}
 	
 		locationContent.appendChild(createNewDeptAccordion(locationID));
 		
@@ -2632,21 +2659,17 @@ function departmentCheckboxFunctionality() {
 
 				if (countOfCheckedDepts == 0) {
 				 $('#select-none-departments').checkbox('set checked');
-				 $('#select-none-departments-mobile').checkbox('set checked');
+				 
 				} else {
-				 $('#select-none-departments').checkbox('set unchecked');
-				 $('#select-none-departments-mobile').checkbox('set unchecked');					
+				 $('#select-none-departments').checkbox('set unchecked');				 					
 				}
 
 				$('#select-all-departments').checkbox('set unchecked');
-				$('#select-all-departments-mobile').checkbox('set unchecked');
-
+				
 			} else if (countOfCheckedDepts == countOfDepts) {
 				$('#select-all-departments').checkbox('set checked');
 				$('#select-none-departments').checkbox('set unchecked');
 
-				$('#select-all-departments-mobile').checkbox('set checked');
-				$('#select-none-departments-mobile').checkbox('set unchecked');
 			}
 		}
 
@@ -2656,7 +2679,7 @@ function departmentCheckboxFunctionality() {
 				countOfCheckedDepts ++;
 				
 				if ((countOfCheckedDepts < countOfDepts) && (countOfCheckedDepts > 0)){
-					howManyDeptssSelected = 'Some';
+					howManyDeptsSelected = 'Some';
 				}
 				
 				setSelectAllCheckBox();
@@ -2672,11 +2695,18 @@ function departmentCheckboxFunctionality() {
 			onUnchecked: function(){
 				activeDepartmentsObj[this.name] = this.checked;
 				countOfCheckedDepts --;
+
+				/*
+				if ((countOfCheckedDepts < countOfDepts) && (countOfCheckedDepts > 0)){
+					howManyDeptsSelected = 'Some';
+				}
+				*/
 				
 				setSelectAllCheckBox();
 				if (howManyDeptsSelected == 'None') {
 					if (countOfCheckedDepts == 0) {
-						runSearch(orderBy, lastSearch);						
+						runSearch(orderBy, lastSearch);
+						return;						
 					}
 				} else {
 					runSearch(orderBy,lastSearch);
@@ -2746,6 +2776,11 @@ function locationCheckboxFunctionality() {
 				//activeLocationsObj[this.name] = this.checked;
 				activeLocationsObj[this.getAttribute('category-id')] = this.checked;
 				countOfCheckedLocations --;
+
+				if ((countOfCheckedLocations < countOfLocations) && (countOfCheckedLocations > 0)){
+					howManyLocationsSelected = 'Some';
+				}
+
 				setSelectAllCheckBox();
 				if (howManyLocationsSelected == 'None') {
 					if (countOfCheckedLocations == 0) {
@@ -2805,7 +2840,7 @@ function departmentCheckboxFunctionalityMobileIncludesRunSearch() {
 			countOfCheckedDepts ++;
 			
 			if ((countOfCheckedDepts < countOfDepts) && (countOfCheckedDepts > 0)){
-				howManyDeptssSelected = 'Some';
+				howManyDeptsSelected = 'Some';
 			}
 			
 			setSelectAllCheckBox();
@@ -2883,7 +2918,7 @@ function departmentCheckboxFunctionalityMobile() {
 			countOfCheckedDepts ++;
 			
 			if ((countOfCheckedDepts < countOfDepts) && (countOfCheckedDepts > 0)){
-				howManyDeptssSelected = 'Some';
+				howManyDeptsSelected = 'Some';
 			}
 			
 			setSelectAllCheckBox();
@@ -3396,7 +3431,6 @@ function closeModal(){
 	document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: none');
 	
 	document.getElementById('create-new-location-btn').setAttribute('style', 'display: none');
-
 
 };
 
