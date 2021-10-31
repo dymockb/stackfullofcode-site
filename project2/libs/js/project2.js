@@ -441,8 +441,10 @@ function getAllLocationsAndDepartments(){
 								let dlid = result.data[ed].locationID;
 								
 									$.ajax({
-									url: "libs/php/countPersonnelByDept.php",
-									type: "GET",
+									url: "libs/post-php/countPersonnelByDept.php",
+									type: "POST",
+									//url: "libs/php/countPersonnelByDept.php",
+									//type: "GET",
 									dataType: "json",
 									data: {
 										deptID: did
@@ -784,8 +786,10 @@ $('#delete-employee-modal-btn').click(function (){
 	document.getElementById('delete-employee-modal-btn').setAttribute('style', 'display: none');
 
 	$.ajax({
-	url: "libs/php/deleteEmployeeByID.php",
-	type: "GET",
+	url: "libs/post-php/deleteEmployeeByID.php",
+	type: "POST",
+	//url: "libs/php/deleteEmployeeByID.php",
+	//type: "GET",
 	dataType: "json",
 	data: {
 		id: employeeID
@@ -821,8 +825,10 @@ $('#update-employee-modal-btn').click(function (){
 	//document.getElementById('update-employee-modal-btn').setAttribute('style', 'display: none');
 
 	$.ajax({
-	url: "libs/php/updateEmployee.php",
-	type: "GET",
+	//url: "libs/php/updateEmployee.php",
+	//type: "GET",
+	url: "libs/post-php/updateEmployee.php",
+	type: "POST",
 	dataType: "json",
 	data: updateEmployeeDataObj,
 	success: function (result) {
@@ -902,8 +908,10 @@ $('#delete-department-modal-btn').click(function (){
 	let emptyLocID = this.getAttribute('emptyLocID');
 	
 	$.ajax({
-	url: "libs/php/deleteDepartmentByID.php",
-	type: "GET",
+	url: "libs/post-php/deleteDepartmentByID.php",
+	type: "POST",
+	//url: "libs/php/deleteDepartmentByID.php",
+	//type: "GET",
 	dataType: "json",
 	data: {
 		departmentID: deleteDepartmentID
@@ -915,8 +923,10 @@ $('#delete-department-modal-btn').click(function (){
 				if (emptyLocID != 0) {
 						
 					$.ajax({
-					url: "libs/php/deleteLocationByID.php",
-					type: "GET",
+					url: "libs/post-php/deleteLocationByID.php",
+					type: "POST",
+					//url: "libs/php/deleteLocationByID.php",
+					//type: "GET",
 					dataType: "json",
 					data: {
 						locationID: emptyLocID
@@ -1073,8 +1083,10 @@ $('#employee-modal-create-fields').submit(function(event) {
 	createEmployeeDataObj['jobTitle'] = 	createEmployeeDataObj['jobTitle'] == 0 ? 'Job Title TBC' : 	createEmployeeDataObj['jobTitle'];
 	
 	$.ajax({
-	url: "libs/php/insertEmployee.php",
-	type: "GET",
+	url: "libs/post-php/insertEmployee.php",
+	type: "POST",
+	//url: "libs/php/insertEmployee.php",
+	//type: "GET",
 	dataType: "json",
 	data: createEmployeeDataObj,
 	success: function (result) {
@@ -1163,8 +1175,10 @@ $(`#submit-new-location-btn`).click(function(e){
     }
 
     $.ajax({
-    url: "libs/php/insertLocation.php",
-    type: "GET",
+		//url: "libs/php/insertLocation.php",
+		//type: "GET",
+		url: "libs/post-php/insertLocation.php",
+    type: "POST",
     dataType: "json",
     data: {
       name: newLocationName
@@ -1176,9 +1190,11 @@ $(`#submit-new-location-btn`).click(function(e){
           newDeptObj['locationID'] = result.data.id;
           
           $.ajax({
-          url: "libs/php/insertDepartmentRtnID.php",  // CHECK
+          //url: "libs/php/insertDepartmentRtnID.php",  // CHECK
           //url: "libs/php/insertDepartment.php",
-          type: "GET",
+          //type: "GET",
+          url: "libs/post-php/insertDepartmentRtnID.php",  // CHECK
+          type: "POST",
           dataType: "json",
           data: newDeptObj,
           success: function (result) {
@@ -1242,7 +1258,7 @@ $(`#submit-new-location-btn`).click(function(e){
 });
 
 
-
+/*
 function oneLocationEventListeners(deptsParam, locKey){
 
 	for (let [k, val] of Object.entries(deptsParam)){	
@@ -1299,8 +1315,10 @@ function oneLocationEventListeners(deptsParam, locKey){
 				updateDepartmentDataObj['departmentID'] = updatedDeptID;	
 				
 				$.ajax({
-				url: "libs/php/updateDepartment.php",
-				type: "GET",
+				//url: "libs/php/updateDepartment.php",
+				//type: "GET",
+				url: "libs/post-php/updateDepartment.php",
+				type: "POST",
 				dataType: "json",
 				data: updateDepartmentDataObj,
 				success: function (result) {
@@ -1368,8 +1386,6 @@ function oneLocationEventListeners(deptsParam, locKey){
 					}
 				}
 			});	
-			
-			console.log(`department id ${k} Rules`,departmentRules);
 
 			$(`#departmentID-${k}-accordion`).click()
 			
@@ -1386,15 +1402,17 @@ function oneLocationEventListeners(deptsParam, locKey){
 			let deptName = departmentsObj[deptID]['name'];
 
 			$.ajax({
-			url: "libs/php/checkIfLastDepartment.php",
-			type: "GET",
+			//url: "libs/php/checkIfLastDepartment.php",
+			//type: "GET",
+			url: "libs/post-php/checkIfLastDepartment.php",
+			type: "POST",
 			dataType: "json",
 			data: {
 				departmentID: deptID
 			},
 			success: function (result) {
 				
-					console.log('delete Location? ',result.data);
+					console.log('delete Location: ',result.data);
 					
 					let locName = locationsObj[result.data.locID];
 										
@@ -1439,18 +1457,15 @@ function oneLocationEventListeners(deptsParam, locKey){
 			
 		});
 
-		/*
-		$(`#departmentID-${k}-trash-warning`).click(function(e){
-			
-
-			$('#alert-modal').modal(
-				{
-					title: '<i class="archive icon"></i>',
-					content: `<div class="alert-modal-text">Cannot delete department. Remove all employees and try again.</div>`
-				}).modal('show');
-
-		});
-		*/
+		
+		//$(`#departmentID-${k}-trash-warning`).click(function(e){
+		//	$('#alert-modal').modal(
+		//		{
+		//			title: '<i class="archive icon"></i>',
+		//			content: `<div class="alert-modal-text">Cannot delete department. Remove all employees and try again.</div>`
+		//		}).modal('show');
+		//});
+		
 		
 		locsAndDeptsObj[locKey]['departments'][k]['loaded'] = true;
 
@@ -1462,6 +1477,7 @@ function oneLocationEventListeners(deptsParam, locKey){
 	
 }
 
+*/
 
 function eventListenersInsideDeptsandLocsModal() {
 
@@ -1527,8 +1543,10 @@ function eventListenersInsideDeptsandLocsModal() {
 					updateDepartmentDataObj['departmentID'] = updatedDeptID;	
 					
 					$.ajax({
-					url: "libs/php/updateDepartment.php",
-					type: "GET",
+					//url: "libs/php/updateDepartment.php",
+					//type: "GET",
+					url: "libs/post-php/updateDepartment.php",
+					type: "POST",
 					dataType: "json",
 					data: updateDepartmentDataObj,
 					success: function (result) {
@@ -1626,13 +1644,17 @@ function eventListenersInsideDeptsandLocsModal() {
 				} else {
 				
 				$.ajax({
-				url: "libs/php/checkIfLastDepartment.php",
-				type: "GET",
+				url: "libs/post-php/checkIfLastDepartment.php",
+				type: "POST",
+				//url: "libs/php/checkIfLastDepartment.php",
+				//type: "GET",
 				dataType: "json",
 				data: {
 					departmentID: deptID
 				},
 				success: function (result) {
+
+						console.log('delete loc result', result);
 						
 						let locName = locationsObj[result.data.locID];
 											
@@ -1764,8 +1786,10 @@ function eventListenersInsideDeptsandLocsModal() {
 				newDeptObj['locationID'] = locationID;
 				
 				$.ajax({
-				url: "libs/php/insertDepartmentRtnID.php",
-				type: "GET",
+				url: "libs/post-php/insertDepartmentRtnID.php",
+				type: "POST",
+				//url: "libs/php/insertDepartmentRtnID.php",
+				//type: "GET",
 				dataType: "json",
 				data: newDeptObj,
 				success: function (result) {
@@ -2273,8 +2297,10 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 	if (editOrCreate == 'edit') {
 		
 		$.ajax({
-		url: "libs/php/departmentsChange.php",
-		type: "GET",
+		//url: "libs/php/departmentsChange.php",
+		//type: "GET",
+		url: "libs/post-php/departmentsChange.php",
+		type: "POST",
 		dataType: "json",
 		data: {
 			locationID: detailsForEditForm.locationID
@@ -2359,8 +2385,10 @@ function createEmployeeModalContent(editOrCreate, detailsForEditForm){
 			locationDropDown.addEventListener('change', function(e){
 				
 						$.ajax({
-						url: "libs/php/departmentsChange.php",
-						type: "GET",
+						//url: "libs/php/departmentsChange.php",
+						//type: "GET",
+						url: "libs/post-php/departmentsChange.php",
+						type: "POST",
 						dataType: "json",
 						data: {
 							locationID: e.target.value
