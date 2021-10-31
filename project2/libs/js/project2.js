@@ -783,7 +783,7 @@ $('#delete-department-modal-btn').click(function (){
 							document.getElementById('modal-deny-btn').click();
 
 							document.getElementById('floating-info-message').setAttribute('class', 'ui info floating-error message');
-							document.getElementById('floating-info-header').innerHTML = 'Department  and Location Deleted';
+							document.getElementById('floating-info-header').innerHTML = 'Location and Department Deleted';
 							document.getElementById('floating-info-text').innerHTML = locationsObj[emptyLocID] + ', ' + departmentsObj[deleteDepartmentID]['name'];
 							refreshPage();
 
@@ -3355,7 +3355,7 @@ function runSearch(orderBy, searchTerm){
 
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
-				console.log('error');
+				console.log('run search error', jqXHR);
 				console.log(textStatus);
 				console.log(errorThrown);
 			},
