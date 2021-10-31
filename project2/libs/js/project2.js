@@ -23,11 +23,15 @@ let activeDepartmentsObj = {};
 let countOfDepts = 0;
 let countOfCheckedDepts;
 let howManyDeptsSelected = 'All';
+let selectAllDeptsUsed = false;
+let selectNoneDeptsUsed = false;
 
 let activeLocationsObj = {};
 let countOfLocations;
 let countOfCheckedLocations;
 let howManyLocationsSelected = 'All';
+let selectAllLocationsUsed = false;
+let selectNoneLocationsUsed = false; 
 
 let locationsDropDownObj = {};
 let departmentsDropDownObj = {};
@@ -88,9 +92,6 @@ function renderCheckboxes(checkboxItems, checkboxIDs, category){
 	}
 
 	checkboxItems.sort()
-
-	console.log('checkbox items', checkboxItems);
-	console.log('checkboxIDs', checkboxIDs);
 
 	for (cbi = 0; cbi < checkboxItems.length; cbi ++) {
 		let cbName, cbInputID;
@@ -2677,17 +2678,23 @@ function departmentCheckboxFunctionality() {
 			onChecked: function(){
 				activeDepartmentsObj[this.name] = this.checked;
 				countOfCheckedDepts ++;
-				
-				if ((countOfCheckedDepts < countOfDepts) && (countOfCheckedDepts > 0)){
-					howManyDeptsSelected = 'Some';
+
+				if (!selectAllDeptsUsed) {
+
+					if (countOfCheckedDepts < countOfDepts && countOfCheckedDepts > 0) {
+						howManyDeptsSelected = 'Some';
+					}
+
 				}
-				
+
 				setSelectAllCheckBox();
 				if (howManyDeptsSelected == 'All') {
 					if (countOfCheckedDepts == countOfDepts) {
 						runSearch(orderBy, lastSearch);						
 					}
 				} else {
+					selectAllDeptsUsed = false;
+					selectNoneDeptsUsed = false;
 					runSearch(orderBy,lastSearch);
 				}
 				
@@ -2696,36 +2703,44 @@ function departmentCheckboxFunctionality() {
 				activeDepartmentsObj[this.name] = this.checked;
 				countOfCheckedDepts --;
 
-				/*
-				if ((countOfCheckedDepts < countOfDepts) && (countOfCheckedDepts > 0)){
-					howManyDeptsSelected = 'Some';
+				if(!selectNoneDeptsUsed) {
+
+					if (countOfCheckedDepts < countOfDepts && countOfCheckedDepts > 0) {
+
+						howManyDeptsSelected = 'Some';
+
+					}
+
 				}
-				*/
 				
 				setSelectAllCheckBox();
 				if (howManyDeptsSelected == 'None') {
 					if (countOfCheckedDepts == 0) {
-						runSearch(orderBy, lastSearch);
-						return;						
+						runSearch(orderBy, lastSearch);					
 					}
 				} else {
+					selectNoneDeptsUsed = false;
+					selectAllDeptsUsed = false;
 					runSearch(orderBy,lastSearch);
 				}
 
 			},				
 		});
-		
-		$('#select-none-departments').checkbox({
-			onChecked: function(){
-				howManyDeptsSelected = 'None';
-			  $('.department-checkbox').checkbox('uncheck');
-			},
-		});
+
 
 		$('#select-all-departments').checkbox({
 			onChecked: function(){
-				howManyDeptsSelected = 'All';
-			  $('.department-checkbox').checkbox('check');
+			    howManyDeptsSelected = 'All';
+			    selectAllDeptsUsed = true; 
+			    $('.department-checkbox').checkbox('check');
+			},
+		});
+
+		$('#select-none-departments').checkbox({
+			onChecked: function(){
+			    howManyDeptsSelected = 'None';
+			    selectNoneDeptsUsed = true;
+			    $('.department-checkbox').checkbox('uncheck');
 			},
 		});
 
@@ -2752,12 +2767,15 @@ function locationCheckboxFunctionality() {
 		$('.location-checkbox').checkbox({
 			onChecked: function(){
 
-				//activeLocationsObj[this.name] = this.checked;
 				activeLocationsObj[this.getAttribute('category-id')] = this.checked;
 				countOfCheckedLocations ++;
-				
-				if ((countOfCheckedLocations < countOfLocations) && (countOfCheckedLocations > 0)){
-					howManyLocationsSelected = 'Some';
+
+				if (!selectAllLocationsUsed) {
+
+					if (countOfCheckedLocations < countOfLocations && countOfCheckedLocations > 0) {
+						howManyLocationsSelected = 'Some';
+					}
+
 				}
 
 				setSelectAllCheckBox();
@@ -2767,7 +2785,8 @@ function locationCheckboxFunctionality() {
 						runSearch(orderBy, lastSearch);						
 					}
 				} else {
-
+					selectAllLocationsUsed = false;
+					selectNoneLocationsUsed = false;   
 					runSearch(orderBy,lastSearch);
 				}
 				
@@ -2777,8 +2796,12 @@ function locationCheckboxFunctionality() {
 				activeLocationsObj[this.getAttribute('category-id')] = this.checked;
 				countOfCheckedLocations --;
 
-				if ((countOfCheckedLocations < countOfLocations) && (countOfCheckedLocations > 0)){
-					howManyLocationsSelected = 'Some';
+				if (!selectNoneLocationsUsed) {
+
+					if (countOfCheckedLocations < countOfLocations && countOfCheckedLocations > 0) {
+						howManyLocationsSelected = 'Some';
+					}
+
 				}
 
 				setSelectAllCheckBox();
@@ -2787,24 +2810,27 @@ function locationCheckboxFunctionality() {
 						runSearch(orderBy, lastSearch);						
 					}
 				} else {
-					console.log('run seach uncheck location', activeLocationsObj);
+					selectAllLocationsUsed = false;
+					selectNoneLocationsUsed = false; 
 					runSearch(orderBy,lastSearch);
 				}
 
 			},				
 		});	
 		
-		$('#select-none-locations').checkbox({
-			onChecked: function(){
-				howManyLocationsSelected = 'None';
-			  $('.location-checkbox').checkbox('uncheck');
-			},
-		});
-
 		$('#select-all-locations').checkbox({
 			onChecked: function(){
 				howManyLocationsSelected = 'All';
+				selectAllLocationsUsed = true;
 			  $('.location-checkbox').checkbox('check');
+			},
+		});
+
+		$('#select-none-locations').checkbox({
+			onChecked: function(){
+				howManyLocationsSelected = 'None';
+				selectNoneLocationsUsed = true;
+			  $('.location-checkbox').checkbox('uncheck');
 			},
 		});
 		
