@@ -163,7 +163,8 @@
 	//$output['data'] = $locationStatusMsg;
 	$output['data']['msg'] = $locationStatusMsg;
 	$output['data']['locID'] = $locID;
-	$output['data']['employeeCount'] = $dependencyData;
+	$output['data']['deptEmployeeCount'] = $dependencyData;
+	$output['data']['countOfDepartmnents'] = count($countData);
 	
 	mysqli_close($conn);
 

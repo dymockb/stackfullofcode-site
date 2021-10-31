@@ -138,167 +138,6 @@ function removeCheckBoxes(category){
 	
 };
 
-/*
-function getAllDepartments(){
-
-  removeCheckBoxes('department');
-
-	$.ajax({
-	url: "libs/php/getAllDepartments.php",
-	type: "GET",
-	dataType: "json",
-	data: {},
-	success: function (result) {
-		
-			console.log('getAllDepartments ',result);
-
-			listOfDepts = [];
-			
-			let locationsForObj = [];
-
-			for (let d = 0; d < result.data.length; d++) {
-
-				departmentsObj[result.data[d].id] = {};
-				departmentsObj[result.data[d].id]['name'] = result.data[d].name;
-				
-				if (!listOfDepts.includes(result.data[d].name)) {
-					listOfDepts.push(result.data[d].name);
-				}
-
-				if(!locationsForObj.includes(result.data[d].locationID)) {
-					locationsForObj.push(result.data[d].locationID);
-				}
-			
-			}	
-			
-			
-			for (let lob = 0; lob < locationsForObj.length; lob ++) {
-				
-				let locationObj = {};
-				locationObj['loaded'] = false;
-				locationObj['departments'] = {};
-				
-				locsAndDeptsObj[locationsForObj[lob]] = locationObj;
-				
-			}
-			
-			
-			for (let d2 = 0; d2 < result.data.length; d2++) {
-					
-				let deptObj = {};
-				deptObj['loaded'] = false;
-				deptObj['depname'] = result.data[d2].name;
-			
-				locsAndDeptsObj[result.data[d2].locationID]['departments'][result.data[d2].id] = deptObj;
-				
-			}
-			
-			console.log('the obj at end of depts ajax', locsAndDeptsObj);
-				
-			
-			listOfDepts.sort();
-
-			countOfDepts = listOfDepts.length;
-			countOfCheckedDepts = listOfDepts.length;
-
-			renderCheckboxes(listOfDepts, 'department');
-
-			departmentCheckboxFunctionality();
-
-			departmentCheckboxFunctionalityMobile();
-			
-			console.log('departments obj', departmentsObj);
-			
-			let finaled = result.data.length;
-
-			for (let ed = 0; ed < result.data.length; ed ++){
-					
-				let did = result.data[ed].id;
-				
-					$.ajax({
-					url: "libs/php/countPersonnelByDept.php",
-					type: "GET",
-					dataType: "json",
-					data: {
-						deptID: did
-					},
-					success: function (result) {
-							
-							departmentsObj[did]['employees'] = result.data.personnel; 
-							
-					},
-					error: function (jqXHR, textStatus, errorThrown) {
-							console.log('error');
-							console.log(textStatus);
-							console.log(errorThrown);
-						},
-					});	
-				
-			if (ed == finaled-1) {
-			
-				console.log('here');
-				manageDepartmentsAndLocationsModal(locsAndDeptsObj);
-			
-			}
-				
-			}
-
-	},
-	error: function (jqXHR, textStatus, errorThrown) {
-			console.log('error');
-			console.log(textStatus);
-			console.log(errorThrown);
-		},
-	});
-}
-
-function getAllLocations(){
-
-  removeCheckBoxes('location');
-
-	$.ajax({
-	url: "libs/php/getAllLocations.php",
-	type: "GET",
-	dataType: "json",
-	data: {},
-	success: function (result) {
-		
-			console.log('getAllLocations ', result);
-			
-			listOfLocations = [];
-			
-			for (let l = 0; l < result.data.length; l++) {
-				
-				locationsObj[result.data[l].id] = result.data[l].name;
-				
-				if (!listOfLocations.includes(result.data[l].name)) {
-					listOfLocations.push(result.data[l].name);
-				}
-				
-			}
-
-			listOfLocations.sort();
-
-			countOfLocations = listOfLocations.length;
-			countOfCheckedLocations = listOfLocations.length;
-
-			renderCheckboxes(listOfLocations, 'location');
-
-			locationCheckboxFunctionality();
-
-			locationCheckboxFunctionalityMobile();
-		
-	},
-	error: function (jqXHR, textStatus, errorThrown) {
-			console.log('error');
-			console.log(textStatus);
-			console.log(errorThrown);
-		},
-	});	
-	
-	
-}
-*/
 function refreshDeptsAndLocsModal(){
 	
 	for (let prop in locsAndDeptsObj){
@@ -917,6 +756,8 @@ $('#delete-department-modal-btn').click(function (){
 		departmentID: deleteDepartmentID
 	},
 	success: function (result) {
+
+			console.log('delete dept ajax result', result);
 			
 			if (result['status'].description != 'dependency error') {
 
@@ -1258,7 +1099,6 @@ $(`#submit-new-location-btn`).click(function(e){
 });
 
 
-/*
 function oneLocationEventListeners(deptsParam, locKey){
 
 	for (let [k, val] of Object.entries(deptsParam)){	
@@ -1477,7 +1317,7 @@ function oneLocationEventListeners(deptsParam, locKey){
 	
 }
 
-*/
+
 
 function eventListenersInsideDeptsandLocsModal() {
 
@@ -2956,10 +2796,6 @@ function departmentCheckboxFunctionalityMobileIncludesRunSearch() {
 			$('.department-mobile-checkbox').checkbox('uncheck');
 		},
 	});
-
-
-	
-	console.log('run search at end of deptscheckboxmobilefunctionality');
 
 	runSearch(orderBy, lastSearch);
 
