@@ -2792,7 +2792,7 @@ function locationCheckboxFunctionality() {
 				
 			},
 			onUnchecked: function(){
-				//activeLocationsObj[this.name] = this.checked;
+				
 				activeLocationsObj[this.getAttribute('category-id')] = this.checked;
 				countOfCheckedLocations --;
 
@@ -2864,9 +2864,13 @@ function departmentCheckboxFunctionalityMobileIncludesRunSearch() {
 		onChecked: function(){
 			activeDepartmentsObj[this.name] = this.checked;
 			countOfCheckedDepts ++;
+
+			if (!selectAllDeptsUsed) {
 			
-			if ((countOfCheckedDepts < countOfDepts) && (countOfCheckedDepts > 0)){
-				howManyDeptsSelected = 'Some';
+				if (countOfCheckedDepts < countOfDepts && countOfCheckedDepts > 0){
+					howManyDeptsSelected = 'Some';
+				}
+
 			}
 			
 			setSelectAllCheckBox();
@@ -2875,6 +2879,8 @@ function departmentCheckboxFunctionalityMobileIncludesRunSearch() {
 					runSearch(orderBy, lastSearch);						
 				}
 			} else {
+				selectAllDeptsUsed = false;
+				selectNoneDeptsUsed = false;
 				runSearch(orderBy,lastSearch);
 			}
 			
@@ -2882,6 +2888,16 @@ function departmentCheckboxFunctionalityMobileIncludesRunSearch() {
 		onUnchecked: function(){
 			activeDepartmentsObj[this.name] = this.checked;
 			countOfCheckedDepts --;
+
+			if(!selectNoneDeptsUsed) {
+
+				if (countOfCheckedDepts < countOfDepts && countOfCheckedDepts > 0) {
+
+					howManyDeptsSelected = 'Some';
+
+				}
+
+			}
 		
 			setSelectAllCheckBox();
 			if (howManyDeptsSelected == 'None') {
@@ -2889,25 +2905,31 @@ function departmentCheckboxFunctionalityMobileIncludesRunSearch() {
 					runSearch(orderBy, lastSearch);						
 				}
 			} else {
+				selectNoneDeptsUsed = false;
+				selectAllDeptsUsed = false;
 				runSearch(orderBy,lastSearch);
 			}
 
 		},				
 	});
-	
-	$('#select-none-departments-mobile').checkbox({
-		onChecked: function(){
-			howManyDeptsSelected = 'None';
-			$('.department-mobile-checkbox').checkbox('uncheck');
-		},
-	});
 
 	$('#select-all-departments-mobile').checkbox({
 		onChecked: function(){
 			howManyDeptsSelected = 'All';
+			selectAllDeptsUsed = true; 
 			$('.department-mobile-checkbox').checkbox('check');
 		},
 	});
+	
+	$('#select-none-departments-mobile').checkbox({
+		onChecked: function(){
+			howManyDeptsSelected = 'None';
+			selectNoneDeptsUsed = true;
+			$('.department-mobile-checkbox').checkbox('uncheck');
+		},
+	});
+
+
 	
 	console.log('run search at end of deptscheckboxmobilefunctionality');
 
@@ -2942,9 +2964,13 @@ function departmentCheckboxFunctionalityMobile() {
 		onChecked: function(){
 			activeDepartmentsObj[this.name] = this.checked;
 			countOfCheckedDepts ++;
+
+			if (!selectAllDeptsUsed) {
 			
-			if ((countOfCheckedDepts < countOfDepts) && (countOfCheckedDepts > 0)){
-				howManyDeptsSelected = 'Some';
+				if (countOfCheckedDepts < countOfDepts && countOfCheckedDepts > 0){
+					howManyDeptsSelected = 'Some';
+				}
+
 			}
 			
 			setSelectAllCheckBox();
@@ -2953,6 +2979,8 @@ function departmentCheckboxFunctionalityMobile() {
 					runSearch(orderBy, lastSearch);						
 				}
 			} else {
+				selectAllDeptsUsed = false;
+				selectNoneDeptsUsed = false;
 				runSearch(orderBy,lastSearch);
 			}
 			
@@ -2960,6 +2988,16 @@ function departmentCheckboxFunctionalityMobile() {
 		onUnchecked: function(){
 			activeDepartmentsObj[this.name] = this.checked;
 			countOfCheckedDepts --;
+
+			if(!selectNoneDeptsUsed) {
+
+				if (countOfCheckedDepts < countOfDepts && countOfCheckedDepts > 0) {
+
+					howManyDeptsSelected = 'Some';
+
+				}
+
+			}
 		
 			setSelectAllCheckBox();
 			if (howManyDeptsSelected == 'None') {
@@ -2967,23 +3005,27 @@ function departmentCheckboxFunctionalityMobile() {
 					runSearch(orderBy, lastSearch);						
 				}
 			} else {
+				selectNoneDeptsUsed = false;
+				selectAllDeptsUsed = false;
 				runSearch(orderBy,lastSearch);
 			}
 
 		},				
 	});
-	
-	$('#select-none-departments-mobile').checkbox({
-		onChecked: function(){
-			howManyDeptsSelected = 'None';
-			$('.department-mobile-checkbox').checkbox('uncheck');
-		},
-	});
 
 	$('#select-all-departments-mobile').checkbox({
 		onChecked: function(){
 			howManyDeptsSelected = 'All';
+			selectAllDeptsUsed = true; 
 			$('.department-mobile-checkbox').checkbox('check');
+		},
+	});
+	
+	$('#select-none-departments-mobile').checkbox({
+		onChecked: function(){
+			howManyDeptsSelected = 'None';
+			selectNoneDeptsUsed = true;
+			$('.department-mobile-checkbox').checkbox('uncheck');
 		},
 	});
 
@@ -3011,11 +3053,15 @@ function locationCheckboxFunctionalityMobile() {
 		onChecked: function(){
 			
 			activeLocationsObj[this.getAttribute('category-id')] = this.checked;
-			//activeLocationsObj[this.name] = this.checked;
+			
 			countOfCheckedLocations ++;
 			
-			if ((countOfCheckedLocations < countOfLocations) && (countOfCheckedLocations > 0)){
-				howManyLocationsSelected = 'Some';
+			if (!selectAllLocationsUsed) {
+
+				if ((countOfCheckedLocations < countOfLocations) && (countOfCheckedLocations > 0)){
+					howManyLocationsSelected = 'Some';
+				}
+			 
 			}
 
 			setSelectAllCheckBox();
@@ -3025,7 +3071,8 @@ function locationCheckboxFunctionalityMobile() {
 					runSearch(orderBy, lastSearch);						
 				}
 			} else {
-
+				selectAllLocationsUsed = false;
+				selectNoneLocationsUsed = false;
 				runSearch(orderBy,lastSearch);
 			}
 			
@@ -3036,6 +3083,14 @@ function locationCheckboxFunctionalityMobile() {
 			
 			//activeLocationsObj[this.name] = this.checked;
 			countOfCheckedLocations --;
+
+			if (!selectNoneLocationsUsed) {
+
+				if (countOfCheckedLocations < countOfLocations && countOfCheckedLocations > 0) {
+					howManyLocationsSelected = 'Some';
+				}
+
+			}
 			
 			setSelectAllCheckBox();
 			if (howManyLocationsSelected == 'None') {
@@ -3043,28 +3098,31 @@ function locationCheckboxFunctionalityMobile() {
 					runSearch(orderBy, lastSearch);						
 				}
 			} else {
+				selectAllLocationsUsed = false;
+				selectNoneLocationsUsed = false;
 				runSearch(orderBy,lastSearch);
 			}
 
 		},				
 	});
 	
+	$('#select-all-locations-mobile').checkbox({
+		onChecked: function(){
+			howManyLocationsSelected = 'All';
+			selectAllLocationsUsed = true;
+			$('.location-mobile-checkbox').checkbox('check');
+		},
+	});
 
 	$('#select-none-locations-mobile').checkbox({
 		onChecked: function(){
 			howManyLocationsSelected = 'None';
-			
+			selectNoneLocationsUsed = true;
 			$('.location-mobile-checkbox').checkbox('uncheck');
 		},
 	});
 
-	$('#select-all-locations-mobile').checkbox({
-		onChecked: function(){
-			howManyLocationsSelected = 'All';
-			
-			$('.location-mobile-checkbox').checkbox('check');
-		},
-	});
+
 	
 
 };
