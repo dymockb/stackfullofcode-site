@@ -1,4 +1,4 @@
-let firstload = 0;
+let firstload = 1;
 
 let employeeDetailsVisibility = 0;
 let employeePropertiesObj = {};
@@ -2827,7 +2827,6 @@ function departmentCheckboxFunctionalityMobileIncludesRunSearch() {
 		runSearch(orderBy, lastSearch);
 		
 	}
-	firstload ++;
 
 };
 
@@ -3373,6 +3372,7 @@ function runSearch(orderBy, searchTerm){
 				employeeJustCreated = false;
 				employeeJustEdited = false;
 				document.getElementById('search-box-icon').setAttribute('class', 'ui icon input');	
+				
 				console.log('refresh count', firstload);	
 
 		},
@@ -3461,6 +3461,7 @@ function attachRadioEvents(){
 }
 
 function refreshPage(){
+	firstload++;
 	
 	for (let prop in locsAndDeptsObj){
 		delete locsAndDeptsObj[prop];
@@ -3516,7 +3517,7 @@ window.onload = (event) => {
 
 			attachRadioEvents();	
 			
-			getAllEmployees();
+			//getAllEmployees();
 
       getAllLocationsAndDepartments();
 
