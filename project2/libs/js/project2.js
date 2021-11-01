@@ -1872,7 +1872,13 @@ function eventListenersInsideLocsModal() {
 						});	
 						*/
 
-						$(`#locationID-${k}-accordion`).click()
+						$(`#locationID-${k}-accordion`).click();
+
+						let clickFieldTimer = setTimeout(function(){
+							console.log('click');
+							document.getElementById(`rename-locationID-${k}-form-field`).click();
+							clearTimeout(clickFieldTimer);
+						}, 500);
 						
 						//$(`#rename-locationID-${k}-input-field`).attr('value','');
 						
@@ -3530,6 +3536,7 @@ function createLocationSegment(id, name){
 					let	renameLocAccordionContent = document.createElement('div');					renameLocAccordion.appendChild(renameLocAccordionContent);
 						let	renameLocAccordionTransition = document.createElement('div'); 		renameLocAccordionContent.appendChild(renameLocAccordionTransition);
 							let	renameLocAccordionContainer = document.createElement('div');		renameLocAccordionTransition.appendChild(renameLocAccordionContainer);
+								let renameLocText = document.createElement('div');								renameLocAccordionContainer.appendChild(renameLocText);
 								let	renameLocAccordionField = document.createElement('div');			renameLocAccordionContainer.appendChild(renameLocAccordionField);
 									let	renameLocAccordionInput = document.createElement('input');  renameLocAccordionField.appendChild(renameLocAccordionInput);
 								let renameLocAccordionButtons = document.createElement('div');  	renameLocAccordionContainer.appendChild(renameLocAccordionButtons);
@@ -3564,11 +3571,12 @@ function createLocationSegment(id, name){
 						renameLocAccordionBtn.setAttribute('class', 'ui tiny button'); renameLocAccordionBtn.setAttribute('id', `locationID-${id}-accordion`); renameLocAccordionBtn.innerHTML = 'Rename location'; 
 					renameLocAccordionContent.setAttribute('class', 'content field');
 						renameLocAccordionTransition.setAttribute('class', 'content field transition hidden');
-							renameLocAccordionContainer.setAttribute('class', 'location-field-container');
-								renameLocAccordionField.setAttribute('class', 'field loc-name-field'); 
-									renameLocAccordionInput.setAttribute('id', `rename-locationID-${id}-input-field`); renameLocAccordionInput.setAttribute('placeholder', 'Rename Location'); renameLocAccordionInput.setAttribute('locid', id); renameLocAccordionInput.setAttribute('type', 'text'); renameLocAccordionInput.setAttribute('value',locationsObj[id]); renameLocAccordionInput.setAttribute('name','loc-rename');
+							renameLocAccordionContainer.setAttribute('class', 'location-field-container'); 
+								renameLocText.innerHTML = 'Edit name: '; 
+								renameLocAccordionField.setAttribute('class', 'field loc-name-field'); renameLocAccordionField.setAttribute('autofocus', ''); renameLocAccordionField.setAttribute('id', `rename-locationID-${id}-form-field`); 
+									renameLocAccordionInput.setAttribute('id', `rename-locationID-${id}-input-field`); renameLocAccordionInput.setAttribute('placeholder', 'Rename Location'); renameLocAccordionInput.setAttribute('locid', id); renameLocAccordionInput.setAttribute('type', 'text'); renameLocAccordionInput.setAttribute('value',locationsObj[id]); renameLocAccordionInput.setAttribute('name','loc-rename'); renameLocAccordionInput.setAttribute('autofocus','');
 								renameLocAccordionButtons.setAttribute('class', 'rename-accordion-buttons');
-									submitRenameLocBtn.setAttribute('class', 'ui tiny button loc-action-button'); submitRenameLocBtn.setAttribute('id', `submit-rename-locationID-${id}-btn`); submitRenameLocBtn.innerHTML = 'Rename';
+									submitRenameLocBtn.setAttribute('class', 'ui tiny button loc-action-button'); submitRenameLocBtn.setAttribute('id', `submit-rename-locationID-${id}-btn`); submitRenameLocBtn.innerHTML = 'Submit';
 									cancelRenameLocBtn.setAttribute('class', 'ui tiny button loc-action-button'); cancelRenameLocBtn.setAttribute('form', `locationID-${id}-form`); cancelRenameLocBtn.setAttribute('id', `cancel-locationID-${id}-btn`); cancelRenameLocBtn.setAttribute('type', 'reset'); cancelRenameLocBtn.innerHTML = 'Cancel';
 				renameLocErrorMsg.setAttribute('class','ui error message');
 		
