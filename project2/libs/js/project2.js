@@ -1,3 +1,5 @@
+let firstload = 0;
+
 let employeeDetailsVisibility = 0;
 let employeePropertiesObj = {};
 let blankEmployeeObj = {};
@@ -511,8 +513,6 @@ $('#manage-depts-and-locs-btn').click(function(){
 			
 		updateLoadedLocsAndDeps = [];
 		
-		console.log('the obj ', locsAndDeptsObj);
-		
 		if (manageDeptsAndLocsOpened != 0) {
 
 			refreshDeptsAndLocsModal();
@@ -937,8 +937,6 @@ $('#create-new-location-btn').click(function(){
 });
 
 $(`#cancel-new-location-btn`).click(function(e){
-
-	console.log('clicked cancel new location');
 
 	$(`#new-location-form`).form('reset');
 	$('#new-location-accordion-btn').click();
@@ -2824,7 +2822,12 @@ function departmentCheckboxFunctionalityMobileIncludesRunSearch() {
 		},
 	});
 
-	runSearch(orderBy, lastSearch);
+	if (firstload > 0) {
+	
+		runSearch(orderBy, lastSearch);
+		
+	}
+	firstload ++;
 
 };
 
@@ -3370,7 +3373,8 @@ function runSearch(orderBy, searchTerm){
 
 				employeeJustCreated = false;
 				employeeJustEdited = false;
-				document.getElementById('search-box-icon').setAttribute('class', 'ui icon input');		
+				document.getElementById('search-box-icon').setAttribute('class', 'ui icon input');	
+				console.log(firstload);	
 
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
