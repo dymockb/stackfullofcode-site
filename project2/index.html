@@ -20,9 +20,10 @@
   <div class="ui segment" id="top-nav">
     <div class="ui fluid container" id="top-nav-items">
       <div id="cogs-and-search">
-        
-        <i class="fas fa-users-cog pointer" id="manage-depts-and-locs-btn"></i> <!-- id="mobile-manage-cog" <span id="icon-block"></span> 
-				<button class="ui button" id="manage-depts-and-locs-btn"><i class="fas fa-edit"></i> Departments & Locations</button> -->
+        <!--
+        <i class="fas fa-users-cog pointer" id="manage-depts-and-locs-btn"></i>  id="mobile-manage-cog" <span id="icon-block"></span> 
+				<button class="ui button" id="manage-depts-and-locs-btn"><i class="fas fa-edit"></i> Departments & Locations</button> 
+        -->
         <div class="item" id="search-box">    
           <div class="ui icon input" id="search-box-icon">
             <input id="search-input" placeholder="Search employees" type="text"> <i class="search icon"></i>
@@ -169,11 +170,16 @@
 
 
       <div class="ui segment search-option-segment">
+        <!-- <i class="fas fa-users-cog pointer" id="manage-depts-and-locs-btn"></i> -->
+        <i class="fas fa-users-cog pointer" id="manage-depts-btn"></i>
         <div class="ui accordion field" id="department-search-options">
           <div class="title" id="department-search-accordion">
-            <i class="icon dropdown"></i> Departments
+            <div>
+              <i class="icon dropdown"></i> 
+              <span>Departments</span>
+            </div>          
           </div>
-
+          
 
           <div class="content field">
             <div class="content field">
@@ -192,13 +198,15 @@
             </div>
           </div>
         </div>
+        
       </div>
 
 
       <div class="ui segment search-option-segment">
+        <i class="fas fa-users-cog pointer" id="manage-locs-btn"></i>
         <div class="ui accordion field" id="location-search-options">
           <div class="title" id="location-search-accordion">
-            <i class="icon dropdown"></i> Locations
+            <i class="icon dropdown"></i>Locations
           </div>
 
 
@@ -519,6 +527,8 @@
                 </div>
                 -->
               </div>
+              <div id="append-department-panels"></div>
+
             </div>
           </div>
         </div>  <!-- close MANAGE DEPTS AND LOCS -->
@@ -526,15 +536,17 @@
       
       
       </div>
+      <div id="invisible-div"></div>
     </div>
-
+    
 
     <div class="actions">
 
 
-			<button class="ui primary button" id="create-new-location-btn">Add new location</button> 
+			<button class="ui primary button" id="save-new-location-btn">Save</button> 
+      <button class="ui primary button" id="create-new-location-btn">Add new location</button> 
 			<button class="ui deny button" id="close-only-btn">Close</button> 
-			<button class="ui deny button" id="modal-deny-btn">Close</button> 
+			<button class="ui deny button" id="modal-deny-btn">Cancel</button> 
 			<button class="ui primary approve button" id="close-employee-modal">Close<i class="right chevron icon"></i></button>
 			</button> <button class="ui primary button" id="submit-create-employee">Create employee</button> 
       <button class="ui primary button" id="submit-edit-employee">Edit Details <i class="right chevron icon"></i>

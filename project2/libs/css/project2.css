@@ -229,7 +229,8 @@ td#employee-details-field {
 #update-employee-modal-btn,
 #create-employee-btn-mobile,
 #submit-depts-and-locs,
-#create-new-location-btn {
+#create-new-location-btn,
+#save-new-location-btn {
 	display: none;
 }
 
@@ -283,6 +284,10 @@ h4.ui.image.header {
 	justify-content: space-between;
 }
 
+.loc-action-button {
+	margin-bottom: 0.5rem !important;
+}
+
 .dept-action-button {
 	margin-bottom: 0.5rem !important;
 }
@@ -311,6 +316,13 @@ h4.ui.image.header {
 	font-size: 1.3rem;
 }
 
+.location-title-row {
+	display: flex;
+	justify-content: space-between;
+	font-size: 1rem;
+	align-items: center;
+}
+
 
 .department-title-row {
 	display: flex;
@@ -326,6 +338,11 @@ h4.ui.image.header {
 	flex-wrap: nowrap
 }
 
+.loc-employee-info-icons {
+	display: flex;
+	align-items: center;
+}
+
 .dept-employee-info-icons {
 	display: flex;
 	align-items: center;
@@ -339,6 +356,20 @@ h4.ui.image.header {
 	float: right;
 	font-size: 1.2rem;
 	padding-right: 1rem;
+}
+
+.location-field-container {
+	display: flex;
+	align-content: center;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+.location-field-container {
+	display: flex;
+	align-content: center;
+	flex-direction: row;
+	flex-wrap: wrap;
 }
 
 .department-field-container {
@@ -361,11 +392,30 @@ h4.ui.image.header {
 	margin-left: 0.5rem !important;
 } 
 
+.loc-name-field {
+	display: flex;
+	flex-grow: 1;
+	margin: 0 !important;
+	margin-right: 0.2rem !important;
+}
+
+.loc-name-field {
+	display: flex;
+	flex-grow: 1;
+	margin: 0 !important;
+	margin-right: 0.2rem !important;
+}
+
 .dept-name-field {
 	display: flex;
 	flex-grow: 1;
 	margin: 0 !important;
 	margin-right: 0.2rem !important;
+}
+
+.create-loc-btn {
+	display: flex;
+	padding: 0.5rem
 }
 
 .create-dept-btn {
@@ -406,13 +456,27 @@ i.fas.fa-user-plus {
 i.fas.fa-users-cog {
 	display: none;
 }
-*/
+
 
 i.fas.fa-users-cog {
 	display: flex;
 	font-size: 2.3rem;
 	margin-left: 2rem;
 	padding-top: 0.5rem;
+}
+*/
+
+i.fas.fa-users-cog {
+	font-size: 1.5rem;
+	float: right
+}
+
+.search-flex {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: nowrap;
+	flex-direction: row;
 }
 
 i.fas.fa-user-edit {
@@ -448,6 +512,11 @@ i.fas.fa-user-edit {
 	margin-right: 1rem;
 }
 
+.new-loc-accordion {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
 .new-dept-accordion {
 	margin-top: 0;
 	margin-bottom: 0;
@@ -455,6 +524,16 @@ i.fas.fa-user-edit {
 
 .department-segment {
 	padding-bottom: 0.2rem !important;
+}
+
+.location-segment {
+	padding-bottom: 0.2rem !important;
+}
+
+.loc-delete-edit-btns {
+	display: flex;
+	flex-wrap: nowrap;
+	align-items: center;
 }
 
 .dept-delete-edit-btns {
