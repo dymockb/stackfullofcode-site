@@ -3271,7 +3271,6 @@ function runSearch(orderBy, searchTerm){
 				maxNewEmployeeID = 0;
 
 				console.log('search result',result);
-				console.log('no of results', result.data.length);
 				
 				$('.result-row').remove();
 
@@ -3374,7 +3373,7 @@ function runSearch(orderBy, searchTerm){
 				employeeJustCreated = false;
 				employeeJustEdited = false;
 				document.getElementById('search-box-icon').setAttribute('class', 'ui icon input');	
-				console.log(firstload);	
+				console.log('refresh count', firstload);	
 
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
