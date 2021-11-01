@@ -33,8 +33,8 @@ let howManyLocationsSelected = 'All';
 let selectAllLocationsUsed = false;
 let selectNoneLocationsUsed = false; 
 
-let locationsDropDownObj = {};
-let departmentsDropDownObj = {};
+//let locationsDropDownObj = {};
+//let departmentsDropDownObj = {};
 
 let	dropDownClicked = 0;
 let locationDropDownClicked = 0;
@@ -1951,7 +1951,29 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 		
 		let menu = menuDiv.cloneNode(true);
 		menu.setAttribute('id', dropdownType + '-menu');
+
+		let dropDownObj = {};
+		let dropDownList = [];
+
+		for (let ddo = 0; ddo < listOfNames.length; ddo ++){
+
+			dropDownObj[listOfNames[ddo]] = listOfIDs[ddo];
+			dropDownList.push(listOfNames[ddo]);
+
+		}
+
+		dropDownList.sort();
+
+		for (let ddn = 0; ddn < dropDownList.length; ddn ++){
 		
+			let oneOption = dataValue.cloneNode(true);
+			let outputValue = dropDownObj[dropDownList[ddn]];
+			oneOption.innerHTML = dropDownList[ddn];
+			oneOption.setAttribute('data-value', outputValue);
+			menu.appendChild(oneOption);			
+
+		}
+		/*
 		for (let loc = 0; loc < listOfNames.length; loc ++){
 			
 			let oneOption = dataValue.cloneNode(true);
@@ -1961,6 +1983,7 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 			menu.appendChild(oneOption);
 			
 		}
+		*/
 		
 		if(editOrCreate == 'create'){
 			input.setAttribute('value', '');
@@ -2051,10 +2074,10 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 	let emailError = document.createElement('div');
 	emailError.setAttribute('class', 'ui error message')
 	
-	let blankInputDiv = document.createElement('div');
-	blankInputDiv.setAttribute('class', 'ui input focus display-none-field');
-	let blankInput = selectionDropdown.cloneNode(true);
-	blankInputDiv.appendChild(blankInput);
+	//let blankInputDiv = document.createElement('div');
+	//blankInputDiv.setAttribute('class', 'ui input focus display-none-field');
+	//let blankInput = selectionDropdown.cloneNode(true);
+	//blankInputDiv.appendChild(blankInput);
 
 	emailField.appendChild(emailHeading);
 	emailField.appendChild(emailInput);
@@ -2064,7 +2087,7 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 	uiForm.appendChild(nameCategories);
 	uiForm.appendChild(jobTitleField);
 	uiForm.appendChild(emailField);	
-	uiForm.appendChild(blankInputDiv);
+	//uiForm.appendChild(blankInputDiv);
 
 	if (editOrCreate == 'edit'){
 		let idField = field.cloneNode(true);
@@ -2095,7 +2118,32 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 			
 				console.log('departments for edit ',result.data);
 
-				
+				let deptsDropDownObj = {};
+				let deptsDropDownList = [];
+
+				for (let dc = 0; dc < result.data.length; dc ++ ) {
+
+					deptsDropDownList.push(result.data[dc].name);
+					deptsDropDownObj[result.data[dc].name] = result.data[dc].id;
+
+				}
+
+				deptsDropDownList.sort();
+
+				for (let ddl = 0; ddl < deptsDropDownList.length; ddl ++ ) {
+
+					let oneOption = document.createElement('div');
+					oneOption.setAttribute('class', 'item');
+
+					let outputValue = deptsDropDownObj[deptsDropDownList[ddl]];
+					oneOption.innerHTML = deptsDropDownList[ddl];
+					oneOption.setAttribute('data-value', outputValue);
+					
+					document.getElementById('department-dropdown-menu').appendChild(oneOption);
+					
+				}
+
+				/*
 				for (let dc = 0; dc < result.data.length; dc ++ ) {
 
 					let oneOption = document.createElement('div');
@@ -2107,7 +2155,8 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 				
 					document.getElementById('department-dropdown-menu').appendChild(oneOption);
 								
-				}		
+				}
+				*/		
 				
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
@@ -2120,6 +2169,7 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 	}
 
 	return listOfIdentifiers;
+
 }
 
 function createEmployeeModalContent(editOrCreate, detailsForEditForm){
@@ -2185,6 +2235,32 @@ function createEmployeeModalContent(editOrCreate, detailsForEditForm){
 
 								document.getElementById('department-dropdown-menu').innerHTML = "";
 
+								let deptsDropDownObj = {};
+								let deptsDropDownList = [];
+
+								for (let dc = 0; dc < result.data.length; dc ++ ) {
+
+									deptsDropDownList.push(result.data[dc].name);
+									deptsDropDownObj[result.data[dc].name] = result.data[dc].id;
+
+								}
+
+								deptsDropDownList.sort();
+
+								for (let ddl = 0; ddl < deptsDropDownList.length; ddl ++ ) {
+
+									let oneOption = document.createElement('div');
+									oneOption.setAttribute('class', 'item');
+
+									let outputValue = deptsDropDownObj[deptsDropDownList[ddl]];
+									oneOption.innerHTML = deptsDropDownList[ddl];
+									oneOption.setAttribute('data-value', outputValue);
+									
+									document.getElementById('department-dropdown-menu').appendChild(oneOption);
+									
+								}
+	
+								/*
 								for (let dc = 0; dc < result.data.length; dc ++ ) {
 
 									let oneOption = document.createElement('div');
@@ -2196,7 +2272,8 @@ function createEmployeeModalContent(editOrCreate, detailsForEditForm){
 									
 									document.getElementById('department-dropdown-menu').appendChild(oneOption);
 									
-								}							
+								}
+								*/							
 								
 								document.getElementById('department-dropdown-placeholder-text').innerHTML = 'Select a department';
 
