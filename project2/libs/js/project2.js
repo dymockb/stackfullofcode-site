@@ -2227,9 +2227,11 @@ function createLocationPanel(name, id, deptsCount, totalEmployees){
 	
 	let locationPanel = document.createElement('div'); //LOCATION PANEL
 		let panelCloser = document.createElement('i');
+		panelCloser.setAttribute('class', 'close icon display-none-field');
+		panelCloser.setAttribute('id', `close-locationID-${id}-panel`);
 		
 		let locationHeader = document.createElement('div');
-		locationHeader.setAttribute('class', 'ui one top attached segment');
+		locationHeader.setAttribute('class', 'ui one top attached segment location-header');
 		let deleteLocationIcon = document.createElement('span');
 		deleteLocationIcon.setAttribute('locid', id);
 		deleteLocationIcon.setAttribute('locname', locationsObj[id]);
@@ -2241,7 +2243,7 @@ function createLocationPanel(name, id, deptsCount, totalEmployees){
 		
 		deleteLocationIcon.appendChild(trashIcon);
 		
-		let locationHeaderText = document.createElement('h4');
+		let locationHeaderText = document.createElement('div');
 		locationHeaderText.innerHTML = `${name}`; 
 		locationHeaderText.setAttribute('class', 'location-header-text')
 		
