@@ -212,6 +212,8 @@ td#employee-details-field {
 	min-width: 330px;
 }
 
+#department-accordion-segment,
+#location-accordion-segment,
 #modal-deny-btn,
 #close-only-btn,
 #create-new-location-btn,

@@ -145,6 +145,8 @@
 
   <div class="ui segment" id="pc-search">
     <div class="content field">
+			<div class="ui button" id="manage-depts-btn">Departments</div>
+			<div class="ui button" id="manage-locs-btn">Locations</div>
 
       <div class="ui segment search-option-segment">
         <div class="grouped fields">
@@ -171,7 +173,7 @@
 
       <div class="ui segment search-option-segment">
         <!-- <i class="fas fa-users-cog pointer" id="manage-depts-and-locs-btn"></i> -->
-        <i class="fas fa-users-cog pointer" id="manage-depts-btn"></i>
+        <i class="fas fa-users-cog pointer" ></i>
         <div class="ui accordion field" id="department-search-options">
           <div class="title" id="department-search-accordion">
             <div>
@@ -203,7 +205,7 @@
 
 
       <div class="ui segment search-option-segment">
-        <i class="fas fa-users-cog pointer" id="manage-locs-btn"></i>
+        <i class="fas fa-users-cog pointer" ></i>
         <div class="ui accordion field" id="location-search-options">
           <div class="title" id="location-search-accordion">
             <i class="icon dropdown"></i>Locations
@@ -374,7 +376,7 @@
                     <div class="content field transition hidden">
                       <form class="ui warning form rename-form" id="new-location-form" name="new-location-form">
                         <div class="department-field-container">
-                          <div class="eight wide field dept-name-field" id="new-location-field">
+                          <div class="eight wide field loc-name-field" id="new-location-field">
                             <input id="input-new-location-field" name="new-location" placeholder="New Location" type="text" value="">
                           </div>
                         </div>
@@ -385,6 +387,47 @@
                             <button class="ui tiny button dept-action-button" form="new-location-form" id="cancel-new-location-btn" type="reset">Cancel</button>
 
                             <div class="ui tiny button dept-action-button" id="submit-new-location-btn">
+                              Submit
+                            </div>
+                          </div>
+                        </div>
+
+
+                        <div class="ui error message">
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+									
+                </div>
+              </div>
+						
+							<div class="ui segment" id="department-accordion-segment">
+                <div class="ui accordion field">
+                  <div class="title" id="accordion-title">
+                    <i class="icon dropdown"></i>
+
+                    <div class="ui button" id="new-department-accordion-btn">
+                      Create new location
+                    </div>
+                  </div>
+
+
+                  <div class="content">
+                    <div class="content field transition hidden">
+                      <form class="ui warning form rename-form" id="new-department-form" name="new-department-form">
+                        <div class="department-field-container">
+                          <div class="eight wide field dept-name-field" id="new-department-field">
+                            <input id="input-new-location-field" name="new-department" placeholder="New Department" type="text" value="">
+                          </div>
+                        </div>
+
+
+                        <div class="manage-dept-btns">
+                          <div>
+                            <button class="ui tiny button dept-action-button" form="new-department-form" id="cancel-new-department-btn" type="reset">Cancel</button>
+
+                            <div class="ui tiny button dept-action-button" id="submit-new-department-btn">
                               Submit
                             </div>
                           </div>

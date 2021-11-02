@@ -1325,8 +1325,420 @@ function oneLocationEventListeners(deptsParam, locKey){
 	}  // end of IF dept loaded == false, apply listeners
 					
 	$(`#rename-dept-${k}-accordion`).accordion();
-} // end of loop through departments	
+} // end of loop through departments
+			
+	
 }
+
+
+
+
+function eventListenersInsideLocsModalORIG() {
+
+	let existingLocationNames = [];
+	
+	for (let [key, value] of Object.entries(locsAndDeptsObj)){
+	
+		//if (!value.loaded) { } //  location loop if loaded == false 
+
+			//updateLoadedLocs.push(key);
+
+			
+
+			//for (let [k, val] of Object.entries(value.departments)){ } //  loop through departments
+			
+				//existingDepartmentNames.push(val.depname);	
+
+				//if(!val.loaded) { }  // IF dept loaded == false, apply listeners was here
+				
+					$(`#departmentID-${k}-form`).form({
+						fields: {
+							name: {
+								identifier: 'dept-rename',
+								rules: departmentRules
+							}
+						}
+					});	
+					
+					updateLoadedDepts.push(k);
+
+					$(`#submit-rename-departmentID-${k}-btn`).click(function(e){
+					e.preventDefault();
+					
+					if (!renameDeptNeedsToBeValidated) {
+					
+					$(`#departmentID-${k}-form`).one('submit', function(event){
+						event.preventDefault();
+
+						$(`#departmentID-${k}-form`).form('set defaults');
+						
+						$(`#departmentID-${k}-accordion`).click()	
+
+						let updatedDeptName;
+						let updatedDeptID;
+						let updateDepartmentDataObj = {};
+
+						for (let e = 0; e < this.elements.length; e ++) {
+					
+							if (this.elements[e].tagName != 'BUTTON') {			
+
+								updatedDeptName = this.elements[e].value;
+								updatedDeptID = this.elements[e].getAttribute('deptID');
+
+								$(`#input-departmentID-${k}-field`).attr('value', this.elements[e].value);
+								$(`#input-departmentID-${k}-field`).attr('placeholder', this.elements[e].value);
+								$(`#departmentID-${k}-title`).hide().html(this.elements[e].value).fadeIn(750); 
+
+								}
+							
+						}	
+						
+						updateDepartmentDataObj['department'] = updatedDeptName;
+						updateDepartmentDataObj['departmentID'] = updatedDeptID;	
+						
+						$.ajax({
+						url: "libs/php/updateDepartment.php",
+						type: "GET",
+						//url: "libs/post-php/updateDepartment.php",
+						//type: "POST",
+						dataType: "json",
+						data: updateDepartmentDataObj,
+						success: function (result) {
+
+								refreshPage();
+
+						},
+						error: function (jqXHR, textStatus, errorThrown) {
+								console.log('error');
+								console.log(textStatus);
+								console.log(errorThrown);
+							},
+						});
+
+					});
+					
+					} // end of IF renameDeptNeedsToBeValidated == false
+					
+
+					
+					if (!$(`#departmentID-${k}-form`).form('validate form')) {
+						console.log('not validated')
+						renameDeptNeedsToBeValidated = true;
+					} else if ($(`#departmentID-${k}-form`).form('validate form')){
+						
+						renameDeptNeedsToBeValidated = false;
+					}
+
+						if ($(`#departmentID-${k}-form`).form('validate form')) {
+							$(`#departmentID-${k}-form`).form('submit');
+							$(`#departmentID-${k}-form`).form('reset');
+						}
+		
+
+					});
+
+					$(`#cancel-departmentID-${k}-btn`).click(function(e){
+						
+						$(`#departmentID-${k}-form`).form('reset');
+
+						$(`#departmentID-${k}-accordion`).click();
+
+					});
+				
+					$(`#rename-departmentID-${k}-btn`).click(function(e){
+
+						departmentRules = basicRules.slice();
+
+						for (let [o,p] of Object.entries(value['departments'])) {
+						
+							let newRule = {}
+							newRule['type'] = `notExactly[${p.depname}]`;	
+							newRule['prompt'] = 'That department already exists in this location.';
+							departmentRules.push(newRule)
+						
+						}
+
+						$(`#departmentID-${k}-form`).form({
+							fields: {
+								name: {
+									identifier: 'dept-rename',
+									rules: departmentRules
+								}
+							}
+						});	
+
+						$(`#departmentID-${k}-accordion`).click()
+						
+						$(`#rename-departmentID-${k}-input-field`).attr('value','');
+						
+					});	
+
+					$(`#delete-departmentID-${k}-btn`).click(function(e){
+
+						document.getElementById('delete-department-modal-btn').setAttribute('style', 'display: inline !important');
+						document.getElementById('delete-department-modal-btn').setAttribute('deptid', `${this.getAttribute('deptid')}`);
+						
+						let deptID = this.getAttribute('deptid');
+						let deptName = departmentsObj[deptID]['name'];
+
+						if (this.getAttribute('employees') != 0) {
+							
+							document.getElementById(`departmentID-${k}-warning`).setAttribute('class','ui floating warning message');
+							document.getElementById(`departmentID-${k}-warning-text`).innerHTML = `<i class="fas fa-exclamation-circle">&nbsp;</i>  Only empty departments can be deleted.`;
+							
+							$(`#departmentID-${k}-close-icon`)
+							.one('click', function() {
+								$(this)
+									.closest('.message')
+									.transition('fade')
+								;
+							});
+							
+						} else {
+						
+						$.ajax({
+						//url: "libs/post-php/checkIfLastDepartment.php",
+						//type: "POST",
+						url: "libs/php/checkIfLastDepartment.php",
+						type: "GET",
+						dataType: "json",
+						data: {
+							departmentID: deptID
+						},
+						success: function (result) {
+
+								console.log('delete loc result', result);
+								
+								let locName = locationsObj[result.data.locID];
+													
+								if (result.data.msg == "Delete location") {
+									
+									document.getElementById('delete-department-modal-btn').setAttribute('emptyLocID', result.data.locID);
+									
+									$('#alert-modal').modal(
+									{
+										title: '<i class="archive icon"></i>',
+										content: `<div class="alert-modal-text">Delete this location and department? 
+										
+														<h4> The location ${locName} and department ${deptName} will both be deleted. </h4>
+														</div>`
+									}).modal('show');
+									
+									
+								}	else {
+									
+									document.getElementById('delete-department-modal-btn').setAttribute('emptyLocID', 0);
+
+									document.getElementById('delete-department-modal-btn').setAttribute('style', 'display: inline');
+
+									$('#alert-modal').modal(
+									{
+										title: '<i class="archive icon"></i>',
+										content: `<div class="alert-modal-text">Delete this department? <h3> ${deptName} </h3></div>`
+									}).modal('show');
+														
+									
+									
+								}
+							
+						},
+						error: function (jqXHR, textStatus, errorThrown) {
+								console.log('error');
+								console.log(textStatus);
+								console.log(errorThrown);
+							},
+						});
+						
+					
+						}
+
+					});
+
+				
+					/*
+					$(`#departmentID-${k}-trash-warning`).click(function(e){
+						
+						$('#alert-modal').modal(
+							{
+								title: '<i class="archive icon"></i>',
+								content: `<div class="alert-modal-text">Cannot delete department. Remove all employees and try again.</div>`
+							}).modal('show');
+
+					});
+					*/
+
+					locsAndDeptsObj[key]['departments'][k]['loaded'] = true;
+
+				
+								
+			// end of IF dept loaded == false, apply listeners was here
+
+			// end of loop through departments was here
+				
+			departmentRules = basicRules.slice();
+
+			//get all current dept names for rules
+			for (let r = 0 ; r < existingDepartmentNames.length; r ++) {
+			
+				let newRule = {}
+					newRule['type'] = `notExactly[${existingDepartmentNames[r]}]`;
+					newRule['prompt'] = 'That department already exists in this location.';
+					departmentRules.push(newRule)
+			
+			}
+				
+			// each department for the current location gets the same rules - for renaming
+			for (let [k, val] of Object.entries(value.departments)){	
+					
+				$(`#departmentID-${k}-form`).form({
+					fields: {
+						name: {
+							identifier: 'dept-rename',
+							rules: departmentRules
+						}
+					}
+				});	
+				
+			}
+		
+			// the new dept field also gets the same rules
+			$(`#locationID-${key}-new-dept-form`).form({
+			
+				fields: {
+						name: {
+							identifier: 'new-department',
+							rules: departmentRules
+						}
+					}
+
+			});
+
+			$(`#locationID-${key}-submit-new-dept-btn`).click(function(e){
+				e.preventDefault();
+				
+				if(!createNewDeptNeedsToBeValidated){
+				
+				$(`#locationID-${key}-new-dept-form`).one('submit', function(event){
+					event.preventDefault();
+
+					$(`#locationID-${key}-new-dept-accordion-btn`).click();
+
+					let newDeptName;
+					let locationID = document.getElementById(`locationID-${key}-submit-new-dept-btn`).getAttribute('locid');
+					
+					for (let e = 0; e < this.elements.length; e ++) {
+				
+						if (this.elements[e].tagName != 'BUTTON') {			
+			
+							newDeptName = this.elements[e].value;
+							
+						}
+			
+					}
+					
+					let newDeptObj = {};
+					newDeptObj['name'] = newDeptName;
+					newDeptObj['locationID'] = locationID;
+					
+					$.ajax({
+					//url: "libs/post-php/insertDepartmentRtnID.php",
+					//type: "POST",
+					url: "libs/php/insertDepartmentRtnID.php",
+					type: "GET",
+					dataType: "json",
+					data: newDeptObj,
+					success: function (result) {
+
+							let newDeptNode = createDepartmentSegment(result.data.id, newDeptName, 0);
+							
+							
+							$(`#location-${locationID}-new-dept-before`).before($(newDeptNode).hide().fadeIn(1000));
+
+							departmentsObj[result.data.id] = {};
+							departmentsObj[result.data.id]['name'] = newDeptName;
+
+							locsAndDeptsObj[locationID]['departments'][result.data.id] = {};
+							locsAndDeptsObj[locationID]['departments'][result.data.id]['loaded'] = false;
+							locsAndDeptsObj[locationID]['departments'][result.data.id]['depname'] = newDeptName;
+
+							oneLocationEventListeners(locsAndDeptsObj[locationID]['departments'], locationID);
+
+							refreshPage();  
+
+					},
+					error: function (jqXHR, textStatus, errorThrown) {
+							console.log('error');
+							console.log(textStatus);
+							console.log(errorThrown);
+						},
+					});
+					
+
+				});
+				
+				} // end of createNewDeptNeedsToBeValidated == false
+				
+				if (!$(`#locationID-${key}-new-dept-form`).form('validate form')) {
+					console.log('not validated')
+					createNewDeptNeedsToBeValidated = true;
+				} else if ($(`#locationID-${key}-new-dept-form`).form('validate form')){
+				
+					createNewDeptNeedsToBeValidated = false;
+				}
+				
+				if ($(`#locationID-${key}-new-dept-form`).form('validate form')) {
+					$(`#locationID-${key}-new-dept-form`).form('submit');
+					$(`#locationID-${key}-new-dept-form`).form('reset');
+				}
+				
+
+			});
+
+			$(`#locationID-${key}-cancel-new-dept-btn`).click(function(e){
+
+				$(`#locationID-${key}-new-dept-form`).form('reset');
+				$(`#locationID-${key}-new-dept-accordion-btn`).click();
+
+			});
+
+			$(`#delete-locationID-${key}-icon`).click(function(e){
+				
+				let onlyDeptID;
+				let checkDeptObj = locsAndDeptsObj[key]['departments'];
+				let checkDeptCount = 0;
+				
+				for (let [check_key, check_val] of Object.entries(checkDeptObj)){
+					
+					checkDeptCount++;
+					onlyDeptID = check_key;
+				
+				}		
+				
+				if (checkDeptCount == 1) {
+
+					document.getElementById(`delete-departmentID-${onlyDeptID}-btn`).click();				
+				} else {
+
+					console.log('error finding last department ID');
+				
+				}
+
+				
+			});
+
+			//locsAndDeptsObj[key]['loaded'] = true;
+
+		
+	// end of location loop if loaded == false was here
+	
+	} //end of loop through the Obj	
+				
+	$('.ui.accordion').accordion();
+	
+
+} //END OF ADDING EVENT LISTENERS FUNCTION;
+
+
 
 function eventListenersInsideLocsModal() {
 
@@ -1335,131 +1747,281 @@ function eventListenersInsideLocsModal() {
 	for (let [k, value] of Object.entries(locsAndDeptsObj)){
 
 		existingLocationNames.push(locationsObj[k]);
+	
+		//if (!value.loaded) { } //  location loop if loaded == false 
 
-		$(`#submit-rename-locationID-${k}-btn`).click(function(e){
-		e.preventDefault();
-		
-		if (!renameLocNeedsToBeValidated) {
-		
-		$(`#locationID-${k}-form`).one('submit', function(event){
-			event.preventDefault();
+			//updateLoadedLocs.push(key);
 
-			$(`#locationID-${k}-form`).form('set defaults');
 			
-			$(`#locationID-${k}-accordion`).click()	
 
-			let updatedLocName;
-			let updatedLocID;
-			let updateLocationDataObj = {};
+			//for (let [k, val] of Object.entries(value.departments)){ } //  loop through departments
+			
+				//existingDepartmentNames.push(val.depname);	
 
-			for (let e = 0; e < this.elements.length; e ++) {
-		
-				if (this.elements[e].tagName != 'BUTTON') {			
+				//if(!val.loaded) { }  // IF dept loaded == false, apply listeners was here
+									
+					//updateLoadedDepts.push(k);
 
-					updatedLocName = this.elements[e].value;
-					updatedLocID = this.elements[e].getAttribute('locID');
+					$(`#submit-rename-locationID-${k}-btn`).click(function(e){
+					e.preventDefault();
+					
+					if (!renameLocNeedsToBeValidated) {
+					
+					$(`#locationID-${k}-form`).one('submit', function(event){
+						event.preventDefault();
 
-					$(`#input-locationID-${k}-field`).attr('value', this.elements[e].value);
-					$(`#input-locationID-${k}-field`).attr('placeholder', this.elements[e].value);
-					$(`#locationID-${k}-title`).hide().html(this.elements[e].value).fadeIn(750); 
+						$(`#locationID-${k}-form`).form('set defaults');
+						
+						$(`#locationID-${k}-accordion`).click()	
 
+						let updatedLocName;
+						let updatedLocID;
+						let updateLocationDataObj = {};
+
+						for (let e = 0; e < this.elements.length; e ++) {
+					
+							if (this.elements[e].tagName != 'BUTTON') {			
+
+								updatedLocName = this.elements[e].value;
+								updatedLocID = this.elements[e].getAttribute('locID');
+
+								$(`#input-locationID-${k}-field`).attr('value', this.elements[e].value);
+								$(`#input-locationID-${k}-field`).attr('placeholder', this.elements[e].value);
+								$(`#locationID-${k}-title`).hide().html(this.elements[e].value).fadeIn(750); 
+
+								}
+							
+						}	
+						
+						updateLocationDataObj['location'] = updatedLocName;
+						updateLocationDataObj['locationID'] = updatedLocID;	
+					
+						console.log('need ajax to update location, JS line 1783');
+						/*
+						$.ajax({
+						url: "libs/php/updateDepartment.php",
+						type: "GET",
+						//url: "libs/post-php/updateDepartment.php",
+						//type: "POST",
+						dataType: "json",
+						data: updateDepartmentDataObj,
+						success: function (result) {
+
+								refreshPage();
+
+						},
+						error: function (jqXHR, textStatus, errorThrown) {
+								console.log('error');
+								console.log(textStatus);
+								console.log(errorThrown);
+							},
+						});
+						*/	
+						});
+					
+					} // end of IF renameLocNeedsToBeValidated == false
+					
+
+					
+					if (!$(`#locationID-${k}-form`).form('validate form')) {
+						console.log('not validated')
+						renameLocNeedsToBeValidated = true;
+					} else if ($(`#locationID-${k}-form`).form('validate form')){
+						
+						renameLocNeedsToBeValidated = false;
 					}
-				
-			}	
-			
-			updateLocationDataObj['location'] = updatedLocName;
-			updateLocationDataObj['locationID'] = updatedLocID;	
+
+						if ($(`#locationID-${k}-form`).form('validate form')) {
+							$(`#locationID-${k}-form`).form('submit');
+							$(`#locationID-${k}-form`).form('reset');
+						}
 		
-			console.log('need ajax to update location, JS line 1783');
+
+					});
+
+					$(`#cancel-locationID-${k}-btn`).click(function(e){
+						
+						$(`#locationID-${k}-form`).form('reset');
+
+						$(`#locationID-${k}-accordion`).click();
+
+					});
+				
+					
+					$(`#rename-locationID-${k}-btn`).click(function(e){
+
+						/* // This is done later in the loop
+						locationRules = basicRules.slice();
+
+						for (let [o,p] of Object.entries(locationsObj) {
+						
+							let newRule = {}
+							newRule['type'] = `notExactly[${p.depname}]`;	
+							newRule['prompt'] = 'That department already exists.';
+							departmentRules.push(newRule)
+						
+						}
+
+						$(`#departmentID-${k}-form`).form({
+							fields: {
+								name: {
+									identifier: 'dept-rename',
+									rules: departmentRules
+								}
+							}
+						});	
+						*/
+
+						$(`#locationID-${k}-accordion`).click();
+
+						let clickFieldTimer = setTimeout(function(){
+							console.log('click');
+							document.getElementById(`rename-locationID-${k}-form-field`).click();
+							clearTimeout(clickFieldTimer);
+						}, 500);
+						
+						//$(`#rename-locationID-${k}-input-field`).attr('value','');
+						
+					});	
+					
+
+					$(`#delete-locationID-${k}-btn`).click(function(e){
+
+						console.log('get current dept count from DB');
+
+						/*
+
+						document.getElementById('delete-department-modal-btn').setAttribute('style', 'display: inline !important');
+						document.getElementById('delete-department-modal-btn').setAttribute('deptid', `${this.getAttribute('deptid')}`);
+						
+						let deptID = this.getAttribute('deptid');
+						let deptName = departmentsObj[deptID]['name'];
+
+						if (this.getAttribute('employees') != 0) {
+							
+							document.getElementById(`departmentID-${k}-warning`).setAttribute('class','ui floating warning message');
+							document.getElementById(`departmentID-${k}-warning-text`).innerHTML = `<i class="fas fa-exclamation-circle">&nbsp;</i>  Only empty departments can be deleted.`;
+							
+							$(`#departmentID-${k}-close-icon`)
+							.one('click', function() {
+								$(this)
+									.closest('.message')
+									.transition('fade')
+								;
+							});
+							
+						} else {
+						
+						$.ajax({
+						//url: "libs/post-php/checkIfLastDepartment.php",
+						//type: "POST",
+						url: "libs/php/checkIfLastDepartment.php",
+						type: "GET",
+						dataType: "json",
+						data: {
+							departmentID: deptID
+						},
+						success: function (result) {
+
+								console.log('delete loc result', result);
+								
+								let locName = locationsObj[result.data.locID];
+													
+								if (result.data.msg == "Delete location") {
+									
+									document.getElementById('delete-department-modal-btn').setAttribute('emptyLocID', result.data.locID);
+									
+									$('#alert-modal').modal(
+									{
+										title: '<i class="archive icon"></i>',
+										content: `<div class="alert-modal-text">Delete this location and department? 
+										
+														<h4> The location ${locName} and department ${deptName} will both be deleted. </h4>
+														</div>`
+									}).modal('show');
+									
+									
+								}	else {
+									
+									document.getElementById('delete-department-modal-btn').setAttribute('emptyLocID', 0);
+
+									document.getElementById('delete-department-modal-btn').setAttribute('style', 'display: inline');
+
+									$('#alert-modal').modal(
+									{
+										title: '<i class="archive icon"></i>',
+										content: `<div class="alert-modal-text">Delete this department? <h3> ${deptName} </h3></div>`
+									}).modal('show');
+														
+									
+									
+								}
+							
+						},
+						error: function (jqXHR, textStatus, errorThrown) {
+								console.log('error');
+								console.log(textStatus);
+								console.log(errorThrown);
+							},
+						});
+						
+					
+						}
+						*/
+
+					});
+
+					//locsAndDeptsObj[key]['departments'][k]['loaded'] = true;
+
+				
+								
+			// end of IF dept loaded == false, apply listeners was here
+
+			// end of loop through departments was here
+
+	}	 //end of loop through the Obj	
+				
+			locationRules = basicRules.slice();
+
+			//get all current dept names for rules
+			for (let r = 0 ; r < existingLocationNames.length; r ++) {
+			
+				let newRule = {}
+					newRule['type'] = `notExactly[${existingLocationNames[r]}]`;
+					newRule['prompt'] = 'That location already exists.';
+					locationRules.push(newRule)
+			
+			}
+				
+			// each location gets the same rules - for renaming
+			for (let [c, val] of Object.entries(locationsObj)){	
+					
+				$(`#locationID-${c}-form`).form({
+					fields: {
+						name: {
+							identifier: 'loc-rename',
+							rules: locationRules
+						}
+					}
+				});	
+				
+			}
+		
+			// the new location field also gets the same rules
+
+			$('#locationID-x-new-loc-accordion-btn').click(function(){
+
+				let invisibleDivTimer = setTimeout(function(){
+					document.getElementById('invisible-div').scrollIntoView({behavior: "smooth", block: "end"});
+					clearTimeout(invisibleDivTimer);
+				},200);
+
+				//document.getElementById('invisible-div').scrollIntoView({behavior: "smooth", block: "end"});
 
 			});
-		
-		} // end of IF renameLocNeedsToBeValidated == false
-		
-		if (!$(`#locationID-${k}-form`).form('validate form')) {
-			console.log('not validated')
-			renameLocNeedsToBeValidated = true;
-		} else if ($(`#locationID-${k}-form`).form('validate form')){
 			
-			renameLocNeedsToBeValidated = false;
-		}
-
-			if ($(`#locationID-${k}-form`).form('validate form')) {
-				$(`#locationID-${k}-form`).form('submit');
-				$(`#locationID-${k}-form`).form('reset');
-			}
-
-
-		});
-
-		$(`#cancel-locationID-${k}-btn`).click(function(e){
 			
-			$(`#locationID-${k}-form`).form('reset');
-
-			$(`#locationID-${k}-accordion`).click();
-
-		});
-	
-		
-		$(`#rename-locationID-${k}-btn`).click(function(e){
-
-		$(`#locationID-${k}-accordion`).click();
-
-			let clickFieldTimer = setTimeout(function(){
-				console.log('click');
-				document.getElementById(`rename-locationID-${k}-form-field`).click();
-				clearTimeout(clickFieldTimer);
-			}, 500);
-
-		});	
-		
-
-		$(`#delete-locationID-${k}-btn`).click(function(e){
-
-			console.log('get current dept count from DB');
-
-		});
-
-	}	 
-				
-	locationRules = basicRules.slice();
-
-
-	for (let r = 0 ; r < existingLocationNames.length; r ++) {
-	
-		let newRule = {}
-			newRule['type'] = `notExactly[${existingLocationNames[r]}]`;
-			newRule['prompt'] = 'That location already exists.';
-			locationRules.push(newRule)
-	
-	}
-				
-	for (let [c, val] of Object.entries(locationsObj)){	
 			
-		$(`#locationID-${c}-form`).form({
-			fields: {
-				name: {
-					identifier: 'loc-rename',
-					rules: locationRules
-				}
-			}
-		});	
-				
-	}
-		
-	// the new location field also gets the same rules
-
-	$('#locationID-x-new-loc-accordion-btn').click(function(){
-
-		let invisibleDivTimer = setTimeout(function(){
-			document.getElementById('invisible-div').scrollIntoView({behavior: "smooth", block: "end"});
-			clearTimeout(invisibleDivTimer);
-		},200);
-
-		//document.getElementById('invisible-div').scrollIntoView({behavior: "smooth", block: "end"});
-
-	});
-					
 			$(`#locationID-x-new-loc-form`).form({
 			
 				fields: {
@@ -1472,445 +2034,146 @@ function eventListenersInsideLocsModal() {
 			});
 			
 			
-	$(`#locationID-x-submit-new-loc-btn`).click(function(e){
-		e.preventDefault();
-		
-		if(!createNewLocNeedsToBeValidated){
-		
-			$(`#locationID-x-new-loc-form`).one('submit', function(event){
-				event.preventDefault();
-
-				$(`#locationID-x-new-loc-accordion-btn`).click();
-
-				let newLocName;
-				//let locationID = document.getElementById(`locationID-x-submit-new-loc-btn`).getAttribute('locid');
-				
-				for (let e = 0; e < this.elements.length; e ++) {
-			
-					if (this.elements[e].tagName != 'BUTTON') {			
-		
-						newLocName = this.elements[e].value;
-						
-					}
-		
-				}
-
-				let newLocNode = createLocationSegment(6, newLocName);
-
-				$(`#location-x-new-loc-before`).before($(newLocNode).hide().fadeIn(1000));
-
-			});
-		
-		} // end of createNewDeptNeedsToBeValidated == false
-		
-		if (!$(`#locationID-x-new-loc-form`).form('validate form')) {
-			console.log('not validated')
-			createNewLocNeedsToBeValidated = true;
-		} else if ($(`#locationID-x-new-loc-form`).form('validate form')){
-			createNewLocNeedsToBeValidated = false;
-		}
-		
-		if ($(`#locationID-x-new-loc-form`).form('validate form')) {
-			$(`#locationID-x-new-loc-form`).form('submit');
-			$(`#locationID-x-new-loc-form`).form('reset');
-		}
-		
-
-	});
-
-	$(`#locationID-x-cancel-new-loc-btn`).click(function(e){
-
-		$(`#locationID-x-new-loc-form`).form('reset');
-		$(`#locationID-x-new-loc-accordion-btn`).click();
-
-	});
-				
-	$('.ui.accordion').accordion();
-	
-
-} //END OF ADDING LOCATION EVENT LISTENERS FUNCTION;
-
-
-
-function eventListenersInsideDeptsModal() {
-
-		let existingDepartmentNames = [];
-
-		for (let [k, val] of Object.entries(departmentsObj)){	
-		
-			existingDepartmentNames.push(val.name);	
-			
-				$(`#departmentID-${k}-form`).form({
-					fields: {
-						name: {
-							identifier: 'dept-rename',
-							rules: departmentRules
-						}
-					}
-				});	
-				
-				updateLoadedDepts.push(k);
-
-			$(`#submit-rename-departmentID-${k}-btn`).click(function(e){
+			$(`#locationID-x-submit-new-loc-btn`).click(function(e){
 				e.preventDefault();
 				
-				if (!renameDeptNeedsToBeValidated) {
+				if(!createNewLocNeedsToBeValidated){
 				
-				$(`#departmentID-${k}-form`).one('submit', function(event){
-					event.preventDefault();
+					$(`#locationID-x-new-loc-form`).one('submit', function(event){
+						event.preventDefault();
 
-					$(`#departmentID-${k}-form`).form('set defaults');
-					
-					$(`#departmentID-${k}-accordion`).click()	
+						$(`#locationID-x-new-loc-accordion-btn`).click();
 
-					let updatedDeptName;
-					let updatedDeptID;
-					let updateDepartmentDataObj = {};
-
-					for (let e = 0; e < this.elements.length; e ++) {
-				
-						if (this.elements[e].tagName != 'BUTTON') {			
-
-							updatedDeptName = this.elements[e].value;
-							updatedDeptID = this.elements[e].getAttribute('deptID');
-
-							$(`#input-departmentID-${k}-field`).attr('value', this.elements[e].value);
-							$(`#input-departmentID-${k}-field`).attr('placeholder', this.elements[e].value);
-							$(`#departmentID-${k}-title`).hide().html(this.elements[e].value).fadeIn(750); 
-
-							}
+						let newLocName;
+						//let locationID = document.getElementById(`locationID-x-submit-new-loc-btn`).getAttribute('locid');
 						
-					}	
+						for (let e = 0; e < this.elements.length; e ++) {
 					
-					updateDepartmentDataObj['department'] = updatedDeptName;
-					updateDepartmentDataObj['departmentID'] = updatedDeptID;	
-					
-					/*
-					$.ajax({
-					url: "libs/php/updateDepartment.php",
-					type: "GET",
-					//url: "libs/post-php/updateDepartment.php",
-					//type: "POST",
-					dataType: "json",
-					data: updateDepartmentDataObj,
-					success: function (result) {
-
-              refreshPage();
-
-					},
-					error: function (jqXHR, textStatus, errorThrown) {
-							console.log('error');
-							console.log(textStatus);
-							console.log(errorThrown);
-						},
-					});
-					*/
-
-				});
+							if (this.elements[e].tagName != 'BUTTON') {			
 				
-				} // end of IF renameDeptNeedsToBeValidated == false
-				
-
-				
-				if (!$(`#departmentID-${k}-form`).form('validate form')) {
-					console.log('not validated')
-					renameDeptNeedsToBeValidated = true;
-				} else if ($(`#departmentID-${k}-form`).form('validate form')){
-					
-					renameDeptNeedsToBeValidated = false;
-				}
-
-					if ($(`#departmentID-${k}-form`).form('validate form')) {
-						$(`#departmentID-${k}-form`).form('submit');
-						$(`#departmentID-${k}-form`).form('reset');
-					}
-
-				
-
-			});
-
-			$(`#cancel-departmentID-${k}-btn`).click(function(e){
-				
-				$(`#departmentID-${k}-form`).form('reset');
-
-				$(`#departmentID-${k}-accordion`).click();
-
-			});
-		
-			$(`#rename-departmentID-${k}-btn`).click(function(e){
-
-				departmentRules = basicRules.slice();
-
-				for (let [o,p] of Object.entries(departmentsObj)) {
-				
-					let newRule = {}
-					newRule['type'] = `notExactly[${p.name}]`;	
-					newRule['prompt'] = 'That department already exists.';
-					departmentRules.push(newRule)
-				
-				}
-
-				$(`#departmentID-${k}-form`).form({
-					fields: {
-						name: {
-							identifier: 'dept-rename',
-							rules: departmentRules
-						}
-					}
-				});	
-
-				$(`#departmentID-${k}-accordion`).click()
-				
-				$(`#rename-departmentID-${k}-input-field`).attr('value','');
-				
-			});	
-
-			$(`#delete-departmentID-${k}-btn`).click(function(e){
-
-				document.getElementById('delete-department-modal-btn').setAttribute('style', 'display: inline !important');
-				document.getElementById('delete-department-modal-btn').setAttribute('deptid', `${this.getAttribute('deptid')}`);
-				
-				let deptID = this.getAttribute('deptid');
-				let deptName = departmentsObj[deptID]['name'];
-
-				if (this.getAttribute('employees') != 0) {
-					
-					document.getElementById(`departmentID-${k}-warning`).setAttribute('class','ui floating warning message');
-					document.getElementById(`departmentID-${k}-warning-text`).innerHTML = `<i class="fas fa-exclamation-circle">&nbsp;</i>  Only empty departments can be deleted.`;
-					
-					$(`#departmentID-${k}-close-icon`)
-					.one('click', function() {
-						$(this)
-							.closest('.message')
-							.transition('fade')
-						;
-					});
-					
-				} else {
-					
-					/*
-				
-				$.ajax({
-				//url: "libs/post-php/checkIfLastDepartment.php",
-				//type: "POST",
-				url: "libs/php/checkIfLastDepartment.php",
-				type: "GET",
-				dataType: "json",
-				data: {
-					departmentID: deptID
-				},
-				success: function (result) {
-
-						console.log('delete loc result', result);
-						
-						let locName = locationsObj[result.data.locID];
-											
-						if (result.data.msg == "Delete location") {
-							
-							document.getElementById('delete-department-modal-btn').setAttribute('emptyLocID', result.data.locID);
-							
-							$('#alert-modal').modal(
-							{
-								title: '<i class="archive icon"></i>',
-								content: `<div class="alert-modal-text">Delete this location and department? 
+								newLocName = this.elements[e].value;
 								
-												<h4> The location ${locName} and department ${deptName} will both be deleted. </h4>
-												</div>`
-							}).modal('show');
-							
-							
-						}	else {
-							
-							document.getElementById('delete-department-modal-btn').setAttribute('emptyLocID', 0);
-
-							document.getElementById('delete-department-modal-btn').setAttribute('style', 'display: inline');
-
-							$('#alert-modal').modal(
-							{
-								title: '<i class="archive icon"></i>',
-								content: `<div class="alert-modal-text">Delete this department? <h3> ${deptName} </h3></div>`
-							}).modal('show');
-												
-							
-							
+							}
+				
 						}
+						
+						//let newDeptObj = {};
+						//newDeptObj['name'] = newDeptName;
+						//newDeptObj['locationID'] = locationID;
+
+						let newLocNode = createLocationSegment(6, newLocName);
+
+						$(`#location-x-new-loc-before`).before($(newLocNode).hide().fadeIn(1000));
+
+						/* need to REDO this to add NEW LOCATION
+						
+						$.ajax({
+						//url: "libs/post-php/insertDepartmentRtnID.php",
+						//type: "POST",
+						url: "libs/php/insertDepartmentRtnID.php",
+						type: "GET",
+						dataType: "json",
+						data: newDeptObj,
+						success: function (result) {
+
+								let newDeptNode = createDepartmentSegment(result.data.id, newDeptName, 0);
+								
+								
+								$(`#location-${locationID}-new-dept-before`).before($(newDeptNode).hide().fadeIn(1000));
+
+								departmentsObj[result.data.id] = {};
+								departmentsObj[result.data.id]['name'] = newDeptName;
+
+								locsAndDeptsObj[locationID]['departments'][result.data.id] = {};
+								locsAndDeptsObj[locationID]['departments'][result.data.id]['loaded'] = false;
+								locsAndDeptsObj[locationID]['departments'][result.data.id]['depname'] = newDeptName;
+
+								oneLocationEventListeners(locsAndDeptsObj[locationID]['departments'], locationID);
+
+								refreshPage();  
+
+						},
+						error: function (jqXHR, textStatus, errorThrown) {
+								console.log('error');
+								console.log(textStatus);
+								console.log(errorThrown);
+							},
+						});
+						*/
+
+					});
+				
+				} // end of createNewDeptNeedsToBeValidated == false
+				
+				if (!$(`#locationID-x-new-loc-form`).form('validate form')) {
+					console.log('not validated')
+					createNewLocNeedsToBeValidated = true;
+				} else if ($(`#locationID-x-new-loc-form`).form('validate form')){
+					createNewLocNeedsToBeValidated = false;
+				}
+				
+				if ($(`#locationID-x-new-loc-form`).form('validate form')) {
+					$(`#locationID-x-new-loc-form`).form('submit');
+					$(`#locationID-x-new-loc-form`).form('reset');
+				}
+				
+
+			});
+
+			$(`#locationID-x-cancel-new-loc-btn`).click(function(e){
+
+				$(`#locationID-x-new-loc-form`).form('reset');
+				$(`#locationID-x-new-loc-accordion-btn`).click();
+
+			});
+
+			
+
+			/// ABOVE NEEDS TO BE REDONE FOR ADDING A NEW LOCATION
+
+			/// THIS CAN ALL BE DELETED I THINK
+
+				/*
+			$(`#delete-locationID-${key}-icon`).click(function(e){
+				
+				let onlyDeptID;
+				let checkDeptObj = locsAndDeptsObj[key]['departments'];
+				let checkDeptCount = 0;
+				
+				for (let [check_key, check_val] of Object.entries(checkDeptObj)){
 					
-				},
-				error: function (jqXHR, textStatus, errorThrown) {
-						console.log('error');
-						console.log(textStatus);
-						console.log(errorThrown);
-					},
-				});
+					checkDeptCount++;
+					onlyDeptID = check_key;
 				
-				*/
+				}		
 				
-			
+				if (checkDeptCount == 1) {
+
+					document.getElementById(`delete-departmentID-${onlyDeptID}-btn`).click();				
+				} else {
+
+					console.log('error finding last department ID');
+				
 				}
 
+				
 			});
 
-							
-	} // end of loop through departments
-			
-		departmentRules = basicRules.slice();
+			*/
 
-		//get all current dept names for rules
-		for (let r = 0 ; r < existingDepartmentNames.length; r ++) {
+			//locsAndDeptsObj[key]['loaded'] = true;
+
 		
-			let newRule = {}
-				newRule['type'] = `notExactly[${existingDepartmentNames[r]}]`;
-				newRule['prompt'] = 'That department already exists.';
-				departmentRules.push(newRule)
-		
-		}
-			
-		// each department for the current location gets the same rules - for renaming
-		for (let [k, val] of Object.entries(departmentsObj)){	
-				
-			$(`#departmentID-${k}-form`).form({
-				fields: {
-					name: {
-						identifier: 'dept-rename',
-						rules: departmentRules
-					}
-				}
-			});	
-			
-		}
-	
-		// the new dept field also gets the same rules 
-		/*
-		$(`#locationID-${key}-new-dept-form`).form({
-		
-			fields: {
-					name: {
-						identifier: 'new-department',
-						rules: departmentRules
-					}
-				}
+		// end of location loop if loaded == false was here
 
-		});
 
-		$(`#locationID-${key}-submit-new-dept-btn`).click(function(e){
-			e.preventDefault();
-			
-			if(!createNewDeptNeedsToBeValidated){
-			
-			$(`#locationID-${key}-new-dept-form`).one('submit', function(event){
-				event.preventDefault();
 
-				$(`#locationID-${key}-new-dept-accordion-btn`).click();
-
-				let newDeptName;
-				let locationID = document.getElementById(`locationID-${key}-submit-new-dept-btn`).getAttribute('locid');
-				
-				for (let e = 0; e < this.elements.length; e ++) {
-			
-					if (this.elements[e].tagName != 'BUTTON') {			
-		
-						newDeptName = this.elements[e].value;
-						
-					}
-		
-				}
-				
-				let newDeptObj = {};
-				newDeptObj['name'] = newDeptName;
-				newDeptObj['locationID'] = locationID;
-				
-				$.ajax({
-				//url: "libs/post-php/insertDepartmentRtnID.php",
-				//type: "POST",
-				url: "libs/php/insertDepartmentRtnID.php",
-				type: "GET",
-				dataType: "json",
-				data: newDeptObj,
-				success: function (result) {
-
-						let newDeptNode = createDepartmentSegment(result.data.id, newDeptName, 0);
-						
-						
-						$(`#location-${locationID}-new-dept-before`).before($(newDeptNode).hide().fadeIn(1000));
-
-						departmentsObj[result.data.id] = {};
-						departmentsObj[result.data.id]['name'] = newDeptName;
-
-						locsAndDeptsObj[locationID]['departments'][result.data.id] = {};
-						locsAndDeptsObj[locationID]['departments'][result.data.id]['loaded'] = false;
-						locsAndDeptsObj[locationID]['departments'][result.data.id]['depname'] = newDeptName;
-
-						oneLocationEventListeners(locsAndDeptsObj[locationID]['departments'], locationID);
-
-						refreshPage();  
-
-				},
-				error: function (jqXHR, textStatus, errorThrown) {
-						console.log('error');
-						console.log(textStatus);
-						console.log(errorThrown);
-					},
-				});
-				
-
-			});
-			
-			} // end of createNewDeptNeedsToBeValidated == false
-			
-			if (!$(`#locationID-${key}-new-dept-form`).form('validate form')) {
-				console.log('not validated')
-				createNewDeptNeedsToBeValidated = true;
-			} else if ($(`#locationID-${key}-new-dept-form`).form('validate form')){
-			
-				createNewDeptNeedsToBeValidated = false;
-			}
-			
-			if ($(`#locationID-${key}-new-dept-form`).form('validate form')) {
-				$(`#locationID-${key}-new-dept-form`).form('submit');
-				$(`#locationID-${key}-new-dept-form`).form('reset');
-			}
-			
-
-		});
-
-		$(`#locationID-${key}-cancel-new-dept-btn`).click(function(e){
-
-			$(`#locationID-${key}-new-dept-form`).form('reset');
-			$(`#locationID-${key}-new-dept-accordion-btn`).click();
-
-		});
-
-    $(`#delete-locationID-${key}-icon`).click(function(e){
-			
-			let onlyDeptID;
-			let checkDeptObj = locsAndDeptsObj[key]['departments'];
-			let checkDeptCount = 0;
-			
-			for (let [check_key, check_val] of Object.entries(checkDeptObj)){
-				
-				checkDeptCount++;
-				onlyDeptID = check_key;
-			
-			}		
-			
-			if (checkDeptCount == 1) {
-
-				document.getElementById(`delete-departmentID-${onlyDeptID}-btn`).click();				
-			} else {
-
-				console.log('error finding last department ID');
-			
-			}
-
-			
-    });
-		*/
+	//end of loop through the Obj	was here
 				
 	$('.ui.accordion').accordion();
 	
 
-} //END OF ADDING DEPARTMENTS EVENT LISTENERS FUNCTION;
-
+} //END OF ADDING EVENT LISTENERS FUNCTION;
 
 
 
@@ -2316,7 +2579,6 @@ function eventListenersInsideDeptsandLocsModal() {
 	
 
 } //END OF ADDING EVENT LISTENERS FUNCTION;
-
 
 
 // ** FUNCTIONS TO CREATE ELEMENTS **
@@ -3404,42 +3666,47 @@ function createNewDeptAccordion(id){
 
 
 function manageDepartmentsAndLocationsModalNEW(category, show){
-	
-		
-	/*
-	if (manageDeptsAndLocsOpened != 0) {
-	
-		let el = document.getElementById('append-location-panels');
-		let elClone = el.cloneNode(true);
-		
-		el.parentNode.replaceChild(elClone, el);
-		
-		document.getElementById('append-location-panels').innerHTML = '';
-	
-	}
-	*/
 
 	document.getElementById('append-location-panels').innerHTML = '';
 	document.getElementById('append-department-panels').innerHTML = '';
 
 	if (category == 'locations'){
 
+		//listOfLocations.sort();	
+
+		//let locationPanel = createLocationPanelNEW('Locations');
 		let locationContent = document.createElement('div');
 
+		//locationContent.setAttribute('class', 'ui attached segment');
 		locationContent.setAttribute('class', 'ui segment');
 		locationContent.setAttribute('id', 'location-entries');
+
+		//locationContent.setAttribute('id', `location-${locationID}-append-dept`);
 		
 		for (let [key, value] of Object.entries(locationsObj)) {	
 				
-			locationContent.appendChild(createLocationSegment(key, value));
+				//let employeeCount = departmentsObj[k]['employees'];
 
-		}
-		
+				//if (!val.loaded) {
+
+					locationContent.appendChild(createLocationSegment(key, value));
+					
+					//}  !val.loaded
+					
+		} // end of loop
+
+		//locationContent.appendChild(createNewLocationAccordion('x'));
+
+		//locationPanel.appendChild(locationContent);
+
+		//document.getElementById('append-location-panels').appendChild(locationPanel);
 		document.getElementById('append-location-panels').appendChild(locationContent);
 
 		if (show == true) {
 
+			
 			document.getElementById('create-new-location-btn').setAttribute('style', 'display: inline');
+
 			showManageModal('Locations');
 			eventListenersInsideLocsModal();
 		
@@ -3447,24 +3714,9 @@ function manageDepartmentsAndLocationsModalNEW(category, show){
 
 	} else if (category == 'departments') {
 
-			let departmentsContent = document.createElement('div');
-
-			departmentsContent.setAttribute('class', 'ui segment');
-			departmentsContent.setAttribute('id', 'department-entries');
-			
-			for (let [key, value] of Object.entries(departmentsObj)) {	
-					
-				departmentsContent.appendChild(createDepartmentSegment(key, value['name'], value['employees']));
-							
-			} 
-			
-			document.getElementById('append-department-panels').appendChild(departmentsContent);
-
-
 		if (show == true){
 		
 			showManageModal('Departments');
-			eventListenersInsideDeptsModal();
 	
 		}
 	}
