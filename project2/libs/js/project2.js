@@ -1584,95 +1584,115 @@ function eventListenersInsideDeptsModal() {
 		for (let [k, val] of Object.entries(departmentsObj)){	
 		
 			existingDepartmentNames.push(val.name);	
-			
-			$(`#departmentID-${k}-form`).form({
-					transition: 'slide down'
-				});
+
+							
+
 
 			$(`#submit-rename-departmentID-${k}-btn`).click(function(e){
 				e.preventDefault();
 				
-				if (!renameDeptNeedsToBeValidated) {
+				if (!renameDeptNeedsToBeValidated) {}
 				
-				$(`#departmentID-${k}-form`).one('submit', function(event){
+					$(`#departmentID-${k}-form`).one('submit', function(event){
 					event.preventDefault();
-
-					//$(`#departmentID-${k}-form`).form('set defaults');
-					
-					//$(`#departmentID-${k}-accordion`).click()	
 
 					let updatedDeptName;
 					let updatedDeptID;
 					let updateDepartmentDataObj = {};
+					let updatedLocationID;
+					let newNameSuccess = false;
+
+					let allFields = $(`#departmentID-${k}-form`).form('get values');
+					console.log(allFields);
+
+					/*
 
 					for (let e = 0; e < this.elements.length; e ++) {
+						console.log(1);
 				
+
+						
 						if (this.elements[e].tagName == 'INPUT' && this.elements[e].getAttribute('type') != 'hidden') {			
 
 							updatedDeptName = this.elements[e].value;
 							updatedDeptID = this.elements[e].getAttribute('deptID');
-							
-							if (updatedDeptName == 'Bad'){
-							
-								//document.getElementById(`departmentID-${k}-warning`).setAttribute('class', 'ui floating warning message');
-								//document.getElementById(`departmentID-${k}-warning-text`).innerHTML = 'A message';
-								
-								$(`#departmentID-${k}-form`).form('add errors', ['error one']);
-								
-								//$(`#input-departmentID-${k}-field`).attr('value', this.elements[e].getAttribute('placeholder'));
-								//$(`#input-departmentID-${k}-field`).attr('placeholder', 'Rename department');
-								
-								//$(`#departmentID-${k}-form`).form('set defaults');
-								//document.getElementById(`departmentID-${k}-form`).reset();
-								//$(`#input-departmentID-${k}-field`).attr('value', 'idiot');
-								//$(`#input-departmentID-${k}-field`).attr('value', this.elements[e].getAttribute('placeholder'));
 
-								$(`#departmentID-${k}-close-icon`)
-									.one('click', function() {
-										$(this)
-											.closest('.message')
-											.transition('fade')
-										;
-									});
-								
+							let ajaxResult = 'badmatch'
+
+							if (ajaxResult == 'badmatch') {
+
+								$(`#departmentID-${k}-form`).form('add errors', ['A data error occurred please refresh this window and try again.'])
+								newNameSuccess = false;
+
 							} else {
-								
-								$(`#input-departmentID-${k}-field`).attr('value', this.elements[e].value);
-								$(`#input-departmentID-${k}-field`).attr('placeholder', this.elements[e].value);
-								$(`#departmentID-${k}-title`).hide().html(this.elements[e].value).fadeIn(750); 								
-								
-								updateDepartmentDataObj['department'] = updatedDeptName;
-								updateDepartmentDataObj['departmentID'] = updatedDeptID;	
-								
-								console.log('submit department', updateDepartmentDataObj);
+							
+								if (updatedDeptName == 'Bad'){
 
-							}
+									newNameSuccess = false;
+									
+									$(`#departmentID-${k}-form`).form('add errors', ['That department already exists']);
+									
+								} else {
+									
+									updateDepartmentDataObj['department'] = updatedDeptName;
+									updateDepartmentDataObj['departmentID'] = updatedDeptID;	
+									
+								}
+							
+							}	
 
+						} else if (this.elements[e].tagName == 'INPUT' && this.elements[e].getAttribute('type') == 'hidden') {
+
+								updatedLocationID = this.elements[e].value;
+
+								updateDepartmentDataObj['location'] = updatedLocationID;
+								
 						}
 						
 					}
+					*/
 
-					console.log('submitted but value didnt go anywhere');
+					if (newNameSuccess) {
+
+						console.log('newnamesuccess');
+						console.log('submit department', updateDepartmentDataObj);					
+
+						$(`#departmentID-${k}-accordion`).click();
+						
+						let renameTimer = setTimeout(function(){
+							$(`#departmentID-${k}-title`).hide().html(`${updatedDeptName} | ${locationsObj[updatedLocationID]}`).fadeIn(750);	
+							clearTimeout(renameTimer);
+						},250);
+						 	
 					
-		
+						console.log('set defaults, update value and placeholder to', updatedDeptName);
+						$(`#departmentID-${k}-form`).form('set defaults');
+						$(`#rename-departmentID-${k}-input-field`).attr('value', updatedDeptName);
+						$(`#rename-departmentID-${k}-input-field`).attr('placeholder', updatedDeptName);
+					
+					}
 
 				});
 				
-				} // end of IF renameDeptNeedsToBeValidated == false
+				 // end of IF renameDeptNeedsToBeValidated == false
 				
-
-				
+				/*
 				if (!$(`#departmentID-${k}-form`).form('validate form')) {
+
 					console.log('not validated')
 					renameDeptNeedsToBeValidated = true;
+
 				} else if ($(`#departmentID-${k}-form`).form('validate form')){
-					
+
 					renameDeptNeedsToBeValidated = false;
+
 				}
+				*/
 
 					if ($(`#departmentID-${k}-form`).form('validate form')) {
+						
 						$(`#departmentID-${k}-form`).form('submit');
-						//$(`#departmentID-${k}-form`).form('reset');
+	
 					}
 
 				
@@ -1691,37 +1711,17 @@ function eventListenersInsideDeptsModal() {
 
 				departmentRules = basicRules.slice();
 
-				//let el = document.getElementById(`rename-departmentID-${k}-input-field`);
-				//let elClone = el.cloneNode(true);
-				
-				//el.parentNode.replaceChild(elClone, el);			
-				
-				//document.getElementById(`rename-departmentID-${k}-input-field`).setAttribute('value', 'idiot');
+				//$(`#departmentID-${k}-form`).form('reset');
 
-
-				$(`#departmentID-${k}-form`).form('reset');
-				//$(`#departmentID-${k}-form`).form('clear');
-				//$(`#departmentID-${k}-form`).form('set defaults');
-				
-				//document.getElementById(`rename-departmentID-${k}-input-field`).setAttribute('value', 'idiot');
-								
-				for (let [o,p] of Object.entries(departmentsObj)) {
-				
-					let newRule = {}
-					newRule['type'] = `notExactly[${p.name}]`;	
-					newRule['prompt'] = 'That department already exists.';
-					departmentRules.push(newRule)
-				
-				}
-
-				$(`#departmentID-${k}-form`).form({
+				$(`#departmentID-${k}-form`).form({	
 					fields: {
 						name: {
 							identifier: 'dept-rename',
 							rules: departmentRules
 						}
-					}
-				});	
+					},
+					transition: 'fade'
+				})	
 
 				$(`#departmentID-${k}-accordion`).click();
 				
@@ -1729,86 +1729,8 @@ function eventListenersInsideDeptsModal() {
 
 			$(`#delete-departmentID-${k}-btn`).click(function(e){
 
-				document.getElementById('delete-department-modal-btn').setAttribute('style', 'display: inline !important');
-				document.getElementById('delete-department-modal-btn').setAttribute('deptid', `${this.getAttribute('deptid')}`);
-				
-				let deptID = this.getAttribute('deptid');
-				let deptName = departmentsObj[deptID]['name'];
+					console.log('delete stuff');
 
-				if (this.getAttribute('employees') != 0) {
-					
-					document.getElementById(`departmentID-${k}-warning`).setAttribute('class','ui floating warning message');
-					document.getElementById(`departmentID-${k}-warning-text`).innerHTML = `<i class="fas fa-exclamation-circle">&nbsp;</i>  Only empty departments can be deleted.`;
-					
-					$(`#departmentID-${k}-close-icon`)
-					.one('click', function() {
-						$(this)
-							.closest('.message')
-							.transition('fade')
-						;
-					});
-					
-				} else {
-					
-					/*
-				
-				$.ajax({
-				//url: "libs/post-php/checkIfLastDepartment.php",
-				//type: "POST",
-				url: "libs/php/checkIfLastDepartment.php",
-				type: "GET",
-				dataType: "json",
-				data: {
-					departmentID: deptID
-				},
-				success: function (result) {
-
-						console.log('delete loc result', result);
-						
-						let locName = locationsObj[result.data.locID];
-											
-						if (result.data.msg == "Delete location") {
-							
-							document.getElementById('delete-department-modal-btn').setAttribute('emptyLocID', result.data.locID);
-							
-							$('#alert-modal').modal(
-							{
-								title: '<i class="archive icon"></i>',
-								content: `<div class="alert-modal-text">Delete this location and department? 
-								
-												<h4> The location ${locName} and department ${deptName} will both be deleted. </h4>
-												</div>`
-							}).modal('show');
-							
-							
-						}	else {
-							
-							document.getElementById('delete-department-modal-btn').setAttribute('emptyLocID', 0);
-
-							document.getElementById('delete-department-modal-btn').setAttribute('style', 'display: inline');
-
-							$('#alert-modal').modal(
-							{
-								title: '<i class="archive icon"></i>',
-								content: `<div class="alert-modal-text">Delete this department? <h3> ${deptName} </h3></div>`
-							}).modal('show');
-												
-							
-							
-						}
-					
-				},
-				error: function (jqXHR, textStatus, errorThrown) {
-						console.log('error');
-						console.log(textStatus);
-						console.log(errorThrown);
-					},
-				});
-				
-				*/
-				
-			
-				}
 
 			});
 
@@ -2541,38 +2463,29 @@ function createCheckbox(checkboxName, checkboxInputID, category, mobile){
 
 // CREATE MODAL CONTENT
 
-function createOneManageDeptsDropDown(listOfNames, listOfIDs) { //fieldName, fieldID
+function createOneManageDeptsDropDown(listOfNames, listOfIDs, currentLocName, currentLocID) { //fieldName, fieldID
 		
 	let outerNode = document.createElement('div');
 	outerNode.setAttribute('class', 'field');
-
-	//let heading = document.createElement('label');
-	//heading.innerHTML = 'MENU';
 	
 	let dropdown = document.createElement('div');
 	dropdown.setAttribute('class', 'ui fluid selection dropdown');
 
 	let selected = document.createElement('div');
 	selected.setAttribute('class', 'default text');
-	selected.innerHTML = 'Default Text';
-
-	/*not sure if needed
-	if (mainTitle.includes('epartment')) {
-		selected.setAttribute('id', 'department-dropdown-placeholder-text');
-	}
-	*/
+	selected.innerHTML = currentLocName;
 	
 	let icon = document.createElement('i');
 	icon.setAttribute('class', 'dropdown icon');
 
 	let input = document.createElement('input');
+	input.setAttribute('type', 'hidden');
+	input.setAttribute('name', 'locID');
+	input.setAttribute('value', currentLocID);
 
-	input.setAttribute('value', 'TEST VALUE');
 	
 	let menu = document.createElement('div');
 	menu.setAttribute('class', 'menu');
-
-	//menu.setAttribute('id', dropdownType + '-menu');
 
 	let dropDownObj = {};
 	let dropDownList = [];
@@ -2598,33 +2511,11 @@ function createOneManageDeptsDropDown(listOfNames, listOfIDs) { //fieldName, fie
 
 	}
 
-	input.setAttribute('value', '');
-	
-	//input.setAttribute('fieldname', fieldID);
-	//input.setAttribute('fieldID', fieldID);
-	input.setAttribute('type', 'hidden');
-	//input.setAttribute('name', fieldName);
-	
-	//listOfIdentifiers.push(fieldName);
-
-	/* not sure
-	if (editOrCreate == 'create'){
-		selected.innerHTML = placeholder;
-	} else {
-			if (mainTitle.includes('epartment')) {
-				selected.innerHTML = detailsForEditForm.department;
-			} else if (mainTitle.includes('ocation')) {
-				selected.innerHTML = detailsForEditForm.locationName;
-			}
-	}
-	*/
-
-	dropdown.appendChild(selected);
-	dropdown.appendChild(icon);
 	dropdown.appendChild(input);
+	dropdown.appendChild(icon);
+	dropdown.appendChild(selected);
 	dropdown.appendChild(menu);		
 
-	//outerNode.appendChild(heading);
 	outerNode.appendChild(dropdown)
 	
 	return outerNode;
@@ -3155,16 +3046,16 @@ function createLocationPanel(name, id, deptsCount, totalEmployees){
 }
 
 
-function createDepartmentSegment(id, name, emps){
+function createDepartmentSegment(id, name, location, locationID, emps){
 	
-	let dropDown = createOneManageDeptsDropDown(['London','New York'], [1, 2]);
+	let dropDown = createOneManageDeptsDropDown(['London','New York', 'Munich'], [1, 2, 4], locationsObj[locationID], locationID);
 	
 	let departmentSegment = document.createElement('div'); // Department Segment
 	let departmentCloser = document.createElement('i');															departmentSegment.appendChild(departmentCloser);
 	let departmentRow = document.createElement('div');															departmentSegment.appendChild(departmentRow);
-		let departmentWarning = document.createElement('div');												departmentRow.appendChild(departmentWarning);
-			let closeWarningIcon = document.createElement('i');													departmentWarning.appendChild(closeWarningIcon);
-			let departmentWarningText = document.createElement('span');									departmentWarning.appendChild(departmentWarningText);
+		//let departmentWarning = document.createElement('div');												departmentRow.appendChild(departmentWarning);
+			//let closeWarningIcon = document.createElement('i');													departmentWarning.appendChild(closeWarningIcon);
+			//let departmentWarningText = document.createElement('span');									departmentWarning.appendChild(departmentWarningText);
 		let departmentDetails = document.createElement('div');												departmentRow.appendChild(departmentDetails);
 			let departmentForm = document.createElement('form');												departmentDetails.appendChild(departmentForm);
 				let departmentTitleRow = document.createElement('div');										departmentForm.appendChild(departmentTitleRow);
@@ -3201,13 +3092,13 @@ function createDepartmentSegment(id, name, emps){
 	departmentCloser.setAttribute('class', 'close icon display-none-field'); departmentCloser.setAttribute('id', `close-departmentID-${id}-icon`);
 	departmentRow.setAttribute('class', 'ui row');
 		departmentDetails.setAttribute('class', 'ui column manage-dept-info');
-		departmentWarning.setAttribute('class', 'ui hidden warning message'); departmentWarning.setAttribute('id', `departmentID-${id}-warning`);
-			closeWarningIcon.setAttribute('class', 'close icon'); closeWarningIcon.setAttribute('id', `departmentID-${id}-close-icon`);
-			departmentWarningText.setAttribute('id', `departmentID-${id}-warning-text`);
+		//departmentWarning.setAttribute('class', 'ui hidden warning message'); departmentWarning.setAttribute('id', `departmentID-${id}-warning`);
+			//closeWarningIcon.setAttribute('class', 'close icon'); closeWarningIcon.setAttribute('id', `departmentID-${id}-close-icon`);
+			//departmentWarningText.setAttribute('id', `departmentID-${id}-warning-text`);
 			departmentForm.setAttribute('class', 'ui form rename-form'); departmentForm.setAttribute('id',`departmentID-${id}-form`); departmentForm.setAttribute('name',`departmentID-${id}-form`); departmentForm.setAttribute('autocomplete','off');
 				departmentTitleRow.setAttribute('class', 'department-title-row');
-					departmentTitle.setAttribute('id', `departmentID-${id}-title`);
-						departmentTitleText.innerHTML = name;
+					//departmentTitle.setAttribute();
+						departmentTitleText.setAttribute('id', `departmentID-${id}-title`); departmentTitleText.innerHTML = `${name} | ${location}`;
 					departmentEmployees.setAttribute('class', 'dept-employee-info-icons');						
 						//departmentEmployeeInfo.setAttribute('class', 'employee-count-icon'); //hide with display-none-field display-none-field
 							//departmentEmployeeCount.setAttribute('id', `departmentID-${id}-employee-count`); departmentEmployeeCount.innerHTML = `${emps}`; departmentEmployeeCount.setAttribute('class', 'employee-count-number default-cursor');
@@ -3452,7 +3343,7 @@ function manageDepartmentsAndLocationsModalNEW(category, show){
 			
 			for (let [key, value] of Object.entries(departmentsObj)) {	
 					
-				departmentsContent.appendChild(createDepartmentSegment(key, value['name'], value['employees']));
+				departmentsContent.appendChild(createDepartmentSegment(key, value['name'], locationsObj[value['locationID']], value['locationID'], value['employees']));
 							
 			} 
 			
