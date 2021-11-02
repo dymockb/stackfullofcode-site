@@ -501,6 +501,7 @@ function showManageModal(category){
 
 		title: `Manage ${category}`,
 		closable: false,
+		autofocus: false,
 		onShow: function(){
 			manageDeptsAndLocsOpened++;
 			
@@ -950,6 +951,50 @@ $('#employee-modal-create-fields').submit(function(event) {
 });
 
 //forms within Manage Depts and Locs Modal
+
+$('#create-new-department-btn').click(function(){
+
+	$('#department-accordion-segment').attr('style', 'display: block');
+
+	departmentRules = basicRules.slice();
+
+	for (let [key, value] of Object.entries(departmentsObj)) {
+		
+		let nameRequired = value.name;
+		
+		let newRule = {}
+		newRule['type'] = `notExactly[${nameRequired}]`;
+		newRule['prompt'] = 'That location already exists';
+		locationRules.push(newRule)
+	
+	}
+	
+		$(`#new-location-form`).form({
+		fields: {
+			name: {
+				identifier: 'new-department',
+				rules: departmentRules
+			}
+		}
+		});
+
+	$('#new-department-accordion-btn').click();
+	//document.getElementById('department-accordion-segment').scrollIntoView({behavior: "smooth"});
+	$("#scrolling-modal-pane").animate({ scrollTop: 0 }, "fast");
+
+});
+
+$(`#cancel-new-department-btn`).click(function(e){
+
+	$(`#new-department-form`).form('reset');
+	$('#new-department-accordion-btn').click();
+
+	let closeNewDepartmentTimer = setTimeout(function(){
+		$('#department-accordion-segment').attr('style', 'display: none');
+		clearTimeout(closeNewDepartmentTimer);
+	},350);		
+
+});
 
 $('#create-new-location-btn').click(function(){
 
@@ -2479,13 +2524,13 @@ function createCheckbox(checkboxName, checkboxInputID, category, mobile){
 
 // CREATE MODAL CONTENT
 
-function createOneManageLocsDropDown(listOfNames, listOfIDs) { //fieldName, fieldID
+function createOneManageDeptsDropDown(listOfNames, listOfIDs) { //fieldName, fieldID
 		
 	let outerNode = document.createElement('div');
 	outerNode.setAttribute('class', 'field');
 
-	let heading = document.createElement('label');
-	heading.innerHTML = 'MENU';
+	//let heading = document.createElement('label');
+	//heading.innerHTML = 'MENU';
 	
 	let dropdown = document.createElement('div');
 	dropdown.setAttribute('class', 'ui fluid selection dropdown');
@@ -2562,7 +2607,7 @@ function createOneManageLocsDropDown(listOfNames, listOfIDs) { //fieldName, fiel
 	dropdown.appendChild(input);
 	dropdown.appendChild(menu);		
 
-	outerNode.appendChild(heading);
+	//outerNode.appendChild(heading);
 	outerNode.appendChild(dropdown)
 	
 	return outerNode;
@@ -3095,80 +3140,7 @@ function createLocationPanel(name, id, deptsCount, totalEmployees){
 
 function createDepartmentSegment(id, name, emps){
 	
-	let departmentSegment = document.createElement('div'); // Department Segment
-	let departmentCloser = document.createElement('i');															departmentSegment.appendChild(departmentCloser);
-	let departmentRow = document.createElement('div');															departmentSegment.appendChild(departmentRow);
-		let departmentWarning = document.createElement('div');												departmentRow.appendChild(departmentWarning);
-			let closeWarningIcon = document.createElement('i');													departmentWarning.appendChild(closeWarningIcon);
-			let departmentWarningText = document.createElement('span');									departmentWarning.appendChild(departmentWarningText);
-		let departmentDetails = document.createElement('div');												departmentRow.appendChild(departmentDetails);
-			let departmentForm = document.createElement('form');												departmentDetails.appendChild(departmentForm);
-				let departmentTitleRow = document.createElement('div');										departmentForm.appendChild(departmentTitleRow);
-					let departmentTitle = document.createElement('span');										departmentTitleRow.appendChild(departmentTitle);
-						let departmentTitleText = document.createElement('h4');								departmentTitle.appendChild(departmentTitleText);
-					let departmentEmployees = document.createElement('div');								departmentTitleRow.appendChild(departmentEmployees);
-						let departmentEmployeeInfo = document.createElement('div');						departmentEmployees.appendChild(departmentEmployeeInfo);
-							let departmentEmployeeCount = document.createElement('span');				departmentEmployeeInfo.appendChild(departmentEmployeeCount);
-							let employeesIcon = document.createElement('i');										departmentEmployeeInfo.appendChild(employeesIcon);
-						let departmentButtons = document.createElement('div');								departmentEmployees.appendChild(departmentButtons);
-							let renameDepartmentBtn = document.createElement('span');						departmentButtons.appendChild(renameDepartmentBtn);
-								let editIcon = document.createElement('i');												renameDepartmentBtn.appendChild(editIcon);
-							let deleteDepartmentBtn = document.createElement('span');						departmentButtons.appendChild(deleteDepartmentBtn);
-								let binIcon = document.createElement('i');												deleteDepartmentBtn.appendChild(binIcon);
-				let renameDeptAccordion = document.createElement('div');									departmentForm.appendChild(renameDeptAccordion);
-					let renameDeptAccordionTitle = document.createElement('div');						renameDeptAccordion.appendChild(renameDeptAccordionTitle);
-						let renameDeptAccordionDropdown = document.createElement('i');				renameDeptAccordionTitle.appendChild(renameDeptAccordionDropdown);
-						let renameDeptAccordionBtn = document.createElement('div');						renameDeptAccordionTitle.appendChild(renameDeptAccordionBtn);	
-					let	renameDeptAccordionContent = document.createElement('div');					renameDeptAccordion.appendChild(renameDeptAccordionContent);
-						let	renameDeptAccordionTransition = document.createElement('div'); 		renameDeptAccordionContent.appendChild(renameDeptAccordionTransition);
-							let	renameDeptAccordionContainer = document.createElement('div');		renameDeptAccordionTransition.appendChild(renameDeptAccordionContainer);
-								let	renameDeptAccordionField = document.createElement('div');			renameDeptAccordionContainer.appendChild(renameDeptAccordionField);
-									let	renameDeptAccordionInput = document.createElement('input'); renameDeptAccordionField.appendChild(renameDeptAccordionInput);
-								let renameDeptAccordionButtons = document.createElement('div');  	renameDeptAccordionContainer.appendChild(renameDeptAccordionButtons);
-									let submitRenameDeptBtn = document.createElement('div');				renameDeptAccordionButtons.appendChild(submitRenameDeptBtn);
-									let cancelRenameDeptBtn = document.createElement('button');			renameDeptAccordionButtons.appendChild(cancelRenameDeptBtn);
-				let renameDeptErrorMsg = document.createElement('div');										departmentForm.appendChild(renameDeptErrorMsg);
-
-	departmentSegment.setAttribute('class', 'ui floating message department-segment');
-	departmentCloser.setAttribute('class', 'close icon display-none-field'); departmentCloser.setAttribute('id', `close-departmentID-${id}-icon`);
-	departmentRow.setAttribute('class', 'ui row');
-		departmentDetails.setAttribute('class', 'ui column manage-dept-info');
-		departmentWarning.setAttribute('class', 'ui hidden warning message'); departmentWarning.setAttribute('id', `departmentID-${id}-warning`);
-			closeWarningIcon.setAttribute('class', 'close icon'); closeWarningIcon.setAttribute('id', `departmentID-${id}-close-icon`);
-			departmentWarningText.setAttribute('id', `departmentID-${id}-warning-text`);
-			departmentForm.setAttribute('class', 'ui form rename-form'); departmentForm.setAttribute('id',`departmentID-${id}-form`); departmentForm.setAttribute('name',`departmentID-${id}-form`);
-				departmentTitleRow.setAttribute('class', 'department-title-row');
-					departmentTitle.setAttribute('id', `departmentID-${id}-title`);
-						departmentTitleText.innerHTML = name;
-					departmentEmployees.setAttribute('class', 'dept-employee-info-icons');						
-						departmentEmployeeInfo.setAttribute('class', 'employee-count-icon'); //hide with display-none-field display-none-field
-							departmentEmployeeCount.setAttribute('id', `departmentID-${id}-employee-count`); departmentEmployeeCount.innerHTML = `${emps}`; departmentEmployeeCount.setAttribute('class', 'employee-count-number default-cursor');
-							employeesIcon.setAttribute('class', 'fas fa-users');
-						departmentButtons.setAttribute('class', 'dept-delete-edit-btns');
-							renameDepartmentBtn.setAttribute('class', 'ui icon button');  renameDepartmentBtn.setAttribute('id', `rename-departmentID-${id}-btn`);
-							editIcon.setAttribute('class', 'fas fa-edit pointer');
-							deleteDepartmentBtn.setAttribute('class', 'ui icon button'); deleteDepartmentBtn.setAttribute('deptid', id); deleteDepartmentBtn.setAttribute('deptname', name); deleteDepartmentBtn.setAttribute('id', `delete-departmentID-${id}-btn`); deleteDepartmentBtn.setAttribute('employees', `${emps}`);// also add emps as property to button
-							binIcon.setAttribute('class', 'fas fa-trash-alt');
-				renameDeptAccordion.setAttribute('class', 'ui accordion field new-dept-accordion');	renameDeptAccordion.setAttribute('id', `rename-dept-${id}-accordion`);
-					renameDeptAccordionTitle.setAttribute('class', 'title display-none-field');
-						renameDeptAccordionDropdown.setAttribute('class', 'icon dropdown');
-						renameDeptAccordionBtn.setAttribute('class', 'ui tiny button'); renameDeptAccordionBtn.setAttribute('id', `departmentID-${id}-accordion`); renameDeptAccordionBtn.innerHTML = 'Rename department'; 
-					renameDeptAccordionContent.setAttribute('class', 'content field');
-						renameDeptAccordionTransition.setAttribute('class', 'content field transition hidden');
-							renameDeptAccordionContainer.setAttribute('class', 'department-field-container');
-								renameDeptAccordionField.setAttribute('class', 'field dept-name-field'); 
-									renameDeptAccordionInput.setAttribute('id', `rename-departmentID-${id}-input-field`); renameDeptAccordionInput.setAttribute('placeholder', 'Rename Department'); renameDeptAccordionInput.setAttribute('deptid', id); renameDeptAccordionInput.setAttribute('type', 'text'); renameDeptAccordionInput.setAttribute('value',''); renameDeptAccordionInput.setAttribute('name','dept-rename');
-								renameDeptAccordionButtons.setAttribute('class', 'rename-accordion-buttons');
-									submitRenameDeptBtn.setAttribute('class', 'ui tiny button dept-action-button'); submitRenameDeptBtn.setAttribute('id', `submit-rename-departmentID-${id}-btn`); submitRenameDeptBtn.innerHTML = 'Submit';
-									cancelRenameDeptBtn.setAttribute('class', 'ui tiny button dept-action-button'); cancelRenameDeptBtn.setAttribute('form', `departmentID-${id}-form`); cancelRenameDeptBtn.setAttribute('id', `cancel-departmentID-${id}-btn`); cancelRenameDeptBtn.setAttribute('type', 'reset'); cancelRenameDeptBtn.innerHTML = 'Cancel';
-				renameDeptErrorMsg.setAttribute('class','ui error message');
-		
-	return departmentSegment
-	
-}
-
-
-function createLocationSegmentORIG(id, name){
+	let dropDown = createOneManageDeptsDropDown(['London','New York'], [1, 2]);
 	
 	let departmentSegment = document.createElement('div'); // Department Segment
 	let departmentCloser = document.createElement('i');															departmentSegment.appendChild(departmentCloser);
@@ -3182,8 +3154,8 @@ function createLocationSegmentORIG(id, name){
 					let departmentTitle = document.createElement('span');										departmentTitleRow.appendChild(departmentTitle);
 						let departmentTitleText = document.createElement('h4');								departmentTitle.appendChild(departmentTitleText);
 					let departmentEmployees = document.createElement('div');								departmentTitleRow.appendChild(departmentEmployees);
-						let departmentEmployeeInfo = document.createElement('div');						departmentEmployees.appendChild(departmentEmployeeInfo);
-							let departmentEmployeeCount = document.createElement('span');				departmentEmployeeInfo.appendChild(departmentEmployeeCount);
+						//let departmentEmployeeInfo = document.createElement('div');						departmentEmployees.appendChild(departmentEmployeeInfo);
+							//let departmentEmployeeCount = document.createElement('span');				departmentEmployeeInfo.appendChild(departmentEmployeeCount);
 							//let employeesIcon = document.createElement('i');										departmentEmployeeInfo.appendChild(employeesIcon);
 						let departmentButtons = document.createElement('div');								departmentEmployees.appendChild(departmentButtons);
 							let renameDepartmentBtn = document.createElement('span');						departmentButtons.appendChild(renameDepartmentBtn);
@@ -3197,11 +3169,18 @@ function createLocationSegmentORIG(id, name){
 					let	renameDeptAccordionContent = document.createElement('div');					renameDeptAccordion.appendChild(renameDeptAccordionContent);
 						let	renameDeptAccordionTransition = document.createElement('div'); 		renameDeptAccordionContent.appendChild(renameDeptAccordionTransition);
 							let	renameDeptAccordionContainer = document.createElement('div');		renameDeptAccordionTransition.appendChild(renameDeptAccordionContainer);
+								let renameDeptText = document.createElement('div');								renameDeptAccordionContainer.appendChild(renameDeptText);
 								let	renameDeptAccordionField = document.createElement('div');			renameDeptAccordionContainer.appendChild(renameDeptAccordionField);
 									let	renameDeptAccordionInput = document.createElement('input'); renameDeptAccordionField.appendChild(renameDeptAccordionInput);
-								let renameDeptAccordionButtons = document.createElement('div');  	renameDeptAccordionContainer.appendChild(renameDeptAccordionButtons);
-									let submitRenameDeptBtn = document.createElement('div');				renameDeptAccordionButtons.appendChild(submitRenameDeptBtn);
-									let cancelRenameDeptBtn = document.createElement('button');			renameDeptAccordionButtons.appendChild(cancelRenameDeptBtn);
+								//let renameDeptAccordionButtons = document.createElement('div');  	renameDeptAccordionContainer.appendChild(renameDeptAccordionButtons);
+									//let submitRenameDeptBtn = document.createElement('div');				renameDeptAccordionButtons.appendChild(submitRenameDeptBtn);
+									//let cancelRenameDeptBtn = document.createElement('button');			renameDeptAccordionButtons.appendChild(cancelRenameDeptBtn);
+							let moveDeptContainer = document.createElement('div');							renameDeptAccordionTransition.appendChild(moveDeptContainer);																												
+								let moveDeptText = document.createElement('div');									moveDeptContainer.appendChild(moveDeptText);																																	
+																																									moveDeptContainer.appendChild(dropDown);
+							let renameDeptAccordionButtons = document.createElement('div');  		renameDeptAccordionTransition.appendChild(renameDeptAccordionButtons);
+								let submitRenameDeptBtn = document.createElement('div');					renameDeptAccordionButtons.appendChild(submitRenameDeptBtn);
+								let cancelRenameDeptBtn = document.createElement('button');				renameDeptAccordionButtons.appendChild(cancelRenameDeptBtn);
 				let renameDeptErrorMsg = document.createElement('div');										departmentForm.appendChild(renameDeptErrorMsg);
 
 	departmentSegment.setAttribute('class', 'ui floating message department-segment');
@@ -3216,13 +3195,13 @@ function createLocationSegmentORIG(id, name){
 					departmentTitle.setAttribute('id', `departmentID-${id}-title`);
 						departmentTitleText.innerHTML = name;
 					departmentEmployees.setAttribute('class', 'dept-employee-info-icons');						
-						departmentEmployeeInfo.setAttribute('class', 'employee-count-icon'); //hide with display-none-field display-none-field
-							departmentEmployeeCount.setAttribute('id', `departmentID-${id}-employee-count`); departmentEmployeeCount.innerHTML = `X Departments`; departmentEmployeeCount.setAttribute('class', 'employee-count-number default-cursor');
+						//departmentEmployeeInfo.setAttribute('class', 'employee-count-icon'); //hide with display-none-field display-none-field
+							//departmentEmployeeCount.setAttribute('id', `departmentID-${id}-employee-count`); departmentEmployeeCount.innerHTML = `${emps}`; departmentEmployeeCount.setAttribute('class', 'employee-count-number default-cursor');
 							//employeesIcon.setAttribute('class', 'fas fa-users');
 						departmentButtons.setAttribute('class', 'dept-delete-edit-btns');
 							renameDepartmentBtn.setAttribute('class', 'ui icon button');  renameDepartmentBtn.setAttribute('id', `rename-departmentID-${id}-btn`);
 							editIcon.setAttribute('class', 'fas fa-edit pointer');
-							//deleteDepartmentBtn.setAttribute('class', 'ui icon button'); deleteDepartmentBtn.setAttribute('deptid', id); deleteDepartmentBtn.setAttribute('deptname', name); deleteDepartmentBtn.setAttribute('id', `delete-departmentID-${id}-btn`); deleteDepartmentBtn.setAttribute('employees', `${emps}`);// also add emps as property to button
+							deleteDepartmentBtn.setAttribute('class', 'ui icon button'); deleteDepartmentBtn.setAttribute('deptid', id); deleteDepartmentBtn.setAttribute('deptname', name); deleteDepartmentBtn.setAttribute('id', `delete-departmentID-${id}-btn`); deleteDepartmentBtn.setAttribute('employees', `${emps}`);// also add emps as property to button
 							binIcon.setAttribute('class', 'fas fa-trash-alt');
 				renameDeptAccordion.setAttribute('class', 'ui accordion field new-dept-accordion');	renameDeptAccordion.setAttribute('id', `rename-dept-${id}-accordion`);
 					renameDeptAccordionTitle.setAttribute('class', 'title display-none-field');
@@ -3231,17 +3210,22 @@ function createLocationSegmentORIG(id, name){
 					renameDeptAccordionContent.setAttribute('class', 'content field');
 						renameDeptAccordionTransition.setAttribute('class', 'content field transition hidden');
 							renameDeptAccordionContainer.setAttribute('class', 'department-field-container');
+								renameDeptText.innerHTML = 'Edit name:';
 								renameDeptAccordionField.setAttribute('class', 'field dept-name-field'); 
 									renameDeptAccordionInput.setAttribute('id', `rename-departmentID-${id}-input-field`); renameDeptAccordionInput.setAttribute('placeholder', 'Rename Department'); renameDeptAccordionInput.setAttribute('deptid', id); renameDeptAccordionInput.setAttribute('type', 'text'); renameDeptAccordionInput.setAttribute('value',''); renameDeptAccordionInput.setAttribute('name','dept-rename');
-								renameDeptAccordionButtons.setAttribute('class', 'rename-accordion-buttons');
-									submitRenameDeptBtn.setAttribute('class', 'ui tiny button dept-action-button'); submitRenameDeptBtn.setAttribute('id', `submit-rename-departmentID-${id}-btn`); submitRenameDeptBtn.innerHTML = 'Submit';
-									cancelRenameDeptBtn.setAttribute('class', 'ui tiny button dept-action-button'); cancelRenameDeptBtn.setAttribute('form', `departmentID-${id}-form`); cancelRenameDeptBtn.setAttribute('id', `cancel-departmentID-${id}-btn`); cancelRenameDeptBtn.setAttribute('type', 'reset'); cancelRenameDeptBtn.innerHTML = 'Cancel';
+								//renameDeptAccordionButtons.setAttribute('class', 'rename-accordion-buttons');
+									//submitRenameDeptBtn.setAttribute('class', 'ui tiny button dept-action-button'); submitRenameDeptBtn.setAttribute('id', `submit-rename-departmentID-${id}-btn`); submitRenameDeptBtn.innerHTML = 'Submit';
+									//cancelRenameDeptBtn.setAttribute('class', 'ui tiny button dept-action-button'); cancelRenameDeptBtn.setAttribute('form', `departmentID-${id}-form`); cancelRenameDeptBtn.setAttribute('id', `cancel-departmentID-${id}-btn`); cancelRenameDeptBtn.setAttribute('type', 'reset'); cancelRenameDeptBtn.innerHTML = 'Cancel';				
+							moveDeptContainer.setAttribute('class', 'department-field-container');
+								moveDeptText.innerHTML = 'Change location';	
+							renameDeptAccordionButtons.setAttribute('class', 'rename-accordion-buttons');
+								submitRenameDeptBtn.setAttribute('class', 'ui tiny button dept-action-button'); submitRenameDeptBtn.setAttribute('id', `submit-rename-departmentID-${id}-btn`); submitRenameDeptBtn.innerHTML = 'Submit';
+								cancelRenameDeptBtn.setAttribute('class', 'ui tiny button dept-action-button'); cancelRenameDeptBtn.setAttribute('form', `departmentID-${id}-form`); cancelRenameDeptBtn.setAttribute('id', `cancel-departmentID-${id}-btn`); cancelRenameDeptBtn.setAttribute('type', 'reset'); cancelRenameDeptBtn.innerHTML = 'Cancel';				
 				renameDeptErrorMsg.setAttribute('class','ui error message');
 		
 	return departmentSegment
 	
 }
-
 
 function createLocationSegment(id, name){
 
@@ -3463,6 +3447,7 @@ function manageDepartmentsAndLocationsModalNEW(category, show){
 
 		if (show == true){
 		
+			document.getElementById('create-new-department-btn').setAttribute('style', 'display: inline');
 			showManageModal('Departments');
 			eventListenersInsideDeptsModal();
 	
@@ -4556,6 +4541,9 @@ function closeModal(){
 	
 	document.getElementById('create-new-location-btn').setAttribute('style', 'display: none');
 	document.getElementById('create-new-location-btn').innerHTML = 'Add new location';
+	
+	document.getElementById('create-new-department-btn').setAttribute('style', 'display: none');
+	document.getElementById('create-new-department-btn').innerHTML = 'Add new department';
 
 	document.getElementById('save-new-location-btn').setAttribute('style', 'display: none');
 

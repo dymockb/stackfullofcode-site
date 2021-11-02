@@ -232,7 +232,8 @@ td#employee-details-field {
 #create-employee-btn-mobile,
 #submit-depts-and-locs,
 #create-new-location-btn,
-#save-new-location-btn {
+#save-new-location-btn,
+#create-new-department-btn {
 	display: none;
 }
 
