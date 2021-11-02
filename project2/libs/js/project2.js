@@ -1584,17 +1584,6 @@ function eventListenersInsideDeptsModal() {
 		for (let [k, val] of Object.entries(departmentsObj)){	
 		
 			existingDepartmentNames.push(val.name);	
-			
-				$(`#departmentID-${k}-form`).form({
-					fields: {
-						name: {
-							identifier: 'dept-rename',
-							rules: departmentRules
-						}
-					}
-				});	
-				
-				updateLoadedDepts.push(k);
 
 			$(`#submit-rename-departmentID-${k}-btn`).click(function(e){
 				e.preventDefault();
@@ -1614,42 +1603,42 @@ function eventListenersInsideDeptsModal() {
 
 					for (let e = 0; e < this.elements.length; e ++) {
 				
-						if (this.elements[e].tagName != 'BUTTON') {			
+						if (this.elements[e].tagName == 'INPUT' && this.elements[e].getAttribute('type') != 'hidden') {			
 
 							updatedDeptName = this.elements[e].value;
 							updatedDeptID = this.elements[e].getAttribute('deptID');
 
-							$(`#input-departmentID-${k}-field`).attr('value', this.elements[e].value);
-							$(`#input-departmentID-${k}-field`).attr('placeholder', this.elements[e].value);
-							$(`#departmentID-${k}-title`).hide().html(this.elements[e].value).fadeIn(750); 
-
+							//document.getElementById(``).innerHTML = 'A message';
+							
+							if (updatedDeptName == 'Bad'){
+							
+								document.getElementById(`departmentID-${k}-warning`).setAttribute('class', 'ui floating warning message');
+								document.getElementById(`departmentID-${k}-warning-text`).innerHTML = 'A message';
+								
+								$(`#departmentID-${k}-close-icon`)
+									.one('click', function() {
+										$(this)
+											.closest('.message')
+											.transition('fade')
+										;
+									});
+								
+							} else {
+								
+								$(`#input-departmentID-${k}-field`).attr('value', this.elements[e].value);
+								$(`#input-departmentID-${k}-field`).attr('placeholder', this.elements[e].value);
+								$(`#departmentID-${k}-title`).hide().html(this.elements[e].value).fadeIn(750); 								
+								
 							}
+
+						}
 						
 					}	
 					
 					updateDepartmentDataObj['department'] = updatedDeptName;
 					updateDepartmentDataObj['departmentID'] = updatedDeptID;	
 					
-					/*
-					$.ajax({
-					url: "libs/php/updateDepartment.php",
-					type: "GET",
-					//url: "libs/post-php/updateDepartment.php",
-					//type: "POST",
-					dataType: "json",
-					data: updateDepartmentDataObj,
-					success: function (result) {
-
-              refreshPage();
-
-					},
-					error: function (jqXHR, textStatus, errorThrown) {
-							console.log('error');
-							console.log(textStatus);
-							console.log(errorThrown);
-						},
-					});
-					*/
+					console.log('submit department', updateDepartmentDataObj);		
 
 				});
 				
@@ -1704,9 +1693,7 @@ function eventListenersInsideDeptsModal() {
 					}
 				});	
 
-				$(`#departmentID-${k}-accordion`).click()
-				
-				$(`#rename-departmentID-${k}-input-field`).attr('value','');
+				$(`#departmentID-${k}-accordion`).click();
 				
 			});	
 
@@ -3212,7 +3199,7 @@ function createDepartmentSegment(id, name, emps){
 							renameDeptAccordionContainer.setAttribute('class', 'department-field-container');
 								renameDeptText.innerHTML = 'Edit name:';
 								renameDeptAccordionField.setAttribute('class', 'field dept-name-field'); 
-									renameDeptAccordionInput.setAttribute('id', `rename-departmentID-${id}-input-field`); renameDeptAccordionInput.setAttribute('placeholder', 'Rename Department'); renameDeptAccordionInput.setAttribute('deptid', id); renameDeptAccordionInput.setAttribute('type', 'text'); renameDeptAccordionInput.setAttribute('value',''); renameDeptAccordionInput.setAttribute('name','dept-rename');
+									renameDeptAccordionInput.setAttribute('id', `rename-departmentID-${id}-input-field`); renameDeptAccordionInput.setAttribute('placeholder', 'Rename Department'); renameDeptAccordionInput.setAttribute('deptid', id); renameDeptAccordionInput.setAttribute('type', 'text'); renameDeptAccordionInput.setAttribute('value',departmentsObj[id].name); renameDeptAccordionInput.setAttribute('name','dept-rename');
 								//renameDeptAccordionButtons.setAttribute('class', 'rename-accordion-buttons');
 									//submitRenameDeptBtn.setAttribute('class', 'ui tiny button dept-action-button'); submitRenameDeptBtn.setAttribute('id', `submit-rename-departmentID-${id}-btn`); submitRenameDeptBtn.innerHTML = 'Submit';
 									//cancelRenameDeptBtn.setAttribute('class', 'ui tiny button dept-action-button'); cancelRenameDeptBtn.setAttribute('form', `departmentID-${id}-form`); cancelRenameDeptBtn.setAttribute('id', `cancel-departmentID-${id}-btn`); cancelRenameDeptBtn.setAttribute('type', 'reset'); cancelRenameDeptBtn.innerHTML = 'Cancel';				
