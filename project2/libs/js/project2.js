@@ -1338,6 +1338,7 @@ function oneLocationEventListeners(deptsParam, locKey){
 						{
 							title: '<i class="archive icon"></i>',
 							content: `<div class="alert-modal-text">Delete this department? <h3> ${deptName} </h3></div>`
+							
 						}).modal('show');
 											
 						
@@ -1604,177 +1605,50 @@ function eventListenersInsideDeptsModal() {
 
 			$(`#submit-rename-departmentID-${k}-btn`).click(function(e){
 				e.preventDefault();
-				
-				if (!renameDeptNeedsToBeValidated) {}
-				
-					$(`#departmentID-${k}-form`).one('submit', function(event){
-					event.preventDefault();
-
-					let updatedDeptName;
-					let updatedDeptID;
-					let updateDepartmentDataObj = {};
-					let updatedLocationID;
-					let newNameSuccess = false;
-
-					let formFields = $(`#departmentID-${k}-form`).form('get values');
-					formFields['departmentID'] = k;
-					console.log('formFields',formFields);
-					
-					function updateDepartment(formData) {
-						
-						$.ajax({
-						//url: "libs/post-php/updateDepartment.php",
-						//type: "POST",
-						url: "libs/php/updateDepartment.php",
-						type: "GET",
-						dataType: "json",
-						data: formData,
-						success: function (result) {
-							
-							//$(`#departmentID-${k}-accordion`).click();
-			
-							let renameTimer = setTimeout(function(){
-								$(`#departmentID-${k}-title`).hide().html(`${formFields['dept-rename']} | ${locationsObj[formFields['locID']]}`).fadeIn(750);	
-								clearTimeout(renameTimer);
-							},250);
 								
-							$(`#departmentID-${k}-form`).form('set defaults');
-							$(`#rename-departmentID-${k}-input-field`).attr('value', `${formFields['dept-rename']}`);
-							$(`#rename-departmentID-${k}-input-field`).attr('placeholder', `${formFields['dept-rename']}`);
-							
-							deptCacheObj[k]['departmentName'] = formFields['dept-rename'];
-							deptCacheObj[k]['locationID'] = formFields['locID'];
+				$(`#departmentID-${k}-form`).one('submit', function(event){
+				event.preventDefault();
 
-						},
-						error: function (jqXHR, textStatus, errorThrown) {
-								console.log('error', jqXHR);
-								console.log(textStatus);
-								console.log(errorThrown);
-							},
-						});
-									
-					}
+				$(`#departmentID-${k}-form`).addClass('loading');
+			
+				let updatedDeptName;
+				let updatedDeptID;
+				let updateDepartmentDataObj = {};
+				let updatedLocationID;
+				let newNameSuccess = false;
+
+				let formFields = $(`#departmentID-${k}-form`).form('get values');
+				formFields['departmentID'] = k;
+				
+				function updateDepartment(formData) {
+					
+					console.log('data submitted', formData);
 					
 					$.ajax({
-					//url: "libs/post-php/checkDepartmentCachce.php",
+					//url: "libs/post-php/updateDepartment.php",
 					//type: "POST",
-					url: "libs/php/checkDepartmentCache.php",
+					url: "libs/php/updateDepartment.php",
 					type: "GET",
 					dataType: "json",
-					data: deptCacheObj[k],
+					data: formData,
 					success: function (result) {
 						
-						console.log('cached dept name is still the same', result);
-						
-						
-						if (result.data == true) {
-							
-							console.log('cache check ok')
-							
-							if (deptCacheObj[k]['departmentName'] == formFields['dept-rename'] && deptCacheObj[k]['locationID'] == formFields['locID']) {
-								
-								console.log('no changes made');
-								
-							} else {
-								
-								console.log('name or loc changed');
-							
-								$.ajax({
-								//url: "libs/post-php/countDeptByName.php",
-								//type: "POST",
-								url: "libs/php/countDeptByName.php",
-								type: "GET",
-								dataType: "json",
-								data: {
-									departmentName: formFields['dept-rename']
-								},
-								success: function (result) {
-									
-									console.log('result of checking if name exists', result);
-									
-								
-									if (result.data['existing-names'] == 0) { 
-									
-										console.log('dept name & loc updated');
-										
-										updateDepartment(formFields);
+						$(`#departmentID-${k}-accordion`).click();
+		
 
-									
-									} else if (result.data['existing-names'] == 1) {
-										
-										console.log('deparment exists with that name')
-										
-										if (result.data['locationID'] == deptCacheObj[k]['locationID']) {
-											
-											$.ajax({
-											//url: "libs/post-php/checkOwnLocNames.php",
-											//type: "POST",
-											url: "libs/php/checkOwnLocNames.php",
-											type: "GET",
-											dataType: "json",
-											data: {
-												departmentName: formFields['dept-rename'],
-												locationID: result.data['locationID']
-											},
-											success: function (result) {
-												
-												console.log('result of own loc name check', result);
-												
-												
-												if (result.data != deptCacheObj[k]['departmentID']){
-													
-											$(`#departmentID-${k}-form`).form('add errors', ['That department already exists in this location.']);
-													
-													
-												} else {
-													
-													console.log('Can update ok');
-													//updateDepartment(formFields);
-													console.log('its got the same location ID - OK to update just location');
-												}
-												
-												
-											},
-											error: function (jqXHR, textStatus, errorThrown) {
-													console.log('error', jqXHR);
-													console.log(textStatus);
-													console.log(errorThrown);
-												},
-											});
-											
-											
-										} else {
-											
-											console.log('DEPT NAME ALREADY EXISTS in a different location');
-											$(`#departmentID-${k}-form`).form('add errors', ['That department already exists in another location.']);
-											
-										}
-
-									
-									}
-									
-
-								},
-								error: function (jqXHR, textStatus, errorThrown) {
-										console.log('error', jqXHR);
-										console.log(textStatus);
-										console.log(errorThrown);
-									},
-								});
-							
-							}
-							
-							
-						} else {
-							
-							$(`#departmentID-${k}-form`).form('add errors', ['A data error occurred please refresh this window and try again.'])
-							
-						}
 						
+						let renameTimer = setTimeout(function(){
+							$(`#departmentID-${k}-form`).removeClass('loading');
+							$(`#departmentID-${k}-title`).hide().html(`${formFields['dept-rename']} | ${locationsObj[formFields['locID']]}`).fadeIn(750);	
+							clearTimeout(renameTimer);
+						},250);
+							
+						$(`#departmentID-${k}-form`).form('set defaults');
+						$(`#rename-departmentID-${k}-input-field`).attr('value', `${formFields['dept-rename']}`);
+						$(`#rename-departmentID-${k}-input-field`).attr('placeholder', `${formFields['dept-rename']}`);
 						
-						
-						
-
+						deptCacheObj[k]['departmentName'] = formFields['dept-rename'];
+						deptCacheObj[k]['locationID'] = formFields['locID'];
 
 					},
 					error: function (jqXHR, textStatus, errorThrown) {
@@ -1783,98 +1657,119 @@ function eventListenersInsideDeptsModal() {
 							console.log(errorThrown);
 						},
 					});
-
-					/*
-
-					for (let e = 0; e < this.elements.length; e ++) {
-						console.log(1);
-				
-
-						
-						if (this.elements[e].tagName == 'INPUT' && this.elements[e].getAttribute('type') != 'hidden') {			
-
-							updatedDeptName = this.elements[e].value;
-							updatedDeptID = this.elements[e].getAttribute('deptID');
-
-							let ajaxResult = 'badmatch'
-
-							if (ajaxResult == 'badmatch') {
-
-								$(`#departmentID-${k}-form`).form('add errors', ['A data error occurred please refresh this window and try again.'])
-								newNameSuccess = false;
-
-							} else {
-							
-								if (updatedDeptName == 'Bad'){
-
-									newNameSuccess = false;
-									
-									$(`#departmentID-${k}-form`).form('add errors', ['That department already exists']);
-									
-								} else {
-									
-									updateDepartmentDataObj['department'] = updatedDeptName;
-									updateDepartmentDataObj['departmentID'] = updatedDeptID;	
-									
-								}
-							
-							}	
-
-						} else if (this.elements[e].tagName == 'INPUT' && this.elements[e].getAttribute('type') == 'hidden') {
-
-								updatedLocationID = this.elements[e].value;
-
-								updateDepartmentDataObj['location'] = updatedLocationID;
 								
+				} //end of Update function
+				
+				$.ajax({
+				//url: "libs/post-php/checkDepartmentCachce.php",
+				//type: "POST",
+				url: "libs/php/checkDepartmentCache.php",
+				type: "GET",
+				dataType: "json",
+				data: deptCacheObj[k],
+				success: function (result) {
+					
+					if (result.data == true) {
+						
+						if (deptCacheObj[k]['departmentName'] == formFields['dept-rename'] && deptCacheObj[k]['locationID'] == formFields['locID']) {
+							
+							$(`#departmentID-${k}-form`).removeClass('loading');
+						
+						} else {
+						
+							$.ajax({
+							//url: "libs/post-php/countDeptByName.php",
+							//type: "POST",
+							url: "libs/php/countDeptByName.php",
+							type: "GET",
+							dataType: "json",
+							data: {
+								departmentName: formFields['dept-rename']
+							},
+							success: function (result) {
+											
+								if (result.data['existing-names'] == 0) { 
+									
+									updateDepartment(formFields);
+
+								} else if (result.data['existing-names'] >= 1) {
+									
+									if (result.data['locationID'] == deptCacheObj[k]['locationID']) {
+										
+										$.ajax({
+										//url: "libs/post-php/checkOwnLocNames.php",
+										//type: "POST",
+										url: "libs/php/checkOwnLocNames.php",
+										type: "GET",
+										dataType: "json",
+										data: {
+											departmentName: formFields['dept-rename'],
+											locationID: result.data['locationID']
+										},
+										success: function (result) {
+											
+											if (result.data != deptCacheObj[k]['departmentID']){
+												
+												$(`#departmentID-${k}-form`).form('add errors', ['That department already exists in this location.']);
+												$(`#departmentID-${k}-form`).removeClass('loading');	
+												
+											} else {
+												
+												updateDepartment(formFields);
+
+											}
+											
+										},
+										error: function (jqXHR, textStatus, errorThrown) {
+												console.log('error', jqXHR);
+												console.log(textStatus);
+												console.log(errorThrown);
+											},
+										});
+										
+										
+									} else {
+										
+										$(`#departmentID-${k}-form`).form('add errors', ['That department already exists in another location.']);
+										$(`#departmentID-${k}-form`).removeClass('loading');
+										
+									}
+								
+								} // end of IF a matching name found in dept table
+
+							},
+							error: function (jqXHR, textStatus, errorThrown) {
+									console.log('error', jqXHR);
+									console.log(textStatus);
+									console.log(errorThrown);
+								},
+							});
+						
 						}
 						
-					}
-					*/
-
-					if (newNameSuccess) {
-
-						console.log('newnamesuccess');
-						console.log('submit department', updateDepartmentDataObj);					
-
-						$(`#departmentID-${k}-accordion`).click();
 						
-						let renameTimer = setTimeout(function(){
-							$(`#departmentID-${k}-title`).hide().html(`${updatedDeptName} | ${locationsObj[updatedLocationID]}`).fadeIn(750);	
-							clearTimeout(renameTimer);
-						},250);
-						 	
-					
-						console.log('set defaults, update value and placeholder to', updatedDeptName);
-						$(`#departmentID-${k}-form`).form('set defaults');
-						$(`#rename-departmentID-${k}-input-field`).attr('value', updatedDeptName);
-						$(`#rename-departmentID-${k}-input-field`).attr('placeholder', updatedDeptName);
-					
+					} else {
+						
+						$(`#departmentID-${k}-form`).form('add errors', ['A data error occurred please refresh this window and try again.'])
+						
 					}
+					
+				},
+				error: function (jqXHR, textStatus, errorThrown) {
+						console.log('error', jqXHR);
+						console.log(textStatus);
+						console.log(errorThrown);
+					},
+				});
+
 
 				}); // end of Submit listener
 				
-				 // end of IF renameDeptNeedsToBeValidated == false
+				if ($(`#departmentID-${k}-form`).form('validate form')) {
 				
-				/*
-				if (!$(`#departmentID-${k}-form`).form('validate form')) {
-
-					console.log('not validated')
-					renameDeptNeedsToBeValidated = true;
-
-				} else if ($(`#departmentID-${k}-form`).form('validate form')){
-
-					renameDeptNeedsToBeValidated = false;
+					$(`#departmentID-${k}-form`).form('submit');
 
 				}
-				*/
-
-					if ($(`#departmentID-${k}-form`).form('validate form')) {
-						
-						$(`#departmentID-${k}-form`).form('submit');
-	
-					}
-
-				
 
 			});
 
@@ -1908,9 +1803,95 @@ function eventListenersInsideDeptsModal() {
 
 			$(`#delete-departmentID-${k}-btn`).click(function(e){
 
-					console.log('delete stuff');
+				$.ajax({
+				//url: "libs/post-php/countPersonnelByDept.php",
+				//type: "POST",
+				url: "libs/php/countPersonnelByDept.php",
+				type: "GET",
+				dataType: "json",
+				data: {
+					deptID: k
+				},
+				success: function (result) {
+					
+					if (result.data.personnel > 9) {
+
+						$(`#departmentID-${k}-warning`).attr('class', 'ui floating warning message');
+						$(`#departmentID-${k}-warning-text`).html(`This department has ${result.data.personnel} employees. <br/>Only empty departments can be deleted.`);
+						
+						$(`#departmentID-${k}-close-icon`)
+						.one('click', function() {
+							$(this)
+								.closest('.message')
+								.transition('fade')
+							;
+						});
+				
+					} else {
+												
+						$.ajax({
+						//url: "libs/post-php/checkDepartmentCachce.php",
+						//type: "POST",
+						url: "libs/php/checkDepartmentCache.php",
+						type: "GET",
+						dataType: "json",
+						data: deptCacheObj[k],
+						success: function (result) {
+							
+							console.log('delete cache check', result);
+							
+							if (result.data == true) {
+							
+							$(`#close-departmentID-${k}-icon`)
+							.one('click', function() {
+								$(this)
+									.closest('.message')
+									.transition('fade')
+								;
+							});
+							
+							//$(`#close-departmentID-${k}-icon`).click();
+							
+							$('#alert-modal').modal(
+								{
+									title: '<i class="archive icon"></i>',
+									content: `<div class="alert-modal-text">Delete this department? <h3>  </h3></div>`
+									
+								}).modal('show');
+								
+							} else {
+								
+								$(`#departmentID-${k}-form`).form('add errors', ['A data error occurred please refresh this window and try again.']);
+								
+							}
+
+						},
+						error: function (jqXHR, textStatus, errorThrown) {
+								console.log('error', jqXHR);
+								console.log(textStatus);
+								console.log(errorThrown);
+							},
+						});
+					
+						
+
+						
+					}
+					
+					
+				},
+				error: function (jqXHR, textStatus, errorThrown) {
+						console.log('error', jqXHR);
+						console.log(textStatus);
+						console.log(errorThrown);
+					},
+				});
 
 
+
+
+					
+					
 			});
 
 							
@@ -3233,9 +3214,9 @@ function createDepartmentSegment(id, name, location, locationID, emps){
 	let departmentSegment = document.createElement('div'); // Department Segment
 	let departmentCloser = document.createElement('i');															departmentSegment.appendChild(departmentCloser);
 	let departmentRow = document.createElement('div');															departmentSegment.appendChild(departmentRow);
-		//let departmentWarning = document.createElement('div');												departmentRow.appendChild(departmentWarning);
-			//let closeWarningIcon = document.createElement('i');													departmentWarning.appendChild(closeWarningIcon);
-			//let departmentWarningText = document.createElement('span');									departmentWarning.appendChild(departmentWarningText);
+		let departmentWarning = document.createElement('div');												departmentRow.appendChild(departmentWarning);
+			let closeWarningIcon = document.createElement('i');													departmentWarning.appendChild(closeWarningIcon);
+			let departmentWarningText = document.createElement('span');									departmentWarning.appendChild(departmentWarningText);
 		let departmentDetails = document.createElement('div');												departmentRow.appendChild(departmentDetails);
 			let departmentForm = document.createElement('form');												departmentDetails.appendChild(departmentForm);
 				let departmentTitleRow = document.createElement('div');										departmentForm.appendChild(departmentTitleRow);
@@ -3272,9 +3253,9 @@ function createDepartmentSegment(id, name, location, locationID, emps){
 	departmentCloser.setAttribute('class', 'close icon display-none-field'); departmentCloser.setAttribute('id', `close-departmentID-${id}-icon`);
 	departmentRow.setAttribute('class', 'ui row');
 		departmentDetails.setAttribute('class', 'ui column manage-dept-info');
-		//departmentWarning.setAttribute('class', 'ui hidden warning message'); departmentWarning.setAttribute('id', `departmentID-${id}-warning`);
-			//closeWarningIcon.setAttribute('class', 'close icon'); closeWarningIcon.setAttribute('id', `departmentID-${id}-close-icon`);
-			//departmentWarningText.setAttribute('id', `departmentID-${id}-warning-text`);
+		departmentWarning.setAttribute('class', 'ui hidden warning message'); departmentWarning.setAttribute('id', `departmentID-${id}-warning`);
+			closeWarningIcon.setAttribute('class', 'close icon'); closeWarningIcon.setAttribute('id', `departmentID-${id}-close-icon`);
+			departmentWarningText.setAttribute('id', `departmentID-${id}-warning-text`);
 			departmentForm.setAttribute('class', 'ui form rename-form'); departmentForm.setAttribute('id',`departmentID-${id}-form`); departmentForm.setAttribute('name',`departmentID-${id}-form`); departmentForm.setAttribute('autocomplete','off');
 				departmentTitleRow.setAttribute('class', 'department-title-row');
 					//departmentTitle.setAttribute();

@@ -35,7 +35,7 @@
 	// first query - SQL statement accepts parameters and so is prepared to avoid SQL injection.
 	// $_REQUEST used for development / debugging. Remember to change to $_POST for production
 
-	$query = $conn->prepare('SELECT COUNT(*) from personnel WHERE departmentID = ?');
+	$query = $conn->prepare('SELECT count(id) as pc from personnel WHERE departmentID = ?');
 
 	$query->bind_param("i", $_REQUEST['deptID']);
 
@@ -62,7 +62,7 @@
 
 	while ($row = mysqli_fetch_assoc($result)) {
 
-		$personnel = $row['COUNT(*)'];
+		$personnel = $row['pc'];
 
 	}
 
