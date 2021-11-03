@@ -1589,14 +1589,12 @@ function eventListenersInsideDeptsModal() {
 			
 			$(`#rename-departmentID-${k}-input-field`).on('input', function(){
 				
-				console.log('change');
 				$(`#submit-rename-departmentID-${k}-btn`).attr('class','ui tiny button dept-action-button');
 				
 			});
 			
 			$(`#departmentID-${k}-loc-dropdown`).on('change', function(){
 				
-				console.log('change');
 				$(`#submit-rename-departmentID-${k}-btn`).attr('class','ui tiny button dept-action-button');
 				
 			});
@@ -1671,11 +1669,15 @@ function eventListenersInsideDeptsModal() {
 						
 						if (result.data == true) {
 							
+							console.log('cache check ok')
+							
 							if (deptCacheObj[k]['departmentName'] == formFields['dept-rename'] && deptCacheObj[k]['locationID'] == formFields['locID']) {
 								
 								console.log('no changes made');
 								
 							} else {
+								
+								console.log('name or loc changed');
 							
 								$.ajax({
 								//url: "libs/post-php/countDeptByName.php",
@@ -1688,8 +1690,9 @@ function eventListenersInsideDeptsModal() {
 								},
 								success: function (result) {
 									
+									console.log('result of checking if name exists', result);
 									
-									//(result.data['existing-names'] == 1 && result.data['locationID'] == deptCacheObj[k]['locationID']) || 		
+								
 									if (result.data['existing-names'] == 0) { 
 									
 										console.log('dept name & loc updated');
@@ -1703,14 +1706,47 @@ function eventListenersInsideDeptsModal() {
 										
 										if (result.data['locationID'] == deptCacheObj[k]['locationID']) {
 											
-											console.log('its got the same location ID - OK to update just location');
+											$.ajax({
+											//url: "libs/post-php/checkOwnLocNames.php",
+											//type: "POST",
+											url: "libs/php/checkOwnLocNames.php",
+											type: "GET",
+											dataType: "json",
+											data: {
+												departmentName: formFields['dept-rename'],
+												locationID: result.data['locationID']
+											},
+											success: function (result) {
+												
+												console.log('result of own loc name check', result);
+												
+												
+												if (result.data != deptCacheObj[k]['departmentID']){
+													
+											$(`#departmentID-${k}-form`).form('add errors', ['That department already exists in this location.']);
+													
+													
+												} else {
+													
+													console.log('Can update ok');
+													//updateDepartment(formFields);
+													console.log('its got the same location ID - OK to update just location');
+												}
+												
+												
+											},
+											error: function (jqXHR, textStatus, errorThrown) {
+													console.log('error', jqXHR);
+													console.log(textStatus);
+													console.log(errorThrown);
+												},
+											});
 											
-											updateDepartment(formFields);
 											
 										} else {
 											
-											console.log('its got a different location ID - THAT DEPT NAME ALREADY EXISTS');
-											$(`#departmentID-${k}-form`).form('add errors', ['That department name already exists']);
+											console.log('DEPT NAME ALREADY EXISTS in a different location');
+											$(`#departmentID-${k}-form`).form('add errors', ['That department already exists in another location.']);
 											
 										}
 
