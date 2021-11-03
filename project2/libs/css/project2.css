@@ -610,6 +610,11 @@ h3.ui.center.header {
 
 @media only screen and (max-width: 767.98px) {
 
+    tr#first-employee-row {
+	  padding-bottom: 0;
+	  padding-top: 0;
+    }
+
 	.rename-accordion-buttons {
 	   margin-top: 0.3rem
     }
