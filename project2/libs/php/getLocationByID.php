@@ -35,32 +35,44 @@
 	// SQL statement accepts parameters and so is prepared to avoid SQL injection.
 	// $_REQUEST used for development / debugging. Remember to change to $_POST for production
 
-	$query = $conn->prepare('UPDATE department set name = ?, locationID = ? WHERE id = ?');
-
-	$query->bind_param("sii", $_REQUEST['dept-rename'], $_REQUEST['locID'], $_REQUEST['departmentID']);
-
-	$query->execute();
+	//$queryForID = $conn->prepare('SELECT name FROM department WHERE id = ?');
+	$queryForID = $conn->prepare('SELECT name FROM location WHERE id = ?');
+	$queryForID->bind_param("i", $_REQUEST['locationID']);
+	$queryForID->execute();
 	
-	if (false === $query) {
+	if (false === $queryForID) {
 
 		$output['status']['code'] = "400";
 		$output['status']['name'] = "executed";
-		$output['status']['description'] = "query failed";	
+		$output['status']['description'] = "queryForID failed";	
 		$output['data'] = [];
 
-		mysqli_close($conn);
-
 		echo json_encode($output); 
-
+	
+		mysqli_close($conn);
 		exit;
 
 	}
+
+	$resultForID = $queryForID->get_result();
+
+  $data;
+	
+	
+
+	while ($row = mysqli_fetch_assoc($resultForID)) {
+
+		$data = $row;
+
+	}
+	
 
 	$output['status']['code'] = "200";
 	$output['status']['name'] = "ok";
 	$output['status']['description'] = "success";
 	$output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000 . " ms";
-	$output['data'] = [];
+	$output['data'] = $data;
+
 	
 	mysqli_close($conn);
 

@@ -35,32 +35,56 @@
 	// SQL statement accepts parameters and so is prepared to avoid SQL injection.
 	// $_REQUEST used for development / debugging. Remember to change to $_POST for production
 
-	$query = $conn->prepare('UPDATE department set name = ?, locationID = ? WHERE id = ?');
-
-	$query->bind_param("sii", $_REQUEST['dept-rename'], $_REQUEST['locID'], $_REQUEST['departmentID']);
-
-	$query->execute();
+	//$queryForID = $conn->prepare('SELECT name FROM department WHERE id = ?');
+	$queryForID = $conn->prepare('SELECT name, locationID FROM department WHERE id = ?');
+	$queryForID->bind_param("i", $_REQUEST['departmentID']);
+	$queryForID->execute();
 	
-	if (false === $query) {
+	if (false === $queryForID) {
 
 		$output['status']['code'] = "400";
 		$output['status']['name'] = "executed";
-		$output['status']['description'] = "query failed";	
+		$output['status']['description'] = "queryForID failed";	
 		$output['data'] = [];
 
-		mysqli_close($conn);
-
 		echo json_encode($output); 
-
+	
+		mysqli_close($conn);
 		exit;
 
 	}
+
+	$resultForID = $queryForID->get_result();
+
+  $dataForID;
+	
+	
+
+	while ($row = mysqli_fetch_assoc($resultForID)) {
+
+		$dataForID = $row;
+
+	}
+	
+	
+	$verified = false;
+	
+	if ($dataForID['name'] == $_REQUEST['departmentName'] && $dataForID['locationID'] == $_REQUEST['locationID']) {
+		
+		$verified = true;
+		
+	}
+	
+	
 
 	$output['status']['code'] = "200";
 	$output['status']['name'] = "ok";
 	$output['status']['description'] = "success";
 	$output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000 . " ms";
-	$output['data'] = [];
+	#$output['data'] = $dataForID;
+	$output['data'] = $verified;
+	$output['details']['departmentName'] = $dataForID['name'];
+	$output['details']['locationID'] = $dataForID['locationID'];
 	
 	mysqli_close($conn);
 

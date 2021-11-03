@@ -20,6 +20,8 @@ let listOfDeptIDs = [];
 let manageDeptsAndLocsOpened = 0;
 let locationRules = [];
 let departmentRules = [];
+let deptCacheObj = {};
+let locCacheObj = {};
 
 let activeDepartmentsObj = {};
 let countOfDepts = 0;
@@ -1584,6 +1586,20 @@ function eventListenersInsideDeptsModal() {
 		for (let [k, val] of Object.entries(departmentsObj)){	
 		
 			existingDepartmentNames.push(val.name);	
+			
+			$(`#rename-departmentID-${k}-input-field`).on('input', function(){
+				
+				console.log('change');
+				$(`#submit-rename-departmentID-${k}-btn`).attr('class','ui tiny button dept-action-button');
+				
+			});
+			
+			$(`#departmentID-${k}-loc-dropdown`).on('change', function(){
+				
+				console.log('change');
+				$(`#submit-rename-departmentID-${k}-btn`).attr('class','ui tiny button dept-action-button');
+				
+			});
 
 							
 
@@ -1602,8 +1618,135 @@ function eventListenersInsideDeptsModal() {
 					let updatedLocationID;
 					let newNameSuccess = false;
 
-					let allFields = $(`#departmentID-${k}-form`).form('get values');
-					console.log(allFields);
+					let formFields = $(`#departmentID-${k}-form`).form('get values');
+					formFields['departmentID'] = k;
+					console.log('formFields',formFields);
+					
+					function updateDepartment(formData) {
+						
+						$.ajax({
+						//url: "libs/post-php/updateDepartment.php",
+						//type: "POST",
+						url: "libs/php/updateDepartment.php",
+						type: "GET",
+						dataType: "json",
+						data: formData,
+						success: function (result) {
+							
+							//$(`#departmentID-${k}-accordion`).click();
+			
+							let renameTimer = setTimeout(function(){
+								$(`#departmentID-${k}-title`).hide().html(`${formFields['dept-rename']} | ${locationsObj[formFields['locID']]}`).fadeIn(750);	
+								clearTimeout(renameTimer);
+							},250);
+								
+							$(`#departmentID-${k}-form`).form('set defaults');
+							$(`#rename-departmentID-${k}-input-field`).attr('value', `${formFields['dept-rename']}`);
+							$(`#rename-departmentID-${k}-input-field`).attr('placeholder', `${formFields['dept-rename']}`);
+							
+							deptCacheObj[k]['departmentName'] = formFields['dept-rename'];
+							deptCacheObj[k]['locationID'] = formFields['locID'];
+
+						},
+						error: function (jqXHR, textStatus, errorThrown) {
+								console.log('error', jqXHR);
+								console.log(textStatus);
+								console.log(errorThrown);
+							},
+						});
+									
+					}
+					
+					$.ajax({
+					//url: "libs/post-php/checkDepartmentCachce.php",
+					//type: "POST",
+					url: "libs/php/checkDepartmentCache.php",
+					type: "GET",
+					dataType: "json",
+					data: deptCacheObj[k],
+					success: function (result) {
+						
+						console.log('cached dept name is still the same', result);
+						
+						
+						if (result.data == true) {
+							
+							if (deptCacheObj[k]['departmentName'] == formFields['dept-rename'] && deptCacheObj[k]['locationID'] == formFields['locID']) {
+								
+								console.log('no changes made');
+								
+							} else {
+							
+								$.ajax({
+								//url: "libs/post-php/countDeptByName.php",
+								//type: "POST",
+								url: "libs/php/countDeptByName.php",
+								type: "GET",
+								dataType: "json",
+								data: {
+									departmentName: formFields['dept-rename']
+								},
+								success: function (result) {
+									
+									
+									//(result.data['existing-names'] == 1 && result.data['locationID'] == deptCacheObj[k]['locationID']) || 		
+									if (result.data['existing-names'] == 0) { 
+									
+										console.log('dept name & loc updated');
+										
+										updateDepartment(formFields);
+
+									
+									} else if (result.data['existing-names'] == 1) {
+										
+										console.log('deparment exists with that name')
+										
+										if (result.data['locationID'] == deptCacheObj[k]['locationID']) {
+											
+											console.log('its got the same location ID - OK to update just location');
+											
+											updateDepartment(formFields);
+											
+										} else {
+											
+											console.log('its got a different location ID - THAT DEPT NAME ALREADY EXISTS');
+											$(`#departmentID-${k}-form`).form('add errors', ['That department name already exists']);
+											
+										}
+
+									
+									}
+									
+
+								},
+								error: function (jqXHR, textStatus, errorThrown) {
+										console.log('error', jqXHR);
+										console.log(textStatus);
+										console.log(errorThrown);
+									},
+								});
+							
+							}
+							
+							
+						} else {
+							
+							$(`#departmentID-${k}-form`).form('add errors', ['A data error occurred please refresh this window and try again.'])
+							
+						}
+						
+						
+						
+						
+
+
+					},
+					error: function (jqXHR, textStatus, errorThrown) {
+							console.log('error', jqXHR);
+							console.log(textStatus);
+							console.log(errorThrown);
+						},
+					});
 
 					/*
 
@@ -1672,7 +1815,7 @@ function eventListenersInsideDeptsModal() {
 					
 					}
 
-				});
+				}); // end of Submit listener
 				
 				 // end of IF renameDeptNeedsToBeValidated == false
 				
@@ -2463,13 +2606,14 @@ function createCheckbox(checkboxName, checkboxInputID, category, mobile){
 
 // CREATE MODAL CONTENT
 
-function createOneManageDeptsDropDown(listOfNames, listOfIDs, currentLocName, currentLocID) { //fieldName, fieldID
+function createOneManageDeptsDropDown(listOfNames, listOfIDs, currentLocName, currentLocID, deptID) { //fieldName, fieldID
 		
 	let outerNode = document.createElement('div');
 	outerNode.setAttribute('class', 'field');
 	
 	let dropdown = document.createElement('div');
 	dropdown.setAttribute('class', 'ui fluid selection dropdown');
+	dropdown.setAttribute('id', `departmentID-${deptID}-loc-dropdown`);
 
 	let selected = document.createElement('div');
 	selected.setAttribute('class', 'default text');
@@ -3048,7 +3192,7 @@ function createLocationPanel(name, id, deptsCount, totalEmployees){
 
 function createDepartmentSegment(id, name, location, locationID, emps){
 	
-	let dropDown = createOneManageDeptsDropDown(['London','New York', 'Munich'], [1, 2, 4], locationsObj[locationID], locationID);
+	let dropDown = createOneManageDeptsDropDown(['London','New York', 'Munich'], [1, 2, 4], locationsObj[locationID], locationID, id);
 	
 	let departmentSegment = document.createElement('div'); // Department Segment
 	let departmentCloser = document.createElement('i');															departmentSegment.appendChild(departmentCloser);
@@ -3124,7 +3268,7 @@ function createDepartmentSegment(id, name, location, locationID, emps){
 							moveDeptContainer.setAttribute('class', 'department-field-container');
 								moveDeptText.innerHTML = 'Change location';	
 							renameDeptAccordionButtons.setAttribute('class', 'rename-accordion-buttons');
-								submitRenameDeptBtn.setAttribute('class', 'ui tiny button dept-action-button'); submitRenameDeptBtn.setAttribute('id', `submit-rename-departmentID-${id}-btn`); submitRenameDeptBtn.innerHTML = 'Submit';
+								submitRenameDeptBtn.setAttribute('class', 'ui tiny disabled button dept-action-button'); submitRenameDeptBtn.setAttribute('id', `submit-rename-departmentID-${id}-btn`); submitRenameDeptBtn.innerHTML = 'Submit';
 								cancelRenameDeptBtn.setAttribute('class', 'ui tiny button dept-action-button'); cancelRenameDeptBtn.setAttribute('form', `departmentID-${id}-form`); cancelRenameDeptBtn.setAttribute('id', `cancel-departmentID-${id}-btn`); cancelRenameDeptBtn.setAttribute('type', 'reset'); cancelRenameDeptBtn.innerHTML = 'Cancel';				
 				renameDeptErrorMsg.setAttribute('class','ui error message');
 		
@@ -3293,20 +3437,6 @@ function createNewDeptAccordion(id){
 
 
 function manageDepartmentsAndLocationsModalNEW(category, show){
-	
-		
-	/*
-	if (manageDeptsAndLocsOpened != 0) {
-	
-		let el = document.getElementById('append-location-panels');
-		let elClone = el.cloneNode(true);
-		
-		el.parentNode.replaceChild(elClone, el);
-		
-		document.getElementById('append-location-panels').innerHTML = '';
-	
-	}
-	*/
 
 	document.getElementById('append-location-panels').innerHTML = '';
 	document.getElementById('append-department-panels').innerHTML = '';
@@ -3341,8 +3471,13 @@ function manageDepartmentsAndLocationsModalNEW(category, show){
 			departmentsContent.setAttribute('class', 'ui segment');
 			departmentsContent.setAttribute('id', 'department-entries');
 			
-			for (let [key, value] of Object.entries(departmentsObj)) {	
-					
+			for (let [key, value] of Object.entries(departmentsObj)) {
+				
+				let cacheDept = {};
+				cacheDept['departmentName'] = value['name'];
+				cacheDept['departmentID'] = key;
+				cacheDept['locationID'] = value['locationID'];
+				deptCacheObj[key] = cacheDept;
 				departmentsContent.appendChild(createDepartmentSegment(key, value['name'], locationsObj[value['locationID']], value['locationID'], value['employees']));
 							
 			} 
@@ -3357,6 +3492,7 @@ function manageDepartmentsAndLocationsModalNEW(category, show){
 			eventListenersInsideDeptsModal();
 	
 		}
+		
 	}
 	
 	/*
