@@ -477,6 +477,9 @@ $('#create-employee-btn').click(function(){
 	document.getElementById('submit-create-employee').setAttribute('style', 'display: inline');
 	document.getElementById('close-only-btn').setAttribute('style', 'display: inline');
 
+	showModal('create employee');
+
+	/*
 
 	$('.ui.modal.employee-details-modal').modal({
 		
@@ -494,30 +497,48 @@ $('#create-employee-btn').click(function(){
 		}	
 		}).modal('show');
 
+	*/
+
 	
 });
 
+function showModal(category){
+	
+	$('.ui.modal.employee-details-modal').modal({
+
+	title: `Manage ${category}`,
+	autofocus: false,
+	onShow: function(){
+	},
+	onHidden: function(){	
+		closeModal();
+	}	
+	}).modal('show');
+	
+}
+
 function showManageModal(category){
+
+	$('.first.modal')
+	.modal('show');
+	
+	
+	/*
 	
 		$('.ui.modal.employee-details-modal').modal({
 
 		title: `Manage ${category}`,
-		closable: false,
 		autofocus: false,
 		onShow: function(){
 			manageDeptsAndLocsOpened++;
 			
 		},
-		onDeny: function(){
-			//return false;
-		},
-		onApprove: function (){
-		console.log('approve');
-		},
 		onHidden: function(){	
 			closeModal();
 		}	
 		}).modal('show');
+
+		*/
 		
 }
 
@@ -540,20 +561,20 @@ $('#manage-locs-btn').click(function(){
 });
 
 $('#manage-depts-btn').click(function(){
+
+	//$('.first.modal')
+	//.modal('show');
+
+	
 			
 	updateLoadedLocsAndDeps = [];
-	
-	//if (manageDeptsAndLocsOpened != 0) {
-		let show = true;
-		refreshDeptsAndLocsModal('departments', show);
 
-	//}		
-	
+	let show = true;
+	refreshDeptsAndLocsModal('departments', show);
+
 	document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: block');
 	document.getElementById('modal-deny-btn').setAttribute('style', 'display: inline');
-	//document.getElementById('create-new-location-btn').setAttribute('style', 'display: inline');
-
-	//showManageModal('Departments');
+	
 
 });
 
@@ -630,16 +651,6 @@ $('#edit-employee-fields-btn').click(function(){
 		title: 'Edit Employee',
 		closable: false,
 		autofocus: false,
-		onShow: function (){
-			//tried to stop location drop down from opening			
-		},
-		onDeny: function(){
-			console.log('deny');
-			//return false;
-		},
-		onApprove: function (){
-		console.log('approve');
-		},
 		onHidden: function(){	
 			console.log('close view employee modal');
 			closeModal();
@@ -744,7 +755,7 @@ $('#update-employee-modal-btn').click(function (){
 	
 
 });
-
+/*
 $('#delete-department-modal-btn').click(function (){
 
 	closeAlertModal();
@@ -820,7 +831,7 @@ $('#delete-department-modal-btn').click(function (){
 	});
 	
 });
-
+*/
 $('#alert-modal-no-btn').click(function(){
 
 	closeAlertModal();
@@ -1828,6 +1839,8 @@ function eventListenersInsideDeptsModal() {
 						});
 				
 					} else {
+
+
 												
 						$.ajax({
 						//url: "libs/post-php/checkDepartmentCachce.php",
@@ -1841,6 +1854,8 @@ function eventListenersInsideDeptsModal() {
 							console.log('delete cache check', result);
 							
 							if (result.data == true) {
+
+								/*
 							
 							$(`#close-departmentID-${k}-icon`)
 							.one('click', function() {
@@ -1849,15 +1864,25 @@ function eventListenersInsideDeptsModal() {
 									.transition('fade')
 								;
 							});
+							*/
+
+							$('.second.modal').modal({
+								content: 'Delete this department?'
+							});
+
+							$('#delete-department-modal-btn').attr('style', 'display: inline');
 							
-							//$(`#close-departmentID-${k}-icon`).click();
+							$('#refresh-depts-btn').click();
 							
+
+							/*
 							$('#alert-modal').modal(
 								{
 									title: '<i class="archive icon"></i>',
 									content: `<div class="alert-modal-text">Delete this department? <h3>  </h3></div>`
 									
 								}).modal('show');
+							*/	
 								
 							} else {
 								
@@ -4687,13 +4712,26 @@ window.onload = (event) => {
 			document.getElementById('search-input').value = ""; 
 			
 			$('.ui.accordion').accordion();
+/*
+			$('.coupled.modal')
+				.modal({
+					allowMultiple: true
+				});
 
+			$('.second.modal')
+				.modal('attach events', '#refresh-depts-btn');
+			
+			// open second modal on first modal buttons
+
+			
+				
 			$('.ui.modal').modal({
 				onHidden: function(){	
 					console.log('close view employee modal');
 					closeModal();
 				}
 			});
+			*/
 
 			$('.message .close')
 				.on('click', function() {
@@ -4709,6 +4747,18 @@ window.onload = (event) => {
 					console.log(this.name);
 				},	
 			});
+
+			$('.coupled.modal')
+					.modal({
+						allowMultiple: true
+					})
+				;
+				// open second modal on first modal buttons
+				$('.second.modal')
+					.modal('attach events', '#open-second-modal-btn')
+				;
+				// show first immediately
+
 
 			attachRadioEvents();	
 			

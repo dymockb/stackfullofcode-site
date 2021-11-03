@@ -341,73 +341,8 @@
     </div>
 
 
-   <!-- <div class="scrolling image content" id="scrolling-modal-pane"> -->
+    <div class="scrolling image content" id="scrolling-modal-pane">
       <div class="content">
-  <!-- close MANAGE DEPTS AND LOCS -->
-      
-      
-      
-      </div>
-      
-    </div>
-    
-
-    <div class="actions">
-
-
-    </div>
-  </div>
-
-
-<!--  <div class="ui small basic test modal" id="alert-modal">   //  <div class="ui icon header"> -->
-  <div class="ui modal" id="alert-modal">
-    
-    <div class="ui header">
-      <i class="archive icon"></i>
-    </div>
-    
-
-    <div class="content">
-    </div>
-
-
-    <div class="actions">
-      <div class="ui red basic cancel button" id="alert-modal-no-btn">
-        <i class="remove icon"></i> No
-      </div>
-
-
-      <div class="ui green ok inverted button" id="delete-employee-modal-btn">
-        <i class="checkmark icon"></i> Yes
-      </div>
-
-
-      <div class="ui approve button" id="delete-department-modal-btn"> 
-      <!--      <div class="ui green ok inverted button" id="delete-department-modal-btn"> -->
-        <i class="checkmark icon"></i> Yes
-      </div>
-			
-			<div class="ui green ok inverted button" id="delete-location-modal-btn">
-        <i class="checkmark icon"></i> Yes
-      </div>
-
-
-      <div class="ui green ok inverted button" id="update-employee-modal-btn">
-        <i class="checkmark icon"></i> Yes
-      </div>
-    </div>
-  </div>
-
-
-  <div class="ui first coupled modal" id="#employee-details-modal-new">
-    <i class="close icon"></i>
-    <div class="header">
-      Modal #1
-    </div>
-    <div class="scrolling image content" id="scrolling-modal-pane"">
-      
-      <div class="content">
-      
         <form autocomplete="off" id="employee-modal-edit-fields" name="employee-modal-edit-fields">
         </form>
 
@@ -510,19 +445,147 @@
 
               
               <div id="append-location-panels">
-              </div>
+                <!--
+                <div class="ui raised floating message location-message-panel">
+                  <i class="close icon display-none-field" id="close-locationID-1-panel"></i>
 
+                  <div class="ui one top attached segment"> <!-- black disabled button 
+                    Location 1 with a very long name&nbsp;-&nbsp;<span id="locationID-1-employee-count">50</span>&nbsp;employees&nbsp;-&nbsp;<span id="locationID-1-dept-count">3</span>&nbsp;Departments&nbsp;<span locid="6" locname="Rio" id="delete-locationID-1-icon" class="location-trash-icon pointer"><i class="fas fa-trash-alt"></i></span>
+                  </div>
+
+                  <div class="ui attached segment">  <!-- append departments 
+                    <!-- <div class="ui form" id="locationID-1-form"> </div> 
+                      <div class="ui floating message department-segment">
+                        <i class="close icon display-none-field" id="close-departmentID-1-icon"></i>
+
+                        <div class="ui row">
+                          <div class="ui column manage-dept-info">
+                            <form class="ui form rename-form" id="departmentID-1-form" name="departmentID-1-form">
+                              <div class="department-title-row">
+                                <span id="departmentID-1-title"><h4>Department with a very long name</h4></span> 
+                                
+                                <div class="dept-employee-info-icons">
+
+                                  <div class="employee-count-icon">
+                                    <span id="departmentID-1-employee-count">25</span>
+                                    <i class="fas fa-users"></i>
+                                  </div>
+                                  
+
+                                  <div class="dept-delete-edit-btns">
+                                    <span class="ui icon button" id="rename-departmentID-1-btn">
+                                      <i class="fas fa-edit pointer"></i> 
+                                    </span>
+
+                                    <span class="ui icon button" deptid="1" deptname="departmentID-1-name" id="delete-departmentID-1-btn">
+                                      <i class="fas fa-trash-alt"></i> 
+                                    </span>
+
+                                    <span class="ui icon button display-none-field" id="departmentID-1-trash-warning">
+                                      <i class="fas fa-trash-alt"></i> 
+                                    </span>
+                                  </div>
+                                </div>
+															
+                              </div>
+
+
+                              <div class="ui accordion field new-dept-accordion">
+                                <div class="title display-none-field">
+                                  <i class="icon dropdown"></i>
+
+                                  <div class="ui tiny button" id="departmentID-1-accordion">
+                                    Rename department
+                                  </div>
+                                </div>
+
+
+                                <div class="content field">
+                                  <div class="content field transition hidden">
+                                    <div class="department-field-container" id="departmentID-1-field-container">
+                                      <div class="field dept-name-field" id="departmentID-1-field">
+                                        <input id="rename-departmentID-1-input-field" name="dept-rename" placeholder="Rename department" deptid="1" type="text" value="">
+                                      </div>
+
+
+                                      <div class="rename-accordion-buttons">
+                                        <div class="ui tiny button dept-action-button" id="submit-rename-departmentID-1-btn">
+                                          Submit
+                                        </div>
+                                        <button class="ui tiny button dept-action-button" form="departmentID-1-form" id="cancel-departmentID-1-btn" type="reset">Cancel</button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
+
+                              <div class="ui error message"></div>
+             
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+											
+                      <div class="ui accordion field">
+                        <div class="title">
+                          <i class="icon dropdown"></i>
+
+                          <div class="ui tiny button" id="locationID-1-new-dept-accordion-btn">
+                            Create new department
+                          </div>
+                        </div>
+
+
+                        <div class="content field">
+                          <div class="content field transition hidden">
+                            <form class="ui form" id="locationID-1-new-dept-form" name="locationID-1-new-dept-form">
+                              <div class="department-field-container">
+                                <div class="eight wide field dept-name-field">
+                                  <input name="new-department" placeholder="New department name" type="text" value="">
+                                </div>
+
+
+                                <div class="create-dept-btn">
+                                  <div class="ui mini button" locid="1" id="locationID-1-submit-new-dept-btn">
+                                    Submit
+                                  </div>
+                                </div>
+
+
+                                <div class="create-dept-btn">
+                                  <button class="ui mini button" id="locationID-1-cancel-new-dept-btn" type="reset">Cancel</button>
+                                </div>
+                              </div>
+
+
+                              <div class="ui error message">
+                                That department already exists in this location
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+                     <!-- form div ended here 
+                  </div>
+                </div>
+                -->
+              </div>
               <div id="append-department-panels"></div>
 
             </div>
           </div>
-        </div>
-
+        </div>  <!-- close MANAGE DEPTS AND LOCS -->
+      
+      
+      
       </div>
-
+      <div id="invisible-div"></div>
     </div>
+    
+
     <div class="actions">
-      <div class="ui primary button" id="open-second-modal-btn">Proceed</div>
+
       <button class="ui primary button" id="refresh-depts-btn">Refresh</button>
        
 
@@ -536,6 +599,66 @@
 			<button class="ui primary approve button" id="close-employee-modal">Close<i class="right chevron icon"></i></button>
 			</button> <button class="ui primary button" id="submit-create-employee">Create employee</button> 
       <button class="ui primary button" id="submit-edit-employee">Edit Details <i class="right chevron icon"></i>
+    </div>
+  </div>
+
+
+<!--  <div class="ui small basic test modal" id="alert-modal">   //  <div class="ui icon header"> -->
+  <div class="ui modal" id="alert-modal">
+    
+    <div class="ui header">
+      <i class="archive icon"></i>
+    </div>
+    
+
+    <div class="content">
+    </div>
+
+
+    <div class="actions">
+      <div class="ui red basic cancel button" id="alert-modal-no-btn">
+        <i class="remove icon"></i> No
+      </div>
+
+
+      <div class="ui green ok inverted button" id="delete-employee-modal-btn">
+        <i class="checkmark icon"></i> Yes
+      </div>
+
+
+      <div class="ui approve button" id="delete-department-modal-btn"> 
+      <!--      <div class="ui green ok inverted button" id="delete-department-modal-btn"> -->
+        <i class="checkmark icon"></i> Yes
+      </div>
+			
+			<div class="ui green ok inverted button" id="delete-location-modal-btn">
+        <i class="checkmark icon"></i> Yes
+      </div>
+
+
+      <div class="ui green ok inverted button" id="update-employee-modal-btn">
+        <i class="checkmark icon"></i> Yes
+      </div>
+    </div>
+  </div>
+
+
+  <div class="ui first coupled modal">
+    <div class="header">
+      Modal #1
+    </div>
+    <div class="image content">
+      <div class="image">
+        <i class="right arrow icon"></i>
+      </div>
+      <div class="description">
+        <p>We have more to share with you. Follow us along to modal 2</p>
+      </div>
+    </div>
+    <div class="actions">
+
+      
+      <div class="ui primary button" id="open-second-modal-btn">Proceed</div>
     </div>
   </div>
 
