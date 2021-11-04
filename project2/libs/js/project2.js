@@ -40,8 +40,6 @@ let selectNoneLocationsUsed = false;
 //let locationsDropDownObj = {};
 //let departmentsDropDownObj = {};
 
-let newDeptDropdown;
-
 let	dropDownClicked = 0;
 let locationDropDownClicked = 0;
 
@@ -794,29 +792,7 @@ $('#create-new-department-btn').click(function(){
 			
 			}
 
-			newDeptDropdown = createOneManageDeptsDropDown(latestLocNames, latestLocIDs, 'Select a Location', "", 0);
-
-			$('#append-new-dept-dropdown').append(newDeptDropdown);
-
 			$('#department-accordion-segment').attr('style', 'display: block');
-		
-			departmentRules = basicRules.slice();
-			
-			$(`#new-department-form`).form({
-			fields: {
-				name: {
-					identifier: 'new-department',
-					rules: departmentRules
-				},
-				location: {
-					identifier: 'locID',
-					rules: [{
-						type: 'empty',
-						prompt: 'Please choose a location.'			
-					}]
-				}
-			}
-			});
 		
 			$('#new-department-accordion-btn').click();
 			//document.getElementById('department-accordion-segment').scrollIntoView({behavior: "smooth"});
@@ -825,12 +801,11 @@ $('#create-new-department-btn').click(function(){
 			$(`#new-department-form`).one('submit', function(event){
 		
 				event.preventDefault();
-				let newDepartmentName = 'New Loc'
-				let newDepartmentNode = createDepartmentSegment(1, newDepartmentName, 'test location', 0, latestLocations);
-	
-				//$(`#append-location-panels`).children()[0].after( $(newLocationNode).hide().fadeIn(1000) );
-				//$(`#append-location-panels`).children()[0].append( $(newLocationNode) );
-				$(`#department-entries`).prepend( $(newDepartmentNode).hide().fadeIn(1000) );
+				//let newDepartmentName = 'New Loc'
+				//let newDepartmentNode = createDepartmentSegment(1, newDepartmentName, 'test location', 0, latestLocations);
+				//$(`#department-entries`).prepend( $(newDepartmentNode).hide().fadeIn(1000) );
+				
+				
 	
 			});	
 
@@ -863,7 +838,6 @@ $(`#cancel-new-department-btn`).click(function(e){
 
 	let closeNewDepartmentTimer = setTimeout(function(){
 		$('#department-accordion-segment').attr('style', 'display: none');
-		newDeptDropdown.remove();
 		clearTimeout(closeNewDepartmentTimer);
 	},350);		
 
@@ -1473,12 +1447,7 @@ function eventListenersInsideDeptsModal() {
 			});
 
 							
-
-
-			$(`#submit-rename-departmentID-${k}-btn`).click(function(e){
-				e.preventDefault();
-								
-				$(`#departmentID-${k}-form`).one('submit', function(event){
+			$(`#departmentID-${k}-form`).one('submit', function(event){
 				event.preventDefault();
 
 				$(`#departmentID-${k}-form`).addClass('loading');
@@ -1635,12 +1604,14 @@ function eventListenersInsideDeptsModal() {
 				});
 
 
-				}); // end of Submit listener
-				
-				if ($(`#departmentID-${k}-form`).form('validate form')) {
-				
-					$(`#departmentID-${k}-form`).form('submit');
+			}); // end of Submit listener
 
+
+			$(`#submit-rename-departmentID-${k}-btn`).click(function(e){
+				e.preventDefault();
+												
+				if ($(`#departmentID-${k}-form`).form('validate form')) {
+					$(`#departmentID-${k}-form`).form('submit');
 				}
 
 			});
@@ -3382,12 +3353,39 @@ function manageDepartmentsAndLocationsModalNEW(category, show){
 			success: function (result) {
 
 				let latestLocations = {};
+				latestLocNames = [];
+				latestLocIDs = [];
 				
 				for (let [llkey, llvalue] of Object.entries(result.data)){
 
 					latestLocations[llvalue['id']] = llvalue['name'];
-				
+					latestLocIDs.push(llvalue['id']);
+					latestLocNames.push(llvalue['name']);
+					
 				}
+				
+				let newDeptDropdown = createOneManageDeptsDropDown(latestLocNames, latestLocIDs, 'Select a Location', "", 0);
+
+				$('#append-new-dept-dropdown').append(newDeptDropdown);
+			
+				departmentRules = basicRules.slice();
+				
+				$(`#new-department-form`).form({
+				fields: {
+					name: {
+						identifier: 'new-department',
+						rules: departmentRules
+					},
+					location: {
+						identifier: 'locID',
+						rules: [{
+							type: 'empty',
+							prompt: 'Please choose a location.'			
+						}]
+					}
+				}
+
+				});
 
 				$.ajax({
 					//url: "libs/post-php/getAllDepartments.php",
