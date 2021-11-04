@@ -370,7 +370,7 @@ function buildCheckBoxFilters(){
 							$('.list .child.checkbox')
 								.checkbox({
 									// Fire on load to set parent value
-									fireOnInit : true,
+									//fireOnInit : true,
 									// Change parent state on each child checkbox change
 									onChange   : function() {
 										var
@@ -399,6 +399,14 @@ function buildCheckBoxFilters(){
 										else {
 											$parentCheckbox.checkbox('set indeterminate');
 										}
+										
+
+									},
+									onChecked: function (){
+
+										console.log(this.getAttribute('deptID'));
+										console.log($(this).checkbox('is checked'));
+										
 									}
 								});
 							
