@@ -99,6 +99,11 @@ body {
 	border-top: 0;
 }
 
+#overflow-filter {
+   height: 30rem;
+   overflow: auto;
+}
+
 #pc-search-column-wrapper {
 	display: flex;
 	width: 100%;
@@ -212,6 +217,8 @@ td#employee-details-field {
 	min-width: 330px;
 }
 
+#close-alert-modal-btn,
+#create-employee-alert-modal-btn,
 #department-accordion-segment,
 #location-accordion-segment,
 #modal-deny-btn,
