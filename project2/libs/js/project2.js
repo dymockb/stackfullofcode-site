@@ -25,7 +25,10 @@ let departmentRules = [];
 let deptCacheObj = {};
 let locCacheObj = {};
 
-let activeDepartmentsObj = {};
+let activeDepartmentsObj = { 
+														1: {},
+														2: {}
+														};
 let countOfDepts = 0;
 let countOfCheckedDepts;
 let howManyDeptsSelected = 'All';
@@ -349,10 +352,14 @@ function buildCheckBoxFilters(){
 							
 							}
 							
+							
+							
 							$('.list .master.checkbox')
 								.checkbox({
 									// check all children
 									onChecked: function() {
+										console.log(this.getAttribute('locid'));
+										activeDepartmentsObj[this.getAttribute('locid')]['parent-status'] = 'all';
 										var
 											$childCheckbox  = $(this).closest('.checkbox').siblings('.list').find('.checkbox')
 										;
@@ -360,6 +367,8 @@ function buildCheckBoxFilters(){
 									},
 									// uncheck all children
 									onUnchecked: function() {
+
+										activeDepartmentsObj[this.getAttribute('locid')]['parent-status'] = 'none';
 										var
 											$childCheckbox  = $(this).closest('.checkbox').siblings('.list').find('.checkbox')
 										;
@@ -371,6 +380,7 @@ function buildCheckBoxFilters(){
 								.checkbox({
 									// Fire on load to set parent value
 									//fireOnInit : true,
+									
 									// Change parent state on each child checkbox change
 									onChange   : function() {
 										var
@@ -403,11 +413,51 @@ function buildCheckBoxFilters(){
 
 									},
 									onChecked: function (){
-
-										console.log(this.getAttribute('deptID'));
-										console.log($(this).checkbox('is checked'));
 										
+										let $listGroup  = $(this).closest('.list');
+										let $parentCheckbox = $listGroup.closest('.item').children('.checkbox')
+										console.log($parentCheckbox[0].children[0].getAttribute('locid'));
+										
+										activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')][this.getAttribute('deptID')] = this.checked;
+										
+										if ($parentCheckbox.checkbox('is checked')){
+											
+											if (this.getAttribute('checkboxIdx') == $listGroup[0].children.length) {
+											
+												console.log('run search with all depts for this location');
+												
+												}
+											
+										} else {
+											
+												console.log('run search with selected depts');
+												activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')]['parent-status'] = 'some';
+											
+										}
+										
+									},
+									onUnchecked: function (){
+										let $listGroup  = $(this).closest('.list');
+										let $parentCheckbox = $listGroup.closest('.item').children('.checkbox')
+
+										activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locID')][this.getAttribute('deptID')] = this.checked;									
+
+										if ($parentCheckbox.checkbox('is unchecked')){
+											
+											if (this.getAttribute('checkboxIdx') == $listGroup[0].children.length) {
+											
+												console.log('run search with no depts for this location');
+												
+												}
+											
+										} else {
+											
+												console.log('run search with selected depts');
+											
+										}
+									
 									}
+									
 								});
 							
 
