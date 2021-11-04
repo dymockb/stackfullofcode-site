@@ -386,14 +386,24 @@ h4.ui.image.header {
 
 .department-field-container {
 	display: flex;
-	align-content: center;
 	flex-direction: row;
 	flex-wrap: wrap;
+	align-items: center;
+	margin-bottom: 0.4rem;
 }
+
+.edit-dept-text-item {
+	min-width: 8rem;
+	text-align: right;
+	padding-right: 0.5rem;
+}
+
 
 .rename-accordion-buttons {
 	display: flex;
 	/* padding: 0.3rem 0; */
+	flex-direction: row;
+	justify-content: flex-end;
 }
 
 .dept-employee-figure {

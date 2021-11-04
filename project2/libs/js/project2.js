@@ -26,9 +26,20 @@ let deptCacheObj = {};
 let locCacheObj = {};
 
 let activeDepartmentsObj = { 
-														1: {},
-														2: {}
-														};
+														1: {
+															1: true,
+															2: true,
+															'parent-status': 'all',
+															'set-by-parent': false
+														},
+														2: {
+															3: true,
+															4: true,
+															5: true,
+															'parent-status': 'all',
+															'set-by-parent': false
+														}
+													};
 let countOfDepts = 0;
 let countOfCheckedDepts;
 let howManyDeptsSelected = 'All';
@@ -358,20 +369,17 @@ function buildCheckBoxFilters(){
 								.checkbox({
 									// check all children
 									onChecked: function() {
-										console.log(this.getAttribute('locid'));
 										activeDepartmentsObj[this.getAttribute('locid')]['parent-status'] = 'all';
-										var
-											$childCheckbox  = $(this).closest('.checkbox').siblings('.list').find('.checkbox')
-										;
+										activeDepartmentsObj[this.getAttribute('locid')]['set-by-parent'] = true;
+										var	$childCheckbox  = $(this).closest('.checkbox').siblings('.list').find('.checkbox');
 										$childCheckbox.checkbox('check');
 									},
 									// uncheck all children
 									onUnchecked: function() {
 
 										activeDepartmentsObj[this.getAttribute('locid')]['parent-status'] = 'none';
-										var
-											$childCheckbox  = $(this).closest('.checkbox').siblings('.list').find('.checkbox')
-										;
+										activeDepartmentsObj[this.getAttribute('locid')]['set-by-parent'] = true;	
+										var	$childCheckbox  = $(this).closest('.checkbox').siblings('.list').find('.checkbox');
 										$childCheckbox.checkbox('uncheck');
 									}
 								});
@@ -379,7 +387,7 @@ function buildCheckBoxFilters(){
 							$('.list .child.checkbox')
 								.checkbox({
 									// Fire on load to set parent value
-									//fireOnInit : true,
+									fireOnInit : true,
 									
 									// Change parent state on each child checkbox change
 									onChange   : function() {
@@ -402,12 +410,49 @@ function buildCheckBoxFilters(){
 										// set parent checkbox state, but don't trigger its onChange callback
 										if(allChecked) {
 											$parentCheckbox.checkbox('set checked');
+											console.log('run search all checked');
+											activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')]['parent-status'] = 'all';
+											
 										}
 										else if(allUnchecked) {
 											$parentCheckbox.checkbox('set unchecked');
+											console.log('run search none checked');
+											activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')]['parent-status'] = 'none';
 										}
 										else {
 											$parentCheckbox.checkbox('set indeterminate');
+											
+											if (activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')]['parent-status'] == 'all') {
+											
+												if (activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')]['set-by-parent'] == true){
+													
+													//console.log('run search all depts');
+													activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')]['set-by-parent'] = false;
+													
+												}											
+											
+											} else if (activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')]['parent-status'] == 'none') {
+												
+												if (activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')]['set-by-parent'] == true) {
+													
+													console.log('run search no depts');
+													activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')]['set-by-parent'] = false;
+												}
+											
+											} else {
+												
+												console.log('run search some depts')
+												
+											}
+											
+											/*
+											if (activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')]['parent-status'] != 'all' && 
+													activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')]['parent-status'] != 'none'	) {
+												
+												console.log('run search some checked');
+												console.log(activeDepartmentsObj);
+											}
+											*/
 										}
 										
 
@@ -416,10 +461,14 @@ function buildCheckBoxFilters(){
 										
 										let $listGroup  = $(this).closest('.list');
 										let $parentCheckbox = $listGroup.closest('.item').children('.checkbox')
-										console.log($parentCheckbox[0].children[0].getAttribute('locid'));
+										//console.log($parentCheckbox[0].children[0].getAttribute('locid'));
 										
 										activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')][this.getAttribute('deptID')] = this.checked;
 										
+										//activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')]['parent-status'] = 'some';
+
+
+										/*
 										if ($parentCheckbox.checkbox('is checked')){
 											
 											if (this.getAttribute('checkboxIdx') == $listGroup[0].children.length) {
@@ -431,17 +480,22 @@ function buildCheckBoxFilters(){
 										} else {
 											
 												console.log('run search with selected depts');
-												activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')]['parent-status'] = 'some';
 											
 										}
+										*/
 										
 									},
 									onUnchecked: function (){
 										let $listGroup  = $(this).closest('.list');
 										let $parentCheckbox = $listGroup.closest('.item').children('.checkbox')
 
-										activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locID')][this.getAttribute('deptID')] = this.checked;									
+										activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locID')][this.getAttribute('deptID')] = this.checked;	
 
+
+										activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')]['parent-status'] = 'some';
+
+
+										/*
 										if ($parentCheckbox.checkbox('is unchecked')){
 											
 											if (this.getAttribute('checkboxIdx') == $listGroup[0].children.length) {
@@ -455,6 +509,7 @@ function buildCheckBoxFilters(){
 												console.log('run search with selected depts');
 											
 										}
+										*/
 									
 									}
 									
@@ -806,8 +861,7 @@ $('#manage-depts-btn').click(function(){
 	let show = true;
 	refreshDeptsAndLocsModal('departments', show);
 
-	document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: block');
-	document.getElementById('modal-deny-btn').setAttribute('style', 'display: inline');
+	//document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: block');
 
 });
 
@@ -1698,14 +1752,10 @@ function eventListenersInsideLocsModal() {
 
 
 
-function eventListenersInsideDeptsModal() {
+function eventListenersInsideDeptsModal(deptCacheObj) {
 
-		let existingDepartmentNames = [];
+		for (let [k, val] of Object.entries(deptCacheObj)){	
 
-		for (let [k, val] of Object.entries(departmentsObj)){	
-		
-			existingDepartmentNames.push(val.name);	
-			
 			$(`#rename-departmentID-${k}-input-field`).on('input', function(){
 				
 				$(`#submit-rename-departmentID-${k}-btn`).attr('class','ui tiny button dept-action-button');
@@ -1781,6 +1831,8 @@ function eventListenersInsideDeptsModal() {
 				dataType: "json",
 				data: deptCacheObj[k],
 				success: function (result) {
+					
+					console.log('result', result);
 					
 					if (result.data == true) {
 						
@@ -1900,8 +1952,6 @@ function eventListenersInsideDeptsModal() {
 
 				departmentRules = basicRules.slice();
 
-				//$(`#departmentID-${k}-form`).form('reset');
-
 				$(`#departmentID-${k}-form`).form({	
 					fields: {
 						name: {
@@ -2018,32 +2068,8 @@ function eventListenersInsideDeptsModal() {
 
 							
 	} // end of loop through departments
-			
-		departmentRules = basicRules.slice();
-
-		//get all current dept names for rules
-		for (let r = 0 ; r < existingDepartmentNames.length; r ++) {
-		
-			let newRule = {}
-				newRule['type'] = `notExactly[${existingDepartmentNames[r]}]`;
-				newRule['prompt'] = 'That department already exists.';
-				departmentRules.push(newRule)
-		
-		}
-			
-		// each department for the current location gets the same rules - for renaming
-		for (let [k, val] of Object.entries(departmentsObj)){	
 				
-			$(`#departmentID-${k}-form`).form({
-				fields: {
-					name: {
-						identifier: 'dept-rename',
-						rules: departmentRules
-					}
-				}
-			});	
-			
-		}
+	$('.ui.accordion').accordion();
 	
 		// the new dept field also gets the same rules 
 		/*
@@ -2171,9 +2197,6 @@ function eventListenersInsideDeptsModal() {
 			
     });
 		*/
-				
-	$('.ui.accordion').accordion();
-	
 
 } //END OF ADDING DEPARTMENTS EVENT LISTENERS FUNCTION;
 
@@ -3373,16 +3396,16 @@ function createDepartmentSegment(id, name, location, locationID, latestLocations
 					renameDeptAccordionContent.setAttribute('class', 'content field');
 						renameDeptAccordionTransition.setAttribute('class', 'content field transition hidden');
 							renameDeptAccordionContainer.setAttribute('class', 'department-field-container');
-								renameDeptText.innerHTML = 'Edit name:';
+								renameDeptText.setAttribute('class', 'edit-dept-text-item') ; renameDeptText.innerHTML = 'Edit name:';
 								renameDeptAccordionField.setAttribute('class', 'field dept-name-field'); 
 									renameDeptAccordionInput.setAttribute('id', `rename-departmentID-${id}-input-field`); renameDeptAccordionInput.setAttribute('placeholder', deptCacheObj[id]['departmentName']); renameDeptAccordionInput.setAttribute('deptid', id); renameDeptAccordionInput.setAttribute('type', 'text'); renameDeptAccordionInput.setAttribute('value',deptCacheObj[id]['departmentName']); renameDeptAccordionInput.setAttribute('name','dept-rename');
 								//renameDeptAccordionButtons.setAttribute('class', 'rename-accordion-buttons');
 									//submitRenameDeptBtn.setAttribute('class', 'ui tiny button dept-action-button'); submitRenameDeptBtn.setAttribute('id', `submit-rename-departmentID-${id}-btn`); submitRenameDeptBtn.innerHTML = 'Submit';
 									//cancelRenameDeptBtn.setAttribute('class', 'ui tiny button dept-action-button'); cancelRenameDeptBtn.setAttribute('form', `departmentID-${id}-form`); cancelRenameDeptBtn.setAttribute('id', `cancel-departmentID-${id}-btn`); cancelRenameDeptBtn.setAttribute('type', 'reset'); cancelRenameDeptBtn.innerHTML = 'Cancel';				
 							moveDeptContainer.setAttribute('class', 'department-field-container');
-								moveDeptText.innerHTML = 'Change location';	
+								moveDeptText.setAttribute('class', 'edit-dept-text-item'); moveDeptText.innerHTML = 'Change location:';	
 							renameDeptAccordionButtons.setAttribute('class', 'rename-accordion-buttons');
-								submitRenameDeptBtn.setAttribute('class', 'ui tiny disabled button dept-action-button'); submitRenameDeptBtn.setAttribute('id', `submit-rename-departmentID-${id}-btn`); submitRenameDeptBtn.innerHTML = 'Submit';
+								submitRenameDeptBtn.setAttribute('class', 'ui tiny disabled button dept-action-button'); submitRenameDeptBtn.setAttribute('id', `submit-rename-departmentID-${id}-btn`); submitRenameDeptBtn.innerHTML = 'Save';
 								cancelRenameDeptBtn.setAttribute('class', 'ui tiny button dept-action-button'); cancelRenameDeptBtn.setAttribute('form', `departmentID-${id}-form`); cancelRenameDeptBtn.setAttribute('id', `cancel-departmentID-${id}-btn`); cancelRenameDeptBtn.setAttribute('type', 'reset'); cancelRenameDeptBtn.innerHTML = 'Cancel';				
 				renameDeptErrorMsg.setAttribute('class','ui error message');
 		
@@ -3657,8 +3680,10 @@ function manageDepartmentsAndLocationsModal(category, show){
 						if (show == true){
 						
 							document.getElementById('create-new-department-btn').setAttribute('style', 'display: inline');
+							document.getElementById('close-only-btn').setAttribute('style', 'display: inline');
+							document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: block');
 							showModal('Departments');
-							eventListenersInsideDeptsModal();
+							eventListenersInsideDeptsModal(deptCacheObj);
 					
 						}
 
