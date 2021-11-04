@@ -35,9 +35,9 @@
 	// SQL statement accepts parameters and so is prepared to avoid SQL injection.
 	// $_REQUEST used for development / debugging. Remember to change to $_POST for production
 
-	//$queryForID = $conn->prepare('SELECT name FROM department WHERE id = ?');
-	$queryForID = $conn->prepare('SELECT name, locationID FROM department WHERE id = ?');
-	$queryForID->bind_param("i", $_REQUEST['departmentID']);
+
+	$queryForID = $conn->prepare('SELECT name FROM location WHERE id = ?');
+	$queryForID->bind_param("i", $_REQUEST['locationID']);
 	$queryForID->execute();
 	
 	if (false === $queryForID) {
@@ -69,7 +69,7 @@
 	
 	$verified = false;
 	
-	if ($dataForID['name'] == $_REQUEST['departmentName'] && $dataForID['locationID'] == $_REQUEST['locationID']) {
+	if ($dataForID['name'] == $_REQUEST['locationName']) {
 		
 		$verified = true;
 		
@@ -83,8 +83,7 @@
 	$output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000 . " ms";
 	#$output['data'] = $dataForID;
 	$output['data'] = $verified;
-	$output['details']['departmentName'] = $dataForID['name'];
-	$output['details']['locationID'] = $dataForID['locationID'];
+	$output['details']['locationName'] = $dataForID['name'];
 	
 	mysqli_close($conn);
 
