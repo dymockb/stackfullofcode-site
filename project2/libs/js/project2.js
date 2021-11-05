@@ -22,7 +22,6 @@ let dontshow = false;
 let manageDeptsAndLocsOpened = 0;
 let locationRules = [];
 let departmentRules = [];
-let deptCacheObj = {};
 let locCacheObj = {};
 
 let activeDepartmentsObj = { 
@@ -1148,10 +1147,10 @@ $('#create-new-department-btn').click(function(){
 					$('#department-accordion-segment').attr('style', 'display: none');	
 					//$('#departmentID-0-loc-dropdown').remove();
 
-					$('#close-alert-modal-btn').attr('style', 'display: inline');
-					$('#create-employee-alert-modal-btn').attr('style', 'display: inline');
+					$('#close-alert-modal-btn').attr('style', 'display: inline-block');
+					$('#create-employee-alert-modal-btn').attr('style', 'display: inline-block');
 					
-					showAlertModal('New Department Created', `New Department Created: ${formFields['new-department']}`);
+					showAlertModal('New Department Created', `New Department successfully created: <br/><br/> ${formFields['new-department']}`);
 					//let newDepartmentName = 'New Loc'
 					//let newDepartmentNode = createDepartmentSegment(1, newDepartmentName, 'test location', 0, latestLocations);
 					//$(`#department-entries`).prepend( $(newDepartmentNode).hide().fadeIn(1000) );
@@ -1185,6 +1184,8 @@ $('#create-new-department-btn').click(function(){
 				success: function (result) {
 								
 					if (result.data['existingNames'] == 0) { 
+					
+						console.log('new dept created');
 						
 						addDepartment(formFields);
 
@@ -1193,53 +1194,8 @@ $('#create-new-department-btn').click(function(){
 						console.log('dept already exists');
 
 						$('#new-department-form').form('add errors', ['A department with that name already exists.']);
-
-						/*
-						
-						if (result.data['confirmLocation']['locationID'] == formFields['locID']) {
-							
-							$.ajax({
-							//url: "libs/post-php/checkOwnLocNames.php",
-							//type: "POST",
-							url: "libs/php/checkOwnLocNames.php",
-							type: "GET",
-							dataType: "json",
-							data: {
-								departmentName: formFields['dept-rename'],
-								locationID: result.data['locationID']
-							},
-							success: function (result) {
-								
-								if (result.data != deptCacheObj[k]['departmentID']){
-									
-									$(`#departmentID-${k}-form`).form('add errors', ['That department already exists in this location.']);
-									$(`#departmentID-${k}-form`).removeClass('loading');	
-									
-								} else {
-									
-									addDepartment(formFields);
-
-								}
-								
-							},
-							error: function (jqXHR, textStatus, errorThrown) {
-									console.log('error', jqXHR);
-									console.log(textStatus);
-									console.log(errorThrown);
-								},
-							});
-							
-							
-						} else {
-							
-							$(`#departmentID-${k}-form`).form('add errors', ['That department already exists in another location.']);
-							$(`#departmentID-${k}-form`).removeClass('loading');
-							
-						}
-
-						*/
 					
-					} // end of IF a matching name found in dept table
+					} 
 
 				},
 				error: function (jqXHR, textStatus, errorThrown) {
@@ -3787,7 +3743,7 @@ function manageDepartmentsAndLocationsModal(category, show){
 					data: {},
 					success: function (result) {
 						
-						deptCacheObj = {};
+						let deptCacheObj = {};
 
 						let departmentsContent = document.createElement('div');
 
@@ -3801,9 +3757,9 @@ function manageDepartmentsAndLocationsModal(category, show){
 							cacheDept['departmentID'] = value['id'];
 							cacheDept['locationID'] = value['locationID'];
 							deptCacheObj[value['id']] = cacheDept;
-							departmentsContent.appendChild(createDepartmentSegment(value['id'], value['name'], latestLocations[value['locationID']], value['locationID'], latestLocations, deptCacheObj));
-										
+							departmentsContent.appendChild(createDepartmentSegment(value['id'], value['name'], latestLocations[value['locationID']], value['locationID'], latestLocations, deptCacheObj));										
 						} 
+						
 						
 						document.getElementById('append-department-panels').appendChild(departmentsContent);
 			
