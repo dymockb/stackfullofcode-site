@@ -4439,7 +4439,7 @@ function viewDetailsBtnFunctionality(){
 function sendRadioSelection(value){
 	
 	orderBy = value;
-	runSearch(orderBy, lastSearch);
+	runSearch(orderBy, lastSearch, activeDepartmentsObj);
 	
 };
 
