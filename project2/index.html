@@ -409,7 +409,7 @@
 
 <!--  <div class="ui small basic test modal" id="alert-modal">   //  <div class="ui icon header"> -->
   <div class="ui modal" id="alert-modal">
-    
+    <i class="close icon"></i>
     <div class="ui header">
       <i class="archive icon"></i>
     </div>
@@ -585,11 +585,11 @@
 			<button class="ui primary button" id="save-new-location-btn">Save</button> 
       <button class="ui primary button" id="create-new-department-btn">Add new department</button>
       <button class="ui primary button" id="create-new-location-btn">Add new location</button> 
-			<button class="ui deny button" id="close-only-btn">Close</button> 
+			<button class="ui deny button" id="close-only-btn">Cancel</button> 
  
-			<button class="ui primary approve button" id="close-employee-modal">Close<i class="right chevron icon"></i></button>
+			<button class="ui primary approve button" id="close-employee-modal">Close</button>
 			</button> <button class="ui primary button" id="submit-create-employee">Save</button> 
-      <button class="ui primary button" id="submit-edit-employee">Edit Details <i class="right chevron icon"></i>
+      <button class="ui primary button" id="submit-edit-employee">Save</button>
     </div>
   </div>
 
@@ -614,6 +614,10 @@
         No
       </div>
       <div class="ui approve button" id="confirm-delete-dept-btn">
+        <i class="checkmark icon"></i>
+        Yes
+      </div>
+      <div class="ui approve button" id="confirm-delete-loc-btn">
         <i class="checkmark icon"></i>
         Yes
       </div>

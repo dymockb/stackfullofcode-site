@@ -854,7 +854,7 @@ $('#delete-employee-btn').click(function (){
 	
 	let employeeDetails = JSON.parse(document.getElementById('delete-employee-btn').getAttribute('employee-details'));
 
-	$('#delete-employee-modal-btn').attr('style', 'display: inline');
+	$('#delete-employee-modal-btn').attr('style', 'display: inline-block');
 
 	document.getElementById('update-employee-modal-btn').setAttribute('style', 'display: none');
 	document.getElementById('delete-department-modal-btn').setAttribute('style', 'display: none');
@@ -865,22 +865,46 @@ $('#delete-employee-btn').click(function (){
 
 $('#edit-employee-fields-btn').click(function(){
 	
-	document.getElementById('employee-modal-edit-fields').innerHTML = "";
-	
 	let employeeDetails = JSON.parse(this.getAttribute('employee-details'));
-
-	employeeBeforeEdit = employeeDetails;
+	let employeeID = employeeDetails['id'];
 	
-	dropDownClicked = 0;
-	createEmployeeModalContent(editOrCreate = 'edit', employeeDetails);	
+	$.ajax({
+	//url: "libs/post-php/deleteEmployeeByID.php",
+	//type: "POST",
+	url: "libs/php/getEmployeeByID.php",
+	type: "GET",
+	dataType: "json",
+	data: {
+		employeeID: employeeID
+	},
+	success: function (result) {
+				
+		console.log(result);
 
-	document.getElementById('employee-modal-edit-fields').setAttribute('style','display: inherit');
-	document.getElementById('submit-edit-employee').setAttribute('style','display: inline');
-	document.getElementById('close-only-btn').setAttribute('style', 'display: inline');
+		
+		document.getElementById('employee-modal-edit-fields').innerHTML = "";
 
-	document.getElementById('submit-edit-employee').setAttribute('employee-details', this.getAttribute('employee-details'));
+		employeeBeforeEdit = employeeDetails;
+		
+		createEmployeeModalContent(editOrCreate = 'edit', result.data);	
+
+		document.getElementById('employee-modal-edit-fields').setAttribute('style','display: inherit');
+		document.getElementById('submit-edit-employee').setAttribute('style','display: inline');
+		document.getElementById('close-only-btn').setAttribute('style', 'display: inline');
+
+		document.getElementById('submit-edit-employee').setAttribute('employee-details', JSON.stringify(result.data));
+		
+		showModal('edit employee');
+		
+	},
+	error: function (jqXHR, textStatus, errorThrown) {
+			console.log('error');
+			console.log(textStatus);
+			console.log(errorThrown);
+		},
+	});
 	
-	showModal('edit employee');
+
 
 });
 
@@ -984,9 +1008,18 @@ $('#update-employee-modal-btn').click(function (){
 
 $('#employee-modal-edit-fields').submit(function(event) {
 	event.preventDefault();
+
+	editEmployeeDataObj = $(this).form('get values');
 	
-	if (this.elements.length > 0) {
-		
+	let findID = JSON.parse($('#submit-edit-employee').attr('employee-details'));
+	
+	editEmployeeDataObj['id'] = findID['id'];
+	
+	console.log('editEmployeeDataObj', editEmployeeDataObj);
+	//if (this.elements.length > 0) {}	
+
+	
+	/*		
 		editEmployeeDataObj = {
 		firstName: '', //
 		lastName: '',		//
@@ -998,6 +1031,9 @@ $('#employee-modal-edit-fields').submit(function(event) {
 		department: '',
 		id: ''
 		}
+	
+
+
 	
 		for (let e = 0; e < this.elements.length; e ++) {
 		
@@ -1028,18 +1064,16 @@ $('#employee-modal-edit-fields').submit(function(event) {
 
 		$('#employee-modal-edit-fields').form('reset');
 		
-	}	
+	*/
 		
 });
 
 $('#employee-modal-create-fields').submit(function(event) {
 	event.preventDefault();
 	
-	if (this.elements) {
-
-		document.getElementById('close-employee-modal').click();
-
-	}
+	//if (this.elements) {
+	//	document.getElementById('close-employee-modal').click();
+  //}
 	
 	createEmployeeDataObj = {
 		firstName: '', //
@@ -1053,18 +1087,13 @@ $('#employee-modal-create-fields').submit(function(event) {
 		id: ''
 	}
 	
-	for (let e = 0; e < this.elements.length; e ++) {
+	createEmployeeDataObj = $(this).form('get values');
 	
-		if (this.elements[e].tagName != 'BUTTON') {			
-		
-			createEmployeeDataObj[this.elements[e].getAttribute('fieldname')] = this.elements[e].value;
-			
-		}
-
-	}
-
-	createEmployeeDataObj['jobTitle'] = 	createEmployeeDataObj['jobTitle'] == 0 ? '' : 	createEmployeeDataObj['jobTitle'];
-	/*
+	//createEmployeeDataObj['jobTitle'] = createEmployeeDataObj['jobTitle'] == '' ? 'test' : 	createEmployeeDataObj['jobTitle'];
+	
+	console.log(createEmployeeDataObj);
+	
+	
 	$.ajax({
 	//url: "libs/post-php/insertEmployee.php",
 	//type: "POST",
@@ -1076,7 +1105,7 @@ $('#employee-modal-create-fields').submit(function(event) {
 		
 			employeeJustCreated = true;
 			
-			refreshPage();
+			//refreshPage();
 			
 
 	},
@@ -1087,7 +1116,7 @@ $('#employee-modal-create-fields').submit(function(event) {
 		},
 	});
 	
-	*/
+	
 		
 });
 
@@ -2933,8 +2962,8 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 		input.setAttribute('fieldname', fieldID);
 		input.setAttribute('fieldID', fieldID);
 		input.setAttribute('type', 'hidden');
-		input.setAttribute('name', fieldName);
-		listOfIdentifiers.push(fieldName);
+		input.setAttribute('name', fieldID);
+		listOfIdentifiers.push(fieldID);
 
 		if (editOrCreate == 'create'){
 			selected.innerHTML = placeholder;
@@ -2959,7 +2988,7 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 	
 	let twoCategories = twoFields.cloneNode(true);
 		
-	twoCategories.appendChild(createDropDown('Department', 'Select a department', listOfNames, listOfIDs, 'locationName', 'locationID', 'location-dropdown'));
+	twoCategories.appendChild(createDropDown('Department', 'Select a department', listOfNames, listOfIDs, 'department', 'departmentID', 'location-dropdown'));
 	
 	//let depNames = [];
 	//let depIDs = [];
@@ -2981,6 +3010,7 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 	
 	let jobTitleInput = inputField.cloneNode(true);
 	jobTitleInput.setAttribute('fieldname', 'jobTitle');
+	jobTitleInput.setAttribute('name', 'jobTitle');
 	jobTitleInput.setAttribute('type', 'text');
 	
 	if (editOrCreate == 'create') {
@@ -3042,6 +3072,8 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 	
 	document.getElementById(`employee-modal-${editOrCreate}-fields`).appendChild(uiForm);
 
+	/*
+	
 	if (editOrCreate == 'edit') {
 		
 		$.ajax({
@@ -3082,7 +3114,7 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 					
 				}
 
-				/*
+				
 				for (let dc = 0; dc < result.data.length; dc ++ ) {
 
 					let oneOption = document.createElement('div');
@@ -3095,7 +3127,7 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 					document.getElementById('department-dropdown-menu').appendChild(oneOption);
 								
 				}
-				*/		
+				
 				
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
@@ -3104,8 +3136,10 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 				console.log(errorThrown);
 			},
 		});
-		
+				
 	}
+	
+	*/
 
 	return listOfIdentifiers;
 
@@ -4366,7 +4400,7 @@ function viewDetailsBtnFunctionality(){
 			console.log('click');
 			console.log('employee Properties Stored',employeePropertiesStored);
 					
-			document.getElementById('delete-employee-modal-btn').setAttribute('style', 'display: inline !important');
+			document.getElementById('delete-employee-modal-btn').setAttribute('style', 'display: inline-block !important');
 			document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', JSON.stringify(employeePropertiesStored));
 
 			$('#alert-modal').modal(
