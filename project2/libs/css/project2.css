@@ -269,6 +269,10 @@ td#employee-details-field {
 	float: left
 }
 
+#create-new-department-btn {
+	float: left;
+}
+
 .scrolling.image.content {
 	display: block !important;
 }
