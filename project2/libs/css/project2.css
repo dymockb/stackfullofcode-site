@@ -133,15 +133,21 @@ body {
 	/* margin-bottom: 0.3rem; */
 	text-align: justify;
 	min-width: 11rem;
+	margin: 0;
 }
 
 #manage-locs-btn {
 	min-width: 11rem;
-	text-align: justify
+	text-align: justify;
+	margin: 0;
 }
 
 i.fas.fa-wrench {
 	float: right
+}
+
+.btn-wrapper {
+	padding: 0.2rem;
 }
 
 #search-option-segments {
@@ -149,6 +155,10 @@ i.fas.fa-wrench {
 	flex-direction: column;
 	align-items: center;
 	margin-top: 1.5rem;
+}
+
+.location-group {
+	border: none !important;
 }
 
 .ui.checkbox {
@@ -328,7 +338,7 @@ h4.ui.image.header {
 	display: inline-flex;
 	flex-wrap: wrap;
 	width: 100%;
-	justify-content: space-between;
+	justify-content: flex-end;
 }
 
 .loc-action-button {
@@ -717,11 +727,11 @@ h3.ui.center.header {
 
 	#pc-table {
 		width: 90%;
-		margin-top: 0.4rem;
+		margin-top: 3rem;
 	}
 
 	thead {
-		top: 5.5rem;
+		top: 6rem;
 	}
 
 	.employee-modal-btn {

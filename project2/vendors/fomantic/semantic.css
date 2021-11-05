@@ -37304,7 +37304,7 @@ ol.ui.suffixed.list li:before,
 
 .ui.celled.list > .item,
 .ui.celled.list > .list {
-  border-top: 1px solid rgba(34, 36, 38, 0.15);
+  /* border-top: 1px solid rgba(34, 36, 38, 0.15); */
   padding-left: 0.5em;
   padding-right: 0.5em;
 }
