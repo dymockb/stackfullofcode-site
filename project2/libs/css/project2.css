@@ -120,6 +120,7 @@ body {
 
 .search-option-segment {
 	width: 97%;
+	margin-bottom: 0 !important;
 }
 
 #management-btns {
@@ -129,7 +130,18 @@ body {
 }	
 
 #manage-depts-btn {
-	margin-bottom: 0.3rem
+	margin-bottom: 0.3rem;
+	text-align: justify;
+	min-width: 11rem;
+}
+
+#manage-locs-btn {
+	min-width: 11rem;
+	text-align: justify
+}
+
+i.fas.fa-wrench {
+	float: right
 }
 
 #search-option-segments {
@@ -547,6 +559,7 @@ i.fas.fa-user-edit {
 
 #scrolling-modal-pane {
 	background-color: #d4d4d5;
+	max-height: calc(80vh - 8rem);
 }
 
 #append-location-panels {
