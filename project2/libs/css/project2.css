@@ -126,7 +126,7 @@ body {
 	display: flex;
 	justify-content: space-around;
 	flex-wrap: wrap;
-}
+}	
 
 #manage-depts-btn {
 	margin-bottom: 0.3rem
