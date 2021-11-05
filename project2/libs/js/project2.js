@@ -1063,8 +1063,8 @@ $('#employee-modal-create-fields').submit(function(event) {
 
 	}
 
-	createEmployeeDataObj['jobTitle'] = 	createEmployeeDataObj['jobTitle'] == 0 ? 'Job Title TBC' : 	createEmployeeDataObj['jobTitle'];
-	
+	createEmployeeDataObj['jobTitle'] = 	createEmployeeDataObj['jobTitle'] == 0 ? '' : 	createEmployeeDataObj['jobTitle'];
+	/*
 	$.ajax({
 	//url: "libs/post-php/insertEmployee.php",
 	//type: "POST",
@@ -1086,6 +1086,8 @@ $('#employee-modal-create-fields').submit(function(event) {
 			console.log(errorThrown);
 		},
 	});
+	
+	*/
 		
 });
 
@@ -2845,7 +2847,7 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 
 			if (mainTitle.includes('epartment')) {
 
-				outerNode.setAttribute('class', 'disabled field');
+				//outerNode.setAttribute('class', 'disabled field');
 				outerNode.setAttribute('id', 'departments-field')
 
 			}
@@ -2883,6 +2885,7 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 		let menu = menuDiv.cloneNode(true);
 		menu.setAttribute('id', dropdownType + '-menu');
 
+		/*
 		let dropDownObj = {};
 		let dropDownList = [];
 
@@ -2895,7 +2898,10 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 
 		dropDownList.sort();
 
-		for (let ddn = 0; ddn < dropDownList.length; ddn ++){
+
+		
+
+		for (let ddn = 0; ddn < listOfNames.length; ddn ++){
 		
 			let oneOption = dataValue.cloneNode(true);
 			let outputValue = dropDownObj[dropDownList[ddn]];
@@ -2904,7 +2910,9 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 			menu.appendChild(oneOption);			
 
 		}
-		/*
+		*/		
+		
+		
 		for (let loc = 0; loc < listOfNames.length; loc ++){
 			
 			let oneOption = dataValue.cloneNode(true);
@@ -2914,7 +2922,7 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 			menu.appendChild(oneOption);
 			
 		}
-		*/
+		
 		
 		if(editOrCreate == 'create'){
 			input.setAttribute('value', '');
@@ -2951,11 +2959,11 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 	
 	let twoCategories = twoFields.cloneNode(true);
 		
-	twoCategories.appendChild(createDropDown('Location', 'Select a location', listOfNames, listOfIDs, 'locationName', 'locationID', 'location-dropdown'));
+	twoCategories.appendChild(createDropDown('Department', 'Select a department', listOfNames, listOfIDs, 'locationName', 'locationID', 'location-dropdown'));
 	
-	let depNames = [];
-	let depIDs = [];
-	twoCategories.appendChild(createDropDown('Department', 'Select a department', depNames, depIDs, 'department', 'departmentID', 'department-dropdown'));
+	//let depNames = [];
+	//let depIDs = [];
+	//twoCategories.appendChild(createDropDown('Department', 'Select a department', depNames, depIDs, 'department', 'departmentID', //'department-dropdown'));
 		
 	let nameCategories = twoFields.cloneNode(true);
 	
@@ -3105,26 +3113,26 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm){
 
 function createEmployeeModalContent(editOrCreate, detailsForEditForm){
 	
-	let listOfLocationsUpdated = [];	
-	
-	let listOfLocationIDs = [];
-	
-	
+	let listOfDepartmentNames = [];
+	let listOfDepartmentIDs = [];
+		
 	$.ajax({
 	//url: "libs/post-php/getAllLocations.php",
 	//type: "POST",
-	url: "libs/php/getAllLocations.php",
+	url: "libs/php/getAllDepartments.php",
 	type: "GET",
 	dataType: "json",
 	data: {},
 	success: function (result) {
-			
-			for (let loc = 0; loc < result.data.length; loc ++){
-				listOfLocationsUpdated.push(result.data[loc].name);
-				listOfLocationIDs.push(result.data[loc].id);
+		
+			for (let r = 0; r < result.data.length; r ++) {
+				
+				listOfDepartmentIDs.push(result.data[r]['id']);
+				listOfDepartmentNames.push(result.data[r]['name']);
+				
 			}
 			
-			let listOfIdentifiers = buildForm(listOfLocationsUpdated, listOfLocationIDs, editOrCreate, detailsForEditForm);
+			let listOfIdentifiers = buildForm(listOfDepartmentNames, listOfDepartmentIDs, editOrCreate, detailsForEditForm);
 			
 			let formValidateFields = {}
 			
@@ -3149,77 +3157,6 @@ function createEmployeeModalContent(editOrCreate, detailsForEditForm){
 				fields: formValidateFields
 			});
 
-			let locationDropDown = document.getElementById('location-dropdown');
-			
-			locationDropDown.addEventListener('change', function(e){
-				
-						$.ajax({
-						url: "libs/php/departmentsChange.php",
-						type: "GET",
-						//url: "libs/post-php/departmentsChange.php",
-						//type: "POST",
-						dataType: "json",
-						data: {
-							locationID: e.target.value
-						},
-						success: function (result) {
-
-								document.getElementById('department-dropdown-menu').innerHTML = "";
-
-								let deptsDropDownObj = {};
-								let deptsDropDownList = [];
-
-								for (let dc = 0; dc < result.data.length; dc ++ ) {
-
-									deptsDropDownList.push(result.data[dc].name);
-									deptsDropDownObj[result.data[dc].name] = result.data[dc].id;
-
-								}
-
-								deptsDropDownList.sort();
-
-								for (let ddl = 0; ddl < deptsDropDownList.length; ddl ++ ) {
-
-									let oneOption = document.createElement('div');
-									oneOption.setAttribute('class', 'item');
-
-									let outputValue = deptsDropDownObj[deptsDropDownList[ddl]];
-									oneOption.innerHTML = deptsDropDownList[ddl];
-									oneOption.setAttribute('data-value', outputValue);
-									
-									document.getElementById('department-dropdown-menu').appendChild(oneOption);
-									
-								}
-	
-								/*
-								for (let dc = 0; dc < result.data.length; dc ++ ) {
-
-									let oneOption = document.createElement('div');
-									oneOption.setAttribute('class', 'item');
-
-									let outputValue = result.data[dc].id;
-									oneOption.innerHTML = result.data[dc].name;
-									oneOption.setAttribute('data-value', outputValue);
-									
-									document.getElementById('department-dropdown-menu').appendChild(oneOption);
-									
-								}
-								*/							
-								
-								document.getElementById('department-dropdown-placeholder-text').innerHTML = 'Select a department';
-
-								if (editOrCreate == 'create') {
-									document.getElementById('departments-field').setAttribute('class', 'required field');
-								}
-						},
-						error: function (jqXHR, textStatus, errorThrown) {
-								console.log('error');
-								console.log(textStatus);
-								console.log(errorThrown);
-							},
-						});
-									
-			}); 	
 
 	},
 	error: function (jqXHR, textStatus, errorThrown) {
@@ -4758,21 +4695,6 @@ function attachRadioEvents(){
 
 function refreshPage(){
 	firstload++;
-	
-	for (let prop in locsAndDeptsObj){
-		delete locsAndDeptsObj[prop];
-	}
-	
-	for (let prop in locationsObj){
-		delete locationsObj[prop];
-	}
-	
-	for (let prop in departmentsObj){
-		delete departmentsObj[prop];
-	}
-
-	listOfLocations = [];
-	listOfDepts = [];
 	
 	getAllEmployees();
 
