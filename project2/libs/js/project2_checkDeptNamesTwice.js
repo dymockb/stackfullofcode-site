@@ -99,7 +99,6 @@ let renameLocNeedsToBeValidated = false;
 let createNewLocNeedsToBeValidated = false;
 
 let addDeptNeedsToBeValidated = false;
-let updateDeptNeedsToBeValidated = false;
 
 
 let locsAndDeptsObj = {};
@@ -1883,19 +1882,25 @@ function eventListenersInsideDeptsModal(deptCacheObj, latestLocations) {
 			});
 
 			$(`#submit-rename-departmentID-${k}-btn`).click(function(e){
-				e.preventDefault();
-
-			if (!updateDeptNeedsToBeValidated) {
+				e.preventDefault();				
 			
 				$(`#departmentID-${k}-form`).one('submit', function(event){
 					event.preventDefault();
 
 					$(`#departmentID-${k}-form`).addClass('loading');
 				
+					let updatedDeptName;
+					let updatedDeptID;
+					let updateDepartmentDataObj = {};
+					let updatedLocationID;
+					let newNameSuccess = false;
+
 					let formFields = $(`#departmentID-${k}-form`).form('get values');
 					formFields['departmentID'] = k;
 					
 					function updateDepartment(formData) {
+						
+						console.log('data submitted', formData);
 						
 						$.ajax({
 						//url: "libs/post-php/updateDepartment.php",
@@ -1905,8 +1910,6 @@ function eventListenersInsideDeptsModal(deptCacheObj, latestLocations) {
 						dataType: "json",
 						data: formData,
 						success: function (result) {
-
-							console.log('department updated');
 							
 							$(`#departmentID-${k}-accordion`).click();
 			
@@ -1992,12 +1995,11 @@ function eventListenersInsideDeptsModal(deptCacheObj, latestLocations) {
 										$.ajax({
 										//url: "libs/post-php/countDeptByName.php",
 										//type: "POST",
-										url: "libs/php/validateChangeDeptName.php",
+										url: "libs/php/countDeptByName.php",
 										type: "GET",
 										dataType: "json",
 										data: {
-											departmentName: formFields['dept-rename'],
-											departmentID: k
+											departmentName: formFields['dept-rename']
 										},
 										success: function (result) {
 														
@@ -2005,12 +2007,50 @@ function eventListenersInsideDeptsModal(deptCacheObj, latestLocations) {
 												
 												updateDepartment(formFields);
 
-											} else {
+											} else if (result.data['existingNames'] >= 1) {
+												
+												if (result.data['confirmLocation']['locationID'] == deptCacheObj[k]['locationID']) {
+													
+													$.ajax({
+													//url: "libs/post-php/checkOwnLocNames.php",
+													//type: "POST",
+													url: "libs/php/checkOwnLocNames.php",
+													type: "GET",
+													dataType: "json",
+													data: {
+														departmentName: formFields['dept-rename'],
+														locationID: result.data['locationID']
+													},
+													success: function (result) {
+														
+														if (result.data != deptCacheObj[k]['departmentID']){
+															
+															$(`#departmentID-${k}-form`).form('add errors', ['That department already exists in this location.']);
+															$(`#departmentID-${k}-form`).removeClass('loading');	
+															
+														} else {
+															
+															updateDepartment(formFields);
 
-												$(`#departmentID-${k}-form`).form('add errors', ['That department already exists.']);
-												$(`#departmentID-${k}-form`).removeClass('loading');	
-
-											} 
+														}
+														
+													},
+													error: function (jqXHR, textStatus, errorThrown) {
+															console.log('error', jqXHR);
+															console.log(textStatus);
+															console.log(errorThrown);
+														},
+													});
+													
+													
+												} else {
+													
+													$(`#departmentID-${k}-form`).form('add errors', ['That department already exists in another location.']);
+													$(`#departmentID-${k}-form`).removeClass('loading');
+													
+												}
+											
+											} // end of IF a matching name found in dept table
 
 										},
 										error: function (jqXHR, textStatus, errorThrown) {
@@ -2053,17 +2093,6 @@ function eventListenersInsideDeptsModal(deptCacheObj, latestLocations) {
 
 
 				}); // end of Submit listener
-
-			}
-
-			if (!$(`#departmentID-${k}-form`).form('validate form')) {
-				console.log('not validated')
-				updateDeptNeedsToBeValidated = true;
-			} else if ($(`#departmentID-${k}-form`).form('validate form')){
-				
-				updateDeptNeedsToBeValidated = false;
-		
-			}
 									
 				if ($(`#departmentID-${k}-form`).form('validate form')) {
 					$(`#departmentID-${k}-form`).form('submit');
