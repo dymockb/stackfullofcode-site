@@ -356,12 +356,15 @@ function buildCheckBoxFilters(){
 							
 							}
 							
-							
+							let cxcount = 0;
+
+							console.log(cxcount++);
 							
 							$('.list .master.checkbox')
 								.checkbox({
 									// check all children
 									onChecked: function() {
+										console.log(1);
 										//activeDepartmentsObj[this.getAttribute('locid')]['parent-status'] = 'all';
 										//activeDepartmentsObj[this.getAttribute('locid')]['set-by-parent'] = true;
 										var	$childCheckbox  = $(this).closest('.checkbox').siblings('.list').find('.checkbox');
@@ -369,7 +372,7 @@ function buildCheckBoxFilters(){
 									},
 									// uncheck all children
 									onUnchecked: function() {
-
+										console.log(2);
 										//activeDepartmentsObj[this.getAttribute('locid')]['parent-status'] = 'none';
 										//activeDepartmentsObj[this.getAttribute('locid')]['set-by-parent'] = true;	
 										var	$childCheckbox  = $(this).closest('.checkbox').siblings('.list').find('.checkbox');
@@ -384,6 +387,7 @@ function buildCheckBoxFilters(){
 									
 									// Change parent state on each child checkbox change
 									onChange   : function() {
+										console.log(3);
 										var
 											$listGroup      = $(this).closest('.list'),
 											$parentCheckbox = $listGroup.closest('.item').children('.checkbox'),
@@ -393,26 +397,32 @@ function buildCheckBoxFilters(){
 										;
 										// check to see if all other siblings are checked or unchecked
 										$checkbox.each(function() {
+											console.log(4);
 											if( $(this).checkbox('is checked') ) {
+												console.log(5);
 												allUnchecked = false;
 											}
 											else {
+												console.log(6);
 												allChecked = false;
 											}
 										});
 										// set parent checkbox state, but don't trigger its onChange callback
 										if(allChecked) {
+											console.log(7);
 											$parentCheckbox.checkbox('set checked');
 											console.log('run search all checked');
 											//activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')]['parent-status'] = 'all';
 											
 										}
 										else if(allUnchecked) {
+											console.log(8);
 											$parentCheckbox.checkbox('set unchecked');
 											console.log('run search none checked');
 											//activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')]['parent-status'] = 'none';
 										}
 										else {
+											console.log(9);
 											$parentCheckbox.checkbox('set indeterminate');
 											console.log('run search some checked')
 											
@@ -451,6 +461,7 @@ function buildCheckBoxFilters(){
 
 									},
 									onChecked: function (){
+										console.log(10);
 										
 										let $listGroup  = $(this).closest('.list');
 										let $parentCheckbox = $listGroup.closest('.item').children('.checkbox')
@@ -479,6 +490,7 @@ function buildCheckBoxFilters(){
 										
 									},
 									onUnchecked: function (){
+										console.log(11);
 										let $listGroup  = $(this).closest('.list');
 										let $parentCheckbox = $listGroup.closest('.item').children('.checkbox')
 
