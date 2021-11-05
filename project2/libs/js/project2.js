@@ -99,6 +99,7 @@ let createNewLocNeedsToBeValidated = false;
 
 let addDeptNeedsToBeValidated = false;
 let updateDeptNeedsToBeValidated = false;
+let addLocNeedsToBeValidated = false;
 
 
 let locsAndDeptsObj = {};
@@ -292,17 +293,6 @@ function removeCheckBoxes(category){
 
 function refreshDeptsAndLocsModal(category, show){
 	
-	for (let prop in locsAndDeptsObj){
-		delete locsAndDeptsObj[prop];
-	}
-	
-	for (let prop in locationsObj){
-		delete locationsObj[prop];
-	}
-	
-	for (let prop in departmentsObj){
-		delete departmentsObj[prop];
-	}
 
 	manageDepartmentsAndLocationsModal(category, show);
 	
@@ -847,20 +837,14 @@ function showAlertModal(title, content){
 $('#manage-locs-btn').click(function(){
 	
 	let show = true;
-	refreshDeptsAndLocsModal('locations', show);
-
-	document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: block');
-	document.getElementById('modal-deny-btn').setAttribute('style', 'display: inline');
-	//document.getElementById('create-new-location-btn').setAttribute('style', 'display: inline');
+	manageDepartmentsAndLocationsModal('locations', show);
 
 });
 
 $('#manage-depts-btn').click(function(){
 
 	let show = true;
-	refreshDeptsAndLocsModal('departments', show);
-
-	//document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: block');
+	manageDepartmentsAndLocationsModal('departments', show);
 
 });
 
@@ -1246,18 +1230,10 @@ $('#create-new-location-btn').click(function(){
 
 	$('#location-accordion-segment').attr('style', 'display: block');
 
-	locationRules = basicRules.slice();
+	$('#new-location-accordion-btn').click();
+	$("#scrolling-modal-pane").animate({ scrollTop: 0 }, "fast");
 
-	for (let [key, value] of Object.entries(locationsObj)) {
-		
-		let nameRequired = value;
-		
-		let newRule = {}
-		newRule['type'] = `notExactly[${nameRequired}]`;
-		newRule['prompt'] = 'That location already exists';
-		locationRules.push(newRule)
-	
-	}
+	locationRules = basicRules.slice();
 	
 		$(`#new-location-form`).form({
 		fields: {
@@ -1267,9 +1243,105 @@ $('#create-new-location-btn').click(function(){
 			}
 		}
 		});
+		
+	$(`#submit-new-location-btn`).click(function(e){
 
-	$('#new-location-accordion-btn').click();
-	document.getElementById('location-accordion-segment').scrollIntoView({behavior: "smooth"});
+		if (!addLocNeedsToBeValidated) {
+
+		$(`#new-location-form`).one('submit', function(event){
+
+			event.preventDefault();
+			
+			let formFields = $('#new-location-form').form('get values');
+			console.log('form fields',formFields);
+
+			function addLocation(formData) {
+						
+				console.log('data submitted', formData);
+				
+				$.ajax({
+				//url: "libs/post-php/insertLocation.php",
+				//type: "POST",
+				url: "libs/php/insertLocation.php",
+				type: "GET",
+				dataType: "json",
+				data: {
+					name: formData['new-location']
+				},
+				success: function (result) {
+
+					$(`#new-location-form`).form('reset');
+					$('#new-location-accordion-btn').click();
+					$('#location-accordion-segment').attr('style', 'display: none');	
+
+					$('#close-alert-modal-btn').attr('style', 'display: inline-block');
+					
+					showAlertModal('New Department Created', `New Location successfully created: <br/><br/> ${formData['new-location']}`);
+
+				},
+				error: function (jqXHR, textStatus, errorThrown) {
+						console.log('error', jqXHR);
+						console.log(textStatus);
+						console.log(errorThrown);
+					},
+				});
+							
+			} //end of Update function
+
+
+			$.ajax({
+				//url: "libs/post-php/countLocByName.php",
+				//type: "POST",
+				url: "libs/php/countLocByName.php",
+				type: "GET",
+				dataType: "json",
+				data: {
+					locationName: formFields['new-location']
+				},
+				success: function (result) {
+								
+					if (result.data['existingNames'] == 0) { 
+					
+						console.log('new loc created');
+						
+						addLocation(formFields);
+
+					} else if (result.data['existingNames'] >= 1) {
+
+						console.log('loc already exists');
+
+						$('#new-location-form').form('add errors', ['A location with that name already exists.']);
+					
+					} 
+
+				},
+				error: function (jqXHR, textStatus, errorThrown) {
+						console.log('error', jqXHR);
+						console.log(textStatus);
+						console.log(errorThrown);
+					},
+				});
+			
+		});	//end of submit listener
+
+	} // end of needs to be validated
+
+	if (!$(`#new-location-form`).form('validate form')) {
+		console.log('not validated')
+		addLocNeedsToBeValidated = true;
+	} else if ($(`#new-location-form`).form('validate form')){
+		
+		addLocNeedsToBeValidated = false;
+
+	}
+
+		if ($(`#new-location-form`).form('validate form')) {
+
+			$(`#new-location-form`).form('submit');
+
+		}
+
+	});
 
 });
 
@@ -1284,124 +1356,6 @@ $(`#cancel-new-location-btn`).click(function(e){
 	},250);		
 
 });
-
-$(`#submit-new-location-btn`).click(function(e){
-
-	if (!locationNameNeedsToBeValidated) { //needs to be validated
-		
-	$(`#new-location-form`).one('submit', function(event){
-	  event.preventDefault();
-
-
-    let newLocationName;
-
-    for (let e = 0; e < this.elements.length; e ++) {
-
-      if (this.elements[e].tagName != 'BUTTON') {			
-
-        console.log(`#new-location-form`, this.elements[e].value);
-        newLocationName = this.elements[e].value;
-        
-      }
-
-    }
-
-		let newLocationNode = createLocationSegment(6, newLocationName);
-
-		//$(`#append-location-panels`).children()[0].after( $(newLocationNode).hide().fadeIn(1000) );
-		//$(`#append-location-panels`).children()[0].append( $(newLocationNode) );
-		$(`#location-entries`).prepend( $(newLocationNode).hide().fadeIn(1000) );
-
-		
-
-		document.getElementById('create-new-location-btn').innerHTML = 'Save';
-		
-		/*
-    $.ajax({
-		url: "libs/php/insertLocation.php",
-		type: "GET",
-		//url: "libs/post-php/insertLocation.php",
-    //type: "POST",
-    dataType: "json",
-    data: {
-      name: newLocationName
-    },
-    success: function (result) {
-      
-          let newDeptObj = {};
-          newDeptObj['name'] = 'New Department';
-          newDeptObj['locationID'] = result.data.id;
-          
-          $.ajax({
-          url: "libs/php/insertDepartmentRtnID.php",  
-          //url: "libs/php/insertDepartment.php", //not used
-          type: "GET",
-          //url: "libs/post-php/insertDepartmentRtnID.php",
-          //type: "POST",
-          dataType: "json",
-          data: newDeptObj,
-          success: function (result) {
-						
-							console.log('new loction result', result);
-							
-							document.getElementById('modal-deny-btn').click();
-							
-							document.getElementById('floating-info-message').setAttribute('class', 'ui info floating-error message');
-							document.getElementById('floating-info-header').innerHTML = 'New Location created';
-							document.getElementById('floating-info-text').innerHTML = newLocationName;
-
-							refreshPage();
-
-          },
-          error: function (jqXHR, textStatus, errorThrown) {
-              console.log('error');
-              console.log(textStatus);
-              console.log(errorThrown);
-            },
-          });
-          
-
-    },
-    error: function (jqXHR, textStatus, errorThrown) {
-        console.log('error');
-        console.log(textStatus);
-        console.log(errorThrown);
-      },
-    });
-
-		*/
-
-  });	
-	
-	} // end of IF locationNameNeedsToBeValidated == false
-				
-
-				
-				if (!$(`#new-location-form`).form('validate form')) {
-					
-					locationNameNeedsToBeValidated = true;
-
-				} else if ($(`#new-location-form`).form('validate form')){
-				
-					locationNameNeedsToBeValidated = false;
-
-				}
-
-
-	if ($(`#new-location-form`).form('validate form')) {
-		$(`#new-location-form`).form('submit');
-		$(`#new-location-form`).form('reset');
-		$('#new-location-accordion-btn').click();
-
-		let closeNewLocationTimer = setTimeout(function(){
-			$('#location-accordion-segment').attr('style', 'display: none');
-			clearTimeout(closeNewLocationTimer);
-		},250);		
-
-	}
-
-});
-
 
 function oneLocationEventListeners(deptsParam, locKey){
 
@@ -1620,69 +1574,176 @@ function oneLocationEventListeners(deptsParam, locKey){
 } // end of loop through departments	
 }
 
-function eventListenersInsideLocsModal() {
-
-	let existingLocationNames = [];
+function eventListenersInsideLocsModal(latestLocations) {
 	
-	for (let [k, value] of Object.entries(locsAndDeptsObj)){
-
-		existingLocationNames.push(locationsObj[k]);
+	for (let [k, val] of Object.entries(latestLocations)){
+	
+		$(`#rename-locationID-${k}-input-field`).on('input', function(){
+			
+			$(`#submit-rename-locationID-${k}-btn`).attr('class','ui tiny button dept-action-button');
+			
+		});
 
 		$(`#submit-rename-locationID-${k}-btn`).click(function(e){
-		e.preventDefault();
-		
-		if (!renameLocNeedsToBeValidated) {
-		
-		$(`#locationID-${k}-form`).one('submit', function(event){
-			event.preventDefault();
-
-			$(`#locationID-${k}-form`).form('set defaults');
 			
-			$(`#locationID-${k}-accordion`).click()	
+			e.preventDefault();
 
-			let updatedLocName;
-			let updatedLocID;
-			let updateLocationDataObj = {};
+			if (!renameLocNeedsToBeValidated) {
+			
+				$(`#locationID-${k}-form`).one('submit', function(event){
+				event.preventDefault();
 
-			for (let e = 0; e < this.elements.length; e ++) {
+			  $(`#locationID-${k}-form`).addClass('loading');
+
+				let formFields = $(`#locationID-${k}-form`).form('get values');
+						
+				function updateLocation(formData) {
+					
+					$.ajax({
+					//url: "libs/post-php/updateLocation.php",
+					//type: "POST",
+					url: "libs/php/updateLocation.php",
+					type: "GET",
+					dataType: "json",
+					data: formData,
+					success: function (result) {
+
+						console.log('location updated');
+						
+						$(`#locationID-${k}-accordion`).click();
 		
-				if (this.elements[e].tagName != 'BUTTON') {			
 
-					updatedLocName = this.elements[e].value;
-					updatedLocID = this.elements[e].getAttribute('locID');
+						
+						let renameTimer = setTimeout(function(){
+							$(`#locationID-${k}-form`).removeClass('loading');
+							$(`#locationID-${k}-title`).hide().html(`${formData['loc-rename']}`).fadeIn(750);	
+							clearTimeout(renameTimer);
+						},250);
+							
+						$(`#locationID-${k}-form`).form('set defaults');
+						$(`#rename-locationID-${k}-input-field`).attr('value', `${formData['loc-rename']}`);
+						$(`#rename-locationID-${k}-input-field`).attr('placeholder', `${formData['loc-rename']}`);
+						
+						latestLocations[k] = formData['loc-rename'];
 
-					$(`#input-locationID-${k}-field`).attr('value', this.elements[e].value);
-					$(`#input-locationID-${k}-field`).attr('placeholder', this.elements[e].value);
-					$(`#locationID-${k}-title`).hide().html(this.elements[e].value).fadeIn(750); 
-
-					}
+					},
+					error: function (jqXHR, textStatus, errorThrown) {
+							console.log('error', jqXHR);
+							console.log(textStatus);
+							console.log(errorThrown);
+						},
+					});
+								
+				} //end of Update function
 				
-			}	
-			
-			updateLocationDataObj['location'] = updatedLocName;
-			updateLocationDataObj['locationID'] = updatedLocID;	
-		
-			console.log('need ajax to update location, JS line 1783');
+				$.ajax({
+					//url: "libs/post-php/checkLocation.php",
+					//type: "POST",
+					url: "libs/php/checkLocationCache.php",
+					type: "GET",
+					dataType: "json",
+					data: {
+						locationID: k,
+						locationName: val
+					},
+					success: function (result) {
+						
+						console.log('location cache result', result);
+						
+						if (result.data == true) {
+					
+							if (latestLocations[k] == formFields['loc-rename']) {
+								
+								$(`#locationID-${k}-form`).removeClass('loading');
+							
+							} else {
+							
+								$.ajax({
+								//url: "libs/post-php/countDeptByName.php",
+								//type: "POST",
+								url: "libs/php/validateChangeLocName.php",
+								type: "GET",
+								dataType: "json",
+								data: {
+									locationName: formFields['loc-rename'],
+									locationID: k
+								},
+								success: function (result) {
+												
+									if (result.data['existingNames'] == 0) { 
+										
+										updateLocation(formFields);
+										
 
-			});
-		
-		} // end of IF renameLocNeedsToBeValidated == false
-		
-		if (!$(`#locationID-${k}-form`).form('validate form')) {
-			console.log('not validated')
-			renameLocNeedsToBeValidated = true;
-		} else if ($(`#locationID-${k}-form`).form('validate form')){
+									} else {
+
+										$(`#locationID-${k}-form`).form('add errors', ['That location already exists.']);
+										$(`#locationID-${k}-form`).removeClass('loading');	
+
+									} 
+
+								},
+								error: function (jqXHR, textStatus, errorThrown) {
+										console.log('error', jqXHR);
+										console.log(textStatus);
+										console.log(errorThrown);
+									},
+								});
+							
+							}
+
+						} else {
+
+							$(`#locationID-${k}-form`).form('add errors', ['A data error occurred please refresh this window and try again.']);
+
+						}
+						
+					},
+					error: function (jqXHR, textStatus, errorThrown) {
+							console.log('error', jqXHR);
+							console.log(textStatus);
+							console.log(errorThrown);
+						},
+					});
+
+
+				}); // end of Submit listener
 			
-			renameLocNeedsToBeValidated = false;
-		}
+			} // end of IF renameLocNeedsToBeValidated == false
+			
+			if (!$(`#locationID-${k}-form`).form('validate form')) {
+				renameLocNeedsToBeValidated = true;
+			} else if ($(`#locationID-${k}-form`).form('validate form')){
+				
+				renameLocNeedsToBeValidated = false;
+			}
 
 			if ($(`#locationID-${k}-form`).form('validate form')) {
+
 				$(`#locationID-${k}-form`).form('submit');
-				$(`#locationID-${k}-form`).form('reset');
+
 			}
 
 
-		});
+		}); // end of click listener
+			
+		$(`#rename-locationID-${k}-btn`).click(function(e){
+
+			locationRules = basicRules.slice();
+	
+			$(`#locationID-${k}-form`).form({	
+				fields: {
+					name: {
+						identifier: 'loc-rename',
+						rules: locationRules
+					}
+				},
+				transition: 'fade'
+			})	
+
+			$(`#locationID-${k}-accordion`).click();
+			
+		});	
 
 		$(`#cancel-locationID-${k}-btn`).click(function(e){
 			
@@ -1692,130 +1753,93 @@ function eventListenersInsideLocsModal() {
 
 		});
 	
-		
-		$(`#rename-locationID-${k}-btn`).click(function(e){
-
-		$(`#locationID-${k}-accordion`).click();
-
-			let clickFieldTimer = setTimeout(function(){
-				console.log('click');
-				document.getElementById(`rename-locationID-${k}-form-field`).click();
-				clearTimeout(clickFieldTimer);
-			}, 500);
-
-		});	
-		
-
 		$(`#delete-locationID-${k}-btn`).click(function(e){
 
-			console.log('get current dept count from DB');
-
-		});
-
-	}	 
+			$.ajax({
+			//url: "libs/post-php/countDeptByLocation.php",
+			//type: "POST",
+			url: "libs/php/countDeptByLocation.php",
+			type: "GET",
+			dataType: "json",
+			data: {
+				locationID: k
+			},
+			success: function (result) {
 				
-	locationRules = basicRules.slice();
+				if (result.data.departments > 2) {
 
-
-	for (let r = 0 ; r < existingLocationNames.length; r ++) {
-	
-		let newRule = {}
-			newRule['type'] = `notExactly[${existingLocationNames[r]}]`;
-			newRule['prompt'] = 'That location already exists.';
-			locationRules.push(newRule)
-	
-	}
-				
-	for (let [c, val] of Object.entries(locationsObj)){	
-			
-		$(`#locationID-${c}-form`).form({
-			fields: {
-				name: {
-					identifier: 'loc-rename',
-					rules: locationRules
-				}
-			}
-		});	
-				
-	}
-		
-	// the new location field also gets the same rules
-
-	$('#locationID-x-new-loc-accordion-btn').click(function(){
-
-		let invisibleDivTimer = setTimeout(function(){
-			document.getElementById('invisible-div').scrollIntoView({behavior: "smooth", block: "end"});
-			clearTimeout(invisibleDivTimer);
-		},200);
-
-		//document.getElementById('invisible-div').scrollIntoView({behavior: "smooth", block: "end"});
-
-	});
+					$(`#locationID-${k}-warning`).attr('class', 'ui floating warning message');
+					$(`#locationID-${k}-warning-text`).html(`This location has ${result.data.departments} departments. <br/>Only empty locations can be deleted.`);
 					
-			$(`#locationID-x-new-loc-form`).form({
+					$(`#locationID-${k}-close-icon`)
+					.one('click', function() {
+						$(this)
+							.closest('.message')
+							.transition('fade')
+						;
+					});
 			
-				fields: {
-						name: {
-							identifier: 'new-location',
-							rules: locationRules
-						}
-					}
+				} else {
 
-			});
-			
-			
-	$(`#locationID-x-submit-new-loc-btn`).click(function(e){
-		e.preventDefault();
-		
-		if(!createNewLocNeedsToBeValidated){
-		
-			$(`#locationID-x-new-loc-form`).one('submit', function(event){
-				event.preventDefault();
-
-				$(`#locationID-x-new-loc-accordion-btn`).click();
-
-				let newLocName;
-				//let locationID = document.getElementById(`locationID-x-submit-new-loc-btn`).getAttribute('locid');
-				
-				for (let e = 0; e < this.elements.length; e ++) {
-			
-					if (this.elements[e].tagName != 'BUTTON') {			
-		
-						newLocName = this.elements[e].value;
 						
-					}
-		
+					$.ajax({
+					//url: "libs/post-php/checkDepartmentCachce.php",
+					//type: "POST",
+					url: "libs/php/checkLocationCache.php",
+					type: "GET",
+					dataType: "json",
+					data: {
+						locationID: k,
+						locationName: val
+					},
+					success: function (result) {
+						
+						console.log('delete location cache check', result);
+						
+						if (result.data == true) {
+
+						$('#modal-header-text').html(`<i class="archive icon"></i> Delete Location`);
+						$('#alert-modal-text').html('Are you sure you want to delete this location?');
+						
+						$('#confirm-delete-loc-btn').attr('style', 'display: inline-block');
+
+						$('#open-second-modal-btn').click();
+
+						$('#confirm-delete-loc-btn').one('click', function(){
+
+							console.log(`now delete Department ${k}, ${val}`);
+
+						});
+						
+
+						} else {
+							
+							$(`#locationID-${k}-form`).form('add errors', ['A data error occurred please refresh this window and try again.']);
+							
+						}
+
+					},
+					error: function (jqXHR, textStatus, errorThrown) {
+							console.log('error', jqXHR);
+							console.log(textStatus);
+							console.log(errorThrown);
+						},
+					});
+	
 				}
-
-				let newLocNode = createLocationSegment(6, newLocName);
-
-				$(`#location-x-new-loc-before`).before($(newLocNode).hide().fadeIn(1000));
-
+				
+				
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+					console.log('error', jqXHR);
+					console.log(textStatus);
+					console.log(errorThrown);
+				},
 			});
-		
-		} // end of createNewDeptNeedsToBeValidated == false
-		
-		if (!$(`#locationID-x-new-loc-form`).form('validate form')) {
-			console.log('not validated')
-			createNewLocNeedsToBeValidated = true;
-		} else if ($(`#locationID-x-new-loc-form`).form('validate form')){
-			createNewLocNeedsToBeValidated = false;
-		}
-		
-		if ($(`#locationID-x-new-loc-form`).form('validate form')) {
-			$(`#locationID-x-new-loc-form`).form('submit');
-			$(`#locationID-x-new-loc-form`).form('reset');
-		}
-		
 
-	});
+		}); //end of delete 
 
-	$(`#locationID-x-cancel-new-loc-btn`).click(function(e){
-
-		$(`#locationID-x-new-loc-form`).form('reset');
-		$(`#locationID-x-new-loc-accordion-btn`).click();
-
-	});
+	}	 //end of loop
 				
 	$('.ui.accordion').accordion();
 	
@@ -1824,26 +1848,26 @@ function eventListenersInsideLocsModal() {
 
 function eventListenersInsideDeptsModal(deptCacheObj, latestLocations) {
 
-		for (let [k, val] of Object.entries(deptCacheObj)){	
+	for (let [k, val] of Object.entries(deptCacheObj)){	
 
-			$(`#rename-departmentID-${k}-input-field`).on('input', function(){
-				
-				$(`#submit-rename-departmentID-${k}-btn`).attr('class','ui tiny button dept-action-button');
-				
-			});
+		$(`#rename-departmentID-${k}-input-field`).on('input', function(){
 			
-			$(`#departmentID-${k}-loc-dropdown`).on('change', function(){
-				
-				$(`#submit-rename-departmentID-${k}-btn`).attr('class','ui tiny button dept-action-button');
-				
-			});
+			$(`#submit-rename-departmentID-${k}-btn`).attr('class','ui tiny button dept-action-button');
+			
+		});
+			
+		$(`#departmentID-${k}-loc-dropdown`).on('change', function(){
+			
+			$(`#submit-rename-departmentID-${k}-btn`).attr('class','ui tiny button dept-action-button');
+			
+		});
 
-			$(`#submit-rename-departmentID-${k}-btn`).click(function(e){
-				e.preventDefault();
+		$(`#submit-rename-departmentID-${k}-btn`).click(function(e){
+			e.preventDefault();
 
 			if (!updateDeptNeedsToBeValidated) {
 			
-				$(`#departmentID-${k}-form`).one('submit', function(event){
+					$(`#departmentID-${k}-form`).one('submit', function(event){
 					event.preventDefault();
 
 					$(`#departmentID-${k}-form`).addClass('loading');
@@ -1990,7 +2014,7 @@ function eventListenersInsideDeptsModal(deptCacheObj, latestLocations) {
 									console.log('error', jqXHR);
 									console.log(textStatus);
 									console.log(errorThrown);
-								},
+							},
 						});
 
 					} else {
@@ -2004,56 +2028,53 @@ function eventListenersInsideDeptsModal(deptCacheObj, latestLocations) {
 							console.log('error', jqXHR);
 							console.log(textStatus);
 							console.log(errorThrown);
-						},
+					},
 					});
 
 
-				}); // end of Submit listener
+			}); // end of Submit listener
 
-			}
+			} // end of IF needs to be validated
 
 			if (!$(`#departmentID-${k}-form`).form('validate form')) {
-				console.log('not validated')
 				updateDeptNeedsToBeValidated = true;
 			} else if ($(`#departmentID-${k}-form`).form('validate form')){
-				
 				updateDeptNeedsToBeValidated = false;
-		
 			}
 									
-				if ($(`#departmentID-${k}-form`).form('validate form')) {
-					$(`#departmentID-${k}-form`).form('submit');
-				}
+			if ($(`#departmentID-${k}-form`).form('validate form')) {
+				$(`#departmentID-${k}-form`).form('submit');
+			}
 
-			});
+		}); //end of click listener
 
-			$(`#cancel-departmentID-${k}-btn`).click(function(e){
-				
-				$(`#departmentID-${k}-form`).form('reset');
+		$(`#cancel-departmentID-${k}-btn`).click(function(e){
+			
+			$(`#departmentID-${k}-form`).form('reset');
 
-				$(`#departmentID-${k}-accordion`).click();
+			$(`#departmentID-${k}-accordion`).click();
 
-			});
-		
-			$(`#rename-departmentID-${k}-btn`).click(function(e){
+		});
+	
+		$(`#rename-departmentID-${k}-btn`).click(function(e){
 
-				departmentRules = basicRules.slice();
+			departmentRules = basicRules.slice();
 
-				$(`#departmentID-${k}-form`).form({	
-					fields: {
-						name: {
-							identifier: 'dept-rename',
-							rules: departmentRules
-						}
-					},
-					transition: 'fade'
-				})	
+			$(`#departmentID-${k}-form`).form({	
+				fields: {
+					name: {
+						identifier: 'dept-rename',
+						rules: departmentRules
+					}
+				},
+				transition: 'fade'
+			})	
 
-				$(`#departmentID-${k}-accordion`).click();
-				
-			});	
+			$(`#departmentID-${k}-accordion`).click();
+			
+		});	
 
-			$(`#delete-departmentID-${k}-btn`).click(function(e){
+		$(`#delete-departmentID-${k}-btn`).click(function(e){
 
 				$.ajax({
 				//url: "libs/post-php/countPersonnelByDept.php",
@@ -2098,6 +2119,8 @@ function eventListenersInsideDeptsModal(deptCacheObj, latestLocations) {
 
 							$('#modal-header-text').html(`<i class="archive icon"></i> Delete Department`);
 							$('#alert-modal-text').html('Are you sure you want to delete this department?');
+							
+							$('#confirm-delete-dept-btn').attr('style', 'display: inline-block');
 
 							$('#open-second-modal-btn').click();
 
@@ -2144,146 +2167,13 @@ function eventListenersInsideDeptsModal(deptCacheObj, latestLocations) {
 						console.log(textStatus);
 						console.log(errorThrown);
 					},
-				});
-
-
-
-
+				});		
 					
+			}); // end of delete
 					
-			});
-
-							
 	} // end of loop through departments
 				
 	$('.ui.accordion').accordion();
-	
-		// the new dept field also gets the same rules 
-		/*
-		$(`#locationID-${key}-new-dept-form`).form({
-		
-			fields: {
-					name: {
-						identifier: 'new-department',
-						rules: departmentRules
-					}
-				}
-
-		});
-
-		$(`#locationID-${key}-submit-new-dept-btn`).click(function(e){
-			e.preventDefault();
-			
-			if(!createNewDeptNeedsToBeValidated){
-			
-			$(`#locationID-${key}-new-dept-form`).one('submit', function(event){
-				event.preventDefault();
-
-				$(`#locationID-${key}-new-dept-accordion-btn`).click();
-
-				let newDeptName;
-				let locationID = document.getElementById(`locationID-${key}-submit-new-dept-btn`).getAttribute('locid');
-				
-				for (let e = 0; e < this.elements.length; e ++) {
-			
-					if (this.elements[e].tagName != 'BUTTON') {			
-		
-						newDeptName = this.elements[e].value;
-						
-					}
-		
-				}
-				
-				let newDeptObj = {};
-				newDeptObj['name'] = newDeptName;
-				newDeptObj['locationID'] = locationID;
-				
-				$.ajax({
-				//url: "libs/post-php/insertDepartmentRtnID.php",
-				//type: "POST",
-				url: "libs/php/insertDepartmentRtnID.php",
-				type: "GET",
-				dataType: "json",
-				data: newDeptObj,
-				success: function (result) {
-
-						let newDeptNode = createDepartmentSegment(result.data.id, newDeptName, 0);
-						
-						
-						$(`#location-${locationID}-new-dept-before`).before($(newDeptNode).hide().fadeIn(1000));
-
-						departmentsObj[result.data.id] = {};
-						departmentsObj[result.data.id]['name'] = newDeptName;
-
-						locsAndDeptsObj[locationID]['departments'][result.data.id] = {};
-						locsAndDeptsObj[locationID]['departments'][result.data.id]['loaded'] = false;
-						locsAndDeptsObj[locationID]['departments'][result.data.id]['depname'] = newDeptName;
-
-						oneLocationEventListeners(locsAndDeptsObj[locationID]['departments'], locationID);
-
-						refreshPage();  
-
-				},
-				error: function (jqXHR, textStatus, errorThrown) {
-						console.log('error');
-						console.log(textStatus);
-						console.log(errorThrown);
-					},
-				});
-				
-
-			});
-			
-			} // end of createNewDeptNeedsToBeValidated == false
-			
-			if (!$(`#locationID-${key}-new-dept-form`).form('validate form')) {
-				console.log('not validated')
-				createNewDeptNeedsToBeValidated = true;
-			} else if ($(`#locationID-${key}-new-dept-form`).form('validate form')){
-			
-				createNewDeptNeedsToBeValidated = false;
-			}
-			
-			if ($(`#locationID-${key}-new-dept-form`).form('validate form')) {
-				$(`#locationID-${key}-new-dept-form`).form('submit');
-				$(`#locationID-${key}-new-dept-form`).form('reset');
-			}
-			
-
-		});
-
-		$(`#locationID-${key}-cancel-new-dept-btn`).click(function(e){
-
-			$(`#locationID-${key}-new-dept-form`).form('reset');
-			$(`#locationID-${key}-new-dept-accordion-btn`).click();
-
-		});
-
-    $(`#delete-locationID-${key}-icon`).click(function(e){
-			
-			let onlyDeptID;
-			let checkDeptObj = locsAndDeptsObj[key]['departments'];
-			let checkDeptCount = 0;
-			
-			for (let [check_key, check_val] of Object.entries(checkDeptObj)){
-				
-				checkDeptCount++;
-				onlyDeptID = check_key;
-			
-			}		
-			
-			if (checkDeptCount == 1) {
-
-				document.getElementById(`delete-departmentID-${onlyDeptID}-btn`).click();				
-			} else {
-
-				console.log('error finding last department ID');
-			
-			}
-
-			
-    });
-		*/
 
 } //END OF ADDING DEPARTMENTS EVENT LISTENERS FUNCTION;
 
@@ -3517,7 +3407,7 @@ function createLocationSegment(id, name){
 						let locationTitleText = document.createElement('h4');								  locationTitle.appendChild(locationTitleText);
 					let locationEmployees = document.createElement('div');								  locationTitleRow.appendChild(locationEmployees);
 						let locationEmployeeInfo = document.createElement('div');						  locationEmployees.appendChild(locationEmployeeInfo);
-							let locationEmployeeCount = document.createElement('span');				  locationEmployeeInfo.appendChild(locationEmployeeCount);
+							//let locationEmployeeCount = document.createElement('span');				  locationEmployeeInfo.appendChild(locationEmployeeCount);
 							//let employeesIcon = document.createElement('i');									locationEmployeeInfo.appendChild(employeesIcon);
 						let locationButtons = document.createElement('div');								  locationEmployees.appendChild(locationButtons);
 							let renameLocationBtn = document.createElement('span');						  locationButtons.appendChild(renameLocationBtn);
@@ -3534,9 +3424,9 @@ function createLocationSegment(id, name){
 								let renameLocText = document.createElement('div');								renameLocAccordionContainer.appendChild(renameLocText);
 								let	renameLocAccordionField = document.createElement('div');			renameLocAccordionContainer.appendChild(renameLocAccordionField);
 									let	renameLocAccordionInput = document.createElement('input');  renameLocAccordionField.appendChild(renameLocAccordionInput);
-								let renameLocAccordionButtons = document.createElement('div');  	renameLocAccordionContainer.appendChild(renameLocAccordionButtons);
-									let submitRenameLocBtn = document.createElement('div');				  renameLocAccordionButtons.appendChild(submitRenameLocBtn);
-									let cancelRenameLocBtn = document.createElement('button');			renameLocAccordionButtons.appendChild(cancelRenameLocBtn);
+							let renameLocAccordionButtons = document.createElement('div');  		renameLocAccordionTransition.appendChild(renameLocAccordionButtons);
+								let submitRenameLocBtn = document.createElement('div');				  	renameLocAccordionButtons.appendChild(submitRenameLocBtn);
+								let cancelRenameLocBtn = document.createElement('button');				renameLocAccordionButtons.appendChild(cancelRenameLocBtn);
 																																									//locationForm.appendChild(dropDown);
 				let renameLocErrorMsg = document.createElement('div');										locationForm.appendChild(renameLocErrorMsg);
 
@@ -3553,13 +3443,13 @@ function createLocationSegment(id, name){
 						locationTitleText.innerHTML = name;
 					locationEmployees.setAttribute('class', 'loc-employee-info-icons');						
 						locationEmployeeInfo.setAttribute('class', 'employee-count-icon'); //hide with display-none-field display-none-field
-							locationEmployeeCount.setAttribute('id', `locationID-${id}-employee-count`); locationEmployeeCount.innerHTML = `X Departments`; locationEmployeeCount.setAttribute('class', 'employee-count-number default-cursor');
+							//locationEmployeeCount.setAttribute('id', `locationID-${id}-employee-count`); locationEmployeeCount.innerHTML = `X Departments`; locationEmployeeCount.setAttribute('class', 'employee-count-number default-cursor');
 							//employeesIcon.setAttribute('class', 'fas fa-users');
 						locationButtons.setAttribute('class', 'loc-delete-edit-btns');
 							renameLocationBtn.setAttribute('class', 'ui icon button');  renameLocationBtn.setAttribute('id', `rename-locationID-${id}-btn`);
-							editIcon.setAttribute('class', 'fas fa-edit pointer');
-							//deleteLocationBtn.setAttribute('class', 'ui icon button'); deleteLocationBtn.setAttribute('locid', id); deleteLocationBtn.setAttribute('locname', name); deleteLocationBtn.setAttribute('id', `delete-locationID-${id}-btn`); deleteLocationBtn.setAttribute('employees', `${emps}`);// also add emps as property to button
-							binIcon.setAttribute('class', 'fas fa-trash-alt');
+								editIcon.setAttribute('class', 'fas fa-edit pointer');
+							deleteLocationBtn.setAttribute('class', 'ui icon button'); deleteLocationBtn.setAttribute('locid', id); deleteLocationBtn.setAttribute('locname', name); deleteLocationBtn.setAttribute('id', `delete-locationID-${id}-btn`); 
+								binIcon.setAttribute('class', 'fas fa-trash-alt');
 				renameLocAccordion.setAttribute('class', 'ui accordion field new-loc-accordion');	renameLocAccordion.setAttribute('id', `rename-loc-${id}-accordion`);
 					renameLocAccordionTitle.setAttribute('class', 'title display-none-field');
 						renameLocAccordionDropdown.setAttribute('class', 'icon dropdown');
@@ -3567,12 +3457,12 @@ function createLocationSegment(id, name){
 					renameLocAccordionContent.setAttribute('class', 'content field');
 						renameLocAccordionTransition.setAttribute('class', 'content field transition hidden');
 							renameLocAccordionContainer.setAttribute('class', 'location-field-container'); 
-								renameLocText.innerHTML = 'Edit name: '; 
+								renameLocText.setAttribute('class', 'edit-loc-text-item'); renameLocText.innerHTML = 'Edit name: '; 
 								renameLocAccordionField.setAttribute('class', 'field loc-name-field'); renameLocAccordionField.setAttribute('autofocus', ''); renameLocAccordionField.setAttribute('id', `rename-locationID-${id}-form-field`); 
-									renameLocAccordionInput.setAttribute('id', `rename-locationID-${id}-input-field`); renameLocAccordionInput.setAttribute('placeholder', 'Rename Location'); renameLocAccordionInput.setAttribute('locid', id); renameLocAccordionInput.setAttribute('type', 'text'); renameLocAccordionInput.setAttribute('value',locationsObj[id]); renameLocAccordionInput.setAttribute('name','loc-rename'); renameLocAccordionInput.setAttribute('autofocus','');
-								renameLocAccordionButtons.setAttribute('class', 'rename-accordion-buttons');
-									submitRenameLocBtn.setAttribute('class', 'ui tiny button loc-action-button'); submitRenameLocBtn.setAttribute('id', `submit-rename-locationID-${id}-btn`); submitRenameLocBtn.innerHTML = 'Submit';
-									cancelRenameLocBtn.setAttribute('class', 'ui tiny button loc-action-button'); cancelRenameLocBtn.setAttribute('form', `locationID-${id}-form`); cancelRenameLocBtn.setAttribute('id', `cancel-locationID-${id}-btn`); cancelRenameLocBtn.setAttribute('type', 'reset'); cancelRenameLocBtn.innerHTML = 'Cancel';
+									renameLocAccordionInput.setAttribute('id', `rename-locationID-${id}-input-field`); renameLocAccordionInput.setAttribute('placeholder', 'Rename Location'); renameLocAccordionInput.setAttribute('locid', id); renameLocAccordionInput.setAttribute('type', 'text'); renameLocAccordionInput.setAttribute('value',name); renameLocAccordionInput.setAttribute('name','loc-rename'); renameLocAccordionInput.setAttribute('autofocus','');
+							renameLocAccordionButtons.setAttribute('class', 'rename-accordion-buttons');
+								submitRenameLocBtn.setAttribute('class', 'ui tiny button loc-action-button'); submitRenameLocBtn.setAttribute('id', `submit-rename-locationID-${id}-btn`); submitRenameLocBtn.innerHTML = 'Save';
+								cancelRenameLocBtn.setAttribute('class', 'ui tiny button loc-action-button'); cancelRenameLocBtn.setAttribute('form', `locationID-${id}-form`); cancelRenameLocBtn.setAttribute('id', `cancel-locationID-${id}-btn`); cancelRenameLocBtn.setAttribute('type', 'reset'); cancelRenameLocBtn.innerHTML = 'Cancel';
 				renameLocErrorMsg.setAttribute('class','ui error message');
 		
 	return locationSegment
@@ -3666,27 +3556,52 @@ function manageDepartmentsAndLocationsModal(category, show){
 	document.getElementById('append-department-panels').innerHTML = '';
 
 	if (category == 'locations'){
-
-		let locationContent = document.createElement('div');
-
-		locationContent.setAttribute('class', 'ui segment');
-		locationContent.setAttribute('id', 'location-entries');
 		
-		for (let [key, value] of Object.entries(locationsObj)) {	
+		$.ajax({
+		//url: "libs/post-php/getAllDepartments.php",
+		//type: "POST",
+		url: "libs/php/getAllLocations.php",
+		type: "GET",
+		dataType: "json",
+		data: {},
+		success: function (result) {
+						
+			let locationContent = document.createElement('div');
+
+			locationContent.setAttribute('class', 'ui segment');
+			locationContent.setAttribute('id', 'location-entries');
+			
+			let latestLocations = {};
+			
+			for (let [key, value] of Object.entries(result.data)) {	
+					
+				latestLocations[value['id']] = value['name'];
 				
-			locationContent.appendChild(createLocationSegment(key, value));
+				locationContent.appendChild(createLocationSegment(value['id'], value['name']));
 
-		}
-		
-		document.getElementById('append-location-panels').appendChild(locationContent);
+			}
+			
+			document.getElementById('append-location-panels').appendChild(locationContent);
 
-		if (show == true) {
+			if (show == true) {
+				
+				document.getElementById('close-only-btn').setAttribute('style', 'display: inline-block');
+				document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: block');	
+				document.getElementById('create-new-location-btn').setAttribute('style', 'display: inline-block; float: left');
+				showModal('Locations');
+				eventListenersInsideLocsModal(latestLocations);
+			
+			}
 
-			document.getElementById('create-new-location-btn').setAttribute('style', 'display: inline');
-			showModal('Locations');
-			eventListenersInsideLocsModal();
-		
-		}
+
+
+		},
+		error: function (jqXHR, textStatus, errorThrown) {
+				console.log('error', jqXHR);
+				console.log(textStatus);
+				console.log(errorThrown);
+			},
+		});
 
 	} else if (category == 'departments') {
 
@@ -3766,8 +3681,8 @@ function manageDepartmentsAndLocationsModal(category, show){
 			
 						if (show == true){
 						
-							document.getElementById('create-new-department-btn').setAttribute('style', 'display: inline');
-							document.getElementById('close-only-btn').setAttribute('style', 'display: inline');
+							document.getElementById('create-new-department-btn').setAttribute('style', 'display: inline-block');
+							document.getElementById('close-only-btn').setAttribute('style', 'display: inline-block');
 							document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: block');
 							showModal('Departments');
 							eventListenersInsideDeptsModal(deptCacheObj, latestLocations);

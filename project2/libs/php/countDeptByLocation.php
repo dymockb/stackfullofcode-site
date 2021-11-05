@@ -1,9 +1,9 @@
 <?php
 
 	// example use from browser
-	// http://localhost/companydirectory/libs/php/getAllLocations.php
+	// http://localhost/companydirectory/libs/php/getPersonnelByID.php?id=<id>
 
-	// remove next two lines for production	
+	// remove next two lines for production
 	
 	ini_set('display_errors', 'On');
 	error_reporting(E_ALL);
@@ -32,13 +32,16 @@
 
 	}	
 
-	// SQL does not accept parameters and so is not prepared
+	// first query - SQL statement accepts parameters and so is prepared to avoid SQL injection.
+	// $_REQUEST used for development / debugging. Remember to change to $_POST for production
 
-	$query = 'SELECT id, name FROM location ORDER BY name';
+	$query = $conn->prepare('SELECT count(id) as lc from department WHERE locationID = ?');
 
-	$result = $conn->query($query);
+	$query->bind_param("i", $_REQUEST['locationID']);
+
+	$query->execute();
 	
-	if (!$result) {
+	if (false === $query) {
 
 		$output['status']['code'] = "400";
 		$output['status']['name'] = "executed";
@@ -52,12 +55,14 @@
 		exit;
 
 	}
-   
-  $data = [];
+    
+	$result = $query->get_result();
+
+  $departments;
 
 	while ($row = mysqli_fetch_assoc($result)) {
 
-		array_push($data, $row);
+		$departments = $row['lc'];
 
 	}
 
@@ -65,7 +70,7 @@
 	$output['status']['name'] = "ok";
 	$output['status']['description'] = "success";
 	$output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000 . " ms";
-	$output['data'] = $data;
+	$output['data']['departments'] = $departments;
 	
 	mysqli_close($conn);
 
