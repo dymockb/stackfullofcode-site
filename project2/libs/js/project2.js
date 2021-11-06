@@ -181,6 +181,27 @@ let filtersAccordion = 'closed';
 let accordionJustOpened = true;
 let clickCount = 0;
 let deptCount;
+	
+
+$('#mobile-search-options').on('click', function(){
+		
+	if (filtersAccordion == 'closed'){
+		
+		//$('#filter-search-segment').addClass('loading');
+		
+		clickCount = 0;
+		
+		let forMobile = true;
+		
+		renderFilterCheckboxes(forMobile);
+
+	}
+
+	filtersAccordion = filtersAccordion == 'closed' ? 'cpen' : 'closed';
+
+
+});
+
 
 $('#filter-search-accordion').on('click', function(){
 		
@@ -190,7 +211,9 @@ $('#filter-search-accordion').on('click', function(){
 		
 		clickCount = 0;
 		
-		renderFilterCheckboxes();
+		let forMobile = false;
+		
+		renderFilterCheckboxes(forMobile);
 
 	}
 
@@ -199,9 +222,10 @@ $('#filter-search-accordion').on('click', function(){
 
 });
 
-function renderFilterCheckboxes(){
+function renderFilterCheckboxes(forMobile){
 	
 	document.getElementById('append-filters').innerHTML = '';
+	document.getElementById('append-mobile-filters').innerHTML = '';
 	
 	$.ajax({
 			//url: "libs/post-php/getAllLocations.php",
@@ -266,8 +290,15 @@ function renderFilterCheckboxes(){
 								}
 	
 							locationGroup.appendChild(listDiv);
-							document.getElementById('append-filters').appendChild(locationGroup);							
-						
+							if (forMobile == false) {
+								
+								document.getElementById('append-filters').appendChild(locationGroup);							
+							
+							} else {
+								
+								document.getElementById('append-mobile-filters').appendChild(locationGroup);							
+								
+							}
 						}
 						
 						deptCount = clickCount.valueOf();

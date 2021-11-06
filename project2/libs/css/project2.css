@@ -79,6 +79,12 @@ body {
 	width: fit-content !important
 }
 
+.item.location-group {
+	break-inside: avoid;
+	page-break-inside: avoid;
+	display: inline-block;
+}
+
 .floating-error {
 	position: fixed !important;
 	width: 90%;
@@ -155,6 +161,10 @@ i.fas.fa-wrench {
 	flex-direction: column;
 	align-items: center;
 	margin-top: 0.8rem;
+}
+
+#append-mobile-filters {
+	columns: 2;
 }
 
 .location-group {
