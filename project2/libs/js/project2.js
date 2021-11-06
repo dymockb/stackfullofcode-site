@@ -144,47 +144,75 @@ function createFilterCheckbox(checkboxName, checkboxInputID, category, mobile){
 
 };
 
-
-
-function renderFilterCheckboxes(checkboxItems, checkboxIDs, category){
-
-	let checkboxesObj = {};
-
-	for (cbo = 0; cbo < checkboxItems.length; cbo ++) {
-		
-		checkboxesObj[checkboxItems[cbo]] = checkboxIDs[cbo]
+function createMasterCheckbox(locationID, label){
 	
-	}
-
-	checkboxItems.sort()
-
-	for (cbi = 0; cbi < checkboxItems.length; cbi ++) {
-		let cbName, cbInputID;
-		if (category == 'department') {
-			cbName = checkboxItems[cbi];
-			
-			cbInputID = checkboxesObj[checkboxItems[cbi]];
-		} else if (category == 'location'){
-			cbName = checkboxItems[cbi];			
-			cbInputID = checkboxesObj[checkboxItems[cbi]];
-			
-		}
-			
-		document.getElementById(`${category}-checkboxes`).appendChild(createCheckbox(cbName, cbInputID, category, false));
-		document.getElementById(`${category}-checkboxes-mobile`).appendChild(createCheckbox(cbName, cbInputID, category, true));
-
-	}
-
-	for (cbid = 0; cbid < checkboxIDs.length; cbid ++) {
+	let masterCheckbox = document.createElement('div');
+		let input = document.createElement('input');			masterCheckbox.appendChild('input');
+		let label = document.createElement('label');			masterCheckbox.appendChild('label');
 		
-		let cbID = checkboxIDs[cbid];
+	input.setAttribute('type', 'checkbox');
+	input.setAttribute('name', label.replaceAll(' ', '-').toLowerCase());
+	input.setAttribute('locid', locationID);
+		
+	return masterCheckbox;
+	
+}
 
-		if(category == 'department') {
-			activeDepartmentsObj[departmentsObj[cbID]['id']] = true;
-		} else if (category == 'location') {
-			activeLocationsObj[cbID] = true;
-		}
+function renderFilterCheckboxes(activeDepartmentsObj){
+	
+	let locationGroup = document.createElement('div');
+	
+	locationGroup.appendChild(createMasterCheckbox(locationID, label));
+
+	
+	for each dept in location:
+	
+	locationGroup.appendChild(createListCheckbox(departmentID, label));
+	
+	function createListCheckbox(departmentID, label){
+		
+		let listItem = document.createElement('div');
+			let itemDiv = document.createElement('div');					listItem.appendChild(itemDiv);
+				let childCheckbox = document.createElement('div');	itemDiv.appendChild(childCheckbox);
+					let input = document.createElement('input');			childCheckbox.appendChild(input);
+					let label = document.createElement('label');			childCheckbox.appendChild(label);
+		
+		listItem.setAttribute('class', 'list');
+			itemDiv.setAttribute('class', 'item');
+				childCheckbox.setAttribute
+		
+		
 	}
+	
+	
+									<div class="item location-group">
+										<div class="ui master checkbox">
+											<input type="checkbox" name="london" locid="1">
+											<label>London</label>
+										</div>
+										<div class="list">
+											<div class="item">
+												<div class="ui child checkbox">
+													<input type="checkbox" deptID="1" name="human-resources" >
+													<label>Human Resources</label>
+												</div>
+											</div>
+											<div class="item">
+												<div class="ui child checkbox">
+													<input type="checkbox" deptID="4" name="legal">
+													<label>Legal</label>
+												</div>
+											</div>
+                      <div class="item">
+												<div class="ui child checkbox">
+													<input type="checkbox" deptID="5" name="services">
+													<label>Services</label>
+												</div>
+											</div>
+										</div>
+									</div>
+
+
 
 }
 
@@ -399,6 +427,8 @@ function setFilterFunctionality() {
 		});
 
 }
+
+
 
 function buildCheckBoxFilters(){
 
