@@ -897,8 +897,39 @@ $('#create-employee-btn-mobile').click(function(){
 });
 
 $('#mobile-manage-cog').click(function (){
-
-	//ALERT TO CHOOSE
+	
+	let optionButtons = document.createElement('div');
+	
+	let manageDepts = document.createElement('button');
+	manageDepts.setAttribute('class', 'ui button');
+	manageDepts.setAttribute('id', 'manage-departments-mobile-btn');
+	
+	manageDepts.innerHTML = 'Manage Departments';
+	
+	let manageLocs = document.createElement('button');
+	manageLocs.setAttribute('class', 'ui button');
+	manageLocs.setAttribute('id', 'manage-locations-mobile-btn');
+	manageLocs.innerHTML = 'Manage Locations';
+	
+	
+	optionButtons.appendChild(manageDepts);
+	optionButtons.appendChild(manageLocs);
+	
+	$('#close-alert-modal-btn').attr('style', 'display: inline-block');
+	
+	showAlertModal('Manage Departments and Locations', optionButtons);
+	
+	$('#manage-departments-mobile-btn').on('click', function(){
+		
+		$('#manage-depts-btn').click();
+		
+	});
+	
+	$('#manage-locations-mobile-btn').on('click', function(){
+		
+		$('#manage-locs-btn').click();
+		
+	});
 
 });
 
@@ -943,7 +974,8 @@ function showModal(title){
 function showAlertModal(title, content){
 
 	$('#alert-modal').modal(
-		{ title: title,
+		{ autofocus: false,
+			title: title,
 		 	content: content }).modal('show');
 
 }
