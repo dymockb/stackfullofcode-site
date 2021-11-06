@@ -154,166 +154,103 @@
       </div>
     </div>
 			<div id="search-option-segments">
-      <div class="ui segment search-option-segment">
-        <div class="grouped fields">
-          <div>
-            Order by:
-          </div>
+				<div class="ui segment search-option-segment">
+					<div class="grouped fields">
+						<div>
+							Order by:
+						</div>
 
 
-          <div class="field">
-            <div class="ui radio checkbox checked active-radio-checkbox" id="order-by-first-name">
-              <input checked class="hidden" name="order-by-2" type="radio" value="firstName"> <label>First Name</label>
-            </div>
-          </div>
+						<div class="field">
+							<div class="ui radio checkbox checked active-radio-checkbox" id="order-by-first-name">
+								<input checked class="hidden" name="order-by-2" type="radio" value="firstName"> <label>First Name</label>
+							</div>
+						</div>
 
 
-          <div class="field">
-            <div class="ui radio checkbox active-radio-checkbox" id="order-by-last-name">
-              <input class="hidden" name="order-by-2" type="radio" value="lastName"> <label>Last Name</label>
-            </div>
-          </div>
-        </div>
-      </div>
+						<div class="field">
+							<div class="ui radio checkbox active-radio-checkbox" id="order-by-last-name">
+								<input class="hidden" name="order-by-2" type="radio" value="lastName"> <label>Last Name</label>
+							</div>
+						</div>
+					</div>
+				</div>
 
-      <div class="ui segment search-option-segment" id="filter-search-segment">
-        <div class="ui accordion field" id="filter-search-options">
-          <div class="title" id="filter-search-accordion">
-            <div>
-              <i class="icon dropdown"></i> 
-              <span>Filters</span>
-            </div>          
-          </div>
-          
-					
-          <div class="content field">
-            <div class="content field">
-							<div id="filter-checkboxes">
-							
-								<div class="ui celled relaxed list" id="append-filters">
-									<!--
-									<div class="item location-group">
-										<div class="ui master checkbox">
-											<input type="checkbox" name="london" locid="1">
-											<label>London</label>
+				<div class="ui segment search-option-segment" id="filter-search-segment">
+					<div class="ui accordion field" id="filter-search-options">
+						<div class="title" id="filter-search-accordion">
+							<div>
+								<i class="icon dropdown"></i> 
+								<span>Filters</span>
+							</div>          
+						</div>
+						
+						
+						<div class="content field">
+							<div class="content field">
+								<div id="filter-checkboxes">
+								
+									<div class="ui celled relaxed list" id="append-filters">
+										<!--
+										<div class="item location-group">
+											<div class="ui master checkbox">
+												<input type="checkbox" name="london" locid="1">
+												<label>London</label>
+											</div>
+											<div class="list">
+												<div class="item">
+													<div class="ui child checkbox">
+														<input type="checkbox" deptID="1" name="legal" >
+														<label>Human Resources</label>
+													</div>
+												</div>
+												<div class="item">
+													<div class="ui child checkbox">
+														<input type="checkbox" deptID="4" name="services">
+														<label>Legal</label>
+													</div>
+												</div>
+												<div class="item">
+													<div class="ui child checkbox">
+														<input type="checkbox" deptID="5" name="services">
+														<label>Services</label>
+													</div>
+												</div>
+											</div>
 										</div>
-										<div class="list">
-											<div class="item">
-												<div class="ui child checkbox">
-													<input type="checkbox" deptID="1" name="legal" >
-													<label>Human Resources</label>
-												</div>
+										<hr/>
+										<div class="item location-group">
+											<div class="ui master checkbox">
+												<input type="checkbox" name="new-york" locID="2">
+												<label>New York</label>
 											</div>
-											<div class="item">
-												<div class="ui child checkbox">
-													<input type="checkbox" deptID="4" name="services">
-													<label>Legal</label>
+											<div class="list">
+												<div class="item">
+													<div class="ui child checkbox checked">
+														<input type="checkbox" deptID="2" name="business-development" checked="">
+														<label>Sales</label>
+													</div>
 												</div>
-											</div>
-                      <div class="item">
-												<div class="ui child checkbox">
-													<input type="checkbox" deptID="5" name="services">
-													<label>Services</label>
+												<div class="item">
+													<div class="ui child checkbox checked">
+														<input type="checkbox" deptID="3" name="research-and-development" checked="">
+														<label>Marketing</label>
+													</div>
 												</div>
 											</div>
 										</div>
+										-->
+										
 									</div>
-                  <hr/>
-									<div class="item location-group">
-										<div class="ui master checkbox">
-											<input type="checkbox" name="new-york" locID="2">
-											<label>New York</label>
-										</div>
-										<div class="list">
-											<div class="item">
-												<div class="ui child checkbox checked">
-													<input type="checkbox" deptID="2" name="business-development" checked="">
-													<label>Sales</label>
-												</div>
-											</div>
-											<div class="item">
-												<div class="ui child checkbox checked">
-													<input type="checkbox" deptID="3" name="research-and-development" checked="">
-													<label>Marketing</label>
-												</div>
-											</div>
-										</div>
-									</div>
-									-->
-									
+								
 								</div>
-							
 							</div>
-            </div>
-          </div>
+						</div>
+						
+						
+					</div>
 					
-					
-        </div>
-        
-      </div>
-
-
-      <div class="ui segment search-option-segment">
-        <div class="ui accordion field" id="department-search-options">
-          <div class="title" id="department-search-accordion">
-            <div>
-              <i class="icon dropdown"></i> 
-              <span>Departments</span>
-            </div>          
-          </div>
-          
-
-          <div class="content field">
-            <div class="content field">
-              <div class="item">
-                Departments
-              </div>
-              <div class="ui checkbox checked" id="select-all-departments">
-                <input checked name="select-all-departments" type="checkbox"> <label>Select All</label>
-              </div>
-              <div class="ui checkbox" id="select-none-departments">
-                <input name="select-none-departments" type="checkbox"> <label>Select None</label>
-              </div>
-              <hr>
-							<div id="department-checkboxes">
-							</div>
-            </div>
-          </div>
-        </div>
-        
-      </div>
-
-
-      <div class="ui segment search-option-segment">
-        <div class="ui accordion field" id="location-search-options">
-          <div class="title" id="location-search-accordion">
-            <i class="icon dropdown"></i>Locations
-          </div>
-
-
-          <div class="content field">
-            <div class="content field">
-              <div class="item">
-                Locations
-              </div>
-
-
-              <div class="ui checkbox checked" id="select-all-locations">
-                <input checked name="select-all-locations" type="checkbox"> <label>Select All</label>
-              </div>
-
-
-              <div class="ui checkbox" id="select-none-locations">
-                <input name="select-none-locations" type="checkbox"> <label>Select None</label>
-              </div>
-
-              <hr>
-							<div id="location-checkboxes">
-							</div>
-            </div>
-          </div>
-        </div>
-      </div>
+				</div>
 			
 			</div>
 			
