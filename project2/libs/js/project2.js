@@ -177,9 +177,31 @@ function createDeptCheckbox(departmentID, labelText){
 		
 }
 
+let filtersAccordion = 'closed';
+let accordionJustOpened = true;
+let clickCount = 0;
+let deptCount;
 
-function renderFilterCheckboxes(latestLocations, latestDepartments){
+$('#filter-search-accordion').on('click', function(){
+		
+	if (filtersAccordion == 'closed'){
+		
+		//$('#filter-search-segment').addClass('loading');
+		
+		clickCount = 0;
+		
+		renderFilterCheckboxes();
+
+	}
+
+	filtersAccordion = filtersAccordion == 'closed' ? 'cpen' : 'closed';
+
+
+});
+
+function renderFilterCheckboxes(){
 	
+	document.getElementById('append-filters').innerHTML = '';
 	
 	$.ajax({
 			//url: "libs/post-php/getAllLocations.php",
@@ -224,7 +246,6 @@ function renderFilterCheckboxes(latestLocations, latestDepartments){
 							
 						}
 
-						//for each location:						
 						for (let [key, value] of Object.entries(latestLocations)){
 													
 							let locationGroup = document.createElement('div');
@@ -234,12 +255,12 @@ function renderFilterCheckboxes(latestLocations, latestDepartments){
 							let listDiv = document.createElement('div');
 							listDiv.setAttribute('class', 'list');
 	
-								//for each dept in location:
 								for (let [k, val] of Object.entries(activeDepartmentsObj[key])){
 
 									if (k != 'set-by-parent'){
 								
 										listDiv.appendChild(createDeptCheckbox(k, latestDepartments[k]));
+										clickCount++;
 									
 									}
 								}
@@ -249,18 +270,11 @@ function renderFilterCheckboxes(latestLocations, latestDepartments){
 						
 						}
 						
-						//let filtersTimer = setTimeout(function(){
-						setFilterFunctionality(firstLoad);							
-						//	clearTimeout(filtersTimer);
-						//},1000);
+						deptCount = clickCount.valueOf();
+						
+						setFilterFunctionality(clickCount, deptCount);
 
-
-						if ($('#preloader').length) {
-							$('#preloader').delay(1000).fadeOut('slow', function () {
-								$(this).remove();
-								//console.log("Window loaded");		
-							});
-						}
+						//$('#filter-search-segment').removeClass('loading');
 
 					},
 					error: function (jqXHR, textStatus, errorThrown) {
@@ -281,6 +295,133 @@ function renderFilterCheckboxes(latestLocations, latestDepartments){
 }
 
 
+function setFilterFunctionality(clickCount, deptCount) {
+
+	$('.list .master.checkbox')
+		.checkbox({
+			// check all children
+			onChecked: function() {
+
+				activeDepartmentsObj[this.getAttribute('locid')]['set-by-parent'] = true;
+				var	$childCheckbox  = $(this).closest('.checkbox').siblings('.list').find('.checkbox');
+				$childCheckbox.checkbox('check');
+				
+				clickCount++;
+
+			},
+			// uncheck all children
+			onUnchecked: function() {
+
+				activeDepartmentsObj[this.getAttribute('locid')]['set-by-parent'] = true;	
+				var	$childCheckbox  = $(this).closest('.checkbox').siblings('.list').find('.checkbox');
+				$childCheckbox.checkbox('uncheck');
+
+				clickCount++;
+
+			}
+		});
+	
+	$('.list .child.checkbox')
+		.checkbox({
+			// Fire on load to set parent value
+			fireOnInit : true,
+			
+			// Change parent state on each child checkbox change
+			onChange   : function() {
+				
+				var
+					$listGroup      = $(this).closest('.list'),
+					$parentCheckbox = $listGroup.closest('.item').children('.checkbox'),
+					$checkbox       = $listGroup.find('.checkbox'),
+					allChecked      = true,
+					allUnchecked    = true
+				;
+				// check to see if all other siblings are checked or unchecked
+				$checkbox.each(function() {
+					
+					if( $(this).checkbox('is checked') ) {
+						
+						allUnchecked = false;
+					}
+					else {
+						
+						allChecked = false;
+					}
+				});
+				// set parent checkbox state, but don't trigger its onChange callback
+				if(allChecked) {
+					
+					if(clickCount > deptCount*2){
+
+						console.log('clickcount', clickCount, 'deptCount', deptCount);
+						runSearch(orderBy, lastSearch, activeDepartmentsObj);
+					}
+
+					$parentCheckbox.checkbox('set checked');
+					
+					activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')]['set-by-parent'] = false;
+					
+					
+				}
+				else if(allUnchecked) {
+
+					if(clickCount > deptCount*2){
+
+						runSearch(orderBy, lastSearch, activeDepartmentsObj);
+					}
+					
+					$parentCheckbox.checkbox('set unchecked');
+					
+					activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')]['set-by-parent'] = false;
+					
+				}
+				else {
+					
+					$parentCheckbox.checkbox('set indeterminate');
+
+					if (activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')]['set-by-parent'] == false){
+
+						if(clickCount > deptCount*2){
+
+							runSearch(orderBy, lastSearch, activeDepartmentsObj);
+						}
+					
+					} 
+
+				}
+				
+
+			},
+			onChecked: function (){
+
+				clickCount++;
+				let $listGroup  = $(this).closest('.list');
+				let $parentCheckbox = $listGroup.closest('.item').children('.checkbox')
+
+				activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')][this.getAttribute('deptID')] = this.checked;
+				//activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')]['parent-status'] = 'some';
+				
+				
+			},
+			onUnchecked: function (){
+				
+				clickCount++;
+				let $listGroup  = $(this).closest('.list');
+				let $parentCheckbox = $listGroup.closest('.item').children('.checkbox')
+
+				activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locID')][this.getAttribute('deptID')] = this.checked;
+				//activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')]['parent-status'] = 'some';
+		
+			}
+			
+
+			
+		});
+
+
+
+}
+
 
 function removeFilterCheckBoxes(category){
 	
@@ -288,8 +429,6 @@ function removeFilterCheckBoxes(category){
 	document.getElementById(`${category}-checkboxes-mobile`).innerHTML = '';
 	
 };
-
-
 
 
 function createCheckbox(checkboxName, checkboxInputID, category, mobile){
@@ -325,7 +464,6 @@ function createCheckbox(checkboxName, checkboxInputID, category, mobile){
 	return checkboxDiv;
 
 };
-
 
 
 function renderCheckboxes(checkboxItems, checkboxIDs, category){
@@ -371,7 +509,6 @@ function renderCheckboxes(checkboxItems, checkboxIDs, category){
 }
 
 
-
 function removeCheckBoxes(category){
 	
 	document.getElementById(`${category}-checkboxes`).innerHTML = '';
@@ -380,143 +517,12 @@ function removeCheckBoxes(category){
 };
 
 
-
 function refreshDeptsAndLocsModal(category, show){
 	
 
 	manageDepartmentsAndLocationsModal(category, show);
 	
 }
-
-function setFilterFunctionality(firstLoad) {
-
-	$('.list .master.checkbox')
-		.checkbox({
-			// check all children
-			onChecked: function() {
-
-				activeDepartmentsObj[this.getAttribute('locid')]['set-by-parent'] = true;
-				var	$childCheckbox  = $(this).closest('.checkbox').siblings('.list').find('.checkbox');
-				$childCheckbox.checkbox('check');
-			},
-			// uncheck all children
-			onUnchecked: function() {
-
-				activeDepartmentsObj[this.getAttribute('locid')]['set-by-parent'] = true;	
-				var	$childCheckbox  = $(this).closest('.checkbox').siblings('.list').find('.checkbox');
-				$childCheckbox.checkbox('uncheck');
-			}
-		});
-	
-	$('.list .child.checkbox')
-		.checkbox({
-			// Fire on load to set parent value
-			fireOnInit : true,
-			
-			// Change parent state on each child checkbox change
-			onChange   : function() {
-				
-				var
-					$listGroup      = $(this).closest('.list'),
-					$parentCheckbox = $listGroup.closest('.item').children('.checkbox'),
-					$checkbox       = $listGroup.find('.checkbox'),
-					allChecked      = true,
-					allUnchecked    = true
-				;
-				// check to see if all other siblings are checked or unchecked
-				$checkbox.each(function() {
-					
-					if( $(this).checkbox('is checked') ) {
-						
-						allUnchecked = false;
-					}
-					else {
-						
-						allChecked = false;
-					}
-				});
-				// set parent checkbox state, but don't trigger its onChange callback
-				if(allChecked) {
-
-					if (!firstLoad){
-					
-					runSearch(orderBy, lastSearch, activeDepartmentsObj);
-					
-					}
-
-					$parentCheckbox.checkbox('set checked');
-					
-					activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')]['set-by-parent'] = false;
-					
-					
-				}
-				else if(allUnchecked) {
-					
-					if (!firstLoad){
-
-						runSearch(orderBy, lastSearch, activeDepartmentsObj);
-					}
-					
-					$parentCheckbox.checkbox('set unchecked');
-					
-					activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')]['set-by-parent'] = false;
-					
-				}
-				else {
-					
-					$parentCheckbox.checkbox('set indeterminate');
-
-					if (activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')]['set-by-parent'] == false){
-
-						if (!firstLoad) {
-							
-							runSearch(orderBy, lastSearch, activeDepartmentsObj);
-
-						}
-
-					} 
-
-				}
-				
-
-			},
-			onChecked: function (){
-											
-				let $listGroup  = $(this).closest('.list');
-				let $parentCheckbox = $listGroup.closest('.item').children('.checkbox')
-
-				activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')][this.getAttribute('deptID')] = this.checked;
-				//activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')]['parent-status'] = 'some';
-				
-				
-			},
-			onUnchecked: function (){
-				
-				let $listGroup  = $(this).closest('.list');
-				let $parentCheckbox = $listGroup.closest('.item').children('.checkbox')
-
-				activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locID')][this.getAttribute('deptID')] = this.checked;
-				//activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')]['parent-status'] = 'some';
-		
-			
-			}
-			
-
-			
-		});
-
-		firstLoadDone(firstLoad);
-
-}
-
-function firstLoadDone(done){
-	
-	if (done == true) {
-		firstLoad = false;
-	}
-	
-}
-
 
 function buildCheckBoxFilters(){
 
@@ -802,6 +808,13 @@ function getAllEmployees(){
 				viewDetailsBtnFunctionality()
 				
 				selectEmployeeFunctionality()
+				
+				if ($('#preloader').length) {
+					$('#preloader').delay(1000).fadeOut('slow', function () {
+						$(this).remove();
+						//console.log("Window loaded");		
+					});
+				}
 				
 
 		},
@@ -5078,7 +5091,7 @@ window.onload = (event) => {
 			
 			//buildCheckBoxFilters();
 			
-			renderFilterCheckboxes();
+			//	renderFilterCheckboxes();
 
       //getAllLocationsAndDepartments('locations', dontshow);
 
