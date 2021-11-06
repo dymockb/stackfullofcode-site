@@ -268,6 +268,7 @@ td#employee-details-field {
 	min-width: 330px;
 }
 
+#refresh-departments-btn,
 #close-alert-modal-btn,
 #create-employee-alert-modal-btn,
 #department-accordion-segment,

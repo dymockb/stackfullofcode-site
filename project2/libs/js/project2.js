@@ -1986,7 +1986,7 @@ function eventListenersInsideLocsModal(latestLocations) {
 
 						$('#confirm-delete-loc-btn').one('click', function(){
 
-							console.log(`now delete Department ${k}, ${val}`);
+							console.log(`now delete Location ${k}, ${val}`);
 
 						});
 						
@@ -2024,6 +2024,26 @@ function eventListenersInsideLocsModal(latestLocations) {
 	
 
 } //END OF ADDING LOCATION EVENT LISTENERS FUNCTION;
+
+function departmentDataError(id){
+	
+$(`#departmentID-${id}-form`).removeClass('loading');
+//$(`#departmentID-${k}-form`).form('add errors', ['A data error occurred please refresh this window and try again.']);
+	
+$('#second-modal-header-text').html(`Data error`);
+$('#second-modal-text').html('A data error occurred please refresh this window and try again.');
+						
+$('#refresh-departments-btn').attr('style', 'display: inline-block');
+
+$('#open-second-modal-btn').click();
+
+$('#refresh-departments-btn').on('click', function(){
+	
+	console.log('refresh departments');
+	
+});
+	
+}
 
 function eventListenersInsideDeptsModal(deptCacheObj, latestLocations) {
 
@@ -2184,7 +2204,8 @@ function eventListenersInsideDeptsModal(deptCacheObj, latestLocations) {
 									
 								} else {
 									
-									$(`#departmentID-${k}-form`).form('add errors', ['A data error occurred please refresh this window and try again.']);
+									departmentDataError(k);
+									
 									
 								}
 
@@ -2197,9 +2218,9 @@ function eventListenersInsideDeptsModal(deptCacheObj, latestLocations) {
 						});
 
 					} else {
-
-						$(`#departmentID-${k}-form`).form('add errors', ['A data error occurred please refresh this window and try again.']);
-
+						
+							departmentDataError(k);
+							
 					}
 						
 					},
@@ -2296,8 +2317,8 @@ function eventListenersInsideDeptsModal(deptCacheObj, latestLocations) {
 							
 							if (result.data == true) {
 
-							$('#modal-header-text').html(`<i class="archive icon"></i> Delete Department`);
-							$('#alert-modal-text').html('Are you sure you want to delete this department?');
+							$('#second-modal-header-text').html(`<i class="archive icon"></i> Delete Department`);
+							$('#second-modal-text').html('Are you sure you want to delete this department?');
 							
 							$('#confirm-delete-dept-btn').attr('style', 'display: inline-block');
 
