@@ -1,4 +1,4 @@
-let firstload = 1;
+let firstLoad = true;
 
 let employeeDetailsVisibility = 0;
 let employeePropertiesObj = {};
@@ -24,7 +24,9 @@ let locationRules = [];
 let departmentRules = [];
 let locCacheObj = {};
 
-let activeDepartmentsObj = { 
+let activeDepartmentsObj = {};
+/*
+													{ 
 														1: {
 															1: false,
 															4: false,
@@ -37,7 +39,7 @@ let activeDepartmentsObj = {
 															'set-by-parent': false
 														}
 													};
-
+*/
 let countOfDepts = 0;
 let countOfCheckedDepts;
 let howManyDeptsSelected = 'All';
@@ -144,75 +146,137 @@ function createFilterCheckbox(checkboxName, checkboxInputID, category, mobile){
 
 };
 
-function createMasterCheckbox(locationID, label){
+function createMasterCheckbox(locationID, labelText){
 	
 	let masterCheckbox = document.createElement('div');
-		let input = document.createElement('input');			masterCheckbox.appendChild('input');
-		let label = document.createElement('label');			masterCheckbox.appendChild('label');
+		let input = document.createElement('input');			masterCheckbox.appendChild(input);
+		let label = document.createElement('label');			masterCheckbox.appendChild(label);
 		
-	input.setAttribute('type', 'checkbox');
-	input.setAttribute('name', label.replaceAll(' ', '-').toLowerCase());
-	input.setAttribute('locid', locationID);
+	masterCheckbox.setAttribute('class', 'ui master checkbox');
+		input.setAttribute('type', 'checkbox'); input.setAttribute('checked', ''); input.setAttribute('name', labelText.replaceAll(' ', '-').toLowerCase()); input.setAttribute('locid', locationID);
+		label.innerHTML = labelText;
 		
 	return masterCheckbox;
 	
 }
 
-function renderFilterCheckboxes(activeDepartmentsObj){
-	
-	let locationGroup = document.createElement('div');
-	
-	locationGroup.appendChild(createMasterCheckbox(locationID, label));
-
-	
-	for each dept in location:
-	
-	locationGroup.appendChild(createListCheckbox(departmentID, label));
-	
-	function createListCheckbox(departmentID, label){
+function createDeptCheckbox(departmentID, labelText){
 		
-		let listItem = document.createElement('div');
-			let itemDiv = document.createElement('div');					listItem.appendChild(itemDiv);
-				let childCheckbox = document.createElement('div');	itemDiv.appendChild(childCheckbox);
-					let input = document.createElement('input');			childCheckbox.appendChild(input);
-					let label = document.createElement('label');			childCheckbox.appendChild(label);
-		
-		listItem.setAttribute('class', 'list');
-			itemDiv.setAttribute('class', 'item');
-				childCheckbox.setAttribute
-		
-		
-	}
-	
-	
-									<div class="item location-group">
-										<div class="ui master checkbox">
-											<input type="checkbox" name="london" locid="1">
-											<label>London</label>
-										</div>
-										<div class="list">
-											<div class="item">
-												<div class="ui child checkbox">
-													<input type="checkbox" deptID="1" name="human-resources" >
-													<label>Human Resources</label>
-												</div>
-											</div>
-											<div class="item">
-												<div class="ui child checkbox">
-													<input type="checkbox" deptID="4" name="legal">
-													<label>Legal</label>
-												</div>
-											</div>
-                      <div class="item">
-												<div class="ui child checkbox">
-													<input type="checkbox" deptID="5" name="services">
-													<label>Services</label>
-												</div>
-											</div>
-										</div>
-									</div>
+	let itemDiv = document.createElement('div');
+		let childCheckbox = document.createElement('div');	itemDiv.appendChild(childCheckbox);
+			let input = document.createElement('input');			childCheckbox.appendChild(input);
+			let label = document.createElement('label');			childCheckbox.appendChild(label);
 
 
+	itemDiv.setAttribute('class', 'item');
+		childCheckbox.setAttribute('class', 'ui child checkbox');
+			input.setAttribute('type', 'checkbox'); input.setAttribute('checked',''); input.setAttribute('deptid',departmentID); input.setAttribute('name', labelText.replaceAll(' ', '-').toLowerCase() );
+			label.innerHTML = labelText;
+				
+	return itemDiv;
+		
+}
+
+
+function renderFilterCheckboxes(latestLocations, latestDepartments){
+	
+	
+	$.ajax({
+			//url: "libs/post-php/getAllLocations.php",
+			//type: "POST",
+			url: "libs/php/getAllLocations.php",
+			type: "GET",
+			dataType: "json",
+			data: {},
+			success: function (result) {
+				
+				let latestLocations = {};
+				
+				for (let [key, value] of Object.entries(result.data)){
+					
+					latestLocations[value['id']] = value['name'];
+					activeDepartmentsObj[value['id']] = {};
+					
+				}
+
+				$.ajax({
+					//url: "libs/post-php/getAllDepartments.php",
+					//type: "POST",
+					url: "libs/php/getAllDepartments.php",
+					type: "GET",
+					dataType: "json",
+					data: {},
+					success: function (result) {
+						
+						let latestDepartments = {};
+						
+						for (let [key, value] of Object.entries(result.data)){
+							
+							latestDepartments[value['id']] = value['name'];
+							
+						}
+					
+						
+						for (let [key, value] of Object.entries(result.data)){
+							
+							activeDepartmentsObj[value['locationID']][value['id']] = true;
+							activeDepartmentsObj[value['locationID']]['set-by-parent'] = false;					
+							
+						}
+
+						//for each location:						
+						for (let [key, value] of Object.entries(latestLocations)){
+													
+							let locationGroup = document.createElement('div');
+							locationGroup.setAttribute('class', 'item location-group');
+							locationGroup.appendChild(createMasterCheckbox(key, value));
+	
+							let listDiv = document.createElement('div');
+							listDiv.setAttribute('class', 'list');
+	
+								//for each dept in location:
+								for (let [k, val] of Object.entries(activeDepartmentsObj[key])){
+
+									if (k != 'set-by-parent'){
+								
+										listDiv.appendChild(createDeptCheckbox(k, latestDepartments[k]));
+									
+									}
+								}
+	
+							locationGroup.appendChild(listDiv);
+							document.getElementById('append-filters').appendChild(locationGroup);							
+						
+						}
+						
+						//let filtersTimer = setTimeout(function(){
+						setFilterFunctionality(firstLoad);							
+						//	clearTimeout(filtersTimer);
+						//},1000);
+
+
+						if ($('#preloader').length) {
+							$('#preloader').delay(1000).fadeOut('slow', function () {
+								$(this).remove();
+								//console.log("Window loaded");		
+							});
+						}
+
+					},
+					error: function (jqXHR, textStatus, errorThrown) {
+							console.log('error', jqXHR);
+							console.log(textStatus);
+							console.log(errorThrown);
+						},
+					});
+
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+					console.log('error', jqXHR);
+					console.log(textStatus);
+					console.log(errorThrown);
+				},
+			});		
 
 }
 
@@ -324,7 +388,7 @@ function refreshDeptsAndLocsModal(category, show){
 	
 }
 
-function setFilterFunctionality() {
+function setFilterFunctionality(firstLoad) {
 
 	$('.list .master.checkbox')
 		.checkbox({
@@ -374,7 +438,12 @@ function setFilterFunctionality() {
 				// set parent checkbox state, but don't trigger its onChange callback
 				if(allChecked) {
 
+					if (!firstLoad){
+					
 					runSearch(orderBy, lastSearch, activeDepartmentsObj);
+					
+					}
+
 					$parentCheckbox.checkbox('set checked');
 					
 					activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')]['set-by-parent'] = false;
@@ -382,8 +451,12 @@ function setFilterFunctionality() {
 					
 				}
 				else if(allUnchecked) {
+					
+					if (!firstLoad){
 
-					runSearch(orderBy, lastSearch, activeDepartmentsObj);
+						runSearch(orderBy, lastSearch, activeDepartmentsObj);
+					}
+					
 					$parentCheckbox.checkbox('set unchecked');
 					
 					activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')]['set-by-parent'] = false;
@@ -395,7 +468,11 @@ function setFilterFunctionality() {
 
 					if (activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')]['set-by-parent'] == false){
 
-						runSearch(orderBy, lastSearch, activeDepartmentsObj);
+						if (!firstLoad) {
+							
+							runSearch(orderBy, lastSearch, activeDepartmentsObj);
+
+						}
 
 					} 
 
@@ -424,10 +501,21 @@ function setFilterFunctionality() {
 			
 			}
 			
+
+			
 		});
+
+		firstLoadDone(firstLoad);
 
 }
 
+function firstLoadDone(done){
+	
+	if (done == true) {
+		firstLoad = false;
+	}
+	
+}
 
 
 function buildCheckBoxFilters(){
@@ -4635,7 +4723,7 @@ function runSearch(orderBy, searchTerm, activeDepartmentsObj) {
 				employeeJustEdited = false;
 				document.getElementById('search-box-icon').setAttribute('class', 'ui icon input');	
 				
-				console.log('refresh count', firstload);	
+				//console.log('refresh count', firstload);	
 
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
@@ -4817,7 +4905,7 @@ function runSearchOLD(orderBy, searchTerm){
 				employeeJustEdited = false;
 				document.getElementById('search-box-icon').setAttribute('class', 'ui icon input');	
 				
-				console.log('refresh count', firstload);	
+				//console.log('refresh count', firstload);	
 
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
@@ -4914,7 +5002,6 @@ function attachRadioEvents(){
 }
 
 function refreshPage(){
-	firstload++;
 	
 	getAllEmployees();
 
@@ -4989,7 +5076,9 @@ window.onload = (event) => {
 			
 			getAllEmployees();
 			
-			buildCheckBoxFilters();
+			//buildCheckBoxFilters();
+			
+			renderFilterCheckboxes();
 
       //getAllLocationsAndDepartments('locations', dontshow);
 
