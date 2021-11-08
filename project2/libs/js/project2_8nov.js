@@ -7,7 +7,7 @@ let employeePropertiesStored;
 let employeeBeforeEdit;
 
 let lastSearch = "";
-let orderBy = 'lastName';
+let orderBy = 'firstName';
 
 let locationsObj = {};
 let departmentsObj = {};
@@ -24,7 +24,6 @@ let locationRules = [];
 let departmentRules = [];
 let locCacheObj = {};
 
-let forMobile = false;
 let activeDepartmentsObj = {};
 /*
 													{ 
@@ -192,7 +191,7 @@ $('#mobile-search-options').on('click', function(){
 		
 		clickCount = 0;
 		
-		forMobile = true;
+		let forMobile = true;
 		
 		renderFilterCheckboxes(forMobile);
 
@@ -212,7 +211,7 @@ $('#filter-search-accordion').on('click', function(){
 		
 		clickCount = 0;
 		
-		forMobile = false;
+		let forMobile = false;
 		
 		renderFilterCheckboxes(forMobile);
 
@@ -785,7 +784,7 @@ function getAllLocationsAndDepartmentsKEEPINCASE(category, show){
 
 }
 
-function getAllEmployees(updateSearch){
+function getAllEmployees(){
 
 	$.ajax({
 		url: "libs/php/getAll.php",
@@ -840,10 +839,6 @@ function getAllEmployees(updateSearch){
 				viewDetailsBtnFunctionality()
 				
 				selectEmployeeFunctionality()
-
-				if (updateSearch == true) {
-					runSearch(orderBy, lastSearch, activeDepartmentsObj);
-				}
 				
 				if ($('#preloader').length) {
 					$('#preloader').delay(1000).fadeOut('slow', function () {
@@ -960,7 +955,7 @@ $('#create-employee-btn').click(function(){
 	createEmployeeModalContent(editOrCreate = 'create', noDetailsRequired, show);
 	
 	//document.getElementById('employee-modal-create-fields').setAttribute('style','display: inherit');
-	//document.getElementById('save-new-employee').setAttribute('style', 'display: inline');
+	//document.getElementById('submit-create-employee').setAttribute('style', 'display: inline');
 	//document.getElementById('close-only-btn').setAttribute('style', 'display: inline');
 
 	//showModal('create employee');
@@ -1063,7 +1058,7 @@ $('#edit-employee-fields-btn').click(function(){
 
 //buttons on employee modal
 
-$('#save-new-employee').click(function(event){
+$('#submit-create-employee').click(function(event){
 
 	if ($('#employee-modal-create-fields').form('validate form')) {
 		$('#employee-modal-create-fields').form('submit');
@@ -1077,83 +1072,51 @@ $('#submit-edit-employee').click(function (){
 	if ($('#employee-modal-edit-fields').form('validate form')) {
 
 		$('#employee-modal-edit-fields').form('submit');
-
-		$('#employee-modal-edit-fields').form('reset');	
-
+		$('#employee-modal-create-fields').form('reset');	
 	}
 	
 });
 
 //buttons on alert modal
 $('#delete-employee-modal-btn').click(function (){
+	
+	closeAlertModal();
 
-	let employeeDetailsCache = JSON.parse(this.getAttribute('employee-details'));
+	let employeeID = JSON.parse(this.getAttribute('employee-details')).id;
+
+	document.getElementById('delete-employee-modal-btn').setAttribute('style', 'display: none');
 
 	$.ajax({
-		//url: "libs/post-php/checkEmployeeCache.php",
-		//type: "POST",
-		url: "libs/php/checkEmployeeCache.php",
-		type: "GET",
-		dataType: "json",
-		data: employeeDetailsCache,
-		success: function (result) {
-						
-			console.log('employee cache result',  result);
-			if (result.data == true) { 
+	//url: "libs/post-php/deleteEmployeeByID.php",
+	//type: "POST",
+	url: "libs/php/deleteEmployeeByID.php",
+	type: "GET",
+	dataType: "json",
+	data: {
+		id: employeeID
+	},
+	success: function (result) {
+				
+		runSearch(orderBy, lastSearch);
+		
+		let deletedEmployeeTimer = setTimeout(function () {
+			document.getElementById('close-panel-icon').click();	
+			clearTimeout(deletedEmployeeTimer);
+		
+		}, 750);
+		
+		refreshPage();
 
-				closeAlertModal();
-
-				let employeeID = JSON.parse(this.getAttribute('employee-details')).id;
-			
-				document.getElementById('delete-employee-modal-btn').setAttribute('style', 'display: none');
-			
-				$.ajax({
-				//url: "libs/post-php/deleteEmployeeByID.php",
-				//type: "POST",
-				url: "libs/php/deleteEmployeeByID.php",
-				type: "GET",
-				dataType: "json",
-				data: {
-					id: employeeID
-				},
-				success: function (result) {
-							
-					runSearch(orderBy, lastSearch);
-					
-					let deletedEmployeeTimer = setTimeout(function () {
-						document.getElementById('close-panel-icon').click();	
-						clearTimeout(deletedEmployeeTimer);
-					
-					}, 750);
-					
-					refreshPage();
-			
-				},
-				error: function (jqXHR, textStatus, errorThrown) {
-						console.log('error');
-						console.log(textStatus);
-						console.log(errorThrown);
-					},
-				});
-
-
-			} else {
-
-				employeeDataError();
-
-			} 
-
+	},
+	error: function (jqXHR, textStatus, errorThrown) {
+			console.log('error');
+			console.log(textStatus);
+			console.log(errorThrown);
 		},
-		error: function (jqXHR, textStatus, errorThrown) {
-				console.log('error', jqXHR);
-				console.log(textStatus);
-				console.log(errorThrown);
-			},
-		});
+	});
 	
 });
 
-/*
 $('#update-employee-modal-btn').click(function (){
 
 	closeAlertModal();
@@ -1187,87 +1150,20 @@ $('#update-employee-modal-btn').click(function (){
 	
 
 });
-*/
 
 
 //FORMS
-
-function employeeDataError(){
-
-	showAlertModal('Data error', 'A data error occurred please refresh the window and try again.');
-			
-	//$('#second-modal-header-text').html(`Data error`);
-	//$('#second-modal-text').html('A data error occurred please refresh the window and try again.');
-							
-	//$('#open-second-modal-btn').click();
-
-	//$('#refresh-xx-btn').on('click', function(){
-	//	console.log('refresh window');	
-	//});
-		
-}
 
 $('#employee-modal-edit-fields').submit(function(event) {
 	event.preventDefault();
 
 	editEmployeeDataObj = $(this).form('get values');
 	
-	let employeeDetailsCache = JSON.parse($('#submit-edit-employee').attr('employee-details'));
+	let findID = JSON.parse($('#submit-edit-employee').attr('employee-details'));
 	
-	editEmployeeDataObj['id'] = employeeDetailsCache['id'];
+	editEmployeeDataObj['id'] = findID['id'];
 	
 	console.log('editEmployeeDataObj', editEmployeeDataObj);
-
-	$.ajax({
-		//url: "libs/post-php/checkEmployeeCache.php",
-		//type: "POST",
-		url: "libs/php/checkEmployeeCache.php",
-		type: "GET",
-		dataType: "json",
-		data: employeeDetailsCache,
-		success: function (result) {
-						
-			console.log('employee cache result',  result);
-			if (result.data == true) { 
-
-				$.ajax({
-					//url: "libs/post-php/updateEmployee.php",
-					//type: "POST",
-					url: "libs/php/updateEmployee.php",
-					type: "GET",
-					dataType: "json",
-					data:  editEmployeeDataObj,
-					success: function (result) {
-									
-						console.log('employee updated');
-						console.log('orderby', orderBy, 'lastSearch', lastSearch);
-						employeeJustEdited = true;
-						editedElement = editEmployeeDataObj;
-						document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', JSON.stringify(editEmployeeDataObj));
-						$('#close-only-btn').click();
-						refreshPage();
-
-					},
-					error: function (jqXHR, textStatus, errorThrown) {
-							console.log('error', jqXHR);
-							console.log(textStatus);
-							console.log(errorThrown);
-						},
-					});	
-
-			} else {
-
-				employeeDataError();
-
-			} 
-
-		},
-		error: function (jqXHR, textStatus, errorThrown) {
-				console.log('error', jqXHR);
-				console.log(textStatus);
-				console.log(errorThrown);
-			},
-		});
 	//if (this.elements.length > 0) {}	
 
 	
@@ -1322,7 +1218,11 @@ $('#employee-modal-edit-fields').submit(function(event) {
 
 $('#employee-modal-create-fields').submit(function(event) {
 	event.preventDefault();
-		
+	
+	//if (this.elements) {
+	//	document.getElementById('close-employee-modal').click();
+  //}
+	
 	createEmployeeDataObj = {
 		firstName: '', //
 		lastName: '',		//
@@ -1341,6 +1241,7 @@ $('#employee-modal-create-fields').submit(function(event) {
 	
 	console.log(createEmployeeDataObj);
 	
+	
 	$.ajax({
 	//url: "libs/post-php/insertEmployee.php",
 	//type: "POST",
@@ -1349,12 +1250,10 @@ $('#employee-modal-create-fields').submit(function(event) {
 	dataType: "json",
 	data: createEmployeeDataObj,
 	success: function (result) {
-
-			$('#close-only-btn').click();
 		
 			employeeJustCreated = true;
 			
-			refreshPage();
+			//refreshPage();
 			
 
 	},
@@ -1835,7 +1734,17 @@ function oneLocationEventListeners(deptsParam, locKey){
 			
 			
 		});
-			
+
+		
+		//$(`#departmentID-${k}-trash-warning`).click(function(e){
+		//	$('#alert-modal').modal(
+		//		{
+		//			title: '<i class="archive icon"></i>',
+		//			content: `<div class="alert-modal-text">Cannot delete department. Remove all employees and try again.</div>`
+		//		}).modal('show');
+		//});
+		
+		
 		locsAndDeptsObj[locKey]['departments'][k]['loaded'] = true;
 
 	}  // end of IF dept loaded == false, apply listeners
@@ -1850,7 +1759,7 @@ function eventListenersInsideLocsModal(latestLocations) {
 	
 		$(`#rename-locationID-${k}-input-field`).on('input', function(){
 			
-			$(`#submit-rename-locationID-${k}-btn`).removeClass('disabled');
+			$(`#submit-rename-locationID-${k}-btn`).attr('class','ui tiny button dept-action-button');
 			
 		});
 
@@ -1881,10 +1790,12 @@ function eventListenersInsideLocsModal(latestLocations) {
 						console.log('location updated');
 						
 						$(`#locationID-${k}-accordion`).click();
-			
+		
+
+						
 						let renameTimer = setTimeout(function(){
 							$(`#locationID-${k}-form`).removeClass('loading');
-							$(`#locationID-${k}-title-text`).hide().html(`${formData['loc-rename']}`).fadeIn(750);	
+							$(`#locationID-${k}-title`).hide().html(`${formData['loc-rename']}`).fadeIn(750);	
 							clearTimeout(renameTimer);
 						},250);
 							
@@ -1939,8 +1850,6 @@ function eventListenersInsideLocsModal(latestLocations) {
 								success: function (result) {
 												
 									if (result.data['existingNames'] == 0) { 
-
-										formFields['locid'] = k;
 										
 										updateLocation(formFields);
 										
@@ -1964,8 +1873,7 @@ function eventListenersInsideLocsModal(latestLocations) {
 
 						} else {
 
-							locationDataError(k);
-							//$(`#locationID-${k}-form`).form('add errors', ['A data error occurred please refresh this window and try again.']);
+							$(`#locationID-${k}-form`).form('add errors', ['A data error occurred please refresh this window and try again.']);
 
 						}
 						
@@ -2027,99 +1935,86 @@ function eventListenersInsideLocsModal(latestLocations) {
 		$(`#delete-locationID-${k}-btn`).click(function(e){
 
 			$.ajax({
-				//url: "libs/post-php/checkDepartmentCachce.php",
-				//type: "POST",
-				url: "libs/php/checkLocationCache.php",
-				type: "GET",
-				dataType: "json",
-				data: {
-					locationID: k,
-					locationName: val
-				},
-				success: function (result) {
-					
-					console.log('delete location cache check', result);
-					
-					if (result.data == true) {
-
-						$.ajax({
-							//url: "libs/post-php/countDeptByLocation.php",
-							//type: "POST",
-							url: "libs/php/countDeptByLocation.php",
-							type: "GET",
-							dataType: "json",
-							data: {
-								locationID: k
-							},
-							success: function (result) {
-								
-								if (result.data.departments > 0) {
+			//url: "libs/post-php/countDeptByLocation.php",
+			//type: "POST",
+			url: "libs/php/countDeptByLocation.php",
+			type: "GET",
+			dataType: "json",
+			data: {
+				locationID: k
+			},
+			success: function (result) {
 				
-									$(`#locationID-${k}-warning`).attr('class', 'ui floating warning message');
-									$(`#locationID-${k}-warning-text`).html(`This location has ${result.data.departments} departments. <br/>Only empty locations can be deleted.`);
-									
-									$(`#locationID-${k}-close-icon`)
-									.one('click', function() {
-										$(this)
-											.closest('.message')
-											.transition('fade')
-										;
-									});
-							
-								} else {
-									
-									$('#second-modal-header-text').html(`<i class="archive icon"></i> Delete Location`);
-									$('#second-modal-text').html('Are you sure you want to delete this location?');
-									
-									$('#confirm-delete-loc-btn').attr('style', 'display: inline-block');
+				if (result.data.departments > 0) {
 
-									$('#open-second-modal-btn').click();
-
-									$('#confirm-delete-loc-btn').one('click', function(){
-
-										console.log(`now delete Location ${k}, ${val}`);
-
-										$(`#close-locationID-${k}-icon`)
-										.one('click', function() {
-											$(this)
-												.closest('.message')
-												.transition('fade')
-											;
-										});
-
-										let deleteLocTimer = setTimeout(function  (){
-											$(`#close-locationID-${k}-icon`).click();		
-											clearTimeout(deleteLocTimer);
-										},500)
-
-									});
-												
-								}
-								
-								
-							},
-							error: function (jqXHR, textStatus, errorThrown) {
-									console.log('error', jqXHR);
-									console.log(textStatus);
-									console.log(errorThrown);
-								},
-							});
+					$(`#locationID-${k}-warning`).attr('class', 'ui floating warning message');
+					$(`#locationID-${k}-warning-text`).html(`This location has ${result.data.departments} departments. <br/>Only empty locations can be deleted.`);
 					
+					$(`#locationID-${k}-close-icon`)
+					.one('click', function() {
+						$(this)
+							.closest('.message')
+							.transition('fade')
+						;
+					});
+			
+				} else {
 
-					} else {
 						
-						locationDataError(id);
-						//$(`#locationID-${k}-form`).form('add errors', ['A data error occurred please refresh this window and try again.']);
-						
-					}
-
-				},
-				error: function (jqXHR, textStatus, errorThrown) {
-						console.log('error', jqXHR);
-						console.log(textStatus);
-						console.log(errorThrown);
+					$.ajax({
+					//url: "libs/post-php/checkDepartmentCachce.php",
+					//type: "POST",
+					url: "libs/php/checkLocationCache.php",
+					type: "GET",
+					dataType: "json",
+					data: {
+						locationID: k,
+						locationName: val
 					},
-				});
+					success: function (result) {
+						
+						console.log('delete location cache check', result);
+						
+						if (result.data == true) {
+
+						$('#modal-header-text').html(`<i class="archive icon"></i> Delete Location`);
+						$('#alert-modal-text').html('Are you sure you want to delete this location?');
+						
+						$('#confirm-delete-loc-btn').attr('style', 'display: inline-block');
+
+						$('#open-second-modal-btn').click();
+
+						$('#confirm-delete-loc-btn').one('click', function(){
+
+							console.log(`now delete Location ${k}, ${val}`);
+
+						});
+						
+
+						} else {
+							
+							$(`#locationID-${k}-form`).form('add errors', ['A data error occurred please refresh this window and try again.']);
+							
+						}
+
+					},
+					error: function (jqXHR, textStatus, errorThrown) {
+							console.log('error', jqXHR);
+							console.log(textStatus);
+							console.log(errorThrown);
+						},
+					});
+	
+				}
+				
+				
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+					console.log('error', jqXHR);
+					console.log(textStatus);
+					console.log(errorThrown);
+				},
+			});
 
 		}); //end of delete 
 
@@ -2129,26 +2024,6 @@ function eventListenersInsideLocsModal(latestLocations) {
 	
 
 } //END OF ADDING LOCATION EVENT LISTENERS FUNCTION;
-
-function locationDataError(id){
-	
-	$(`#locationID-${id}-form`).removeClass('loading');
-	//$(`#departmentID-${k}-form`).form('add errors', ['A data error occurred please refresh this window and try again.']);
-		
-	$('#second-modal-header-text').html(`Data error`);
-	$('#second-modal-text').html('A data error occurred please refresh this window and try again.');
-							
-	$('#refresh-locations-btn').attr('style', 'display: inline-block');
-	
-	$('#open-second-modal-btn').click();
-	
-	$('#refresh-locations-btn').on('click', function(){
-		
-		console.log('refresh locations');
-		
-	});
-		
-}
 
 function departmentDataError(id){
 	
@@ -2401,105 +2276,94 @@ function eventListenersInsideDeptsModal(deptCacheObj, latestLocations) {
 
 		$(`#delete-departmentID-${k}-btn`).click(function(e){
 
+			departmentDataError(k);
 
-			$.ajax({
-				//url: "libs/post-php/checkDepartmentCache.php",
+			/*
+
+				$.ajax({
+				//url: "libs/post-php/countPersonnelByDept.php",
 				//type: "POST",
-				url: "libs/php/checkDepartmentCache.php",
+				url: "libs/php/countPersonnelByDept.php",
 				type: "GET",
 				dataType: "json",
-				data: deptCacheObj[k],
+				data: {
+					deptID: k
+				},
 				success: function (result) {
 					
-					console.log('delete cache check', result);
-					
-					if (result.data == true) {
+					if (result.data.personnel > 0) {
 
-						$.ajax({
-							//url: "libs/post-php/countPersonnelByDept.php",
-							//type: "POST",
-							url: "libs/php/countPersonnelByDept.php",
-							type: "GET",
-							dataType: "json",
-							data: {
-								deptID: k
-							},
-							success: function (result) {
-								
-								if (result.data.personnel > 0) {
-
-									$(`#departmentID-${k}-warning`).attr('class', 'ui floating warning message');
-									$(`#departmentID-${k}-warning-text`).html(`This department has ${result.data.personnel} employees. <br/>Only empty departments can be deleted.`);
-									
-									$(`#departmentID-${k}-close-icon`)
-									.one('click', function() {
-										$(this)
-											.closest('.message')
-											.transition('fade')
-										;
-									});
-							
-								} else {
-
-									$('#second-modal-header-text').html(`<i class="archive icon"></i> Delete Department`);
-									$('#second-modal-text').html('Are you sure you want to delete this department?');
-									
-									$('#confirm-delete-dept-btn').attr('style', 'display: inline-block');
-
-									$('#open-second-modal-btn').click();
-
-									$('#confirm-delete-dept-btn').one('click', function(){
-
-										console.log(`now delete Department ${k}, ${deptCacheObj[k]['departmentName']}`);
-
-										$(`#close-departmentID-${k}-icon`)
-										.one('click', function() {
-											$(this)
-												.closest('.message')
-												.transition('fade')
-											;
-										});
-
-										let deleteDeptTimer = setTimeout(function  (){
-											$(`#close-departmentID-${k}-icon`).click();		
-											clearTimeout(deleteDeptTimer);
-										},500)
-
-									});
-									
-								}
-								
-								
-							},
-							error: function (jqXHR, textStatus, errorThrown) {
-									console.log('error', jqXHR);
-									console.log(textStatus);
-									console.log(errorThrown);
-								}
-							
-						});
-								
-
-					} else {
+						$(`#departmentID-${k}-warning`).attr('class', 'ui floating warning message');
+						$(`#departmentID-${k}-warning-text`).html(`This department has ${result.data.personnel} employees. <br/>Only empty departments can be deleted.`);
 						
-						departmentDataError(k);
-						//$(`#departmentID-${k}-form`).form('add errors', ['A data error occurred please refresh this window and try again.']);
+						$(`#departmentID-${k}-close-icon`)
+						.one('click', function() {
+							$(this)
+								.closest('.message')
+								.transition('fade')
+							;
+						});
+				
+					} else {
+
+
+												
+						$.ajax({
+						//url: "libs/post-php/checkDepartmentCachce.php",
+						//type: "POST",
+						url: "libs/php/checkDepartmentCache.php",
+						type: "GET",
+						dataType: "json",
+						data: deptCacheObj[k],
+						success: function (result) {
+							
+							console.log('delete cache check', result);
+							
+							if (result.data == true) {
+
+							$('#second-modal-header-text').html(`<i class="archive icon"></i> Delete Department`);
+							$('#second-modal-text').html('Are you sure you want to delete this department?');
+							
+							$('#confirm-delete-dept-btn').attr('style', 'display: inline-block');
+
+							$('#open-second-modal-btn').click();
+
+							$('#confirm-delete-dept-btn').one('click', function(){
+
+								console.log(`now delete Department ${k}, ${deptCacheObj[k]['departmentName']}`);
+
+							});
+							
+
+							} else {
+								
+								$(`#departmentID-${k}-form`).form('add errors', ['A data error occurred please refresh this window and try again.']);
+								
+							}
+
+						},
+						error: function (jqXHR, textStatus, errorThrown) {
+								console.log('error', jqXHR);
+								console.log(textStatus);
+								console.log(errorThrown);
+							},
+						});
+					
+						
+
 						
 					}
-
+					
+					
 				},
-				
 				error: function (jqXHR, textStatus, errorThrown) {
 						console.log('error', jqXHR);
 						console.log(textStatus);
 						console.log(errorThrown);
-					}
-
+					},
 			});
-
-
 			
-			
+			*/
 					
 			}); // end of delete
 					
@@ -2932,8 +2796,7 @@ function createEmployee(employeePropertiesObj){
 
 		let checkNull = value == 0 ? 0 : value;
 
-		//EDITED ZERO
-		let textValue = checkNull == "" ? "" : checkNull;
+		let textValue = checkNull == "" ? 0 : checkNull;
 
 		if (textValue == 'TBC') {
 			console.log(key, value);
@@ -3450,7 +3313,7 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm, sho
 		if (editOrCreate == 'create') {
 		
 			document.getElementById('employee-modal-create-fields').setAttribute('style','display: inherit');
-			document.getElementById('save-new-employee').setAttribute('style', 'display: inline-block');
+			document.getElementById('submit-create-employee').setAttribute('style', 'display: inline-block');
 			document.getElementById('close-only-btn').setAttribute('style', 'display: inline');
 
 			showModal('Create new employee');
@@ -3739,7 +3602,7 @@ function createLocationSegment(id, name){
 			locationForm.setAttribute('class', 'ui form rename-form'); locationForm.setAttribute('id',`locationID-${id}-form`); locationForm.setAttribute('name',`locationID-${id}-form`);
 				locationTitleRow.setAttribute('class', 'location-title-row');
 					locationTitle.setAttribute('id', `locationID-${id}-title`);
-					locationTitleText.setAttribute('id', `locationID-${id}-title-text`); locationTitleText.innerHTML = name;
+						locationTitleText.innerHTML = name;
 					locationEmployees.setAttribute('class', 'loc-employee-info-icons');						
 						locationEmployeeInfo.setAttribute('class', 'employee-count-icon'); //hide with display-none-field display-none-field
 							//locationEmployeeCount.setAttribute('id', `locationID-${id}-employee-count`); locationEmployeeCount.innerHTML = `X Departments`; locationEmployeeCount.setAttribute('class', 'employee-count-number default-cursor');
@@ -3760,7 +3623,7 @@ function createLocationSegment(id, name){
 								renameLocAccordionField.setAttribute('class', 'field loc-name-field'); renameLocAccordionField.setAttribute('autofocus', ''); renameLocAccordionField.setAttribute('id', `rename-locationID-${id}-form-field`); 
 									renameLocAccordionInput.setAttribute('id', `rename-locationID-${id}-input-field`); renameLocAccordionInput.setAttribute('placeholder', 'Rename Location'); renameLocAccordionInput.setAttribute('locid', id); renameLocAccordionInput.setAttribute('type', 'text'); renameLocAccordionInput.setAttribute('value',name); renameLocAccordionInput.setAttribute('name','loc-rename'); renameLocAccordionInput.setAttribute('autofocus','');
 							renameLocAccordionButtons.setAttribute('class', 'rename-accordion-buttons');
-								submitRenameLocBtn.setAttribute('class', 'ui tiny disabled button loc-action-button'); submitRenameLocBtn.setAttribute('id', `submit-rename-locationID-${id}-btn`); submitRenameLocBtn.innerHTML = 'Save';
+								submitRenameLocBtn.setAttribute('class', 'ui tiny button loc-action-button'); submitRenameLocBtn.setAttribute('id', `submit-rename-locationID-${id}-btn`); submitRenameLocBtn.innerHTML = 'Save';
 								cancelRenameLocBtn.setAttribute('class', 'ui tiny button loc-action-button'); cancelRenameLocBtn.setAttribute('form', `locationID-${id}-form`); cancelRenameLocBtn.setAttribute('id', `cancel-locationID-${id}-btn`); cancelRenameLocBtn.setAttribute('type', 'reset'); cancelRenameLocBtn.innerHTML = 'Cancel';
 				renameLocErrorMsg.setAttribute('class','ui error message');
 		
@@ -4619,62 +4482,28 @@ function selectEmployeeFunctionality(){
 			let employeeDetails = this.firstChild.children[0].getAttribute('employee-properties');
 			employeePropertiesObj = JSON.parse(employeeDetails);
 
-			$.ajax({
-				//url: "libs/post-php/checkEmployeeCache.php",
-				//type: "POST",
-				url: "libs/php/checkEmployeeCache.php",
-				type: "GET",
-				dataType: "json",
-				data: employeePropertiesObj,
-				success: function (result) {
-								
-					console.log('employee cache result',  result);
-					if (result.data == true) { 
+			employeePropertiesObj['jobTitle'] = employeePropertiesObj['jobTitle'] == 0 ? 'Job Title TBC' : employeePropertiesObj['jobTitle'];
 
-						//let employeeDetails = this.firstChild.children[0].getAttribute('employee-properties');
-						//employeePropertiesObj = JSON.parse(employeeDetails);
-			
-						employeePropertiesObj['jobTitle'] = employeePropertiesObj['jobTitle'] == 0 ? 'Job Title TBC' : employeePropertiesObj['jobTitle'];
-			
-						renderEmployee(employeePropertiesObj);
-			
-						if (employeeDetailsVisibility == 0) {
-			
-							$('.employee-detail-fields').attr('style', 'visibility: visible');
-							$('#employee-panel-message').attr('class', 'ui floating message');
-							
-							document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
-							document.getElementById('delete-employee-btn').setAttribute('employee-details', employeeDetails);
-							document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', employeeDetails)
-							employeeDetailsVisibility ++;
-						} else {
-			
-							$('#employee-panel-message').attr('class', 'ui floating message');
-							document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
-							document.getElementById('delete-employee-btn').setAttribute('employee-details', employeeDetails);
-							document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', employeeDetails)
-						}
-		
+			renderEmployee(employeePropertiesObj);
 
-		
-					} else {
-		
-						employeeDataError();
-		
-					} 
-		
-				},
-				error: function (jqXHR, textStatus, errorThrown) {
-						console.log('error', jqXHR);
-						console.log(textStatus);
-						console.log(errorThrown);
-				},
-			});
+			if (employeeDetailsVisibility == 0) {
 
+				$('.employee-detail-fields').attr('style', 'visibility: visible');
+				$('#employee-panel-message').attr('class', 'ui floating message');
+				
+				document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
+				document.getElementById('delete-employee-btn').setAttribute('employee-details', employeeDetails);
+				document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', employeeDetails)
+				employeeDetailsVisibility ++;
+			} else {
 
+				$('#employee-panel-message').attr('class', 'ui floating message');
+				document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
+				document.getElementById('delete-employee-btn').setAttribute('employee-details', employeeDetails);
+				document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', employeeDetails)
+			}
 			 
 		});
-	
 	}
 	
 }
@@ -5195,7 +5024,7 @@ function closeModal(){
 	document.getElementById('employee-modal-view-fields').setAttribute('style','display: none');
 	document.getElementById('employee-modal-edit-fields').setAttribute('style','display: none');
 	document.getElementById('employee-modal-create-fields').setAttribute('style','display: none');
-	document.getElementById('save-new-employee').setAttribute('style','display: none');
+	document.getElementById('submit-create-employee').setAttribute('style','display: none');
 	document.getElementById('submit-edit-employee').setAttribute('style', 'display: none');
 	document.getElementById('modal-deny-btn').setAttribute('style', 'display: none');
 	document.getElementById('close-only-btn').setAttribute('style', 'display: none');
@@ -5267,9 +5096,9 @@ function attachRadioEvents(){
 
 function refreshPage(){
 	
-	getAllEmployees(true);
+	getAllEmployees();
 
-	//getAllLocationsAndDepartments('locations');	
+	getAllLocationsAndDepartments('locations');	
   // includes runSearch at the end inside mobiledeptcheckboxes or somthing
 
 }
@@ -5339,8 +5168,13 @@ window.onload = (event) => {
 			attachRadioEvents();	
 			
 			getAllEmployees();
+			
+			//buildCheckBoxFilters();
+			
+			//	renderFilterCheckboxes();
 
-			renderFilterCheckboxes(forMobile);
+      //getAllLocationsAndDepartments('locations', dontshow);
+
 
 		});
 
