@@ -268,46 +268,95 @@ td#employee-details-field {
 	min-width: 330px;
 }
 
-#refresh-departments-btn,
-#close-alert-modal-btn,
+
+/*
 #create-employee-alert-modal-btn,
-#department-accordion-segment,
-#location-accordion-segment,
 #modal-deny-btn,
-#close-only-btn,
-#create-new-location-btn,
 #manage-depts-and-locs,
-#employee-modal-create-fields,
-#employee-modal-edit-fields,
-#employee-modal-view-fields,
 #close-employee-modal,
-#submit-create-employee,
-#submit-edit-employee,
 #edit-employee-modal-btn,
-#delete-employee-modal-btn,
 #delete-department-modal-btn,
 #delete-location-modal-btn,
 #update-employee-modal-btn,
-#create-employee-btn-mobile,
 #submit-depts-and-locs,
 #create-new-location-btn,
 #save-new-location-btn,
+*/
+
+
+/*First modal*/
+#close-only-btn,
+#cancel-first-modal-btn,
+#create-new-location-btn,
 #create-new-department-btn,
-#open-second-modal-btn,
-#alert-modal-no-btn {
+#save-new-employee,
+#submit-edit-employee,
+/*invisible*/
+#open-second-modal-btn {
 	display: none;
 }
 
-.employee-modal-btn {
-	display: none !important;
+#create-new-location-btn {
+	float: right
 }
+
+#create-new-department-btn {
+	float: right;
+}
+
+
+
+/*2nd modal*/
+#refresh-departments-btn,
+#second-modal-no-btn,
+#confirm-delete-dept-btn,
+#refresh-locations-btn,
+#confirm-delete-loc-btn,
+#refresh-editing-employee-btn {
+	display: none;
+}
+
+/*Alert modal*/
+#close-alert-modal-btn,
+#delete-employee-modal-btn,
+#alert-modal-no-btn,
+#refresh-window-btn {
+	display: none;
+}
+
+/*Accordions*/
+#department-accordion-segment,
+#location-accordion-segment {
+	display: none;
+}
+
+/*Forms*/
+#employee-modal-create-fields,
+#employee-modal-edit-fields,
+#employee-modal-view-fields {
+	display: none;
+}
+
+/*mobile*/
+#create-employee-btn-mobile {
+	display: none;
+}
+
+/*Panel*/
 
 #delete-employee-btn {
 	float: left
 }
 
-#create-new-department-btn {
-	float: left;
+
+.employee-btn {
+	float: right;
+	display: none !important;
+}
+
+
+.employee-modal-btn {
+	display: none !important;
 }
 
 .scrolling.image.content {
@@ -320,10 +369,7 @@ td#employee-details-field {
 	width: 70%;
 }
 
-.employee-btn {
-	float: right;
-	display: none !important;
-}
+
 
 h4.ui.image.header {
 	display: inline;
@@ -513,10 +559,6 @@ h4.ui.image.header {
 
 #accordion-title {
 	display: none;
-}
-
-#create-new-location-btn {
-	float: right
 }
 
 i.fas.fa-info-circle {

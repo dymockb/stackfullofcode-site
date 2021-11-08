@@ -347,7 +347,8 @@
 
                       <p class="display-none-field" id="employee-id-field"></p>
                     </div>
-                    <button class="ui button" id="delete-employee-btn">Delete</button> <button class="ui button employee-panel-btn" id="edit-employee-fields-btn">Edit</button>
+                    <button class="ui button" id="delete-employee-btn">Delete</button> 
+                    <button class="ui button employee-panel-btn" id="edit-employee-fields-btn">Edit</button>
                   </div>
                 </div>
               </div>
@@ -377,10 +378,7 @@
 		  <div class="ui deny button" id="close-alert-modal-btn">
          Close
       </div>
-      <div class="ui approve button" id="create-employee-alert-modal-btn">
-        Create employee
-      </div>
-			
+
       <div class="ui red basic cancel button" id="alert-modal-no-btn">
         <i class="remove icon"></i> No
       </div>
@@ -390,20 +388,27 @@
         <i class="checkmark icon"></i> Yes
       </div>
 
+   <!--
+      <div class="ui approve button" id="create-employee-alert-modal-btn">
+        Create employee
+      </div>
+			
 
-      <div class="ui approve button" id="delete-department-modal-btn"> 
-      <!--      <div class="ui green ok inverted button" id="delete-department-modal-btn"> -->
+    <div class="ui approve button" id="delete-department-modal-btn"> 
+         <div class="ui green ok inverted button" id="delete-department-modal-btn"> 
         <i class="checkmark icon"></i> Yes
       </div>
 			
 			<div class="ui green ok inverted button" id="delete-location-modal-btn">
         <i class="checkmark icon"></i> Yes
       </div>
-
-
       <div class="ui green ok inverted button" id="update-employee-modal-btn">
         <i class="checkmark icon"></i> Yes
       </div>
+
+    -->
+
+
     </div>
   </div>
 
@@ -531,18 +536,23 @@
 
     </div>
     <div class="actions">
-      <div class="ui primary button" id="open-second-modal-btn">Proceed</div>       
-
-			<button class="ui deny button" id="modal-deny-btn">Cancel</button>
-			
-			<button class="ui primary button" id="save-new-location-btn">Save</button> 
+      <button class="ui deny button" id="close-only-btn">Close</button>
+      <button class="ui deny button" id="cancel-first-modal-btn">Cancel</button>
+     
       <button class="ui primary button" id="create-new-department-btn">Add new department</button>
       <button class="ui primary button" id="create-new-location-btn">Add new location</button> 
-			<button class="ui deny button" id="close-only-btn">Cancel</button> 
- 
-			<button class="ui primary approve button" id="close-employee-modal">Close</button>
-			</button> <button class="ui primary button" id="save-new-employee">Save</button> 
+
+      <button class="ui primary button" id="save-new-employee">Submit</button> 
       <button class="ui primary button" id="submit-edit-employee">Save</button>
+      
+      <div class="ui primary button" id="open-second-modal-btn">Proceed</div>       
+
+      <!--
+			<button class="ui deny button" id="modal-deny-btn">Cancel</button>	
+			<button class="ui primary button" id="save-new-location-btn">Save</button> 
+			<button class="ui primary approve button" id="close-employee-modal">Close</button>
+      -->
+
     </div>
   </div>
 

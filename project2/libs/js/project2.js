@@ -955,7 +955,7 @@ $('#close-mobile-accordion-options').click(function(){
 $('#create-employee-btn').click(function(){
 	
 	let noDetailsRequired = {};
-	locationDropDownClicked = 0;
+	//locationDropDownClicked = 0;
 	let show = true;
 	createEmployeeModalContent(editOrCreate = 'create', noDetailsRequired, show);
 	
@@ -981,7 +981,11 @@ function showAlertModal(title, content){
 	$('#alert-modal').modal(
 		{ autofocus: false,
 			title: title,
-		 	content: content }).modal('show');
+		 	content: content,
+			onHidden: function() {
+				closeAlertModal();
+			}
+		}).modal('show');
 
 }
 
@@ -1007,10 +1011,8 @@ $('#delete-employee-btn').click(function (){
 	let employeeDetails = JSON.parse(document.getElementById('delete-employee-btn').getAttribute('employee-details'));
 
 	$('#delete-employee-modal-btn').attr('style', 'display: inline-block');
+	$('#alert-modal-no-btn').attr('style', 'display: inline-block');
 
-	document.getElementById('update-employee-modal-btn').setAttribute('style', 'display: none');
-	document.getElementById('delete-department-modal-btn').setAttribute('style', 'display: none');
-	
 	showAlertModal('<i class="archive icon"></i>', `<div class="alert-modal-text">Delete this employee? <br> <h3> ${employeeDetails.firstName} ${employeeDetails.lastName} </h3></div>`);
 
 	});
@@ -1101,7 +1103,7 @@ $('#delete-employee-modal-btn').click(function (){
 			console.log('employee cache result',  result);
 			if (result.data == true) { 
 
-				closeAlertModal();
+				//closeAlertModal();
 
 				let employeeID = JSON.parse(this.getAttribute('employee-details')).id;
 			
@@ -2072,6 +2074,7 @@ function eventListenersInsideLocsModal(latestLocations) {
 									$('#second-modal-text').html('Are you sure you want to delete this location?');
 									
 									$('#confirm-delete-loc-btn').attr('style', 'display: inline-block');
+									$('#second-modal-no-btn').attr('style', 'display: inline-block');
 
 									$('#open-second-modal-btn').click();
 
@@ -2445,7 +2448,8 @@ function eventListenersInsideDeptsModal(deptCacheObj, latestLocations) {
 									$('#second-modal-text').html('Are you sure you want to delete this department?');
 									
 									$('#confirm-delete-dept-btn').attr('style', 'display: inline-block');
-
+									$('#second-modal-no-btn').attr('style', 'display: inline-block');
+									
 									$('#open-second-modal-btn').click();
 
 									$('#confirm-delete-dept-btn').one('click', function(){
@@ -3451,7 +3455,8 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm, sho
 		
 			document.getElementById('employee-modal-create-fields').setAttribute('style','display: inherit');
 			document.getElementById('save-new-employee').setAttribute('style', 'display: inline-block');
-			document.getElementById('close-only-btn').setAttribute('style', 'display: inline');
+			document.getElementById('cancel-first-modal-btn').setAttribute('style', 'display: inline-block');
+			//document.getElementById('close-only-btn').setAttribute('style', 'display: inline');
 
 			showModal('Create new employee');
 		
@@ -3459,7 +3464,8 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm, sho
 			
 			document.getElementById('employee-modal-edit-fields').setAttribute('style','display: inherit');
 			document.getElementById('submit-edit-employee').setAttribute('style','display: inline-block');
-			document.getElementById('close-only-btn').setAttribute('style', 'display: inline-block');
+			document.getElementById('cancel-first-modal-btn').setAttribute('style', 'display: inline-block');
+			//document.getElementById('close-only-btn').setAttribute('style', 'display: inline-block');
 
 			document.getElementById('submit-edit-employee').setAttribute('employee-details', JSON.stringify(detailsForEditForm));
 		
@@ -3886,7 +3892,7 @@ function manageDepartmentsAndLocationsModal(category, show){
 				
 				document.getElementById('close-only-btn').setAttribute('style', 'display: inline-block');
 				document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: block');	
-				document.getElementById('create-new-location-btn').setAttribute('style', 'display: inline-block; float: left');
+				document.getElementById('create-new-location-btn').setAttribute('style', 'display: inline-block');
 				showModal('Locations');
 				eventListenersInsideLocsModal(latestLocations);
 			
@@ -5189,42 +5195,53 @@ function runSearchOLD(orderBy, searchTerm){
 
 function closeModal(){	
 
+	//forms - reset
 	document.getElementById('employee-modal-create-fields').reset();
 	document.getElementById('employee-modal-edit-fields').reset();
 
+	//forms - hide
 	document.getElementById('employee-modal-view-fields').setAttribute('style','display: none');
 	document.getElementById('employee-modal-edit-fields').setAttribute('style','display: none');
 	document.getElementById('employee-modal-create-fields').setAttribute('style','display: none');
-	document.getElementById('save-new-employee').setAttribute('style','display: none');
-	document.getElementById('submit-edit-employee').setAttribute('style', 'display: none');
-	document.getElementById('modal-deny-btn').setAttribute('style', 'display: none');
-	document.getElementById('close-only-btn').setAttribute('style', 'display: none');
 
+	//forms - empty html
 	document.getElementById('employee-modal-view-fields').innerHTML = "";
 	document.getElementById('employee-modal-create-fields').innerHTML = "";
 	document.getElementById('employee-modal-edit-fields').innerHTML = "";
-	document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: none');
 	
+	//buttons - hide
+	document.getElementById('save-new-employee').setAttribute('style','display: none');
+	document.getElementById('submit-edit-employee').setAttribute('style', 'display: none');
+	document.getElementById('close-only-btn').setAttribute('style', 'display: none');
 	document.getElementById('create-new-location-btn').setAttribute('style', 'display: none');
-	document.getElementById('create-new-location-btn').innerHTML = 'Add new location';
-	
 	document.getElementById('create-new-department-btn').setAttribute('style', 'display: none');
-	document.getElementById('create-new-department-btn').innerHTML = 'Add new department';
+	document.getElementById('cancel-first-modal-btn').setAttribute('style', 'display: none');
 
-	document.getElementById('save-new-location-btn').setAttribute('style', 'display: none');
+	//accordions - hide
+	document.getElementById('department-accordion-segment').setAttribute('style', 'display: none');
+	document.getElementById('location-accordion-segment').setAttribute('style', 'display: none');
 
-	$('#departmentID-0-loc-dropdown').remove();
+	//second modal buttons
+	$('#refresh-departments-btn').attr('style', 'display: none');
+	$('#second-modal-no-btn').attr('style', 'display: none');
+	$('#confirm-delete-dept-btn').attr('style', 'display: none');
+	$('#refresh-locations-btn').attr('style', 'display: none');
+	$('#confirm-delete-loc-btn').attr('style', 'display: none');
+	$('#refresh-editing-employee-btn').attr('style', 'display: none');
+
+	//document.getElementById('modal-deny-btn').setAttribute('style', 'display: none');
+	//document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: none');
+	//document.getElementById('create-new-location-btn').innerHTML = 'Add new location';
+	//$('#departmentID-0-loc-dropdown').remove();
 
 };
 
 function closeAlertModal(){
 
-	document.getElementById('delete-employee-modal-btn').setAttribute('style', 'display: none');
-	document.getElementById('update-employee-modal-btn').setAttribute('style', 'display: none');
-	document.getElementById('delete-department-modal-btn').setAttribute('style', 'display: none');
-	document.getElementById('create-new-location-btn').setAttribute('style', 'display: none');
-
-	document.getElementById('create-new-location-btn').innerHTML = 'Add new location';
+	$('#close-alert-modal-btn').attr('style', 'display: none');
+	$('#delete-employee-modal-btn').attr('style', 'display: none');
+	$('#alert-modal-no-btn').attr('style', 'display: none');
+	$('#refresh-window-btn').attr('style', 'display: none')
 
 }
 
@@ -5333,8 +5350,16 @@ window.onload = (event) => {
 				
 			$('.second.modal')
 				.modal('attach events', '#open-second-modal-btn');
-				
 
+			/*
+			$('.second.modal')
+			.modal({
+				onHidden: function() {
+					closeSecondModal();
+				}
+			})
+			.modal('attach events', '#open-second-modal-btn');
+			*/
 
 			attachRadioEvents();	
 			
