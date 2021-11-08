@@ -1105,7 +1105,7 @@ $('#delete-employee-modal-btn').click(function (){
 
 				//closeAlertModal();
 
-				let employeeID = JSON.parse(this.getAttribute('employee-details')).id;
+				let employeeID = JSON.parse($('#delete-employee-modal-btn').attr('employee-details')).id;
 			
 				document.getElementById('delete-employee-modal-btn').setAttribute('style', 'display: none');
 			
@@ -1120,7 +1120,7 @@ $('#delete-employee-modal-btn').click(function (){
 				},
 				success: function (result) {
 							
-					runSearch(orderBy, lastSearch);
+					runSearch(orderBy, lastSearch, activeDepartmentsObj);
 					
 					let deletedEmployeeTimer = setTimeout(function () {
 						document.getElementById('close-panel-icon').click();	
@@ -3023,13 +3023,16 @@ function createEmployeeRow(employeePropertiesObj, visibility) {
 
 function renderEmployee(employeeProperties){
 
-	employeeProperties['jobTitle'] = employeeProperties['jobTitle'] == '' ? 'Job Title TBC' : employeeProperties['jobTitle'];
+	employeeProperties['jobTitle'] = employeeProperties['jobTitle'] == '' ? 'test' : employeeProperties['jobTitle'];
 	
 	for (const [key, value] of Object.entries(employeeProperties)) {
 					
 		document.getElementById(`employee-${key}-field`).innerHTML = value;
-		if (value == 'Job Title TBC') {
-			document.getElementById(`employee-${key}-field`).setAttribute('style', 'color: gray; font-size: 1rem; font-style: italic');
+		if (key == 'jobTitle') {
+			if (value == ''){
+				document.getElementById(`employee-${key}-field`).innerHTML = 'Job Title TBC';
+				document.getElementById(`employee-${key}-field`).setAttribute('style', 'color: gray; font-size: 1rem; font-style: italic');
+			}
 		} else {
 			document.getElementById(`employee-${key}-field`).setAttribute('style', '');
 		}
@@ -4951,10 +4954,12 @@ function runSearch(orderBy, searchTerm, activeDepartmentsObj) {
 					if (employeeDetailsVisibility == 0) {
 
 						$('.employee-detail-fields').attr('style', 'visibility: visible');
+						
 						$('#employee-panel-message').attr('class', 'ui floating message');
 						document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
 						document.getElementById('delete-employee-btn').setAttribute('employee-details', employeeDetails);
 						document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', employeeDetails)
+						
 						employeeDetailsVisibility ++;
 
 					} else {
@@ -4963,6 +4968,7 @@ function runSearch(orderBy, searchTerm, activeDepartmentsObj) {
 						document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
 						document.getElementById('delete-employee-btn').setAttribute('employee-details', employeeDetails);
 						document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', employeeDetails)
+
 					}
 					
 				}
