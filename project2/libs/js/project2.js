@@ -108,6 +108,12 @@ let locsAndDeptsObj = {};
 let updateLoadedDepts = [];
 let updateLoadedLocs = [];
 
+let filtersAccordion = 'closed';
+let accordionJustOpened = true;
+let clickCount = 0;
+let deptCount;
+	
+
 // ** PAGE LOAD FUNCTIONS **
 
 
@@ -178,12 +184,6 @@ function createDeptCheckbox(departmentID, labelText){
 		
 }
 
-let filtersAccordion = 'closed';
-let accordionJustOpened = true;
-let clickCount = 0;
-let deptCount;
-	
-
 $('#mobile-search-options').on('click', function(){
 		
 	if (filtersAccordion == 'closed'){
@@ -198,11 +198,10 @@ $('#mobile-search-options').on('click', function(){
 
 	}
 
-	filtersAccordion = filtersAccordion == 'closed' ? 'cpen' : 'closed';
+	filtersAccordion = filtersAccordion == 'closed' ? 'open' : 'closed';
 
 
 });
-
 
 $('#filter-search-accordion').on('click', function(){
 		
@@ -218,7 +217,7 @@ $('#filter-search-accordion').on('click', function(){
 
 	}
 
-	filtersAccordion = filtersAccordion == 'closed' ? 'cpen' : 'closed';
+	filtersAccordion = filtersAccordion == 'closed' ? 'open' : 'closed';
 
 
 });
@@ -1373,124 +1372,124 @@ $('#employee-modal-create-fields').submit(function(event) {
 
 //forms within Manage Depts and Locs Modal
 
-$('#create-new-department-btn').click(function(){
+$('#create-new-department-btn').on('click',function(){
 
 	$('#department-accordion-segment').attr('style', 'display: block');
 
 	$('#new-department-accordion-btn').click();
 	$("#scrolling-modal-pane").animate({ scrollTop: 0 }, "fast");
+	
+	
+});
 
+$(`#submit-new-department-btn`).click(function(e){
 
-	$(`#submit-new-department-btn`).click(function(e){
+	if (!addDeptNeedsToBeValidated) {
 
-		if (!addDeptNeedsToBeValidated) {
+	$(`#new-department-form`).one('submit', function(event){
 
-		$(`#new-department-form`).one('submit', function(event){
-
-			event.preventDefault();
-			
-			let formFields = $('#new-department-form').form('get values');
-			console.log('form fields',formFields);
-
-			function addDepartment(formData) {
-						
-				console.log('data submitted', formData);
-				
-				$.ajax({
-				//url: "libs/post-php/insertDepartmentRtnID.php",
-				//type: "POST",
-				url: "libs/php/insertDepartmentRtnID.php",
-				type: "GET",
-				dataType: "json",
-				data: {
-					name: formData['new-department'],
-					locationID: formData['locID']
-				},
-				success: function (result) {
-
-					$(`#new-department-form`).form('reset');
-					$('#new-department-accordion-btn').click();
-					$('#department-accordion-segment').attr('style', 'display: none');	
-					//$('#departmentID-0-loc-dropdown').remove();
-
-					$('#close-alert-modal-btn').attr('style', 'display: inline-block');
-					$('#create-employee-alert-modal-btn').attr('style', 'display: inline-block');
-					
-					showAlertModal('New Department Created', `New Department successfully created: <br/><br/> ${formFields['new-department']}`);
-					//let newDepartmentName = 'New Loc'
-					//let newDepartmentNode = createDepartmentSegment(1, newDepartmentName, 'test location', 0, latestLocations);
-					//$(`#department-entries`).prepend( $(newDepartmentNode).hide().fadeIn(1000) );
-					
-					$('#create-employee-alert-modal-btn').one('click', function (){
-						
-						$('#create-employee-btn').click();
-						
-					});
-
-				},
-				error: function (jqXHR, textStatus, errorThrown) {
-						console.log('error', jqXHR);
-						console.log(textStatus);
-						console.log(errorThrown);
-					},
-				});
-							
-			} //end of Update function
-
-
-			$.ajax({
-				//url: "libs/post-php/countDeptByName.php",
-				//type: "POST",
-				url: "libs/php/countDeptByName.php",
-				type: "GET",
-				dataType: "json",
-				data: {
-					departmentName: formFields['new-department']
-				},
-				success: function (result) {
-								
-					if (result.data['existingNames'] == 0) { 
-					
-						console.log('new dept created');
-						
-						addDepartment(formFields);
-
-					} else if (result.data['existingNames'] >= 1) {
-
-						console.log('dept already exists');
-
-						$('#new-department-form').form('add errors', ['A department with that name already exists.']);
-					
-					} 
-
-				},
-				error: function (jqXHR, textStatus, errorThrown) {
-						console.log('error', jqXHR);
-						console.log(textStatus);
-						console.log(errorThrown);
-					},
-				});
-			
-		});	//end of submit listener
-
-	} // end of needs to be validated
-
-	if (!$(`#new-department-form`).form('validate form')) {
-		console.log('not validated')
-		addDeptNeedsToBeValidated = true;
-	} else if ($(`#new-department-form`).form('validate form')){
+		event.preventDefault();
 		
-		addDeptNeedsToBeValidated = false;
+		let formFields = $('#new-department-form').form('get values');
+		console.log('form fields',formFields);
+
+		function addDepartment(formData) {
+					
+			console.log('data submitted', formData);
+			
+			$.ajax({
+			//url: "libs/post-php/insertDepartmentRtnID.php",
+			//type: "POST",
+			url: "libs/php/insertDepartmentRtnID.php",
+			type: "GET",
+			dataType: "json",
+			data: {
+				name: formData['new-department'],
+				locationID: formData['locID']
+			},
+			success: function (result) {
+
+				$(`#new-department-form`).form('reset');
+				$('#new-department-accordion-btn').click();
+				$('#department-accordion-segment').attr('style', 'display: none');	
+				//$('#departmentID-0-loc-dropdown').remove();
+
+				$('#close-alert-modal-btn').attr('style', 'display: inline-block');
+				$('#create-employee-alert-modal-btn').attr('style', 'display: inline-block');
+				
+				showAlertModal('New Department Created', `New Department successfully created: <br/><br/> ${formFields['new-department']}`);
+				//let newDepartmentName = 'New Loc'
+				//let newDepartmentNode = createDepartmentSegment(1, newDepartmentName, 'test location', 0, latestLocations);
+				//$(`#department-entries`).prepend( $(newDepartmentNode).hide().fadeIn(1000) );
+				
+				$('#create-employee-alert-modal-btn').one('click', function (){
+					
+					$('#create-employee-btn').click();
+					
+				});
+
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+					console.log('error', jqXHR);
+					console.log(textStatus);
+					console.log(errorThrown);
+				},
+			});
+						
+		} //end of Update function
+
+
+		$.ajax({
+			//url: "libs/post-php/countDeptByName.php",
+			//type: "POST",
+			url: "libs/php/countDeptByName.php",
+			type: "GET",
+			dataType: "json",
+			data: {
+				departmentName: formFields['new-department']
+			},
+			success: function (result) {
+							
+				if (result.data['existingNames'] == 0) { 
+				
+					console.log('new dept created');
+					
+					addDepartment(formFields);
+
+				} else if (result.data['existingNames'] >= 1) {
+
+					console.log('dept already exists');
+
+					$('#new-department-form').form('add errors', ['A department with that name already exists.']);
+				
+				} 
+
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+					console.log('error', jqXHR);
+					console.log(textStatus);
+					console.log(errorThrown);
+				},
+			});
+		
+	});	//end of submit listener
+
+} // end of needs to be validated
+
+if (!$(`#new-department-form`).form('validate form')) {
+	console.log('not validated')
+	addDeptNeedsToBeValidated = true;
+} else if ($(`#new-department-form`).form('validate form')){
+	
+	addDeptNeedsToBeValidated = false;
+
+}
+
+	if ($(`#new-department-form`).form('validate form')) {
+
+		$(`#new-department-form`).form('submit');
 
 	}
-
-		if ($(`#new-department-form`).form('validate form')) {
-
-			$(`#new-department-form`).form('submit');
-
-		}
-
-	});
 
 });
 
@@ -1526,104 +1525,104 @@ $('#create-new-location-btn').click(function(){
 		}
 		});
 		
-	$(`#submit-new-location-btn`).click(function(e){
+});
 
-		if (!addLocNeedsToBeValidated) {
+$(`#submit-new-location-btn`).click(function(e){
 
-		$(`#new-location-form`).one('submit', function(event){
+	if (!addLocNeedsToBeValidated) {
 
-			event.preventDefault();
-			
-			let formFields = $('#new-location-form').form('get values');
-			console.log('form fields',formFields);
+	$(`#new-location-form`).one('submit', function(event){
 
-			function addLocation(formData) {
-						
-				console.log('data submitted', formData);
-				
-				$.ajax({
-				//url: "libs/post-php/insertLocation.php",
-				//type: "POST",
-				url: "libs/php/insertLocation.php",
-				type: "GET",
-				dataType: "json",
-				data: {
-					name: formData['new-location']
-				},
-				success: function (result) {
-
-					$(`#new-location-form`).form('reset');
-					$('#new-location-accordion-btn').click();
-					$('#location-accordion-segment').attr('style', 'display: none');	
-
-					$('#close-alert-modal-btn').attr('style', 'display: inline-block');
-					
-					showAlertModal('New Department Created', `New Location successfully created: <br/><br/> ${formData['new-location']}`);
-
-				},
-				error: function (jqXHR, textStatus, errorThrown) {
-						console.log('error', jqXHR);
-						console.log(textStatus);
-						console.log(errorThrown);
-					},
-				});
-							
-			} //end of Update function
-
-
-			$.ajax({
-				//url: "libs/post-php/countLocByName.php",
-				//type: "POST",
-				url: "libs/php/countLocByName.php",
-				type: "GET",
-				dataType: "json",
-				data: {
-					locationName: formFields['new-location']
-				},
-				success: function (result) {
-								
-					if (result.data['existingNames'] == 0) { 
-					
-						console.log('new loc created');
-						
-						addLocation(formFields);
-
-					} else if (result.data['existingNames'] >= 1) {
-
-						console.log('loc already exists');
-
-						$('#new-location-form').form('add errors', ['A location with that name already exists.']);
-					
-					} 
-
-				},
-				error: function (jqXHR, textStatus, errorThrown) {
-						console.log('error', jqXHR);
-						console.log(textStatus);
-						console.log(errorThrown);
-					},
-				});
-			
-		});	//end of submit listener
-
-	} // end of needs to be validated
-
-	if (!$(`#new-location-form`).form('validate form')) {
-		console.log('not validated')
-		addLocNeedsToBeValidated = true;
-	} else if ($(`#new-location-form`).form('validate form')){
+		event.preventDefault();
 		
-		addLocNeedsToBeValidated = false;
+		let formFields = $('#new-location-form').form('get values');
+		console.log('form fields',formFields);
+
+		function addLocation(formData) {
+					
+			console.log('data submitted', formData);
+			
+			$.ajax({
+			//url: "libs/post-php/insertLocation.php",
+			//type: "POST",
+			url: "libs/php/insertLocation.php",
+			type: "GET",
+			dataType: "json",
+			data: {
+				name: formData['new-location']
+			},
+			success: function (result) {
+
+				$(`#new-location-form`).form('reset');
+				$('#new-location-accordion-btn').click();
+				$('#location-accordion-segment').attr('style', 'display: none');	
+
+				$('#close-alert-modal-btn').attr('style', 'display: inline-block');
+				
+				showAlertModal('New Department Created', `New Location successfully created: <br/><br/> ${formData['new-location']}`);
+
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+					console.log('error', jqXHR);
+					console.log(textStatus);
+					console.log(errorThrown);
+				},
+			});
+						
+		} //end of Update function
+
+
+		$.ajax({
+			//url: "libs/post-php/countLocByName.php",
+			//type: "POST",
+			url: "libs/php/countLocByName.php",
+			type: "GET",
+			dataType: "json",
+			data: {
+				locationName: formFields['new-location']
+			},
+			success: function (result) {
+							
+				if (result.data['existingNames'] == 0) { 
+				
+					console.log('new loc created');
+					
+					addLocation(formFields);
+
+				} else if (result.data['existingNames'] >= 1) {
+
+					console.log('loc already exists');
+
+					$('#new-location-form').form('add errors', ['A location with that name already exists.']);
+				
+				} 
+
+			},
+			error: function (jqXHR, textStatus, errorThrown) {
+					console.log('error', jqXHR);
+					console.log(textStatus);
+					console.log(errorThrown);
+				},
+			});
+		
+	});	//end of submit listener
+
+} // end of needs to be validated
+
+if (!$(`#new-location-form`).form('validate form')) {
+	console.log('not validated')
+	addLocNeedsToBeValidated = true;
+} else if ($(`#new-location-form`).form('validate form')){
+	
+	addLocNeedsToBeValidated = false;
+
+}
+
+	if ($(`#new-location-form`).form('validate form')) {
+
+		$(`#new-location-form`).form('submit');
 
 	}
-
-		if ($(`#new-location-form`).form('validate form')) {
-
-			$(`#new-location-form`).form('submit');
-
-		}
-
-	});
 
 });
 
@@ -2058,7 +2057,7 @@ function eventListenersInsideLocsModal(latestLocations) {
 								if (result.data.departments > 0) {
 				
 									$(`#locationID-${k}-warning`).attr('class', 'ui floating warning message');
-									$(`#locationID-${k}-warning-text`).html(`This location has ${result.data.departments} departments. <br/>Only empty locations can be deleted.`);
+									$(`#locationID-${k}-warning-text`).html(`This location has ${result.data.departments} department(s). <br/>Only empty locations can be deleted.`);
 									
 									$(`#locationID-${k}-close-icon`)
 									.one('click', function() {
@@ -2432,7 +2431,7 @@ function eventListenersInsideDeptsModal(deptCacheObj, latestLocations) {
 								if (result.data.personnel > 0) {
 
 									$(`#departmentID-${k}-warning`).attr('class', 'ui floating warning message');
-									$(`#departmentID-${k}-warning-text`).html(`This department has ${result.data.personnel} employees. <br/>Only empty departments can be deleted.`);
+									$(`#departmentID-${k}-warning-text`).html(`This department has ${result.data.personnel} employee(s). <br/>Only empty departments can be deleted.`);
 									
 									$(`#departmentID-${k}-close-icon`)
 									.one('click', function() {
@@ -2453,21 +2452,43 @@ function eventListenersInsideDeptsModal(deptCacheObj, latestLocations) {
 									$('#open-second-modal-btn').click();
 
 									$('#confirm-delete-dept-btn').one('click', function(){
-
+										
 										console.log(`now delete Department ${k}, ${deptCacheObj[k]['departmentName']}`);
+										
+										$.ajax({
+										//url: "libs/post-php/deleteDepartmentByID.php",
+										//type: "POST",
+										url: "libs/php/deleteDepartmentByID.php",
+										type: "GET",
+										dataType: "json",
+										data: {
+											departmentID: k
+										},
+										success: function (result) {
+											
+											console.log(`department ${k} deleted`);
+											
+											$(`#close-departmentID-${k}-icon`)
+											.one('click', function() {
+												$(this)
+													.closest('.message')
+													.transition('fade')
+												;
+											});
 
-										$(`#close-departmentID-${k}-icon`)
-										.one('click', function() {
-											$(this)
-												.closest('.message')
-												.transition('fade')
-											;
+											let deleteDeptTimer = setTimeout(function  (){
+												$(`#close-departmentID-${k}-icon`).click();		
+												clearTimeout(deleteDeptTimer);
+											},500)
+
+										},
+										error: function (jqXHR, textStatus, errorThrown) {
+												console.log('error', jqXHR);
+												console.log(textStatus);
+												console.log(errorThrown);
+											}
+										
 										});
-
-										let deleteDeptTimer = setTimeout(function  (){
-											$(`#close-departmentID-${k}-icon`).click();		
-											clearTimeout(deleteDeptTimer);
-										},500)
 
 									});
 									
@@ -2479,7 +2500,7 @@ function eventListenersInsideDeptsModal(deptCacheObj, latestLocations) {
 									console.log('error', jqXHR);
 									console.log(textStatus);
 									console.log(errorThrown);
-								}
+							}
 							
 						});
 								
@@ -5215,6 +5236,14 @@ function closeModal(){
 	document.getElementById('employee-modal-create-fields').innerHTML = "";
 	document.getElementById('employee-modal-edit-fields').innerHTML = "";
 	
+	
+	//dept and loc panels
+	document.getElementById('append-location-panels').innerHTML = '';
+	document.getElementById('append-department-panels').innerHTML = '';
+	document.getElementById('location-accordion-segment').setAttribute('style','display: none');
+	document.getElementById('department-accordion-segment').setAttribute('style','display: none');
+	$('#departmentID-0-loc-dropdown').remove();	
+
 	//buttons - hide
 	document.getElementById('save-new-employee').setAttribute('style','display: none');
 	document.getElementById('submit-edit-employee').setAttribute('style', 'display: none');
@@ -5234,11 +5263,16 @@ function closeModal(){
 	$('#refresh-locations-btn').attr('style', 'display: none');
 	$('#confirm-delete-loc-btn').attr('style', 'display: none');
 	$('#refresh-editing-employee-btn').attr('style', 'display: none');
-
+	
+	//close filter if open
+	if (filtersAccordion == 'open') {
+		document.getElementById('filter-search-accordion').click();
+	}
+	
 	//document.getElementById('modal-deny-btn').setAttribute('style', 'display: none');
 	//document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: none');
 	//document.getElementById('create-new-location-btn').innerHTML = 'Add new location';
-	//$('#departmentID-0-loc-dropdown').remove();
+	
 
 };
 
