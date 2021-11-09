@@ -112,7 +112,8 @@ let filtersAccordion = 'closed';
 let accordionJustOpened = true;
 let clickCount = 0;
 let deptCount;
-	
+
+let nameOfDepartment;			
 
 // ** PAGE LOAD FUNCTIONS **
 
@@ -1230,31 +1231,82 @@ $('#employee-modal-edit-fields').submit(function(event) {
 						
 			console.log('employee cache result',  result);
 			if (result.data == true) { 
-
-				$.ajax({
-					//url: "libs/post-php/updateEmployee.php",
+			
+					$.ajax({
+					//url: "libs/post-php/getDepartmentByID.php",
 					//type: "POST",
-					url: "libs/php/updateEmployee.php",
+					url: "libs/php/getDepartmentByID.php",
 					type: "GET",
 					dataType: "json",
-					data:  editEmployeeDataObj,
+					data: {
+						departmentID: editEmployeeDataObj['departmentID']
+					},
 					success: function (result) {
-									
-						console.log('employee updated');
-						console.log('orderby', orderBy, 'lastSearch', lastSearch);
-						employeeJustEdited = true;
-						editedElement = editEmployeeDataObj;
-						document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', JSON.stringify(editEmployeeDataObj));
-						$('#close-only-btn').click();
-						refreshPage();
+						
+						console.log('dept ID result', result);
+						editEmployeeDataObj['department'] = result.data['name'];
+							
+						$.ajax({
+						//url: "libs/post-php/getLocationByID.php",
+						//type: "POST",
+						url: "libs/php/getLocationByID.php",
+						type: "GET",
+						dataType: "json",
+						data: {
+							locationID: result.data['locationID']
+						},
+						success: function (result) {
+							
+							console.log('loc ID result', result);
+							editEmployeeDataObj['locationName'] = result.data['name'];
+							
+							$.ajax({
+							//url: "libs/post-php/updateEmployee.php",
+							//type: "POST",
+							url: "libs/php/updateEmployee.php",
+							type: "GET",
+							dataType: "json",
+							data:  editEmployeeDataObj,
+							success: function (result) {
+											
+								console.log('employee updated');
+								console.log('orderby', orderBy, 'lastSearch', lastSearch);
+								employeeJustEdited = true;
+								editedElement = editEmployeeDataObj;
+								document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', JSON.stringify(editEmployeeDataObj));
+								$('#close-only-btn').click();
+								refreshPage();
 
+							},
+							error: function (jqXHR, textStatus, errorThrown) {
+									console.log('error', jqXHR);
+									console.log(textStatus);
+									console.log(errorThrown);
+								},
+							});
+
+						
+						
+						},
+						error: function (jqXHR, textStatus, errorThrown) {
+								console.log('error', jqXHR);
+								console.log(textStatus);
+								console.log(errorThrown);
+							},
+						});
+					
+					
+					
 					},
 					error: function (jqXHR, textStatus, errorThrown) {
 							console.log('error', jqXHR);
 							console.log(textStatus);
 							console.log(errorThrown);
 						},
-					});	
+					});
+
+
+	
 
 			} else {
 
@@ -1338,7 +1390,7 @@ $('#employee-modal-create-fields').submit(function(event) {
 	
 	createEmployeeDataObj = $(this).form('get values');
 	
-	//createEmployeeDataObj['jobTitle'] = createEmployeeDataObj['jobTitle'] == '' ? 'test' : 	createEmployeeDataObj['jobTitle'];
+	//createEmployeeDataObj['jobTitle'] = createEmployeeDataObj['jobTitle'] == '' ? '' : 	createEmployeeDataObj['jobTitle'];
 	
 	console.log(createEmployeeDataObj);
 	
@@ -2080,19 +2132,41 @@ function eventListenersInsideLocsModal(latestLocations) {
 									$('#confirm-delete-loc-btn').one('click', function(){
 
 										console.log(`now delete Location ${k}, ${val}`);
+										
+										$.ajax({
+										//url: "libs/post-php/deleteLocationByID.php",
+										//type: "POST",
+										url: "libs/php/deleteLocationByID.php",
+										type: "GET",
+										dataType: "json",
+										data: {
+											locationID: k
+										},
+										success: function (result) {
+											
+											console.log(`location ${k} deleted`);
+											
+											$(`#close-locationID-${k}-icon`)
+											.one('click', function() {
+												$(this)
+													.closest('.message')
+													.transition('fade')
+												;
+											});
 
-										$(`#close-locationID-${k}-icon`)
-										.one('click', function() {
-											$(this)
-												.closest('.message')
-												.transition('fade')
-											;
+											let deleteLocTimer = setTimeout(function  (){
+												$(`#close-locationID-${k}-icon`).click();		
+												clearTimeout(deleteLocTimer);
+											},500)
+
+										},
+										error: function (jqXHR, textStatus, errorThrown) {
+												console.log('error', jqXHR);
+												console.log(textStatus);
+												console.log(errorThrown);
+											}
+										
 										});
-
-										let deleteLocTimer = setTimeout(function  (){
-											$(`#close-locationID-${k}-icon`).click();		
-											clearTimeout(deleteLocTimer);
-										},500)
 
 									});
 												
@@ -3044,7 +3118,7 @@ function createEmployeeRow(employeePropertiesObj, visibility) {
 
 function renderEmployee(employeeProperties){
 
-	employeeProperties['jobTitle'] = employeeProperties['jobTitle'] == '' ? 'test' : employeeProperties['jobTitle'];
+	employeeProperties['jobTitle'] = employeeProperties['jobTitle'] == '' ? '' : employeeProperties['jobTitle'];
 	
 	for (const [key, value] of Object.entries(employeeProperties)) {
 					
@@ -3270,15 +3344,22 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm, sho
 
 		}
 		*/		
-		
+
+		console.log('details for edit form deptID', detailsForEditForm['departmentID']);
 		
 		for (let loc = 0; loc < listOfNames.length; loc ++){
+			
 			
 			let oneOption = dataValue.cloneNode(true);
 			let outputValue = listOfIDs[loc];
 			oneOption.innerHTML = listOfNames[loc];
 			oneOption.setAttribute('data-value', outputValue);
 			menu.appendChild(oneOption);
+
+			if (listOfIDs[loc] == detailsForEditForm['departmentID']) {
+				
+				nameOfDepartment = listOfNames[loc];
+			}	
 			
 		}
 		
@@ -3317,7 +3398,7 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm, sho
 	}
 	
 	let twoCategories = twoFields.cloneNode(true);
-		
+	
 	twoCategories.appendChild(createDropDown('Department', 'Select a department', listOfNames, listOfIDs, 'department', 'departmentID', 'location-dropdown'));
 	
 	//let depNames = [];
@@ -3490,6 +3571,8 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm, sho
 			document.getElementById('submit-edit-employee').setAttribute('style','display: inline-block');
 			document.getElementById('cancel-first-modal-btn').setAttribute('style', 'display: inline-block');
 			//document.getElementById('close-only-btn').setAttribute('style', 'display: inline-block');
+			
+			detailsForEditForm['department'] = nameOfDepartment;
 
 			document.getElementById('submit-edit-employee').setAttribute('employee-details', JSON.stringify(detailsForEditForm));
 		
@@ -3932,7 +4015,7 @@ function manageDepartmentsAndLocationsModal(category, show){
 			},
 		});
 
-	} else if (category == 'departments') {
+	} else if (category == 'departments') {				
 
 		$.ajax({
 			//url: "libs/post-php/getAllDepartments.php",
