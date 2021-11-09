@@ -285,10 +285,10 @@ td#employee-details-field {
 
 
 /*First modal*/
-#close-only-btn,
-#cancel-first-modal-btn,
 #create-new-location-btn,
 #create-new-department-btn,
+#close-only-btn,
+#cancel-first-modal-btn,
 #save-new-employee,
 #submit-edit-employee,
 /*invisible*/
@@ -297,11 +297,11 @@ td#employee-details-field {
 }
 
 #create-new-location-btn {
-	float: right
+	float: left
 }
 
 #create-new-department-btn {
-	float: right;
+	float: left;
 }
 
 

@@ -163,7 +163,9 @@ function createDeptCheckbox(departmentID, labelText){
 		
 }
 
-$('#mobile-search-options').on('click', function(){
+$('#search-accordion').on('click', function(){
+
+	console.log('what')
 		
 	if (filtersAccordion == 'closed'){
 		
@@ -282,9 +284,7 @@ function renderFilterCheckboxes(forMobile){
 						
 						deptCount = clickCount.valueOf();
 						
-						setFilterFunctionality(clickCount, deptCount);
-
-						//$('#filter-search-segment').removeClass('loading');
+						setFilterFunctionality(clickCount, deptCount);		
 
 					},
 					error: function (jqXHR, textStatus, errorThrown) {
@@ -532,8 +532,22 @@ function showAlertModal(title, content){
 
 function employeeDataError(){
 
+
+	$('#refresh-window-btn').attr('style', 'display: inline-block');
 	showAlertModal('Data error', 'A data error occurred please refresh the window and try again.');
+
+	$('#refresh-window-btn').on('click', function(){
+
+		refreshWindow();
+
+	});
 		
+}
+
+function refreshWindow () {
+
+	location.reload();
+
 }
 
 // ** EVENT LISTENERS **
@@ -658,30 +672,56 @@ $('#edit-employee-fields-btn').click(function(){
 	
 	let employeeDetails = JSON.parse(this.getAttribute('employee-details'));
 	let employeeID = employeeDetails['id'];
-	
-	$.ajax({
-	//url: "libs/post-php/deleteEmployeeByID.php",
-	//type: "POST",
-	url: "libs/php/getEmployeeByID.php",
-	type: "GET",
-	dataType: "json",
-	data: {
-		employeeID: employeeID
-	},
-	success: function (result) {
 
-		document.getElementById('employee-modal-edit-fields').innerHTML = "";
-		
-		let show = true;
-		createEmployeeModalContent(editOrCreate = 'edit', result.data, show);	
-		
-	},
-	error: function (jqXHR, textStatus, errorThrown) {
-			console.log('error');
-			console.log(textStatus);
-			console.log(errorThrown);
+	$.ajax({
+		//url: "libs/post-php/checkEmployeeCache.php",
+		//type: "POST",
+		url: "libs/php/checkEmployeeCache.php",
+		type: "GET",
+		dataType: "json",
+		data: employeeDetails,
+		success: function (result) {
+						
+			console.log('employee cache result',  result);
+			if (result.data == true) {
+
+				$.ajax({
+					//url: "libs/post-php/deleteEmployeeByID.php",
+					//type: "POST",
+					url: "libs/php/getEmployeeByID.php",
+					type: "GET",
+					dataType: "json",
+					data: {
+						employeeID: employeeID
+					},
+					success: function (result) {
+				
+						document.getElementById('employee-modal-edit-fields').innerHTML = "";
+						
+						let show = true;
+						createEmployeeModalContent(editOrCreate = 'edit', result.data, show);	
+						
+					},
+					error: function (jqXHR, textStatus, errorThrown) {
+							console.log('error');
+							console.log(textStatus);
+							console.log(errorThrown);
+						},
+					});
+
+			 } else {
+
+				employeeDataError();
+
+			 }
+
 		},
-	});
+		error: function (jqXHR, textStatus, errorThrown) {
+				console.log('error');
+				console.log(textStatus);
+				console.log(errorThrown);
+			},
+		});
 
 });
 
@@ -1430,6 +1470,7 @@ function eventListenersInsideLocsModal(latestLocations) {
 									
 									$('#confirm-delete-loc-btn').attr('style', 'display: inline-block');
 									$('#second-modal-no-btn').attr('style', 'display: inline-block');
+									$('#refresh-page-btn').attr('style', 'display: none');
 
 									$('#open-second-modal-btn').click();
 
@@ -1488,7 +1529,7 @@ function eventListenersInsideLocsModal(latestLocations) {
 
 					} else {
 						
-						locationDataError(id);
+						locationDataError(k);
 						
 					}
 
@@ -1516,14 +1557,14 @@ function locationDataError(id){
 	$('#second-modal-header-text').html(`Data error`);
 	$('#second-modal-text').html('A data error occurred please refresh this window and try again.');
 							
-	$('#refresh-locations-btn').attr('style', 'display: inline-block');
+	$('#refresh-page-btn').attr('style', 'display: inline-block');
 	
 	$('#open-second-modal-btn').click();
 	
-	$('#refresh-locations-btn').on('click', function(){
+	$('#refresh-page-btn').on('click', function(){
 		
-		console.log('refresh locations');
-		
+		refreshWindow();
+
 	});
 		
 }
@@ -1535,13 +1576,13 @@ function departmentDataError(id){
 	$('#second-modal-header-text').html(`Data error`);
 	$('#second-modal-text').html('A data error occurred please refresh this window and try again.');
 							
-	$('#refresh-departments-btn').attr('style', 'display: inline-block');
+	$('#refresh-page-btn').attr('style', 'display: inline-block');
 
 	$('#open-second-modal-btn').click();
 
-	$('#refresh-departments-btn').on('click', function(){
+	$('#refresh-page-btn').on('click', function(){
 		
-		console.log('refresh departments');
+		refreshWindow();
 		
 	});
 	
@@ -1823,6 +1864,7 @@ function eventListenersInsideDeptsModal(deptCacheObj, latestLocations) {
 									
 									$('#confirm-delete-dept-btn').attr('style', 'display: inline-block');
 									$('#second-modal-no-btn').attr('style', 'display: inline-block');
+									$('#refresh-page-btn').attr('style', 'display: none');
 									
 									$('#open-second-modal-btn').click();
 
@@ -2017,7 +2059,7 @@ function renderEmployee(employeeProperties){
 					
 		document.getElementById(`employee-${key}-field`).innerHTML = value;
 		if (key == 'jobTitle') {
-			if (value == ''){
+			if (value == '' || value == 'Job Title TBC'){
 				document.getElementById(`employee-${key}-field`).innerHTML = 'Job Title TBC';
 				document.getElementById(`employee-${key}-field`).setAttribute('style', 'color: gray; font-size: 1rem; font-style: italic');
 			}
@@ -2721,6 +2763,10 @@ function manageDepartmentsAndLocationsModal(category, show){
 							showModal('Departments');
 							eventListenersInsideDeptsModal(deptCacheObj, latestLocations);
 					
+						} else if (show == 'refresh') {
+
+							eventListenersInsideDeptsModal(deptCacheObj, latestLocations);
+
 						}
 
 					},
@@ -2772,9 +2818,6 @@ function selectEmployeeFunctionality(){
 								
 					console.log('employee cache result',  result);
 					if (result.data == true) { 
-
-						//let employeeDetails = this.firstChild.children[0].getAttribute('employee-properties');
-						//employeePropertiesObj = JSON.parse(employeeDetails);
 			
 						employeePropertiesObj['jobTitle'] = employeePropertiesObj['jobTitle'] == 0 ? 'Job Title TBC' : employeePropertiesObj['jobTitle'];
 			
@@ -3189,6 +3232,7 @@ function closeModal(){
 	$('#refresh-locations-btn').attr('style', 'display: none');
 	$('#confirm-delete-loc-btn').attr('style', 'display: none');
 	$('#refresh-editing-employee-btn').attr('style', 'display: none');
+	$('#refresh-page-btn').attr('style', 'display: none');
 	
 	//close filter if open
 	if (filtersAccordion == 'open') {
