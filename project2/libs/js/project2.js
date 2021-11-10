@@ -97,7 +97,7 @@ let nameOfDepartment;
 
 
 // CREATE CHECKBOXES
-
+/*
 function createFilterCheckbox(checkboxName, checkboxInputID, category, mobile){
 	let checkboxDiv = document.createElement('div');
 
@@ -132,6 +132,7 @@ function createFilterCheckbox(checkboxName, checkboxInputID, category, mobile){
 
 };
 
+*/
 function createMasterCheckbox(locationID, labelText){
 	
 	let masterCheckbox = document.createElement('div');
@@ -167,6 +168,7 @@ function renderFilterCheckboxes(forMobile){
 	
 	document.getElementById('append-filters').innerHTML = '';
 	document.getElementById('append-mobile-filters').innerHTML = '';
+	let mobileRefresh = false;
 	
 	$.ajax({
 			//url: "libs/post-php/getAllLocations.php",
@@ -237,7 +239,9 @@ function renderFilterCheckboxes(forMobile){
 							
 							} else {
 								
-								document.getElementById('append-mobile-filters').appendChild(locationGroup);							
+								document.getElementById('append-mobile-filters').appendChild(locationGroup);
+								$('.result-row').remove();
+								getAllEmployees(false);
 								
 							}
 						}
@@ -270,7 +274,7 @@ function setFilterFunctionality(clickCount, deptCount) {
 		.checkbox({
 			// check all children
 			onChecked: function() {
-
+				console.log(1);
 				activeDepartmentsObj[this.getAttribute('locid')]['set-by-parent'] = true;
 				var	$childCheckbox  = $(this).closest('.checkbox').siblings('.list').find('.checkbox');
 				$childCheckbox.checkbox('check');
@@ -280,7 +284,7 @@ function setFilterFunctionality(clickCount, deptCount) {
 			},
 			// uncheck all children
 			onUnchecked: function() {
-
+				console.log(2);
 				activeDepartmentsObj[this.getAttribute('locid')]['set-by-parent'] = true;	
 				var	$childCheckbox  = $(this).closest('.checkbox').siblings('.list').find('.checkbox');
 				$childCheckbox.checkbox('uncheck');
@@ -297,7 +301,7 @@ function setFilterFunctionality(clickCount, deptCount) {
 			
 			// Change parent state on each child checkbox change
 			onChange   : function() {
-				
+				console.log(3);				
 				var
 					$listGroup      = $(this).closest('.list'),
 					$parentCheckbox = $listGroup.closest('.item').children('.checkbox'),
@@ -307,7 +311,7 @@ function setFilterFunctionality(clickCount, deptCount) {
 				;
 				// check to see if all other siblings are checked or unchecked
 				$checkbox.each(function() {
-					
+				console.log(4);					
 					if( $(this).checkbox('is checked') ) {
 						
 						allUnchecked = false;
@@ -319,7 +323,7 @@ function setFilterFunctionality(clickCount, deptCount) {
 				});
 				// set parent checkbox state, but don't trigger its onChange callback
 				if(allChecked) {
-					
+				console.log(5);					
 					if(clickCount > deptCount*2){
 
 						runSearch(orderBy, lastSearch, activeDepartmentsObj);
@@ -332,7 +336,7 @@ function setFilterFunctionality(clickCount, deptCount) {
 					
 				}
 				else if(allUnchecked) {
-
+				console.log(6);
 					if(clickCount > deptCount*2){
 
 						runSearch(orderBy, lastSearch, activeDepartmentsObj);
@@ -344,7 +348,7 @@ function setFilterFunctionality(clickCount, deptCount) {
 					
 				}
 				else {
-					
+				console.log(7);
 					$parentCheckbox.checkbox('set indeterminate');
 
 					if (activeDepartmentsObj[$parentCheckbox[0].children[0].getAttribute('locid')]['set-by-parent'] == false){
@@ -361,7 +365,7 @@ function setFilterFunctionality(clickCount, deptCount) {
 
 			},
 			onChecked: function (){
-
+				console.log(8);
 				clickCount++;
 				let $listGroup  = $(this).closest('.list');
 				let $parentCheckbox = $listGroup.closest('.item').children('.checkbox')
@@ -372,7 +376,7 @@ function setFilterFunctionality(clickCount, deptCount) {
 				
 			},
 			onUnchecked: function (){
-				
+				console.log(9);				
 				clickCount++;
 				let $listGroup  = $(this).closest('.list');
 				let $parentCheckbox = $listGroup.closest('.item').children('.checkbox')
@@ -541,8 +545,6 @@ function delay(callback, ms) {
 
 //FILTER ACCORDIONS
 $('#search-accordion').on('click', function(){
-
-	console.log('what')
 		
 	if (filtersAccordion == 'closed'){
 		
@@ -3059,6 +3061,8 @@ function sendRadioSelection(value){
 // ** SEARCH FUNCTION **
 
 function runSearch(orderBy, searchTerm, activeDepartmentsObj) {
+	
+	console.log('runSearch');
 
 	let activeDepartments = "";
 	
