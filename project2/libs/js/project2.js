@@ -2899,7 +2899,7 @@ function viewDetailsBtnFunctionality(){
 
 						//let employeeDetails = employeePropertiesObj;
 							
-						createEmployeeModalContent(editOrCreate = 'edit', employeePropertiesObj);	
+						//createEmployeeModalContent(editOrCreate = 'edit', employeePropertiesObj);	
 
 						document.getElementById('submit-edit-employee').setAttribute('employee-details', employeeProperties);
 
@@ -2936,23 +2936,54 @@ function viewDetailsBtnFunctionality(){
 
 						document.getElementById('employee-modal-edit-fields').setAttribute('style','display: inherit');
 						
-						let waitForModal = setTimeout(function(){
-							document.getElementById('employee-modal-form-fields').setAttribute('style', 'display: none');		
-							clearTimeout(waitForModal);			
-						},450);
+						//let waitForModal = setTimeout(function(){
+						//	document.getElementById('employee-modal-form-fields').setAttribute('style', 'display: none');		
+						//	clearTimeout(waitForModal);			
+						//},450);
 
 						$('#edit-employee-mobile-modal-button').click(function(e){
-							e.preventDefault()
+							e.preventDefault();
+							
+							$.ajax({
+							//url: "libs/post-php/getEmployeeByID.php",
+							//type: "POST",
+							url: "libs/php/getEmployeeByID.php",
+							type: "GET",
+							dataType: "json",
+							data: {
+								employeeID: employeePropertiesObj['id']
+							},
+							success: function (result) { 
+							
+								console.log(result);
 
-							document.getElementById('submit-edit-employee').setAttribute('style', 'display: inline');
-							document.getElementById('close-only-btn').setAttribute('style', 'display: inline');
+							
+							document.getElementById('submit-edit-employee').setAttribute('style', 'display: inline-block');
+							document.getElementById('cancel-first-modal-btn').setAttribute('style', 'display: inline-block');
+							document.getElementById('close-only-btn').setAttribute('style', 'display: none');
 
 							document.getElementById('close-mobile-employee-panel').click();
 							
 							let closeModalMsgTimer = setTimeout(function(){
-								document.getElementById('employee-modal-form-fields').setAttribute('style', 'display: inherit');
+
+								createEmployeeModalContent(editOrCreate = 'edit', result.data, true);
+								//createEmployeeModalContent(editOrCreate = 'edit', employeePropertiesObj, true);
 								clearTimeout(closeModalMsgTimer);
-							}, 200);
+							}, 200);							
+							
+							
+							
+							
+							},
+							error: function (jqXHR, textStatus, errorThrown) {
+									console.log('error', jqXHR);
+									console.log(textStatus);
+									console.log(errorThrown);
+							},
+							});
+					
+
+
 
 						});
 
@@ -2992,7 +3023,7 @@ function viewDetailsBtnFunctionality(){
 						
 						document.getElementById('close-only-btn').setAttribute('style', 'display: inline');
 						
-						showModal('employee details');
+						showModal('Employee details');	
 			
 
 		
