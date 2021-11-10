@@ -43,8 +43,12 @@ body {
 
 #cogs-and-search {
 	display: flex;
+	align-items: center;
 }
 
+#company-directory-title {
+	padding-left: 1rem;
+}
 
 #search-box {
 	margin-left: auto;
@@ -52,7 +56,7 @@ body {
 }
 
 #search-box-icon {
-	margin-left: -4rem
+	margin-left: -15rem;
 }
 
 #company-logo {
