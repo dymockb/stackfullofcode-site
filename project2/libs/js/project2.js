@@ -163,46 +163,6 @@ function createDeptCheckbox(departmentID, labelText){
 		
 }
 
-$('#search-accordion').on('click', function(){
-
-	console.log('what')
-		
-	if (filtersAccordion == 'closed'){
-		
-		//$('#filter-search-segment').addClass('loading');
-		
-		clickCount = 0;
-		
-		forMobile = true;
-		
-		renderFilterCheckboxes(forMobile);
-
-	}
-
-	filtersAccordion = filtersAccordion == 'closed' ? 'open' : 'closed';
-
-
-});
-
-$('#filter-search-accordion').on('click', function(){
-		
-	if (filtersAccordion == 'closed'){
-		
-		//$('#filter-search-segment').addClass('loading');
-		
-		clickCount = 0;
-		
-		forMobile = false;
-		
-		renderFilterCheckboxes(forMobile);
-
-	}
-
-	filtersAccordion = filtersAccordion == 'closed' ? 'open' : 'closed';
-
-
-});
-
 function renderFilterCheckboxes(forMobile){
 	
 	document.getElementById('append-filters').innerHTML = '';
@@ -553,6 +513,7 @@ function refreshWindow () {
 // ** EVENT LISTENERS **
 
 //SEARCH BOX
+
 $('#search-input').on('input', delay(function () {
   
 	console.log('search term:', this.value.toLowerCase());
@@ -577,6 +538,47 @@ function delay(callback, ms) {
     }, ms || 0);
   };
 }
+
+//FILTER ACCORDIONS
+$('#search-accordion').on('click', function(){
+
+	console.log('what')
+		
+	if (filtersAccordion == 'closed'){
+		
+		//$('#filter-search-segment').addClass('loading');
+		
+		clickCount = 0;
+		
+		forMobile = true;
+		
+		renderFilterCheckboxes(forMobile);
+
+	}
+
+	filtersAccordion = filtersAccordion == 'closed' ? 'open' : 'closed';
+
+
+});
+
+$('#filter-search-accordion').on('click', function(){
+		
+	if (filtersAccordion == 'closed'){
+		
+		//$('#filter-search-segment').addClass('loading');
+		
+		clickCount = 0;
+		
+		forMobile = false;
+		
+		renderFilterCheckboxes(forMobile);
+
+	}
+
+	filtersAccordion = filtersAccordion == 'closed' ? 'open' : 'closed';
+
+
+});
 
 //BUTTONS
 
@@ -2453,7 +2455,7 @@ function createEmployeeModalContent(editOrCreate, detailsForEditForm, show){
 	
 };
 
-function createDepartmentSegment(id, name, location, locationID, latestLocations, deptCacheObj){
+function createDepartmentSegment(id, name, locationName, locationID, latestLocations, deptCacheObj){
 
 	let latestLocNames = [];
 	let latestLocIDs = [];
@@ -2515,7 +2517,7 @@ function createDepartmentSegment(id, name, location, locationID, latestLocations
 			departmentForm.setAttribute('class', 'ui form rename-form'); departmentForm.setAttribute('id',`departmentID-${id}-form`); departmentForm.setAttribute('name',`departmentID-${id}-form`); departmentForm.setAttribute('autocomplete','off');
 				departmentTitleRow.setAttribute('class', 'department-title-row');
 					//departmentTitle.setAttribute();
-						departmentTitleText.setAttribute('id', `departmentID-${id}-title`); departmentTitleText.innerHTML = `${name} | ${location}`;
+						departmentTitleText.setAttribute('id', `departmentID-${id}-title`); departmentTitleText.innerHTML = `${name} | ${locationName}`;
 					departmentEmployees.setAttribute('class', 'dept-employee-info-icons');						
 						//departmentEmployeeInfo.setAttribute('class', 'employee-count-icon'); //hide with display-none-field display-none-field
 							//departmentEmployeeCount.setAttribute('id', `departmentID-${id}-employee-count`); departmentEmployeeCount.innerHTML = `${emps}`; departmentEmployeeCount.setAttribute('class', 'employee-count-number default-cursor');
@@ -2871,134 +2873,147 @@ function viewDetailsBtnFunctionality(){
 
 		let employeeProperties = JSON.parse(this.getAttribute('employee-details'));
 		
-		employeePropertiesStored = employeeProperties;
-				
-		for (const [key, value] of Object.entries(employeeProperties)) {
-
-			employeePropertiesObj[key] = value;
-			
-		}
-
-		employeePropertiesObj['jobTitle'] = employeePropertiesObj['jobTitle'] == 0 ? 'Job Title TBC' : employeePropertiesObj['jobTitle'];
-
-		let employeeDetails = employeePropertiesObj;
+		//let employeeID = employeeProperties['id'];
 		
-		dropDownClicked = 0;
-			
-		createEmployeeModalContent(editOrCreate = 'edit', employeeDetails);	
-
-		document.getElementById('submit-edit-employee').setAttribute('employee-details', this.getAttribute('employee-details'));
-
-		renderEmployee(employeePropertiesObj);
-		$('.employee-detail-fields').attr('style', 'visibility: visible');
-		document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeeDetails);
-		document.getElementById('delete-employee-btn').setAttribute('employee-details', employeeDetails);
-		document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', employeeDetails)
-
-		let employeeModalPanel = document.getElementById('employee-segment').cloneNode(true)
-
-		console.log(employeeModalPanel.children[0].children[0]);
-		
-		employeeModalPanel.children[0].children[0].setAttribute('id', 'close-mobile-employee-panel');
-		employeeModalPanel.children[0].children[0].setAttribute('style', 'display: none !important');
-
-		employeeModalPanel.children[0].children[1].children[1].setAttribute('id', "delete-employee-mobile-modal-button");
-		employeeModalPanel.children[0].children[1].children[1].setAttribute('style', "display: inline !important");
-		employeeModalPanel.children[0].children[1].children[2].setAttribute('id', "edit-employee-mobile-modal-button");
-		employeeModalPanel.children[0].children[1].children[2].setAttribute('style', "display: inline !important; float: right");
-		employeeModalPanel.children[0].setAttribute('class', 'ui message');
-		
-		console.log(employeeModalPanel.children[0].children[1].children[2]);
-
-		let headingNode = document.createElement('h3');
-		headingNode.innerHTML = 'Update details'
-
-		document.getElementById('employee-modal-edit-fields').appendChild(employeeModalPanel);
-
-		let topDiv = document.createElement('div')
-		topDiv.appendChild(employeeModalPanel);
-		
-		document.getElementById('employee-modal-edit-fields').appendChild(topDiv);
-
-		document.getElementById('employee-modal-edit-fields').setAttribute('style','display: inherit');
-		
-		let waitForModal = setTimeout(function(){
-			document.getElementById('employee-modal-form-fields').setAttribute('style', 'display: none');		
-			clearTimeout(waitForModal);			
-		},450);
-
-		$('#edit-employee-mobile-modal-button').click(function(e){
-			e.preventDefault()
-
-			document.getElementById('submit-edit-employee').setAttribute('style', 'display: inline');
-			document.getElementById('close-only-btn').setAttribute('style', 'display: inline');
-
-			document.getElementById('close-mobile-employee-panel').click();
-			
-			let closeModalMsgTimer = setTimeout(function(){
-				document.getElementById('employee-modal-form-fields').setAttribute('style', 'display: inherit');
-				clearTimeout(closeModalMsgTimer);
-			}, 200);
-
-		});
-
-		$('#delete-employee-mobile-modal-button').click(function(e){
-			e.preventDefault()
-			console.log('click');
-			console.log('employee Properties Stored',employeePropertiesStored);
+		$.ajax({
+				//url: "libs/post-php/checkEmployeeCache.php",
+				//type: "POST",
+				url: "libs/php/checkEmployeeCache.php",
+				type: "GET",
+				dataType: "json",
+				data: employeeProperties,
+				success: function (result) {
+								
+					console.log('employee cache result',  result);
+					if (result.data == true) { 
 					
-			document.getElementById('delete-employee-modal-btn').setAttribute('style', 'display: inline-block !important');
-			document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', JSON.stringify(employeePropertiesStored));
+						employeePropertiesStored = employeeProperties;
+					
+						for (const [key, value] of Object.entries(employeeProperties)) {
 
-			$('#alert-modal').modal(
-				{
-					title: '<i class="archive icon"></i>',
-					content: `<div class="alert-modal-text">Delete this employee? <br> <h3> ${employeePropertiesStored.firstName} ${employeePropertiesStored.lastName} </h3></div>`
-				}).modal('show');
+							employeePropertiesObj[key] = value;
+							
+						}
 
-		});
+						employeePropertiesObj['jobTitle'] = employeePropertiesObj['jobTitle'] == 0 ? 'Job Title TBC' : employeePropertiesObj['jobTitle'];
 
-		$('#mobile-modal-update-employee-btn').click(function(e){
+						//let employeeDetails = employeePropertiesObj;
+							
+						createEmployeeModalContent(editOrCreate = 'edit', employeePropertiesObj);	
+
+						document.getElementById('submit-edit-employee').setAttribute('employee-details', employeeProperties);
+
+						renderEmployee(employeePropertiesObj);
+						$('.employee-detail-fields').attr('style', 'visibility: visible');
+						document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', employeePropertiesObj);
+						document.getElementById('delete-employee-btn').setAttribute('employee-details', employeePropertiesObj);
+						document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', employeePropertiesObj)
+
+						let employeeModalPanel = document.getElementById('employee-segment').cloneNode(true)
+
+						console.log(employeeModalPanel.children[0].children[0]);
+						
+						employeeModalPanel.children[0].children[0].setAttribute('id', 'close-mobile-employee-panel');
+						employeeModalPanel.children[0].children[0].setAttribute('style', 'display: none !important');
+
+						employeeModalPanel.children[0].children[1].children[1].setAttribute('id', "delete-employee-mobile-modal-button");
+						employeeModalPanel.children[0].children[1].children[1].setAttribute('style', "display: inline !important");
+						employeeModalPanel.children[0].children[1].children[2].setAttribute('id', "edit-employee-mobile-modal-button");
+						employeeModalPanel.children[0].children[1].children[2].setAttribute('style', "display: inline !important; float: right");
+						employeeModalPanel.children[0].setAttribute('class', 'ui message');
+						
+						console.log(employeeModalPanel.children[0].children[1].children[2]);
+
+						let headingNode = document.createElement('h3');
+						headingNode.innerHTML = 'Update details'
+
+						document.getElementById('employee-modal-edit-fields').appendChild(employeeModalPanel);
+
+						let topDiv = document.createElement('div')
+						topDiv.appendChild(employeeModalPanel);
+						
+						document.getElementById('employee-modal-edit-fields').appendChild(topDiv);
+
+						document.getElementById('employee-modal-edit-fields').setAttribute('style','display: inherit');
+						
+						let waitForModal = setTimeout(function(){
+							document.getElementById('employee-modal-form-fields').setAttribute('style', 'display: none');		
+							clearTimeout(waitForModal);			
+						},450);
+
+						$('#edit-employee-mobile-modal-button').click(function(e){
+							e.preventDefault()
+
+							document.getElementById('submit-edit-employee').setAttribute('style', 'display: inline');
+							document.getElementById('close-only-btn').setAttribute('style', 'display: inline');
+
+							document.getElementById('close-mobile-employee-panel').click();
+							
+							let closeModalMsgTimer = setTimeout(function(){
+								document.getElementById('employee-modal-form-fields').setAttribute('style', 'display: inherit');
+								clearTimeout(closeModalMsgTimer);
+							}, 200);
+
+						});
+
+						$('#delete-employee-mobile-modal-button').click(function(e){
+							e.preventDefault()
+							console.log('click');
+							console.log('employee Properties Stored',employeePropertiesStored);
+									
+							document.getElementById('delete-employee-modal-btn').setAttribute('style', 'display: inline-block !important');
+							document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', JSON.stringify(employeePropertiesStored));
+							document.getElementById('alert-modal-no-btn').setAttribute('style', 'display: inline-block !important');
 			
-			console.log('update');
-			document.getElementById('submit-edit-employee').setAttribute('style', 'display: inline');
-			document.getElementById('employee-modal-form-fields').setAttribute('style', 'display: inherit');
+							$('#alert-modal').modal(
+								{
+									title: '<i class="archive icon"></i>',
+									content: `<div class="alert-modal-text">Delete this employee? <br> <h3> ${employeePropertiesStored.firstName} ${employeePropertiesStored.lastName} </h3></div>`
+								}).modal('show');
 
-		});
+						});
+
+						$('#mobile-modal-update-employee-btn').click(function(e){
+							
+							console.log('update');
+							document.getElementById('submit-edit-employee').setAttribute('style', 'display: inline');
+							document.getElementById('employee-modal-form-fields').setAttribute('style', 'display: inherit');
+
+						});
+
+						
+						$('.message .close')
+						.on('click', function() {
+							$(this)
+								.closest('.message')
+								.transition('fade')
+							;
+						});
+						
+						document.getElementById('close-only-btn').setAttribute('style', 'display: inline');
+						
+						showModal('employee details');
+			
 
 		
-		$('.message .close')
-		.on('click', function() {
-			$(this)
-				.closest('.message')
-				.transition('fade')
-			;
+
+		
+					} else {
+		
+						employeeDataError();
+		
+					} 
+		
+				},
+				error: function (jqXHR, textStatus, errorThrown) {
+						console.log('error', jqXHR);
+						console.log(textStatus);
+						console.log(errorThrown);
+				},
+			});
+
+		
 		});
-		
-		document.getElementById('close-only-btn').setAttribute('style', 'display: inline');
-		
-		showModal('employee details');
-		
-		/*
-		$('.ui.modal.employee-details-modal').modal({
-			title: 'Employee details',
-			closable: false,
-			autofocus: false,
-			onDeny: function(){
-				console.log('deny');
-				//return false;
-			},
-			onApprove: function (){
-			console.log('approve');
-			},
-			onHidden: function(){	
-				console.log('close view employee modal');
-				closeModal();
-			}	
-		}).modal('show');
-		*/
-	
-	});
 	
 }
 
