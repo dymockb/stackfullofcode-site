@@ -28,13 +28,19 @@ li img {
 .profile-img {
 	background-size: contain;
 	background-repeat: no-repeat;
-	background-image: url("../assets/img/desert-island.png");
+	background-image: url("../assets/img/desert-island.jpg");
 	transition: background-image 1s;
+}
+
+#profile-img {
+	height: 21rem;
+	width: 31rem;
+	overflow: hidden;
 }
 
 [data-theme="dark"] {
   filter: invert(100%);
-	background-image: url("../assets/img/inverted-island.png")
+	background-image: url("../assets/img/inverted-island.jpg")
 }
 
 
