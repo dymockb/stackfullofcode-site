@@ -64,9 +64,11 @@
   --bs-body-bg: #fff;
 }
 
+/*
 :root {
   filter: invert(100%);
 }
+*/
 
 *,
 *::before,
@@ -11416,7 +11418,7 @@ section.resume-section {
   align-items: center;
   padding-left: 1rem;
   padding-right: 1rem;
-  /*padding-top: 5rem;*/
+  padding-top: 5rem;
   padding-bottom: 5rem;
   max-width: 75rem;
 }

@@ -1,0 +1,10 @@
+li img {
+    width: 50%;
+    vertical-align: text-top;
+}
+
+.contact .php-email-form button[type=submit] {
+	
+	background: rgb(189, 93, 56)
+	
+}
