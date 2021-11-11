@@ -29,6 +29,7 @@ li img {
 	--background-lightbulb-img: url("../assets/img/hanging-light-bulb-off.jpg");
 	--project-2-mobile-img: url("../assets/img/project2-mobile.png");
 	--project-2-desktop-img: url("../assets/img/project2-desktop.png");
+	--top-light: url("../assets/img/hanging-light-bulb-off.jpg");
 }
 
 .profile-img {
@@ -64,11 +65,31 @@ li img {
 	background-clip: content-box;
 }
 
+#light-btn {
+	height: 10rem;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-image: var(--top-light);
+	transition: background-image 1s;
+	position: sticky;
+	top: 3.5rem;
+	/* left: 20rem; */
+	margin-left: 80%;
+	cursor: pointer;
+}
+
+@media (min-width: 992px) {
+  #light-btn {
+		display: none;
+	}
+}
+
 [data-theme="dark"] {
   filter: invert(100%);
 	--background-lightbulb-img: url("../assets/img/hanging-light-bulb-on.jpg");
 	--project-2-mobile-img: url("../assets/img/project2-mobile-inv.png");
 	--project-2-desktop-img: url("../assets/img/project2-desktop-inv.png");
+	--top-light: url("../assets/img/hanging-light-bulb-on.jpg")
 }
 
 
