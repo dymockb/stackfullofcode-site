@@ -8,7 +8,7 @@ li img {
 }
 
 #title-section {
-	margin-top: -10rem;
+	/* margin-top: -15rem; */
 }
 
 .icon {
@@ -25,22 +25,50 @@ li img {
 	background-image: url("../assets/img/html5.png");
 }
 
+:root {
+	--background-lightbulb-img: url("../assets/img/hanging-light-bulb-off.jpg");
+	--project-2-mobile-img: url("../assets/img/project2-mobile.png");
+	--project-2-desktop-img: url("../assets/img/project2-desktop.png");
+}
+
 .profile-img {
+	cursor: pointer;
 	background-size: contain;
 	background-repeat: no-repeat;
-	background-image: url("../assets/img/desert-island.jpg");
+	background-image: var(--background-lightbulb-img);
 	transition: background-image 1s;
+	background-clip: content-box;
 }
 
 #profile-img {
-	height: 21rem;
-	width: 31rem;
-	overflow: hidden;
+	height: 10rem;
+	width: 10rem;
+	/* overflow: hidden; */
+}
+
+#project-2-mobile-img {
+	height: 29rem;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-image: var(--project-2-mobile-img);
+	transition: background-image 1s;
+	background-clip: content-box;
+}
+
+#project-2-desktop-img {
+	height: 29rem;
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-image: var(--project-2-desktop-img);
+	transition: background-image 1s;
+	background-clip: content-box;
 }
 
 [data-theme="dark"] {
   filter: invert(100%);
-	background-image: url("../assets/img/inverted-island.jpg")
+	--background-lightbulb-img: url("../assets/img/hanging-light-bulb-on.jpg");
+	--project-2-mobile-img: url("../assets/img/project2-mobile-inv.png");
+	--project-2-desktop-img: url("../assets/img/project2-desktop-inv.png");
 }
 
 
@@ -57,4 +85,37 @@ section#contact {
 	/* border-style: solid; */
 	padding-left: 2rem;
 	padding-right: 2rem;
+}
+
+/*
+@keyframes pulse {
+	0% {
+	 transform: scale(1, 1);
+	}
+
+	50% {
+	 transform: scale(1.1, 1.1);
+	}
+
+	100% {
+	transform: scale(1, 1);
+	}
+}
+
+
+#profile-img {
+	animation: pulse 1s linear infinite;
+}
+*/
+
+#profile-img:hover{ 
+  animation: pulse 1s;
+  animation-timing-function: linear;   
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.1);
+  100% { transform: scale(1); }
+  }
 }
