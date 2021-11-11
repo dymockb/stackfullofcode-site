@@ -4,7 +4,51 @@ li img {
 }
 
 .contact .php-email-form button[type=submit] {
-	
 	background: rgb(189, 93, 56)
-	
+}
+
+#title-section {
+	margin-top: -10rem;
+}
+
+.icon {
+	height: 80px;
+	width: 80px;
+	display: inline-block;
+}
+
+.icon-html5 {
+	/* background: red; */
+	/*background-image: url("../assets/img/desert-island.jpg");*/
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-image: url("../assets/img/html5.png");
+}
+
+.profile-img {
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-image: url("../assets/img/desert-island.png");
+	transition: background-image 1s;
+}
+
+[data-theme="dark"] {
+  filter: invert(100%);
+	background-image: url("../assets/img/inverted-island.png")
+}
+
+
+:root {	
+ transition: filter 1s;
+}
+
+section#contact {
+    padding-bottom: 0;
+}
+
+#contact-section {
+	/* border: 1px; */
+	/* border-style: solid; */
+	padding-left: 2rem;
+	padding-right: 2rem;
 }
