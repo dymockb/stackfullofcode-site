@@ -62,21 +62,46 @@ li img {
 	background-repeat: no-repeat;
 	background-image: var(--project-2-desktop-img);
 	transition: background-image 1s;
-	background-clip: content-box;
+	/* background-clip: content-box; */
+}
+
+.pointer {
+	/* cursor: pointer; */
 }
 
 #light-btn {
 	height: 10rem;
-	background-size: contain;
+	/* width: fit-content; */
+	background-size: cover;
 	background-repeat: no-repeat;
 	background-image: var(--top-light);
+	background-position: center;
 	transition: background-image 1s;
 	position: sticky;
+	z-index: 10;
 	top: 3.5rem;
 	/* left: 20rem; */
-	margin-left: 80%;
+	margin-left: 70%;
 	cursor: pointer;
+	pointer-events: all;
+	/* border-bottom: 1px black; */
+	border-bottom: black;
+	border-style: solid;
+	background-color: red;
 }
+
+@media (min-width: 576px) {
+  #light-btn {
+		height: 10rem;
+		margin-left: 86%;
+	}
+}
+@media (min-width: 768px) {
+  #light-btn {
+		height: 15rem;
+	}
+}
+
 
 @media (min-width: 992px) {
   #light-btn {
@@ -84,6 +109,19 @@ li img {
 	}
 }
 
+/*
+
+@media (min-width: 1200px) {
+ {
+
+  }
+}
+@media (min-width: 1400px) {
+ {
+
+  }
+}
+*/
 [data-theme="dark"] {
   filter: invert(100%);
 	--background-lightbulb-img: url("../assets/img/hanging-light-bulb-on.jpg");
