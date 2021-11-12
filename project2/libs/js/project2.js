@@ -168,7 +168,6 @@ function renderFilterCheckboxes(forMobile){
 	
 	document.getElementById('append-filters').innerHTML = '';
 	document.getElementById('append-mobile-filters').innerHTML = '';
-	let mobileRefresh = false;
 	
 	$.ajax({
 			//url: "libs/post-php/getAllLocations.php",
@@ -240,10 +239,15 @@ function renderFilterCheckboxes(forMobile){
 							} else {
 								
 								document.getElementById('append-mobile-filters').appendChild(locationGroup);
-								$('.result-row').remove();
-								getAllEmployees(false);
+								//$('.result-row').remove();
+								//getAllEmployees(false);
+								
 								
 							}
+						}
+						
+						if (forMobile != false) {
+							refreshPage();
 						}
 						
 						deptCount = clickCount.valueOf();
@@ -488,6 +492,7 @@ function showAlertModal(title, content){
 			title: title,
 		 	content: content,
 			onHidden: function() {
+				console.log('is this working');
 				closeAlertModal();
 			}
 		}).modal('show');
@@ -769,7 +774,7 @@ $('#delete-employee-modal-btn').click(function (){
 			console.log('employee cache result',  result);
 			if (result.data == true) { 
 
-				//closeAlertModal();
+				//
 
 				let employeeID = JSON.parse($('#delete-employee-modal-btn').attr('employee-details')).id;
 			
@@ -794,7 +799,8 @@ $('#delete-employee-modal-btn').click(function (){
 					
 					}, 750);
 					
-					refreshPage();
+					//closeAlertModal();
+					//refreshPage();
 			
 				},
 				error: function (jqXHR, textStatus, errorThrown) {
@@ -887,7 +893,7 @@ $('#employee-modal-edit-fields').submit(function(event) {
 								editedElement = editEmployeeDataObj;
 								document.getElementById('edit-employee-fields-btn').setAttribute('employee-details', JSON.stringify(editEmployeeDataObj));
 								$('#close-only-btn').click();
-								refreshPage();
+								//refreshPage();
 
 							},
 							error: function (jqXHR, textStatus, errorThrown) {
@@ -968,7 +974,7 @@ $('#employee-modal-create-fields').submit(function(event) {
 		
 			employeeJustCreated = true;
 			
-			refreshPage();
+			//refreshPage();
 			
 
 	},
@@ -2066,6 +2072,8 @@ function renderEmployee(employeeProperties){
 			if (value == '' || value == 'Job Title TBC'){
 				document.getElementById(`employee-${key}-field`).innerHTML = 'Job Title TBC';
 				document.getElementById(`employee-${key}-field`).setAttribute('style', 'color: gray; font-size: 1rem; font-style: italic');
+			} else {
+				document.getElementById(`employee-${key}-field`).setAttribute('style', 'font-style: normal; font-size: 1.28rem; color: black');
 			}
 		} else {
 			document.getElementById(`employee-${key}-field`).setAttribute('style', '');
@@ -2329,12 +2337,21 @@ function buildForm(listOfNames, listOfIDs, editOrCreate, detailsForEditForm, sho
 	jobTitleInput.setAttribute('name', 'jobTitle');
 	jobTitleInput.setAttribute('type', 'text');
 	
+	if (editOrCreate == 'edit') {
+		let jobTitleValue = detailsForEditForm.jobTitle == '' || detailsForEditForm.jobTitle == 'Job Title TBC' ? '' : detailsForEditForm.jobTitle;
+		jobTitleInput.setAttribute('value', jobTitleValue);
+	}
+	
 	if (editOrCreate == 'create') {
 		jobTitleInput.setAttribute('placeholder', 'Job Title');
-	} else {
+	} 
+	
+	/*
+	else {
 		let jobTitlePlaceholder = detailsForEditForm.jobTitle == 0 ? 'Job Title' : detailsForEditForm.jobTitle;
 		jobTitleInput.setAttribute('placeholder', jobTitlePlaceholder);
 	}
+	*/
 	
 	jobTitleField.appendChild(jobTitleHeading);
 	jobTitleField.appendChild(jobTitleInput);
@@ -2889,7 +2906,7 @@ function viewDetailsBtnFunctionality(){
 					console.log('employee cache result',  result);
 					if (result.data == true) { 
 					
-						employeePropertiesStored = employeeProperties;
+						//employeePropertiesStored = employeeProperties;
 					
 						for (const [key, value] of Object.entries(employeeProperties)) {
 
@@ -2992,18 +3009,22 @@ function viewDetailsBtnFunctionality(){
 						$('#delete-employee-mobile-modal-button').click(function(e){
 							e.preventDefault()
 							console.log('click');
-							console.log('employee Properties Stored',employeePropertiesStored);
+							console.log('employee Properties Stored',employeeProperties);
 									
 							document.getElementById('delete-employee-modal-btn').setAttribute('style', 'display: inline-block !important');
-							document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', JSON.stringify(employeePropertiesStored));
+							document.getElementById('delete-employee-modal-btn').setAttribute('employee-details', JSON.stringify(employeeProperties));
 							document.getElementById('alert-modal-no-btn').setAttribute('style', 'display: inline-block !important');
 			
+							showAlertModal('<i class="archive icon"></i>', `Delete this employee? <br> <h3> ${employeeProperties.firstName} ${employeeProperties.lastName} </h3>`);
+							
+							/*
 							$('#alert-modal').modal(
 								{
 									title: '<i class="archive icon"></i>',
 									content: `<div class="alert-modal-text">Delete this employee? <br> <h3> ${employeePropertiesStored.firstName} ${employeePropertiesStored.lastName} </h3></div>`
 								}).modal('show');
-
+							*/			
+							
 						});
 
 						$('#mobile-modal-update-employee-btn').click(function(e){
@@ -3282,7 +3303,6 @@ function closeModal(){
 	$('#refresh-locations-btn').attr('style', 'display: none');
 	$('#confirm-delete-loc-btn').attr('style', 'display: none');
 	$('#refresh-editing-employee-btn').attr('style', 'display: none');
-	$('#refresh-page-btn').attr('style', 'display: none');
 	
 	//close filter if open
 	if (filtersAccordion == 'open') {
@@ -3293,15 +3313,22 @@ function closeModal(){
 	//document.getElementById('manage-depts-and-locs').setAttribute('style', 'display: none');
 	//document.getElementById('create-new-location-btn').innerHTML = 'Add new location';
 	
+	console.log('1st modal closed');
+	refreshPage();
+	
 
 };
 
 function closeAlertModal(){
+	
+	console.log('alertmodal closed');
 
 	$('#close-alert-modal-btn').attr('style', 'display: none');
 	$('#delete-employee-modal-btn').attr('style', 'display: none');
 	$('#alert-modal-no-btn').attr('style', 'display: none');
 	$('#refresh-window-btn').attr('style', 'display: none')
+	
+	refreshPage();
 
 }
 
@@ -3344,6 +3371,7 @@ function attachRadioEvents(){
 
 function refreshPage(){
 	
+	console.log('refresh now - get all emps');
 	getAllEmployees(true);
 
 }
