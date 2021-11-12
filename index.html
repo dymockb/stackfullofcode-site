@@ -46,18 +46,26 @@
 				<div id="light-btn"></div>
          Page Content-->
         <div class="container-fluid p-0">
-				<div id="light-btn" class="pointer"></div>
-            <!-- About-->
+				
+					<div id="light-btn" class="light-img"></div>
+        
+					<!-- About-->
             <section class="resume-section aos-item" id="about" data-aos="fade-in">
                 <div class="resume-section-content" id="title-section">
                     <h1 class="mb-0">
-                        Dymock
-                        <span class="text-primary">Brett</span>
+                        <span id="dymock">Dymock</span>
+                        <span id="brett" class="text-primary">Brett</span>
                     </h1>
 										<h2 class="mb-0">
                         <span class="text-primary">Full-stack</span>
 												Developer 
                     </h2>
+										<h1 class="ml11">
+											<span class="text-wrapper">
+												<span class="line line1"></span>
+												<span class="letters">Hello Goodbye</span>
+											</span>
+										</h1>
 								</div>
             </section>
             <hr class="m-0" />				
@@ -76,7 +84,7 @@
                     <ul class="fa-ul mb-0">
                         <li>
                             <span class="fa-li aos-item" data-aos="fade-in"><i class="fas fa-check"></i></span>
-                            Microsoft HTML and CSS thing
+                            Microsoft Technology Associate: Introduction to Programming Using HTML and CSS.
                         </li>
                     </ul>
                 </div>
@@ -94,15 +102,8 @@
 												<div class="img-fluid mx-auto mb-2" id="project-2-desktop-img"></div>
 
 												-->
-
-
-
-
-
-
 												<div class="aos-item" data-aos="fade-in">
-													<span>This project was a load of twatishness. Random Word Generator. Supposedly there are over one million words in the English Language. We trimmed some fat to take away really odd words and determiners. Then we grabbed the most popular words and built this word randomizer. Just keep clicking generate—chances are you won't find a repeat!
-Random Word Games As an exercise for English students, generate a list of ten random words and have the student write a story that incorporates those words in the order they're generated. You could also take the hard work out of playing MadLibs but for that you'll need to separate out the parts of speech. There's generators for each one, just jump over using the options below.
+													<span>An interactive map providing top-level data for countries around the world.  Built using Bootstrap and the Leaflet mapping library, the map interacts with x different APIs to provide a blend of real-time, geographic and image data for any selected country. 
 													</span>
 												</div>
 											</li>
@@ -112,13 +113,7 @@ Random Word Games As an exercise for English students, generate a list of ten ra
 												<div class="img-fluid mx-auto mb-2" id="project-2-mobile-img"></div>
 												<div class="img-fluid mx-auto mb-2" id="project-2-desktop-img"></div>
 												<div class="aos-item" data-aos="fade-in">
-													<p>This project was another load of twatishness. Random Word Generator
-Supposedly there are over one million words in the English Language. We trimmed some fat to take away really odd words and determiners. Then we grabbed the most popular words and built this word randomizer. Just keep clicking generate—chances are you won't find a repeat!
-
-Random Word Games
-As an exercise for English students, generate a list of ten random words and have the student write a story that incorporates those words in the order they're generated.
-
-You could also take the hard work out of playing MadLibs but for that you'll need to separate out the parts of speech. There's generators for each one, just jump over using the options below.
+													<p>This project uses the Semantic framework in conjunction with PHP/MariaDB/SQL database to provide the user with an intuitive interface for managing company employees across a range of locations and departments.
 													</p>
 												</div>
 											</li>
@@ -183,12 +178,75 @@ You could also take the hard work out of playing MadLibs but for that you'll nee
         -->	
 				<!-- Core theme JS-->
 				<script src="index/vendors/aos-master/dist/aos.js"></script>
+				<script src="index/vendors/anime/anime.min.js"></script>
         <script src="index/js/scripts.js"></script>
 				<script>
 
-					
+
+						/*
+						// Wrap every letter in a span
+						const firstNameWrapper = document.getElementById('dymock');
+						firstNameWrapper.innerHTML = firstNameWrapper.textContent.replace(/\S/g, "<span class='letter'>$&</span>");
+
+						const lastNameWrapper = document.getElementById('brett');
+						lastNameWrapper.innerHTML = lastNameWrapper.textContent.replace(/\S/g, "<span class='letter'>$&</span>");
+
+						anime.timeline({loop: false})
+							.add({
+								targets: '#dymock .letter',
+								opacity: [0,1],
+								easing: "easeInOutQuad",
+								duration: 1250,
+								delay: (el, i) => 150 * (i+1)
+							})
+
+							anime.timeline({loop: false})
+							.add({
+								targets: '#brett .letter',
+								opacity: [0,1],
+								easing: "easeInOutQuad",
+								duration: 1250,
+								delay: (el, i) => 150 * (i+1)
+							})
+							*/
 				
-				const rootDataset = document.documentElement.dataset;
+							const fsWrapper = document.querySelector('.ml11 .letters');
+								fsWrapper.innerHTML = fsWrapper.textContent.replace(/([^\x00-\x80]|\w)/g, "<span class='letter'>$&</span>");
+
+								anime.timeline({loop: false})
+									.add({
+										targets: '.ml11 .line',
+										scaleY: [0,1],
+										opacity: [0.5,1],
+										easing: "easeOutExpo",
+										duration: 700
+									})
+									.add({
+										targets: '.ml11 .line',
+										translateX: [0, document.querySelector('.ml11 .letters').getBoundingClientRect().width + 10],
+										easing: "easeOutExpo",
+										duration: 700,
+										delay: 100
+									}).add({
+										targets: '.ml11 .letter',
+										opacity: [0,1],
+										easing: "easeOutExpo",
+										duration: 600,
+										offset: '-=775',
+										delay: (el, i) => 34 * (i+1)
+									}).add({
+										targets: '.ml11',
+										opacity: 1,
+										duration: 1000,
+										easing: "easeOutExpo",
+										delay: 0
+									}).add({
+										targets: '.ml11 .line',
+										opacity: 0,
+										duration: 1000,
+										easing: "easeOutExpo",
+										delay: 0
+									})
 
 					AOS.init({
 						easing: 'ease-in-out-sine'
@@ -198,6 +256,8 @@ You could also take the hard work out of playing MadLibs but for that you'll nee
 
 					var itemsCounter = 1;
 					var container = document.getElementById('lightbulb-container');
+
+					const rootDataset = document.documentElement.dataset;
 				
 					function addItem () {
 						if (itemsCounter > 1) return;

@@ -1,3 +1,44 @@
+.text-wrapper {
+    color: white
+}
+
+
+.ml11 {
+  font-weight: 700;
+  font-size: 3.5em;
+  color: white;
+}
+
+.ml11 .text-wrapper {
+  position: relative;
+  display: inline-block;
+  padding-top: 0.1em;
+  padding-right: 0.05em;
+  padding-bottom: 0.15em;
+  color: #212529
+}
+
+.ml11 .line {
+  opacity: 0;
+  position: absolute;
+  left: 0;
+  height: 100%;
+  width: 3px;
+  background-color: #212529;
+  transform-origin: 0 50%;
+}
+
+.ml11 .line1 { 
+  top: 0; 
+  left: 0;
+}
+
+.ml11 .letter {
+  display: inline-block;
+  line-height: 1em;
+}
+
+
 li img {
     width: 50%;
     vertical-align: text-top;
@@ -7,14 +48,12 @@ li img {
 	background: rgb(189, 93, 56)
 }
 
-#title-section {
-	/* margin-top: -15rem; */
-}
 
 .icon {
-	height: 80px;
-	width: 80px;
+	height: 3rem;
+	width: 3rem;
 	display: inline-block;
+	/* font-size: 5rem; */
 }
 
 .icon-html5 {
@@ -22,14 +61,25 @@ li img {
 	/*background-image: url("../assets/img/desert-island.jpg");*/
 	background-size: contain;
 	background-repeat: no-repeat;
-	background-image: url("../assets/img/html5.png");
+	background-image: var(--html5-logo);
+	transition: background-image 1s;
+}
+
+ul.list-inline.dev-icons {
+	cursor: default;
 }
 
 :root {
 	--background-lightbulb-img: url("../assets/img/hanging-light-bulb-off.jpg");
+	--top-light: url("../assets/img/gimp/hanging-light-bulb-off-bg.png");
+
+	--hover-light: url("../assets/img/gimp/hanging-light-bulb-on.png");
+	
 	--project-2-mobile-img: url("../assets/img/project2-mobile.png");
 	--project-2-desktop-img: url("../assets/img/project2-desktop.png");
-	--top-light: url("../assets/img/hanging-light-bulb-off.jpg");
+
+	--html5-logo: url("../assets/img/logos/HTML5_Badge_128.png");
+	
 }
 
 .profile-img {
@@ -65,13 +115,10 @@ li img {
 	/* background-clip: content-box; */
 }
 
-.pointer {
-	/* cursor: pointer; */
-}
-
 #light-btn {
-	height: 10rem;
-	/* width: fit-content; */
+	float: right;
+	height: 11rem;
+	width: 25%;
 	background-size: cover;
 	background-repeat: no-repeat;
 	background-image: var(--top-light);
@@ -79,26 +126,25 @@ li img {
 	transition: background-image 1s;
 	position: sticky;
 	z-index: 10;
-	top: 3.5rem;
-	/* left: 20rem; */
-	margin-left: 70%;
+	top: -8.5rem;
 	cursor: pointer;
-	pointer-events: all;
-	/* border-bottom: 1px black; */
-	border-bottom: black;
-	border-style: solid;
-	background-color: red;
 }
+
+#light-btn:hover {
+	transition: background-image .5s;
+	background-image: var(--hover-light);
+}
+
 
 @media (min-width: 576px) {
   #light-btn {
-		height: 10rem;
-		margin-left: 86%;
+		height: 11rem;
+		/* margin-left: 86%; */
 	}
 }
 @media (min-width: 768px) {
   #light-btn {
-		height: 15rem;
+		height: 11rem;
 	}
 }
 
@@ -125,9 +171,14 @@ li img {
 [data-theme="dark"] {
   filter: invert(100%);
 	--background-lightbulb-img: url("../assets/img/hanging-light-bulb-on.jpg");
+	--top-light: url("../assets/img/gimp/hanging-light-bulb-on-bg-new2.png");
+
+	--hover-light: url("../assets/img/gimp/hanging-light-bulb-on-bg-new2.png");
+	
 	--project-2-mobile-img: url("../assets/img/project2-mobile-inv.png");
 	--project-2-desktop-img: url("../assets/img/project2-desktop-inv.png");
-	--top-light: url("../assets/img/hanging-light-bulb-on.jpg")
+
+	--html5-logo: url("../assets/img/logos/HTML5_Badge_128_inv.png");
 }
 
 
