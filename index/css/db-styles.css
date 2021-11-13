@@ -1,7 +1,19 @@
-.text-wrapper {
-    color: white
+.fs-word {
+	display: flex;
+	flex-wrap: nowrap
 }
 
+.letters {
+	display: flex;
+	flex-wrap: wrap;
+	font-size: calc(1.725rem + 5.7vw);
+	cursor: default
+}
+
+
+.text-wrapper {
+  color: white
+}
 
 .ml11 {
   font-weight: 700;
@@ -50,19 +62,34 @@ li img {
 
 
 .icon {
-	height: 3rem;
-	width: 3rem;
+	height: calc(1.25rem + 5.7vw);
+	width: calc(1.25rem + 5.7vw);
 	display: inline-block;
-	/* font-size: 5rem; */
+}
+
+.cv-icon {
+	height: calc(1.25rem + 5.7vw);
+	width: calc(1.25rem + 5.7vw);
+	display: inline;
+	margin-right: 1rem;
 }
 
 .icon-html5 {
-	/* background: red; */
-	/*background-image: url("../assets/img/desert-island.jpg");*/
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-image: var(--html5-logo);
 	transition: background-image 1s;
+}
+
+.cert-image {
+	height: calc(2rem + 5.7vw);
+	width: calc(2rem + 5.7vw);
+	margin-right: 1rem;
+}
+
+.cert-item {
+	display: flex;
+	align-items: center;
 }
 
 ul.list-inline.dev-icons {
@@ -117,7 +144,7 @@ ul.list-inline.dev-icons {
 
 #light-btn {
 	float: right;
-	height: 11rem;
+	height: 7rem;
 	width: 25%;
 	background-size: cover;
 	background-repeat: no-repeat;
@@ -126,9 +153,10 @@ ul.list-inline.dev-icons {
 	transition: background-image 1s;
 	position: sticky;
 	z-index: 10;
-	top: -8.5rem;
+	top: -6.5rem;
 	cursor: pointer;
 }
+
 
 #light-btn:hover {
 	transition: background-image .5s;
@@ -216,7 +244,7 @@ section#contact {
 #profile-img {
 	animation: pulse 1s linear infinite;
 }
-*/
+
 
 #profile-img:hover{ 
   animation: pulse 1s;
@@ -229,3 +257,4 @@ section#contact {
   100% { transform: scale(1); }
   }
 }
+*/
