@@ -64,12 +64,6 @@
   --bs-body-bg: #fff;
 }
 
-/*
-:root {
-  filter: invert(100%);
-}
-*/
-
 *,
 *::before,
 *::after {
@@ -11296,7 +11290,7 @@ textarea.form-control-lg {
   }
 }
 body {
-  padding-top: 3.375rem;
+  /* padding-top: 3.375rem; */
   color: #6c757d;
 }
 

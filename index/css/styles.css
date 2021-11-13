@@ -64,10 +64,6 @@
   --bs-body-bg: #fff;
 }
 
-:root {
-  filter: invert(100%);
-}
-
 *,
 *::before,
 *::after {
