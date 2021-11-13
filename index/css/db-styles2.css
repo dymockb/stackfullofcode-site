@@ -7,7 +7,8 @@
 	display: flex;
 	flex-wrap: wrap;
 	font-size: calc(1.725rem + 5.7vw);
-	cursor: default
+	cursor: default;
+	width: 70%;
 }
 
 
@@ -58,6 +59,11 @@ li img {
 
 .contact .php-email-form button[type=submit] {
 	background: rgb(189, 93, 56)
+}
+
+.fa-ul {
+	margin: 0;
+	padding-right: 2.9rem;
 }
 
 
@@ -114,9 +120,9 @@ body {
 }
 
 .profile-img {
-	border: 0.5rem solid rgb(189 93 56);
-	height: 10rem;
-	width: 10rem;
+	border: 0.3rem solid rgb(189 93 56);
+	height: 6rem;
+	width: 6rem;
 	cursor: pointer;
 	background-size: contain;
 	background-repeat: no-repeat;
@@ -125,12 +131,6 @@ body {
 	background-clip: content-box;
 	float: right;
 	/* z-index: 20; */
-}
-
-#profile-img {
-	/*height: 10rem;
-	width: 10rem;
-	 overflow: hidden; */
 }
 
 #project-2-mobile-img {
@@ -153,8 +153,6 @@ body {
 
 #light-btn {
 	float: right;
-	/* height: 7rem; */
-	/* width: 25%; */
 	background-size: cover;
 	background-repeat: no-repeat;
 	background-image: var(--top-light);
@@ -172,17 +170,84 @@ body {
 	background-image: var(--hover-light);
 }
 
+section#about {
+		min-height: 100vh;
+}
+
+section#contact {
+		min-height: 100vh;
+}
+
+section#skills {
+		min-height: 100vh;
+}
+
+section#project1 {
+		min-height: 100vh;
+}
+
+section#project2 {
+		min-height: 100vh;
+}
+
+section#download-cv {
+		min-height: 100vh;
+}
+
+.parallax__layer--back {
+	
+	display: none;
+	
+}
+	
+@media (min-width: 350px) {
+	
+	.parallax__layer--back {
+		
+		display: inherit
+		
+	}
+	
+	
+}
+
 
 @media (min-width: 576px) {
-  #light-btn {
-		/* height: 11rem; */
-		/* margin-left: 86%; */
+
+	.profile-img {
+		border: 0.5rem solid rgb(189 93 56);		
+		height: 10rem;
+		width: 10rem;
+
 	}
+
+	
 }
 @media (min-width: 768px) {
   #light-btn {
 		/* height: 11rem; */
 	}
+	
+	section#projects {
+			width: 80%;
+	}
+	
+	section#skills {
+			width: 80%;
+	}
+
+	.letters {
+		width: 100%;
+	}
+	
+	.parallax__layer--back {
+    -webkit-transform: translateZ(-7.5px) scale(6);
+    transform: translateZ(-7.5px) scale(6);
+    z-index: 20;
+    padding: 165vh 0 !important;
+    width: 119vw;
+}
+
 }
 
 
@@ -190,6 +255,11 @@ body {
   #light-btn {
 		display: none;
 	}
+
+	.parallax__layer--back {
+   display: none
+	}
+	
 }
 
 /*
