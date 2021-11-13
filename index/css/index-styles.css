@@ -1,3 +1,97 @@
+:root {
+	--desktop-lightbulb-img: url("../assets/img/inkscape/new-bulb-off.svg");
+	--top-light: url("../assets/img/inkscape/hanging-bulb-off.svg");
+
+	--hover-light: url("../assets/img/inkscape/new-bulb-on.svg");
+	
+	--project-2-mobile-img: url("../assets/img/project2-mobile.png");
+	--project-2-desktop-img: url("../assets/img/project2-desktop.png");
+
+	--html5-logo: url("../assets/img/logos/HTML5_Badge_128.png");
+	
+}
+
+body {
+	padding-top: 0;
+	background-color: white;
+}
+
+  /* Parallax base styles
+  --------------------------------------------- */
+
+  .parallax {
+    height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-perspective: 1px;
+    perspective: 1px;
+  }
+
+  .parallax__layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  .parallax__layer--base {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+		padding: 20vh 0 !important;
+		
+  }
+
+  .parallax__layer--back {
+    -webkit-transform: translateZ(-8.5px) scale(5);
+    transform: translateZ(-8.5px) scale(5);
+    z-index: 1;
+    padding: 243vh 0 !important;
+    width: 25vw;
+    margin-left: 353vw;
+  }
+	
+	@media (min-width: 768px) {
+	
+		.parallax__layer--back {
+    -webkit-transform: translateZ(-7.5px) scale(6);
+    transform: translateZ(-7.5px) scale(6);
+    z-index: 20;
+    padding: 165vh 0 !important;
+    width: 119vw;
+}
+	
+	
+	}
+
+
+  /* demo styles
+  --------------------------------------------- */
+
+  body {
+    font: 100% / 1.5 Arial;
+  }
+	
+	/*
+  .parallax {
+    font-size: 200%;
+  }
+	*/
+	
+   /* add some padding to force scrollbars */
+  .parallax__layer {
+    padding: 100vh 0;
+  }
+
+   /* centre the content in the parallax layers */
+  .title {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+  }
+
 .fs-word {
 	display: flex;
 	flex-wrap: nowrap
@@ -8,7 +102,7 @@
 	flex-wrap: wrap;
 	font-size: calc(1.725rem + 5.7vw);
 	cursor: default;
-	width: 70%;
+	width: 80%;
 }
 
 
@@ -51,6 +145,9 @@
   line-height: 1em;
 }
 
+section.resume-section .resume-section-content {
+  width: 77%;
+}
 
 li img {
     width: 50%;
@@ -63,7 +160,6 @@ li img {
 
 .fa-ul {
 	margin: 0;
-	padding-right: 2.9rem;
 }
 
 
@@ -87,6 +183,10 @@ li img {
 	transition: background-image 1s;
 }
 
+#certs-list {
+  padding: 0
+}
+
 .cert-image {
 	height: calc(2rem + 5.7vw);
 	width: calc(2rem + 5.7vw);
@@ -96,42 +196,35 @@ li img {
 .cert-item {
 	display: flex;
 	align-items: center;
+	flex-wrap: wrap;
 }
 
 ul.list-inline.dev-icons {
 	cursor: default;
 }
 
-:root {
-	--background-lightbulb-img: url("../assets/img/inkscape/new-bulb-off.svg");
-	--top-light: url("../assets/img/gimp/hanging-light-bulb-off-bg.png");
 
-	--hover-light: url("../assets/img/gimp/hanging-light-bulb-on.png");
-	
-	--project-2-mobile-img: url("../assets/img/project2-mobile.png");
-	--project-2-desktop-img: url("../assets/img/project2-desktop.png");
-
-	--html5-logo: url("../assets/img/logos/HTML5_Badge_128.png");
-	
-}
-
-body {
-	padding-top: 0;
-	background-color: white;
-}
-
-.profile-img {
+#desktop-light {
+  height: 10rem;
+  width: 10rem;
 	border: 0.3rem solid rgb(189 93 56);
-	height: 6rem;
-	width: 6rem;
 	cursor: pointer;
-	background-size: contain;
+	background-size: cover;
 	background-repeat: no-repeat;
-	background-image: var(--background-lightbulb-img);
+	background-image: var(--desktop-lightbulb-img);
 	transition: background-image 1s;
 	background-clip: content-box;
-	float: right;
 	background-color: white;
+}
+
+#portfolio1-title, #portfolio2-title {
+  margin-bottom: 1rem !important;
+  display: inline;
+}
+
+#project1-title, #project2-title {
+  min-width: 60%;
+  z-index: 50;
 }
 
 #project-2-mobile-img {
@@ -153,6 +246,9 @@ body {
 }
 
 #light-btn {
+	height: 6rem;
+	width: 6rem;
+	border: 0.35rem solid rgb(189 93 56);
 	float: right;
 	background-size: cover;
 	background-repeat: no-repeat;
@@ -160,16 +256,17 @@ body {
 	background-position: center;
 	transition: background-image 1s;
 	position: sticky;
-	z-index: 10;
 	top: -6.5rem;
 	cursor: pointer;
+	background-color: white;
 }
 
-
+/*
 #light-btn:hover {
 	transition: background-image .5s;
 	background-image: var(--hover-light);
 }
+*/
 
 section#about {
 		min-height: 100vh;
@@ -183,12 +280,36 @@ section#skills {
 		min-height: 100vh;
 }
 
+.project-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#title-section {
+  width: 100%;
+}
+
+section#skills {
+  min-height: 100vh;
+  align-items: start;
+  padding-top: 3.5rem;
+  padding-right: 1.5rem;
+}
+
 section#project1 {
 		min-height: 100vh;
+		align-items: start;
+		padding-top: 3.5rem;
+		padding-right: 1.5rem;
 }
 
 section#project2 {
 		min-height: 100vh;
+		align-items: start;
+		padding-top: 3.5rem;
+    padding-right: 1.5rem;
 }
 
 section#download-cv {
@@ -200,8 +321,10 @@ section#download-cv {
 	display: none;
 	
 }
+
+
 	
-@media (min-width: 350px) {
+@media (min-width: 330px) {
 	
 	.parallax__layer--back {
 		
@@ -215,19 +338,11 @@ section#download-cv {
 
 @media (min-width: 576px) {
 
-	.profile-img {
-		border: 0.5rem solid rgb(189 93 56);		
-		height: 10rem;
-		width: 10rem;
-
-	}
 
 	
 }
+
 @media (min-width: 768px) {
-  #light-btn {
-		/* height: 11rem; */
-	}
 	
 	section#projects {
 			width: 80%;
@@ -243,10 +358,10 @@ section#download-cv {
 	
 	.parallax__layer--back {
     -webkit-transform: translateZ(-7.5px) scale(6);
-    transform: translateZ(-7.5px) scale(6);
+    transform: translateZ(-8px) scale(6);
     z-index: 20;
-    padding: 165vh 0 !important;
-    width: 119vw;
+    padding: 216vh 0 !important;
+    width: 125vw;
 }
 
 }
@@ -278,10 +393,10 @@ section#download-cv {
 */
 [data-theme="dark"] {
   filter: invert(100%);
-	--background-lightbulb-img: url("../assets/img/inkscape/new-bulb-on.svg");
-	--top-light: url("../assets/img/gimp/hanging-light-bulb-on-bg-new2.png");
+	--desktop-lightbulb-img: url("../assets/img/inkscape/new-bulb-on.svg");
+	--top-light: url("../assets/img/inkscape/new-bulb-on.svg");
 
-	--hover-light: url("../assets/img/gimp/hanging-light-bulb-on-bg-new2.png");
+	--hover-light: url("../assets/img/inkscape/new-bulb-on.svg");
 	
 	--project-2-mobile-img: url("../assets/img/project2-mobile-inv.png");
 	--project-2-desktop-img: url("../assets/img/project2-desktop-inv.png");
@@ -303,6 +418,7 @@ section#contact {
 	/* border-style: solid; */
 	padding-left: 2rem;
 	padding-right: 2rem;
+	width: 100%;
 }
 
 /*

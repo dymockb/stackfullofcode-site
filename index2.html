@@ -19,110 +19,20 @@
 	<!-- Core theme CSS (includes Bootstrap)-->
 
 	<link href="index/css/my-styles.css" rel="stylesheet" />
-	<link href="index/css/db-styles2.css" rel="stylesheet" />
+	<link href="index/css/index-styles2.css" rel="stylesheet" />
 <style>
 
-  /* Parallax base styles
-  --------------------------------------------- */
-
-  .parallax {
-    height: 100vh;
-    overflow-x: hidden;
-    overflow-y: auto;
-    -webkit-perspective: 1px;
-    perspective: 1px;
-  }
-
-  .parallax__layer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-  }
-
-  .parallax__layer--base {
-    -webkit-transform: translateZ(0);
-    transform: translateZ(0);
-		padding: 20vh 0 !important;
-		
-  }
-
-  .parallax__layer--back {
-    -webkit-transform: translateZ(-5.5px) scale(4); 
-		transform: translateZ(-5.5px) scale(4);
-    z-index: 20;
-    padding: 183vh 0 !important;
-    width: 127vw;
-  }
-	
-	@media (min-width: 768px) {
-	
-		.parallax__layer--back {
-    -webkit-transform: translateZ(-7.5px) scale(6);
-    transform: translateZ(-7.5px) scale(6);
-    z-index: 20;
-    padding: 165vh 0 !important;
-    width: 119vw;
-}
-	
-	
-	}
 
 
-  /* demo styles
-  --------------------------------------------- */
-
-  * {
-    margin:0;
-    padding:0;
-  }
-
-  body {
-    font: 100% / 1.5 Arial;
-  }
-	
-	/*
-  .parallax {
-    font-size: 200%;
-  }
-	*/
-	
-   /* add some padding to force scrollbars */
-  .parallax__layer {
-    padding: 100vh 0;
-  }
-
-   /* centre the content in the parallax layers */
-  .title {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    -webkit-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-  }
-
-
-  /* misc
-  --------------------------------------------- */
-  .demo__info {
-    position: absolute;
-    z-index:100;
-    bottom: 1vh;
-    top: auto;
-    font-size:80%;
-    text-align:center;
-    width: 100%;
-  }
 </style>
 </head>
 
-<body id="page-top">
+<body>
 
         <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top" id="sideNav">
 						
             <a class="navbar-brand js-scroll-trigger"> <!-- href="#page-top" -->
-                <span class="d-block d-lg-none"></span>
+                <span class="d-block d-lg-none"><i class="fas fa-igloo"></i></span>
 								<!-- src="index/assets/img/inverted-island.jpg" 
 								
 														item.setAttribute('data-aos-duration', '500');
@@ -134,13 +44,13 @@
 								<div id="profile-img" class="img-fluid img-profile rounded-circle mx-auto mb-2 profile-img" alt="..." ></div>	
 							-->
                 <span class="d-none d-lg-block" id="lightbulb-container">
-								<div id="profile-img" class="img-fluid img-profile rounded-circle mx-auto mb-2 profile-img" alt="..." ></div>
+								<div id="desktop-light" class="img-fluid img-profile rounded-circle mx-auto mb-2" alt="..." ></div>
 								</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
             <div class="collapse navbar-collapse" id="navbarResponsive">
                 <ul class="navbar-nav">
-                    <li class="nav-item"><a class="nav-link" href="#page-top">About</a></li> <!--class="nav-link js-scroll-trigger" -->
+                    <li class="nav-item"><a class="nav-link" href="#about">About</a></li> <!--class="nav-link js-scroll-trigger" -->
                     <li class="nav-item"><a class="nav-link" href="#skills">Skills</a></li>
                     <li class="nav-item"><a class="nav-link" href="#project1">Projects</a></li>
                     <li class="nav-item"><a class="nav-link" href="#download-cv">Download CV</a></li>
@@ -151,7 +61,7 @@
 				
   <div class="parallax">
     <div class="parallax__layer parallax__layer--back">
-				<div id="light-btn" class="img-fluid img-profile rounded-circle mx-auto mb-2 profile-img" alt="..." ></div>
+				<div id="light-btn" class="img-fluid img-profile mx-auto mb-2" alt="..." ></div>
     </div>
     <div class="parallax__layer parallax__layer--base">			
 			<section class="resume-section aos-item" id="about" data-aos="fade-in">
@@ -219,7 +129,7 @@
 								<li class="list-inline-item" data-aos="fade-down" data-aos-duration="200" data-aos-delay="200"><i class="icon icon-html5"></i></li>
 						</ul>
 						<div class="subheading mb-3 aos-item" data-aos="fade-in">Certifications</div>
-						<ul class="mb-0"> <!-- class="fa-ul mb-0" -->
+						<ul id="certs-list" class="mb-0"> <!-- class="fa-ul mb-0" -->
 								<li class="cert-item"><img class="cert-image" src="index/assets/img/microsoft/microsoft-certification-seal.png">Microsoft Technology Associate<br>Introduction to Programming Using HTML and CSS.</li>
 								<!--
 								<li>
@@ -232,11 +142,11 @@
 		<hr class="m-0" />
 		<!-- Project1 -->
 		<section class="resume-section aos-item" id="project1" data-aos="fade-in">
-				<div class="resume-section-content">
-						<h2 class="mb-5 aos-item" data-aos="fade-in">Project 1</h2>
-						<a href="project1/" target="_blank"><h3>Gazetteer</h3></a>
+				<div class="resume-section-content project-content">
+					<h2 class="mb-5 aos-item" id="portfolio1-title" data-aos="fade-in">Portfolio</h2>
+					<a id="project1-title" href="project1/" target="_blank"><h4>Gazetter</h4></a>
 						<ul class="fa-ul mb-0">
-							<li class="aos-item" data-aos="fade-in">An interactive map providing top-level data for countries around the world.  </li>
+							<li class="aos-item" data-aos="fade-in">An interactive map providing top-level country data.</li>
 							<li class="aos-item" data-aos="fade-in">Built using Bootstrap and the Leaflet mapping library, the map interacts with x different APIs to provide a blend of real-time, geographic and image data for any selected country.
 							</li>
 							<!--  <img class="img-fluid mx-auto mb-2" src="index/assets/img/preview-map.png" alt="..." /> 
@@ -249,12 +159,12 @@
 		<hr class="m-0" />
 		<!-- Project2 -->
 		<section class="resume-section aos-item" id="project2" data-aos="fade-in">
-				<div class="resume-section-content">
-						<h2 class="mb-5 aos-item" data-aos="fade-in">Project 2</h2>												
+				<div class="resume-section-content project-content">
+						<h2 class="mb-5 aos-item" id="portfolio2-title" data-aos="fade-in">Portfolio</h2>												
 									
-						<a href="project2/" target="_blank"><h3>Company Directory</h3></a>
+						<a id="project2-title" href="project2/" target="_blank"><h4>Company Directory</h4></a>
 						<ul class="fa-ul mb-0">
-							<li class="aos-item" data-aos="fade-in">This project uses the Semantic framework in conjunction with PHP/MariaDB/SQL database to provide the user with an intuitive interface for managing company employees across a range of locations and departments.
+							<li class="aos-item" data-aos="fade-in">This project uses the Semantic framework in conjunction with PHP/MariaDB/SQL database. It provides an intuitive interface for managing company employees across a range of locations and departments.
 							</li>
 						</ul>
 				</div>
@@ -412,7 +322,7 @@
 						rootDataset.theme = inDarkMode ? '' : 'dark';
 					}						
 
-					document.getElementById('profile-img').onclick = () => {
+					document.getElementById('desktop-light').onclick = () => {
 						const inDarkMode = (rootDataset.theme === 'dark');
 						rootDataset.theme = inDarkMode ? '' : 'dark';
 					}
