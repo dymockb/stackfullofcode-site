@@ -1,7 +1,10 @@
-/*GENERAL */
+/*GENERAL 
+
+breakpoints 275, 576, 768, 922, 1200, 1400 
+*/
 :root {
 	--desktop-lightbulb-img: url("../assets/img/inkscape/new-bulb-off.svg");
-	--top-light: url("../assets/img/inkscape/hanging-bulb-off.svg");
+	--top-light: url("../assets/img/inkscape/hanging-bg-bulb-off.svg");
 
 	--hover-light: url("../assets/img/inkscape/new-bulb-on.svg");
 	
@@ -15,6 +18,7 @@
 }
 
 body {
+	font-family: Arial, Helvetica, sans-serif;
 	padding-top: 0;
 	background-color: white;
 }
@@ -23,8 +27,12 @@ body {
 	cursor: default;
 }
 
+.pointer {
+	cursor: pointer;
+}
 
-/* Parallax styles 
+
+/* Parallax styles OLD
 
   .parallax {
     height: 100vh;
@@ -89,9 +97,191 @@ body {
 	}
 
 */
+
+
+  /* Parallax base styles
+  --------------------------------------------- */
+
+  .parallax {
+    height: 500px; /* fallback for older browsers */
+    height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-perspective: 300px;
+    perspective: 300px;
+  }
+
+  .parallax__group {
+    position: relative;
+    height: 500px; /* fallback for older browsers */
+    height: 100vh;
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+  }
+
+  .parallax__layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  .parallax__layer--fore {
+    -webkit-transform: translateZ(90px) scale(.7);
+    transform: translateZ(90px) scale(.7);
+    z-index: 1;
+  }
+
+  .parallax__layer--base {
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+    z-index: 4;
+  }
+
+  .parallax__layer--back {
+    -webkit-transform: translateZ(-300px) scale(2);
+    transform: translateZ(-300px) scale(2);
+    z-index: 3;
+  }
+
+  .parallax__layer--deep {
+    -webkit-transform: translateZ(-600px) scale(3);
+    transform: translateZ(-3935px) scale(3);
+    z-index: 2;
+  }
+
+	.title {
+    text-align: center;
+    /* position: absolute; */
+    /* left: 50%; */
+    /* top: 50%; */
+    /* -webkit-transform: translate(-50%, -50%); */
+    /* transform: translate(-50%, -50%); */
+  }
+
+
+
+  /* Debugger styles - used to show the effect
+  --------------------------------------------- */
+
+  .debug {
+    position: fixed;
+    top: 0;
+    left: 4.5em;
+    z-index: 1999;
+    background: rgba(0,0,0,.85);
+    color: #fff;
+    padding: .5em;
+    border-radius: 0 0 5px 5px;
+  }
+  .debug-on .parallax__group {
+    -webkit-transform: translate3d(800px, 0, -800px) rotateY(30deg);
+    transform: translate3d(700px, 0, -800px) rotateY(30deg);
+ }
+  .debug-on .parallax__layer {
+    box-shadow: 0 0 0 2px #000;
+    opacity: 0.9;
+  }
+  .parallax__group {
+    -webkit-transition: -webkit-transform 0.5s;
+    transition: transform 0.5s;
+  }
+
+
+  /* demo styles
+  --------------------------------------------- 
+
+  body, html {
+    overflow: hidden;
+  }
+
+  body {
+    font: 100% / 1.5 Arial;
+  }
+
+  * {
+    margin:0;
+    padding:0;
+  }
+
+  .parallax {
+    font-size: 400%;
+  }
+  
+*/
+
+  /* style the groups
+  --------------------------------------------- */
+
+  #group1 {
+    z-index: 5; /* slide over group 2 */
+  }
+  #group1 .parallax__layer--base {
+    background: white;
+  }
+
+  #group2 {
+    z-index: 3; /* slide under groups 1 and 3 */
+  }
+  #group2 .parallax__layer--back {
+    background: rgb(123,210,102);
+  }
+
+  #group3 {
+    z-index: 4; /* slide over group 2 and 4 */
+  }
+  #group3 .parallax__layer--base {
+    background: rgb(153,216,101);
+  }
+
+  #group4 {
+    z-index: 2; /* slide under group 3 and 5 */
+  }
+  #group4 .parallax__layer--deep {
+    /* text-align: center; */
+    width: 287vw;
+    width: 370
+vw;
+    height: 100
+vh;
+    /* background: #f9fafb; */
+    margin-left: -98vw;
+  }
+
+  #group5 {
+    z-index: 3; /* slide over group 4 and 6 */
+  }
+  #group5 .parallax__layer--base {
+    background: rgb(214,229,100);
+  }
+
+  #group6 {
+    z-index: 2; /* slide under group 5 and 7 */
+  }
+  #group6 .parallax__layer--back {
+    background: rgb(245,235,100);
+  }
+
+  #group7 {
+    z-index: 3; /* slide over group 7 */
+  }
+  #group7 .parallax__layer--base {
+    background: rgb(255,241,100);
+  }
 	
 
+/* Foreground styles*/
+
+.hr-fg {
+	display: none;
+}
+
 /*GENERAL SECTIONS */
+
+.section-gap {
+	height: 61vh;
+}
 
 section#about, section#contact, section#skills {
 	min-height: 100vh;
@@ -107,6 +297,7 @@ section#project2,	section#project1, section#skills, section#download-cv {
 	padding-top: 3.5rem;
 	padding-right: 1.5rem;
 	/* justify-content: center; */
+	/* background-color: white; */
 }
 
 
@@ -143,9 +334,9 @@ margin: 0;
 .letters {
 	display: flex;
 	flex-wrap: wrap;
-	font-size: calc(1.725rem + 5.7vw);
+	font-size: calc(1.75rem + 5.7vw);
 	cursor: default;
-	width: 80%;
+	width: 90%;
 }
 
 @media (min-width: 768px) {
@@ -198,6 +389,17 @@ margin: 0;
 
 /* SKILLS SECTION */
 
+section#skills {
+	background-color: white;
+}
+
+#skills-info {
+
+background: white;
+
+padding-bottom: 2rem;
+}
+
 .icon {
 	height: calc(1.25rem + 5.7vw);
 	width: calc(1.25rem + 5.7vw);
@@ -209,6 +411,10 @@ margin: 0;
 	width: calc(3.25rem + 5.7vw) !important;
 	/* display: inline-block; */
 	/* padding-top: 20vh; */
+	background: #dee2e6;
+	padding-top: 1rem;
+	padding-bottom: 1rem;
+	border-radius: 10%;
 }
 
 .icon-html5 {
@@ -236,6 +442,10 @@ margin: 0;
 
 /*PROJECT 1 & 2 */
 
+section#project1 {
+	background-color: white;
+}
+
 #portfolio1-title, #portfolio2-title {
   margin-bottom: 1rem !important;
   display: inline;
@@ -259,6 +469,10 @@ margin: 0;
 	margin-top: 2rem;
 }
 
+section#project2 {
+	background-color: white;
+}
+
 #project-2-mobile-img {
 	height: 29rem;
 	background-size: contain;
@@ -277,6 +491,53 @@ margin: 0;
 	/* background-clip: content-box; */
 }
 
+/* DOWNLOAD CV */
+
+#cv-box {
+	margin-top: 29rem;
+	width: fit-content;
+	margin-left: auto;
+	margin-right: auto;
+	background: white;
+}
+
+#download-cv-heading {
+	background: white;
+	padding-bottom: 6rem;
+	padding-top: 5rem;
+}
+
+.center-align {
+	text-align: center;
+}
+
+#pdf-icon {
+	padding-top: 0vh;
+}
+
+
+/*CONTACT SECTION*/
+
+section#contact {
+	background-color: white;
+}
+
+.contact .php-email-form button[type=submit] {
+	background: rgb(189, 93, 56)
+}
+
+section#contact {
+    padding-bottom: 0;
+}
+
+#contact-section {
+	/* border: 1px; */
+	/* border-style: solid; */
+	padding-left: 2rem;
+	padding-right: 2rem;
+	width: 100%;
+}
+
 /* LIGHTS */
 
 #desktop-light {
@@ -293,11 +554,11 @@ margin: 0;
 }
 
 #light-btn {
-	height: 340rem;
-	width: 26rem;
+	height: 234vh;
+	/* width: 100%; */
 	/* border: 0.35rem solid rgb(189 93 56); */
-	float: right;
-	background-size: auto;
+	/* float: right; */
+	background-size: contain;
 	background-repeat: no-repeat;
 	background-image: var(--top-light);
 	background-position: bottom;
@@ -306,49 +567,24 @@ margin: 0;
 	/* top: -6.5rem; */
 	cursor: pointer;
 	/* background-color: white; */
-	margin-top: -184rem;
+	/* margin-top: -184rem; */
+	/* color: bisque; */
+	/* padding-top: 0rem; */
 }
 
 @media (min-width: 992px) {
   
+	/*
 	#light-btn {
 		display: none;
 	}
+	*/
 
 	#desktop-light:hover {
 		transition: background-image .5s;
 		background-image: var(--hover-light);
 	}	
 
-}
-
-/* DOWNLOAD CV */
-
-.center-align {
-	text-align: center;
-}
-
-#pdf-icon {
-	padding-top: 20vh;
-}
-
-
-/*CONTACT SECTION*/
-
-.contact .php-email-form button[type=submit] {
-	background: rgb(189, 93, 56)
-}
-
-section#contact {
-    padding-bottom: 0;
-}
-
-#contact-section {
-	/* border: 1px; */
-	/* border-style: solid; */
-	padding-left: 2rem;
-	padding-right: 2rem;
-	width: 100%;
 }
 
 
@@ -377,7 +613,7 @@ section#contact {
 [data-theme="dark"] {
   filter: invert(100%);
 	--desktop-lightbulb-img: url("../assets/img/inkscape/new-bulb-on.svg");
-	--top-light: url("../assets/img/inkscape/new-bulb-on.svg");
+	--top-light: url("../assets/img/inkscape/hanging-bg-bulb-on.svg");
 
 	--hover-light: url("../assets/img/inkscape/new-bulb-on.svg");
 	

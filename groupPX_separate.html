@@ -7,9 +7,11 @@
 	<meta name="author" content="" />
 	<title>groupPX</title>
 	<script src="https://use.fontawesome.com/releases/v5.15.4/js/all.js" crossorigin="anonymous"></script>
+  <!--
 	<link href="https://fonts.googleapis.com/css?family=Saira+Extra+Condensed:500,700" rel="stylesheet" type="text/css" />
 	<link href="https://fonts.googleapis.com/css?family=Muli:400,400i,800,800i" rel="stylesheet" type="text/css" />
-	<link href="index/css/my-styles.css" rel="stylesheet" />
+	-->
+  <link href="index/css/my-styles.css" rel="stylesheet" />
 	<link href="index/css/index-styles2.css" rel="stylesheet" />
 <style>
 
@@ -26,7 +28,7 @@
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top" id="sideNav">
 						
     <a class="navbar-brand js-scroll-trigger"> <!-- href="#page-top" -->
-        <span class="d-block d-lg-none pointer" id="toggle-light"><i class="far fa-lightbulb"></i></span>
+        <span class="d-block d-lg-none"><i class="fas fa-igloo"></i></span>
         <!-- src="index/assets/img/inverted-island.jpg" 
         
                     item.setAttribute('data-aos-duration', '500');
@@ -108,11 +110,23 @@
               </h1>
           </div>
       </section>
-      <div class="section-gap"></div>
-      				
-      <!-- Skills <hr class="m-0" /> -->
-      <section class="resume-section aos-item" id="skills" data-aos="fade-in">
-          <div class="resume-section-content default-cursor" id="skills-info">
+      <!--<hr class="m-0" />-->
+      			
+      </div>
+      <div class="parallax__layer parallax__layer--fore">
+
+        
+
+      </div>
+    </div>
+
+    <div id="group2" class="parallax__group">
+      <div class="parallax__layer parallax__layer--base">
+        
+        <!-- Skills -->
+        <div class="section-gap"></div>
+        <section class="resume-section aos-item" id="skills" data-aos="fade-in">  	
+          <div class="resume-section-content default-cursor">
               <h2 class="mb-5">Skills</h2>
               <div class="subheading mb-3">Programming Languages & Tools</div>
               <ul class="list-inline dev-icons">
@@ -121,7 +135,6 @@
                   <li class="list-inline-item" data-aos="fade-down" data-aos-duration="200" data-aos-delay="100"><i class="icon icon-html5"></i></li>
                   <li class="list-inline-item" data-aos="fade-down" data-aos-duration="200" data-aos-delay="200"><i class="icon icon-html5"></i></li>
               </ul>
-              <div id="cert-section">
               <div class="subheading mb-3 aos-item" data-aos="fade-in">Certifications</div>
               <ul id="certs-list" class="mb-0"> <!-- class="fa-ul mb-0" -->
                   <li class="cert-item"><img class="cert-image" src="index/assets/img/microsoft/microsoft-certification-seal.png">Microsoft Technology Associate<br>Introduction to Programming Using HTML and CSS.</li>
@@ -131,32 +144,53 @@
                   </li>
                   -->
               </ul>
-              </div>
           </div>
-      </section>
-      
-      <div class="section-gap"></div>
-      <!-- Project1 <hr class="m-0" /> -->
-      <section class="resume-section aos-item" id="project1" data-aos="fade-in">
+        </section>
+      <!--<hr class="m-0" />-->
+        
+      </div>
+      <div class="parallax__layer parallax__layer--back">
+        <div class="title">Background Layer</div>
+      </div>
+    </div>
+
+    <div id="group3" class="parallax__group">
+
+      <div class="parallax__layer parallax__layer--fore">      
+
+      </div>
+
+      <div class="parallax__layer parallax__layer--base">
+        
+        <!-- Project1 -->
+        <section class="resume-section aos-item" id="project1" data-aos="fade-in">
           <div class="resume-section-content project-content">
             <h2 class="mb-5 aos-item" id="portfolio1-title" data-aos="fade-in">Portfolio - Gazetter</h2>
             <!-- <a id="project1-title" href="project1/" target="_blank"><h4>Gazetter</h4></a> -->
               <ul class="fa-ul mb-0">
                 <li class="aos-item" data-aos="fade-in">An interactive map providing dynamic top-level country data.</li>
-                <li class="aos-item" data-aos="fade-in">Built using Bootstrap and the Leaflet mapping library, the gazetter interacts with 14 APIs to provide a blend of real-time, geographic and image data for any selected country.
-                </li>
+                <li class="aos-item" data-aos="fade-in">Built using Bootstrap and the Leaflet mapping library, the gazetter interacts with 14 APIs to provide a blend of real-time, geographic and image data for any selected country.</li>
                 <!--  <img class="img-fluid mx-auto mb-2" src="index/assets/img/preview-map.png" alt="..." /> 
                 <div class="img-fluid mx-auto mb-2" id="project-2-mobile-img"></div>
                 <div class="img-fluid mx-auto mb-2" id="project-2-desktop-img"></div>
                 -->
               </ul>													
               <a href="project1/" target="_blank"><img class="project-screenshot" src="index/assets/img/project1/project1-screen.png"></a>
-            </div>
-      </section>
-      
-      <hr class="m-0" />
-      <!-- Project2 -->
-      <section class="resume-section aos-item" id="project2" data-aos="fade-in">
+              
+              </div>
+        </section>
+
+        <!--<hr class="m-0" />-->
+
+      </div>
+
+    </div>
+  
+    <div id="group4" class="parallax__group">
+      <div class="parallax__layer parallax__layer--base">
+
+        <!-- Project2 -->
+        <section class="resume-section aos-item" id="project2" data-aos="fade-in">
           <div class="resume-section-content project-content">
               <h2 class="mb-5 aos-item" id="portfolio2-title" data-aos="fade-in">Portfolio - Company Directory</h2>															
               <!-- <a id="project2-title" href="project2/" target="_blank"><h4>Company Directory</h4></a> -->
@@ -166,83 +200,8 @@
               </ul>
               <a href="project2/" target="_blank"><img class="project-screenshot" src="index/assets/img/project2/project2-screen.png"></a>
           </div>
-      </section>
-      <hr class="m-0" />
-      <!--  Download CV -->
-      
-      <section class="resume-section aos-item" id="download-cv" data-aos="fade-in">
-          <div class="resume-section-content">
-              <!--
-              <h2 class="mb-5 aos-item" data-aos="fade-in" id="download-cv-heading">Download CV</h2>
-              -->
-              <div id="cv-box">
-                <h2 id="pdf-icon" class="aos-item center-align" data-aos="fade-in">
-                  <a href="index/download.pdf" download="newfilename.pdf">
-                    <i class="fas fa-file-pdf cv-icon"></i>
-                  </a>
-                </h2>
-                <span class="center-align">
-                  <a href="index/download.pdf" download="newfilename.pdf"><h2>Download CV</h2></a>
-                </span>
-              </div>
-          </div>
-      </section>
-      
-      <!-- <hr class="m-0" /> Contact -->
-      <section class="resume-section contact aos-item" id="contact" data-aos="fade-in">
-        <div class="resume-section-content" id="contact-section">
-          <h2 class="mb-5">Contact</h2>
-          <form action="forms/contact.php" method="post" role="form" class="php-email-form">
-              <div class="row">
-                <div class="col-md-6 form-group">
-                  <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" required="">
-                </div>
-                <div class="col-md-6 form-group mt-3 mt-md-0">
-                  <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" required="">
-                </div>
-              </div>
-              <!--
-              <div class="form-group mt-3">
-                <input type="text" class="form-control" name="subject" id="subject" placeholder="Subject" required="">
-              </div>
-              -->
-              <div class="form-group mt-3">
-                <textarea class="form-control" name="message" rows="5" placeholder="Message" required=""></textarea>
-              </div>
-              <div class="my-3">
-                <div class="loading">Loading</div>
-                <div class="error-message"></div>
-                <div class="sent-message">Your message has been sent. Thank you!</div>
-              </div>
-              <div class="text-center">
-                <button type="submit">Send Message</button>
-              </div>
-          </form>
-        </div>
-      </section>
-
-      </div>
-    </div>
-<!--
-    <div id="group2" class="parallax__group">
-      <div class="parallax__layer parallax__layer--base">
-        <div class="title">Base Layer</div>
-      </div>
-      <div class="parallax__layer parallax__layer--back">
-        <div class="title">Background Layer</div>
-      </div>
-    </div>
-    <div id="group3" class="parallax__group">
-      <div class="parallax__layer parallax__layer--fore">
-        <div class="title">Foreground Layer</div>
-      </div>
-      <div class="parallax__layer parallax__layer--base">
-        <div class="title">Base Layer</div>
-      </div>
-    </div>
-  -->
-    <div id="group4" class="parallax__group">
-      <div class="parallax__layer parallax__layer--base">
+        </section>
+      <!--<hr class="m-0" />-->
         
       </div>
       <div class="parallax__layer parallax__layer--back">
@@ -254,23 +213,72 @@
         
       </div>
     </div>
-    <!--
+    
     <div id="group5" class="parallax__group">
       <div class="parallax__layer parallax__layer--fore">
-        <div class="title">Foreground Layer</div>
+        
       </div>
       <div class="parallax__layer parallax__layer--base">
-        <div class="title">Base Layer</div>
+        <!-- Download CV -->
+        <section class="resume-section aos-item" id="download-cv" data-aos="fade-in">
+          <div class="resume-section-content">
+              <h2 class="mb-5 aos-item" data-aos="fade-in">Download CV</h2>
+              <h2 id="pdf-icon" class="aos-item center-align" data-aos="fade-in">
+                <a href="index/download.pdf" download="newfilename.pdf">
+                  <i class="fas fa-file-pdf cv-icon"></i>
+                </a>
+              </h2>
+              <span class="center-align">
+                <a href="index/download.pdf" download="newfilename.pdf"><h2>Download PDF</h2></a>
+              </span>
+          </div>
+        </section>
+      <!--<hr class="m-0" />-->
+
       </div>
     </div>
     <div id="group6" class="parallax__group">
-      <div class="parallax__layer parallax__layer--back">
-        <div class="title">Background Layer</div>
+      <!--
+      <div class="parallax__layer parallax__layer--back">   
       </div>
+      -->
       <div class="parallax__layer parallax__layer--base">
-        <div class="title">Base Layer</div>
+        <!-- Contact -->
+        <section class="resume-section contact aos-item" id="contact" data-aos="fade-in">
+          <div class="resume-section-content" id="contact-section">
+            <h2 class="mb-5">Contact</h2>
+            <form action="forms/contact.php" method="post" role="form" class="php-email-form">
+                <div class="row">
+                  <div class="col-md-6 form-group">
+                    <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" required="">
+                  </div>
+                  <div class="col-md-6 form-group mt-3 mt-md-0">
+                    <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" required="">
+                  </div>
+                </div>
+                <!--
+                <div class="form-group mt-3">
+                  <input type="text" class="form-control" name="subject" id="subject" placeholder="Subject" required="">
+                </div>
+                -->
+                <div class="form-group mt-3">
+                  <textarea class="form-control" name="message" rows="5" placeholder="Message" required=""></textarea>
+                </div>
+                <div class="my-3">
+                  <div class="loading">Loading</div>
+                  <div class="error-message"></div>
+                  <div class="sent-message">Your message has been sent. Thank you!</div>
+                </div>
+                <div class="text-center">
+                  <button type="submit">Send Message</button>
+                </div>
+            </form>
+          </div>
+          </section>
+
       </div>
     </div>
+    <!--
     <div id="group7" class="parallax__group">
       <div class="parallax__layer parallax__layer--base">
         <div class="title">Base Layer</div>
@@ -357,21 +365,21 @@
     });
     */
 
-
+    /*
   
     const rootDataset = document.documentElement.dataset;
   
-    document.getElementById('toggle-light').onclick = () => {
+    document.getElementById('light-btn').onclick = () => {
       const inDarkMode = (rootDataset.theme === 'dark');
       rootDataset.theme = inDarkMode ? '' : 'dark';
     }						
-      
+  
     document.getElementById('desktop-light').onclick = () => {
       const inDarkMode = (rootDataset.theme === 'dark');
       rootDataset.theme = inDarkMode ? '' : 'dark';
     }
     
-    
+    */
     
     $('.php-email-form').submit(function(e){
       e.preventDefault();
