@@ -223,7 +223,7 @@ hr {
     z-index: 5; /* slide over group 2 */
   }
   #group1 .parallax__layer--base {
-    background: white;
+    /* background: white; */
   }
 
   #group2 {
@@ -251,7 +251,7 @@ vw;
     height: 100
 vh;
     /* background: #f9fafb; */
-    margin-left: -98vw;
+    margin-left: -105vw;
   }
 
   #group5 {
@@ -290,6 +290,7 @@ vh;
 
 section#about, section#contact, section#skills {
 	min-height: 100vh;
+	/* align-items: start; */
 }
 
 section.resume-section .resume-section-content {
@@ -329,6 +330,17 @@ margin: 0;
 
 #title-section {
   width: 100%;
+  margin-top: -18rem;
+}
+
+#first-name-last-name {
+	background: white;
+	width: fit-content;
+	opacity: 0;
+}
+
+#top-words {
+/* background: white; */
 }
 
 .fs-word {
@@ -353,22 +365,23 @@ margin: 0;
 }
 
 .text-wrapper {
-  color: white
+  color: white;
+  /* background: white; */
 }
 
 .ml11 {
   font-weight: 700;
-  font-size: 3.5em;
+  /* font-size: 3.5em; */
   color: white;
 }
 
 .ml11 .text-wrapper {
   position: relative;
   display: inline-block;
-  padding-top: 0.1em;
+  /* padding-top: 0.1em; */
   padding-right: 0.05em;
-  padding-bottom: 0.15em;
-  color: #212529
+  /* padding-bottom: 0.15em; */
+  color: #212529;
 }
 
 .ml11 .line {
@@ -389,6 +402,7 @@ margin: 0;
 .ml11 .letter {
   display: inline-block;
   line-height: 1em;
+  background: white;
 }
 
 
@@ -525,7 +539,7 @@ section#project2 {
 
 #cv-box {
 	
-margin-top: 31rem;
+margin-top: 28rem;
 	
 width: fit-content;
 	
@@ -589,7 +603,8 @@ section#contact {
 }
 
 #light-btn {
-	height: 234vh;
+	opacity: 0;
+	height: 358vh;
 	/* width: 100%; */
 	/* border: 0.35rem solid rgb(189 93 56); */
 	/* float: right; */
@@ -602,7 +617,7 @@ section#contact {
 	/* top: -6.5rem; */
 	cursor: pointer;
 	/* background-color: white; */
-	/* margin-top: -184rem; */
+	margin-top: -267rem;
 	/* color: bisque; */
 	/* padding-top: 0rem; */
 }
