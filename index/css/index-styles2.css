@@ -1,3 +1,4 @@
+/*GENERAL */
 :root {
 	--desktop-lightbulb-img: url("../assets/img/inkscape/new-bulb-off.svg");
 	--top-light: url("../assets/img/inkscape/hanging-bulb-off.svg");
@@ -8,6 +9,8 @@
 	--project-2-desktop-img: url("../assets/img/project2-desktop.png");
 
 	--html5-logo: url("../assets/img/logos/HTML5_Badge_128.png");
+
+	transition: filter 1s;
 	
 }
 
@@ -16,8 +19,12 @@ body {
 	background-color: white;
 }
 
-  /* Parallax base styles
-  --------------------------------------------- */
+.default-cursor {
+	cursor: default;
+}
+
+
+/* Parallax styles 
 
   .parallax {
     height: 100vh;
@@ -42,55 +49,91 @@ body {
 		
   }
 
-  .parallax__layer--back {
-    -webkit-transform: translateZ(-8.5px) scale(5);
-    transform: translateZ(-8px) scale(1);
-    z-index: 1;
-    padding: 0vh 0 !important;
-    width: 112vw;
-    margin-left: 276vw;
-  }
+	.parallax__layer--back {
+		display: none;	
+	}
+
+	@media (min-width: 275px) {
+	
+		.parallax__layer--back {
+			/*display: inherit;
+			-webkit-transform: translateZ(-8.5px) scale(5);
+			transform: translateZ(-8px) scale(1);
+			z-index: 1;
+			padding: 0vh 0 !important;
+			width: 112vw;
+			margin-left: 276vw;
+		}
+		
+	}
 	
 	@media (min-width: 768px) {
 	
 		.parallax__layer--back {
-    -webkit-transform: translateZ(-7.5px) scale(6);
-    transform: translateZ(-7.5px) scale(6);
-    z-index: 20;
-    padding: 165vh 0 !important;
-    width: 119vw;
-}
-	
+			/*display: inherit;
+			-webkit-transform: translateZ(-7.5px) scale(6);
+			transform: translateZ(-7.5px) scale(6);
+			z-index: 20;
+			padding: 165vh 0 !important;
+			width: 67vw;
+		}
 	
 	}
 
-
-  /* demo styles
-  --------------------------------------------- */
-
-  body {
-    font: 100% / 1.5 Arial;
-  }
+	@media (min-width: 992px) {
 	
-	/*
-  .parallax {
-    font-size: 200%;
-  }
-	*/
-	
-   /* add some padding to force scrollbars */
-  .parallax__layer {
-    padding: 100vh 0;
-  }
+		.parallax__layer--back {
+		 display: none
+		}
+		
+	}
 
-   /* centre the content in the parallax layers */
-  .title {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    -webkit-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
-  }
+*/
+	
+
+/*GENERAL SECTIONS */
+
+section#about, section#contact, section#skills {
+	min-height: 100vh;
+}
+
+section.resume-section .resume-section-content {
+  width: 100%;
+}
+
+section#project2,	section#project1, section#skills, section#download-cv {
+	min-height: 100vh;
+	align-items: start;
+	padding-top: 3.5rem;
+	padding-right: 1.5rem;
+	/* justify-content: center; */
+}
+
+
+@media (min-width: 768px) {
+	
+	section#projects, section#skills {
+			width: 80%;
+	}
+	
+}
+
+/*List styles*/
+
+li img {
+	width: 50%;
+	vertical-align: text-top;
+}
+
+.fa-ul {
+margin: 0;
+}
+
+/*ABOUT SECTION */
+
+#title-section {
+  width: 100%;
+}
 
 .fs-word {
 	display: flex;
@@ -105,6 +148,13 @@ body {
 	width: 80%;
 }
 
+@media (min-width: 768px) {
+		
+	.letters {
+		width: 100%;
+	}
+
+}
 
 .text-wrapper {
   color: white
@@ -145,23 +195,8 @@ body {
   line-height: 1em;
 }
 
-section.resume-section .resume-section-content {
-  width: 77%;
-}
 
-li img {
-    width: 50%;
-    vertical-align: text-top;
-}
-
-.contact .php-email-form button[type=submit] {
-	background: rgb(189, 93, 56)
-}
-
-.fa-ul {
-	margin: 0;
-}
-
+/* SKILLS SECTION */
 
 .icon {
 	height: calc(1.25rem + 5.7vw);
@@ -170,10 +205,10 @@ li img {
 }
 
 .cv-icon {
-	height: calc(1.25rem + 5.7vw);
-	width: calc(1.25rem + 5.7vw);
-	display: inline;
-	margin-right: 1rem;
+	height: calc(3.25rem + 5.7vw);
+	width: calc(3.25rem + 5.7vw) !important;
+	/* display: inline-block; */
+	/* padding-top: 20vh; */
 }
 
 .icon-html5 {
@@ -199,32 +234,29 @@ li img {
 	flex-wrap: wrap;
 }
 
-ul.list-inline.dev-icons {
-	cursor: default;
-}
-
-
-#desktop-light {
-  height: 10rem;
-  width: 10rem;
-	border: 0.3rem solid rgb(189 93 56);
-	cursor: pointer;
-	background-size: cover;
-	background-repeat: no-repeat;
-	background-image: var(--desktop-lightbulb-img);
-	transition: background-image 1s;
-	background-clip: content-box;
-	background-color: white;
-}
+/*PROJECT 1 & 2 */
 
 #portfolio1-title, #portfolio2-title {
   margin-bottom: 1rem !important;
   display: inline;
 }
 
+
+.project-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
 #project1-title, #project2-title {
   min-width: 60%;
   z-index: 50;
+}
+
+.project-screenshot {
+	max-width: 100%;
+	margin-top: 2rem;
 }
 
 #project-2-mobile-img {
@@ -245,6 +277,21 @@ ul.list-inline.dev-icons {
 	/* background-clip: content-box; */
 }
 
+/* LIGHTS */
+
+#desktop-light {
+  height: 10rem;
+  width: 10rem;
+	border: 0.3rem solid rgb(189 93 56);
+	cursor: pointer;
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-image: var(--desktop-lightbulb-img);
+	transition: background-image 1s;
+	background-clip: content-box;
+	background-color: white;
+}
+
 #light-btn {
 	height: 340rem;
 	width: 26rem;
@@ -262,122 +309,56 @@ ul.list-inline.dev-icons {
 	margin-top: -184rem;
 }
 
-/*
-#light-btn:hover {
-	transition: background-image .5s;
-	background-image: var(--hover-light);
-}
-*/
+@media (min-width: 992px) {
+  
+	#light-btn {
+		display: none;
+	}
 
-section#about {
-		min-height: 100vh;
+	#desktop-light:hover {
+		transition: background-image .5s;
+		background-image: var(--hover-light);
+	}	
+
+}
+
+/* DOWNLOAD CV */
+
+.center-align {
+	text-align: center;
+}
+
+#pdf-icon {
+	padding-top: 20vh;
+}
+
+
+/*CONTACT SECTION*/
+
+.contact .php-email-form button[type=submit] {
+	background: rgb(189, 93, 56)
 }
 
 section#contact {
-		min-height: 100vh;
+    padding-bottom: 0;
 }
 
-section#skills {
-		min-height: 100vh;
-}
-
-.project-content {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-}
-
-#title-section {
-  width: 100%;
-}
-
-section#skills {
-  min-height: 100vh;
-  align-items: start;
-  padding-top: 3.5rem;
-  padding-right: 1.5rem;
-}
-
-section#project1 {
-		min-height: 100vh;
-		align-items: start;
-		padding-top: 3.5rem;
-		padding-right: 1.5rem;
-}
-
-section#project2 {
-		min-height: 100vh;
-		align-items: start;
-		padding-top: 3.5rem;
-    padding-right: 1.5rem;
-}
-
-section#download-cv {
-		min-height: 100vh;
-}
-
-.parallax__layer--back {
-	
-	display: none;
-	
+#contact-section {
+	/* border: 1px; */
+	/* border-style: solid; */
+	padding-left: 2rem;
+	padding-right: 2rem;
+	width: 100%;
 }
 
 
-	
-@media (min-width: 330px) {
-	
-	.parallax__layer--back {
-		display: inherit;
-	}
-	
-	
-}
-
-
+/*
 @media (min-width: 576px) {
 
 
 	
 }
 
-@media (min-width: 768px) {
-	
-	section#projects {
-			width: 80%;
-	}
-	
-	section#skills {
-			width: 80%;
-	}
-
-	.letters {
-		width: 100%;
-	}
-	
-	.parallax__layer--back {
-    -webkit-transform: translateZ(-7.5px) scale(6);
-    transform: translateZ(-8px) scale(6);
-    z-index: 20;
-    padding: 216vh 0 !important;
-    width: 125vw;
-}
-
-}
-
-
-@media (min-width: 992px) {
-  #light-btn {
-		display: none;
-	}
-
-	.parallax__layer--back {
-   display: none
-	}
-	
-}
-
-/*
 
 @media (min-width: 1200px) {
  {
@@ -390,6 +371,9 @@ section#download-cv {
   }
 }
 */
+
+/*DARK THEME */
+
 [data-theme="dark"] {
   filter: invert(100%);
 	--desktop-lightbulb-img: url("../assets/img/inkscape/new-bulb-on.svg");
@@ -404,21 +388,7 @@ section#download-cv {
 }
 
 
-:root {	
- transition: filter 1s;
-}
-
-section#contact {
-    padding-bottom: 0;
-}
-
-#contact-section {
-	/* border: 1px; */
-	/* border-style: solid; */
-	padding-left: 2rem;
-	padding-right: 2rem;
-	width: 100%;
-}
+/*ANIMATION STUFF */
 
 /*
 @keyframes pulse {
