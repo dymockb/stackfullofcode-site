@@ -153,7 +153,7 @@ hr {
 
   .parallax__layer--deep {
     -webkit-transform: translateZ(-600px) scale(3);
-    transform: translateZ(-3935px) scale(3);
+    transform: translateZ(-800px) scale(3);
     z-index: 2;
   }
 
@@ -244,12 +244,29 @@ hr {
   #group4 {
     z-index: 2; /* slide under group 3 and 5 */
   }
+
+	/*
   #group4 .parallax__layer--deep {
     width: 287vw;
     width: 370vw;
     height: 100vh;
-    margin-left: -184vw;
+    margin-left: -165vw;
   }
+	*/
+
+	
+  #group4 .parallax__layer--deep {
+		/* width: 287vw; */
+		/* width: 370vw; */
+		height: 100vh;
+		/* position: absolute; */
+		left: 50%;
+		/* top: 50%; */
+		/* -webkit-transform: translate(-50%, -50%); */
+		/* transform: translate(-50%, -50%); */
+		}
+	
+
 
 @media (min-width: 576px) {
 
@@ -555,7 +572,8 @@ section#project2 {
 	width: fit-content;
 	margin-left: auto;
 	margin-right: auto;
-	background: white;
+	/* background: white; */
+	padding-left: 2.5rem;
 }
 
 section#download-cv {
@@ -575,6 +593,10 @@ section#download-cv {
 
 #pdf-icon {
 	padding-top: 0vh;
+}
+
+#download-text {
+	background-color: white;
 }
 
 
@@ -619,7 +641,7 @@ section#contact {
 
 #light-btn {
 	opacity: 0;
-	height: 399vh;
+	height: 100vh;
 	/* width: 100%; */
 	/* border: 0.35rem solid rgb(189 93 56); */
 	/* float: right; */
@@ -632,13 +654,35 @@ section#contact {
 	/* top: -6.5rem; */
 	cursor: pointer;
 	/* background-color: white; */
-	margin-top: -116rem;
+	margin-top: -45vh;
 	/* color: bisque; */
 	/* padding-top: 0rem; */
 }
 
-.chandelier {
-	background-image: var(--top-chnd) !important;
+#chandelier-img {
+	/* padding-top: 30vh; */
+	/* opacity: 0; */
+	height: 100vh;
+	/* width: 100%; */
+	/* width: fit-content; */
+	/* border: 0.35rem solid rgb(189 93 56); */
+	/* float: right; */
+	background-size: contain;
+	background-repeat: no-repeat;
+	background-image: var(--top-chnd);
+	background-position: center;
+	transition: background-image 1s;
+	/* position: sticky; */
+	/* top: -6.5rem; */
+	cursor: pointer;
+	/* background-color: white; */
+	margin-top: 17vh;
+	/* color: bisque; */
+	/* padding-top: 0rem; */
+}
+
+.chandelier-change {
+	background-image: url("../assets/img/inkscape/hanging-bg-chnd-change.svg") !important;
 }
 
 

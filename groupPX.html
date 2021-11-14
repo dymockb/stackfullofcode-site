@@ -178,7 +178,8 @@
                   </a>
                 </h2>
                 <span class="center-align">
-                  <a href="index/download.pdf" download="newfilename.pdf"><h2>Download CV</h2></a>
+                  <a href="index/download.pdf" download="newfilename.pdf">
+                  <h2 id="download-text">Download CV</h2></a>
                 </span>
               </div>
           </div>
@@ -245,8 +246,13 @@
         
       </div>
       <div class="parallax__layer parallax__layer--deep">
-
+      <!--
         <div id="light-btn" class="img-fluid img-profile mx-auto mb-2" alt="..." ></div>
+        <div id="chandelier-img" class="img-fluid img-profile mx-auto mb-2" alt="..." ></div>
+      -->
+
+        <div id="light-btn"></div>
+        <div id="chandelier-img"></div>
         
       </div>
     </div>
@@ -383,7 +389,7 @@
       console.log('observer:', observer);
       console.log(countObs);
       if (countObs > 1) {
-        $('#light-btn').attr('class', 'chandelier');
+        $('#light-btn').attr('class', 'chandelier-change');
       }
     });
 
