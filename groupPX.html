@@ -129,7 +129,7 @@
               </div>
           </div>
       </section>
-      
+      <hr class="m-0" />
       <!-- Project1 <hr class="m-0" /> -->
       <section class="resume-section aos-item" id="project1" data-aos="fade-in">
           <div class="resume-section-content project-content">
@@ -372,6 +372,22 @@
 
     $('#first-name-last-name').delay(200).animate({opacity:1});
     $('#light-btn').delay(200).animate({opacity: 1}, 1000);
+
+    const myImg = document.getElementById('portfolio2-title');
+
+    let countObs = 0;
+
+    observer = new IntersectionObserver((entry, observer) => {
+      countObs ++;
+      console.log('entry:', entry);
+      console.log('observer:', observer);
+      console.log(countObs);
+      if (countObs > 1) {
+        $('#light-btn').attr('class', 'chandelier');
+      }
+    });
+
+    observer.observe(myImg);
     
     
     

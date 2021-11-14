@@ -15,8 +15,8 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
   <path
-     style="color:#000000;fill:#000000;stroke-width:29.7301;-inkscape-stroke:none"
-     d="m 1590.932,0 v 11250.754 h 119.8378 V 0 Z"
+     style="color:#000000;fill:#000000;stroke-width:31.3332;-inkscape-stroke:none"
+     d="M 1598.0892,-2941.2825 V 11250.754 h 105.5234 V -2941.2825 Z"
      id="path4316" />
   <defs
      id="defs115" />
@@ -30,9 +30,9 @@
      inkscape:pagecheckerboard="1"
      inkscape:document-units="in"
      showgrid="false"
-     inkscape:zoom="0.079968228"
-     inkscape:cx="5083.2688"
-     inkscape:cy="1569.3733"
+     inkscape:zoom="0.31987291"
+     inkscape:cx="1867.9294"
+     inkscape:cy="3165.3196"
      inkscape:window-width="1680"
      inkscape:window-height="987"
      inkscape:window-x="-8"
@@ -53,7 +53,7 @@
      inkscape:export-ydpi="96" />
   <g
      id="g1953"
-     transform="matrix(1.5,0,0,1.5,-1336.3574,11129.727)">
+     transform="matrix(1.5,0,0,1.5,5697.6776,11051.571)">
     <path
        id="path1126-1"
        style="fill:#000000;stroke:#000000;stroke-width:4.00288"

@@ -239,7 +239,8 @@ sup {
 a {
   color: #bd5d38;
   text-decoration: underline;
-  display: inline;
+  /* display: inline; */
+  text-align: center;
 }
 a:hover {
   color: #974a2d;
@@ -11414,7 +11415,7 @@ section.resume-section {
   padding-left: 1.8rem;
   padding-right: 1rem;
   padding-top: 5rem;
-  padding-bottom: 5rem;
+  padding-bottom: 4rem;
   max-width: 75rem;
 }
 section.resume-section .resume-section-content {
