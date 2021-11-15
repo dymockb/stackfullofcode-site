@@ -6,17 +6,21 @@ breakpoints 275, 576, 768, 922, 1200, 1400
 
 #preload-img {
   background: url("../assets/img/inkscape/hanging-bg-chnd-off.svg") no-repeat;
+  background: url("../assets/img/inkscape/new-bulb-on.svg") no-repeat;
+	background: url("../assets/img/inkscape/hanging-bg-bulb-on.svg") no-repeat;
+	background: url("../assets/img/inkscape/new-bulb-on.svg") no-repeat;
+  background: url("../assets/img/inkscape/top-bulb-on.svg") no-repeat;
 }
 
 :root {
 	--desktop-lightbulb-img: url("../assets/img/inkscape/new-bulb-off.svg");
 	--top-light: url("../assets/img/inkscape/hanging-bg-bulb-off.svg");
 	--top-chnd: url("../assets/img/inkscape/hanging-bg-chnd-off.svg");
+  
+  --top-bulb: url("../assets/img/inkscape/top-bulb-off.svg");
 
 	--hover-light: url("../assets/img/inkscape/new-bulb-on.svg");
 	
-	--project-2-mobile-img: url("../assets/img/project2-mobile.png");
-	--project-2-desktop-img: url("../assets/img/project2-desktop.png");
 
 	--logo-bootstrap: url("../assets/img/logos/bootstrap.svg");
 	--logo-css3: url("../assets/img/logos/css3.svg");
@@ -67,14 +71,21 @@ span#toggle-light {
 
 #top-switch {
   position: fixed;
-  height: 8rem;
-  width: 12rem;
-  left: -1rem;
-  top: -2.1rem;
-  background-image: var(--desktop-lightbulb-img);
+  height: 3.5rem;
+  width: 2.7rem;
+  left: .8rem;
+  top: -1px;
+  background-image: var(--top-bulb);
   background-size: contain;
   background-repeat: no-repeat;
+  background-position: bottom;
   filter: invert(82%) sepia(8%) saturate(1133%) hue-rotate(329deg) brightness(94%) contrast(88%);
+  transition: background-image 1s;
+}
+
+#download-cv-menu-link {
+  
+color: #e1b6a5;
 }
 
 /* fade items on scroll with this: */
@@ -82,6 +93,7 @@ span#toggle-light {
 .aos-item {
   opacity: 0;
   transition: opacity 1s;
+  transition-delay: 100ms;
 }
 
 
@@ -292,8 +304,8 @@ span#toggle-light {
     z-index: 2; /* slide under group 3 and 5 */
   }
   #group4 .parallax__layer--deep {
-    width: 192vw;
-    left: 114vw;
+    width: 310vw;
+    left: -74vw;
   }
 
 @media (min-width: 576px) {
@@ -671,6 +683,7 @@ section#download-cv {
 section#contact {
   align-items: end;
   padding-bottom: 2rem;
+  pointer-events: none;
 }
 
 #contact-heading {
@@ -688,6 +701,7 @@ section#contact {
 	padding-left: 2rem;
 	padding-right: 2rem;
 	width: 100%;
+	pointer-events: all;
 }
 
 /* LIGHTS */
@@ -708,9 +722,9 @@ section#contact {
 
 #light-btn {
 	opacity: 0;
-	height: 425vh;
+	height: 346vh;
 	/* margin-left: -1rem; */
-	/* width: 100%; */
+	width: 100%;
 	/* border: 0.35rem solid rgb(189 93 56); */
 	/* float: right; */
 	background-size: contain;
@@ -722,7 +736,7 @@ section#contact {
 	/* top: -6.5rem; */
 	cursor: pointer;
 	/* background-color: white; */
-	margin-top: -116rem;
+	margin-top: -100rem;
 	/* color: bisque; */
 	/* padding-top: 0rem; */
 }
@@ -737,8 +751,31 @@ section#contact {
 	background-image: var(--hover-light);
 }	
 
+/*also switch off light-btn width if taking this out*/
+div#back-layer-container {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: flex-end;
+}
 
+div#back-layer-cv {
+  width: 50%;
+  padding-bottom: 9rem;
+  opacity: 0;
+}
 
+#backlayer-pdf {
+  opacity: 1;
+}
+
+#backlayer-pdf-icon {
+  height: calc(12.5rem + 5.7vw);
+  width: calc(12.5rem + 5.7vw) !important;
+}
+
+h2#back-layer-download-text {
+  font-size: 5rem;
+}
 
 /*
 @media (min-width: 576px) {
@@ -772,6 +809,7 @@ section#contact {
 	--desktop-lightbulb-img: url("../assets/img/inkscape/new-bulb-on.svg");
 	--top-light: url("../assets/img/inkscape/hanging-bg-bulb-on.svg");
 	--hover-light: url("../assets/img/inkscape/new-bulb-on.svg");
+  --top-bulb: url("../assets/img/inkscape/top-bulb-on.svg");
 
   --icon-colours: invert(100%); 
 

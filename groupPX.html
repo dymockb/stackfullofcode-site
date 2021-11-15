@@ -24,11 +24,14 @@
   </div>
 
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top" id="sideNav">
-						
+    <span class="d-block d-lg-none pointer" id="toggle-light">
+      <div id="top-switch"></div>
+    </span>
+
+    <a class="nav-link" id="download-cv-menu-link" href="#download-cv">Download CV</a>
+
     <a class="navbar-brand js-scroll-trigger"> <!-- href="#page-top" -->
-        <span class="d-block d-lg-none pointer" id="toggle-light">
-          <div id="top-switch"></div>
-        </span>
+
 
 
         <span class="d-none d-lg-block" id="lightbulb-container">
@@ -40,10 +43,10 @@
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
     <div class="collapse navbar-collapse" id="navbarResponsive">
         <ul class="navbar-nav">
-            <li class="nav-item"><a class="nav-link" href="#about">About</a></li> <!--class="nav-link js-scroll-trigger" -->
+            <!-- <li class="nav-item"><a class="nav-link" href="#about">About</a></li>  -->
             <li class="nav-item"><a class="nav-link" href="#skills">Skills</a></li>
             <li class="nav-item"><a class="nav-link" href="#project1">Projects</a></li>
-            <li class="nav-item"><a class="nav-link" href="#download-cv">Download CV</a></li>
+            <li class="nav-item"></li>
             <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
         </ul>
     </div>
@@ -173,7 +176,7 @@
           </div>
       </section>
       <hr class="m-0" />
-      <!--  Download CV -->
+      <!--  Download CV 
       
       <section class="resume-section" id="download-cv">
           <div class="resume-section-content">
@@ -191,7 +194,7 @@
               </div>
           </div>
       </section>
-      
+      -->
       <!-- <hr class="m-0" /> Contact -->
       <section class="resume-section contact" id="contact">
         <div class="resume-section-content aos-item" id="contact-section">
@@ -254,8 +257,24 @@
       </div>
       <div class="parallax__layer parallax__layer--deep">
 
-        <div id="light-btn" class="img-fluid img-profile mx-auto mb-2" alt="..." ></div>
-        
+        <div id="back-layer-container">
+          <div id="light-btn" class="img-fluid img-profile mx-auto mb-2" alt="..." ></div>
+
+          <!--
+          <div id="back-layer-cv">
+            <h2 id="backlayer-pdf" class="center-align aos-item">
+              <a href="index/download.pdf" download="newfilename.pdf">
+                <i class="fas fa-file-pdf cv-icon" id="backlayer-pdf-icon"></i>
+              </a>
+            </h2>
+            <span class="center-align aos-item">
+              <a href="index/download.pdf" download="newfilename.pdf">
+                <h2 id="back-layer-download-text">Download CV</h2></a>
+            </span>
+          </div>
+          -->
+        </div>
+      
       </div>
     </div>
     <!--

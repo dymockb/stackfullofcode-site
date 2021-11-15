@@ -98,6 +98,14 @@ const myImg = document.getElementById('portfolio2-title');
 
 let countObs = 0;
 
+const ioOptions = {
+  //root: document.getElementById('scrolling-container'),
+  rootMargin: '0px 10px 0px 10px',
+  //threshold: 0.5,
+  trackVisibility: true,
+  delay: 100,
+}
+
 const workingObserver = new IntersectionObserver((entry, observer) => {
   countObs ++;
   //console.log('entry:', entry);
@@ -105,24 +113,28 @@ const workingObserver = new IntersectionObserver((entry, observer) => {
   //console.log(countObs);
   if (countObs > 1) {
     $('#light-btn').attr('class', 'chandelier');
+    $('#back-layer-cv').attr('style', 'opacity: 1');
   }
-});
+  }, ioOptions);
 
 workingObserver.observe(myImg);
+
+
 
 
 const fadeInElements = document.querySelectorAll('.aos-item');
 console.log(fadeInElements);
 
 let observer = new IntersectionObserver((entry, observer) => {
-    console.log('entry:', entry);
+    //console.log('entry:', entry);
     //console.log('isIntersecting:', entry[0].isIntersecting);
-    console.log('observer:', observer);
+    //console.log('observer:', observer);
+    console.log('isVisible:', entry[0].isVisible, entry[0].target);
     if (entry[0].isIntersecting == true) {
       entry[0].target.setAttribute('style', 'opacity: 1');
     } 
               
-});
+}, ioOptions);
 
 fadeInElements.forEach(elem => {
   observer.observe(elem);
