@@ -2,6 +2,12 @@
 
 breakpoints 275, 576, 768, 922, 1200, 1400 
 */
+
+
+#preload-img {
+  background: url("../assets/img/inkscape/hanging-bg-chnd-off.svg") no-repeat;
+}
+
 :root {
 	--desktop-lightbulb-img: url("../assets/img/inkscape/new-bulb-off.svg");
 	--top-light: url("../assets/img/inkscape/hanging-bg-bulb-off.svg");
@@ -12,7 +18,18 @@ breakpoints 275, 576, 768, 922, 1200, 1400
 	--project-2-mobile-img: url("../assets/img/project2-mobile.png");
 	--project-2-desktop-img: url("../assets/img/project2-desktop.png");
 
-	--html5-logo: url("../assets/img/logos/HTML5_Badge_128.png");
+	--logo-bootstrap: url("../assets/img/logos/bootstrap.svg");
+	--logo-css3: url("../assets/img/logos/css3.svg");
+	--logo-html5: url("../assets/img/logos/html5.svg");
+  --logo-javascript: url("../assets/img/logos/javascript.svg");
+	--logo-jquery: url("../assets/img/logos/jquery.svg");
+	--logo-mariadb: url("../assets/img/logos/mariadb.svg");
+	--logo-nodejs: url("../assets/img/logos/nodejs.svg");
+	--logo-php-icon: url("../assets/img/logos/php-icon.svg");
+  --logo-semantic-ui: url("../assets/img/logos/semantic-ui.svg");
+  --logo-sql-database-generic: url("../assets/img/logos/sql-database-generic.svg");
+
+  --icon-colours: invert(0%);
 
 	transition: filter 1s;
 	
@@ -35,6 +52,11 @@ body {
 hr {
 	opacity: 1;
 	color: #dee2e6;
+}
+
+.aos-item {
+  opacity: 0;
+  transition: opacity 1s;
 }
 
 
@@ -153,7 +175,7 @@ hr {
 
   .parallax__layer--deep {
     -webkit-transform: translateZ(-600px) scale(3);
-    transform: translateZ(-800px) scale(3);
+    transform: translateZ(-3392px) scale(3);
     z-index: 2;
   }
 
@@ -244,29 +266,10 @@ hr {
   #group4 {
     z-index: 2; /* slide under group 3 and 5 */
   }
-
-	/*
   #group4 .parallax__layer--deep {
-    width: 287vw;
-    width: 370vw;
-    height: 100vh;
-    margin-left: -165vw;
+    width: 192vw;
+    left: 114vw;
   }
-	*/
-
-	
-  #group4 .parallax__layer--deep {
-		/* width: 287vw; */
-		/* width: 370vw; */
-		height: 100vh;
-		/* position: absolute; */
-		left: 50%;
-		/* top: 50%; */
-		/* -webkit-transform: translate(-50%, -50%); */
-		/* transform: translate(-50%, -50%); */
-		}
-	
-
 
 @media (min-width: 576px) {
 
@@ -318,20 +321,16 @@ hr {
 	height: 61vh;
 }
 
-section#about, section#contact, section#skills {
-	min-height: 100vh;
-	/* align-items: start; */
-}
-
 section.resume-section .resume-section-content {
   width: 100%;
 }
 
-section#project2,	section#project1, section#skills, section#download-cv {
+section#about, section#skills, section#project1, section#project2, section#download-cv, section#contact {
 	height: 100vh;
 	align-items: start;
 	padding-top: 4.5rem;
-	padding-right: 1.5rem;
+	padding-right: 0;
+	padding-left: 0;
 	justify-content: space-between;
 	/* background-color: white; */
 }
@@ -352,17 +351,13 @@ margin: 0;
 
 #title-section {
   width: 100%;
-  margin-top: -13rem;
+  margin-top: 4rem;
 }
 
 #first-name-last-name {
 	background: white;
 	width: fit-content;
 	opacity: 0;
-}
-
-#top-words {
-/* background: white; */
 }
 
 .fs-word {
@@ -437,10 +432,12 @@ section#skills {
 }
 
 #skills-info {
+  background: white;
+  padding-bottom: 2rem;
+}
 
-background: white;
-
-padding-bottom: 2rem;
+li.list-inline-item {
+  margin: 0;
 }
 
 .icon {
@@ -449,23 +446,35 @@ padding-bottom: 2rem;
 	display: inline-block;
 }
 
-.cv-icon {
-	height: calc(3.25rem + 5.7vw);
-	width: calc(3.25rem + 5.7vw) !important;
-	/* display: inline-block; */
-	/* padding-top: 20vh; */
-	background: #dee2e6;
-	padding-top: 1rem;
-	padding-bottom: 1rem;
-	border-radius: 10%;
+.dev-icons {
+  font-size: 1rem;
 }
 
-.icon-html5 {
+.tech-icon {
+	height: calc(1.5rem + 5.7vw);
+	width: calc(1.5rem + 5.7vw) !important;
+	display: inline-block;
 	background-size: contain;
 	background-repeat: no-repeat;
-	background-image: var(--html5-logo);
-	transition: background-image 1s;
+	background-position: center;
+	border-radius: 10%;
+	/*  transition: background-image 1s; */
+	transition: filter 1s;
+	filter: var(--icon-colours);
+	background-color: white;
 }
+
+.icon-bootstrap {	background-image: var(--logo-bootstrap) }
+.icon-css3 { background-image: var(--logo-css3) }
+.icon-html5 {	background-image: var(--logo-html5) }
+.icon-javascript { background-image: var(--logo-javascript) }
+.icon-jquery { background-image: var(--logo-jquery) }
+.icon-mariadb {	background-image: var(--logo-mariadb) }
+.icon-nodejs {	background-image: var(--logo-nodejs) }
+.icon-php-icon {	background-image: var(--logo-php-icon) }
+.icon-semantic-ui {	background-image: var(--logo-semantic-ui) }
+.icon-sql-database-generic {	background-image: var(--logo-sql-database-generic) }
+
 
 #certs-list {
   padding: 0
@@ -485,6 +494,12 @@ padding-bottom: 2rem;
 
 /*PROJECT 1 & 2 */
 
+.project-header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
 section#project1 {
 	background-color: white;
 }
@@ -494,11 +509,10 @@ section#project1 {
   /* display: inline; */
 }
 
-
 .project-content {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: left;
   align-items: center;
   /* flex-grow: 1; */
   height: 100%;
@@ -506,13 +520,9 @@ section#project1 {
   align-content: space-between;
 }
 
-.project-text {
-    /* margin-top: 2rem; */
-}
-
 .project-link {
 	width: 100%;
-	text-align: center;
+	text-align: right;
 	/* margin-top: 2rem; */
 }
 
@@ -567,18 +577,27 @@ section#project2 {
 
 /* DOWNLOAD CV */
 
+.cv-icon {
+  height: calc(1.5rem + 5.7vw);
+  width: calc(1.5rem + 5.7vw) !important;
+  display: inline-block;
+  background-color: white;
+  padding: 0.3rem;
+  border-radius: 20%;
+}
+
 #cv-box {
 	/* margin-top: 28rem; */
 	width: fit-content;
-	margin-left: auto;
-	margin-right: auto;
+	/* margin-left: auto; */
+	/* margin-right: auto; */
 	/* background: white; */
-	padding-left: 2.5rem;
 }
 
 section#download-cv {
    align-items: end;
    padding-bottom: 5.5rem;
+   justify-content: flex-start;
 }
 
 #download-cv-heading {
@@ -591,29 +610,25 @@ section#download-cv {
 	text-align: center;
 }
 
-#pdf-icon {
-	padding-top: 0vh;
+#download-text {
+	background: white;
 }
 
-#download-text {
-	background-color: white;
+#pdf-icon {
+	padding-top: 0vh;
 }
 
 
 /*CONTACT SECTION*/
 
 section#contact {
-	background-color: white;
+  align-items: end;
+  padding-bottom: 2rem;
 }
+
 
 .contact .php-email-form button[type=submit] {
 	background: rgb(189, 93, 56)
-}
-
-section#contact {
-    padding-bottom: 0;
-    border-top: #bd5d38;
-    border-top-style: solid;
 }
 
 #contact-section {
@@ -641,7 +656,8 @@ section#contact {
 
 #light-btn {
 	opacity: 0;
-	height: 100vh;
+	height: 425vh;
+	/* margin-left: -1rem; */
 	/* width: 100%; */
 	/* border: 0.35rem solid rgb(189 93 56); */
 	/* float: right; */
@@ -654,35 +670,13 @@ section#contact {
 	/* top: -6.5rem; */
 	cursor: pointer;
 	/* background-color: white; */
-	margin-top: -45vh;
+	margin-top: -116rem;
 	/* color: bisque; */
 	/* padding-top: 0rem; */
 }
 
-#chandelier-img {
-	/* padding-top: 30vh; */
-	/* opacity: 0; */
-	height: 100vh;
-	/* width: 100%; */
-	/* width: fit-content; */
-	/* border: 0.35rem solid rgb(189 93 56); */
-	/* float: right; */
-	background-size: contain;
-	background-repeat: no-repeat;
-	background-image: var(--top-chnd);
-	background-position: center;
-	transition: background-image 1s;
-	/* position: sticky; */
-	/* top: -6.5rem; */
-	cursor: pointer;
-	/* background-color: white; */
-	margin-top: 17vh;
-	/* color: bisque; */
-	/* padding-top: 0rem; */
-}
-
-.chandelier-change {
-	background-image: url("../assets/img/inkscape/hanging-bg-chnd-change.svg") !important;
+.chandelier {
+	background-image: var(--top-chnd) !important;
 }
 
 
@@ -722,17 +716,28 @@ section#contact {
 
 [data-theme="dark"] {
   filter: invert(100%);
+
 	--desktop-lightbulb-img: url("../assets/img/inkscape/new-bulb-on.svg");
 	--top-light: url("../assets/img/inkscape/hanging-bg-bulb-on.svg");
-
 	--hover-light: url("../assets/img/inkscape/new-bulb-on.svg");
-	
-	--project-2-mobile-img: url("../assets/img/project2-mobile-inv.png");
-	--project-2-desktop-img: url("../assets/img/project2-desktop-inv.png");
 
-	--html5-logo: url("../assets/img/logos/HTML5_Badge_128_inv.png");
+  --icon-colours: invert(100%); 
+
 }
 
+/*
+.icon-bootstrap {	background-image: var(--logo-bootstrap) }
+.icon-css3 { background-image: var(--logo-css3) }
+.icon-html5 {	background-image: var(--logo-html5) }
+.icon-javascript { background-image: var(--logo-javascript) }
+.icon-jquery { background-image: var(--logo-jquery) }
+.icon-mariadb {	background-image: var(--logo-mariadb) }
+.icon-nodejs {	background-image: var(--logo-nodejs) }
+.icon-php-icon {	background-image: var(--logo-php-icon) }
+.icon-semantic-ui {	background-image: var(--logo-semantic-ui) }
+.icon-sql-database-generic {	background-image: var(--logo-sql-database-generic) }
+
+*/
 
 /*ANIMATION STUFF */
 
