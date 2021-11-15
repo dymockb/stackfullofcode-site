@@ -26,9 +26,15 @@
   <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top" id="sideNav">
 						
     <a class="navbar-brand js-scroll-trigger"> <!-- href="#page-top" -->
-        <span class="d-block d-lg-none pointer" id="toggle-light"><i class="far fa-lightbulb"></i></span>
+        <span class="d-block d-lg-none pointer" id="toggle-light">
+          <div id="top-switch"></div>
+        </span>
+
+
         <span class="d-none d-lg-block" id="lightbulb-container">
-        <div id="desktop-light" class="img-fluid img-profile rounded-circle mx-auto mb-2" alt="..." ></div>
+          
+            <div id="desktop-light" class="img-fluid img-profile rounded-circle mx-auto mb-2" alt="..." ></div>
+          
         </span>
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
@@ -127,27 +133,21 @@
       <section class="resume-section" id="project1">
           <div class="resume-section-content project-content">
             <div class="project-header aos-item">
-            <h2 class="mb-5" id="portfolio1-title">
-              Portfolio
-            </h2>
-            <a class="project-link" href="project1/" target="_blank">
-              <h2>Gazetter</h2>
-            </a>
-            </div>
-            <!-- <a id="project1-title" href="project1/" target="_blank"><h4>Gazetter</h4></a> -->
-              <ul class="fa-ul mb-0 project-text aos-item">
-                <li>An interactive map providing dynamic top-level country data.</li>
-                <li>Built using Bootstrap and the Leaflet mapping library, the gazetter interacts with 14 APIs to provide a blend of real-time, geographic and image data for any selected country.
-                </li>
-                <!--  <img class="img-fluid mx-auto mb-2" src="index/assets/img/preview-map.png" alt="..." /> 
-                <div class="img-fluid mx-auto mb-2" id="project-2-mobile-img"></div>
-              
-                <div class="img-fluid mx-auto mb-2" id="project-2-desktop-img"></div>
-              <a class="project-link" href="project1/" target="_blank"><h2>Visit project</h2></a>
-              -->
-              </ul>													
-              <a href="project1/" target="_blank"><img class="project-screenshot" src="index/assets/img/project1/project1-screen.png"></a>
-              
+              <h2 class="mb-5 text-primary" id="portfolio1-title">
+                Portfolio
+              </h2>
+              <a class="project-link" href="project1/" target="_blank">
+                <h2>Gazetter</h2>
+              </a>
+              </div>
+              <div class="project-image-and-text">
+                <a href="project1/" target="_blank"><img class="project-screenshot" src="index/assets/img/project1/p1dt.png"></a>
+                <ul class="fa-ul mb-0 project-text aos-item">
+                  <li>An interactive map providing dynamic top-level country data.</li>
+                  <li>Built using Bootstrap and the Leaflet mapping library, the gazetter interacts with 14 APIs to provide a blend of real-time, geographic and image data for any selected country.
+                  </li>
+                </ul>	
+              </div>												  
             </div>
       </section>
       
@@ -156,19 +156,20 @@
       <section class="resume-section" id="project2">
           <div class="resume-section-content project-content">
             <div class="project-header aos-item">
-              <h2 class="mb-5" id="portfolio2-title">
+              <h2 class="mb-5 text-primary" id="portfolio2-title">
                 Portfolio
               </h2>
               <a class="project-link" href="project2/" target="_blank">
                 <h2>Company Directory</h2>
               </a>
-              </div>														
-              <ul class="fa-ul mb-0 project-text aos-item">
-                <li>This project uses the Semantic UI framework in conjunction with a PHP/MariaDB/SQL database set-up. It provides an intuitive interface for managing company employees across a range of locations and departments.
-                </li>
-              </ul>
-              <a href="project2/" target="_blank"><img class="project-screenshot" src="index/assets/img/project2/project2-screen.png"></a>
-              
+              </div>	
+              <div class="project-image-and-text">													
+                <a href="project2/" target="_blank"><img class="project-screenshot" src="index/assets/img/project2/p2dt.png"></a>
+                <ul class="fa-ul mb-0 project-text aos-item">
+                  <li>This project uses the Semantic UI framework in conjunction with a PHP/MariaDB/SQL database set-up. It provides an intuitive interface for managing company employees across a range of locations and departments.
+                  </li>
+                </ul>      
+              </div>
           </div>
       </section>
       <hr class="m-0" />
@@ -178,12 +179,12 @@
           <div class="resume-section-content">
 
               <div id="cv-box">
-                <h2 id="pdf-icon" class="center-align">
+                <h2 id="pdf-icon" class="center-align aos-item">
                   <a href="index/download.pdf" download="newfilename.pdf">
                     <i class="fas fa-file-pdf cv-icon"></i>
                   </a>
                 </h2>
-                <span class="center-align">
+                <span class="center-align aos-item">
                   <a href="index/download.pdf" download="newfilename.pdf">
                     <h2 id="download-text">Download CV</h2></a>
                 </span>
@@ -193,8 +194,8 @@
       
       <!-- <hr class="m-0" /> Contact -->
       <section class="resume-section contact" id="contact">
-        <div class="resume-section-content" id="contact-section">
-          <h2 class="mb-5">Contact</h2>
+        <div class="resume-section-content aos-item" id="contact-section">
+          <h2 id="contact-heading" class="mb-5">Contact</h2>
           <form action="forms/contact.php" method="post" role="form" class="php-email-form">
               <div class="row">
                 <div class="col-md-6 form-group">

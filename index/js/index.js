@@ -73,6 +73,9 @@ easing: 'ease-in-out-sine'
 });
 */
 
+$('.nav-link').click(function(){
+  $('.aos-item').attr('style', 'opacity: 1')
+});
 
 
 const rootDataset = document.documentElement.dataset;
@@ -112,9 +115,9 @@ const fadeInElements = document.querySelectorAll('.aos-item');
 console.log(fadeInElements);
 
 let observer = new IntersectionObserver((entry, observer) => {
-    //console.log('entry:', entry[0].target);
+    console.log('entry:', entry);
     //console.log('isIntersecting:', entry[0].isIntersecting);
-    //console.log('observer:', observer);
+    console.log('observer:', observer);
     if (entry[0].isIntersecting == true) {
       entry[0].target.setAttribute('style', 'opacity: 1');
     } 
