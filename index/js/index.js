@@ -32,24 +32,29 @@ anime.timeline({loop: false})
   
   $(document).ready(function () {
 
+    $('.carousel').carousel();
 
+
+    /*
     function vhToPixels (vh) {
       return Math.round(window.innerHeight / (100 / vh));
     }
+    */
 
-    
-    const windowHeight = vhToPixels(100);
+
+    const _1vh = window.innerHeight / 100;
+
+    const windowHeight = window.innerHeight;
     console.log('windowHeight', windowHeight);
-    const fraction = (windowHeight*4) /6;
-    console.log('fraction', fraction, windowHeight*4);
 
-    const section1On = fraction;
-    const section2On = fraction*2;
-    const section3On = fraction*3;
-    const section4On = fraction*4;
-    const section5On = fraction*5;
+    const adjustFactor = windowHeight / 3;
 
-    const listOfTitles = ['Skills','Portfolio','Portfolio','Contact']
+    const section0On = windowHeight - adjustFactor;
+    const section1On = windowHeight*2 - adjustFactor;
+    const section2On = windowHeight*3 - adjustFactor;
+    const section3On = windowHeight*4 - adjustFactor;
+
+    const listOfTitles = ['<span class="text-primary">Full-stack</span><span>developer</span>','Skills','Portfolio','Portfolio','Contact']
 
     let visibleSection = 0;
 
@@ -57,46 +62,48 @@ anime.timeline({loop: false})
 
     window.onscroll = () => {
         scrolling = true;
-    };
+        //$('#highlights').attr('style', `background-position: right 0px bottom ${window.scrollY / 4 }px`);
+      };
 
     setInterval(() => {
 
         if (scrolling) {
             scrolling = false;
+
+
             
             currentSection = visibleSection.valueOf();
             
-            if (window.scrollY > section1On && window.scrollY < section2On) {
+            if (window.scrollY <= section0On) {
+              if (currentSection != 0) {
+                visibleSection = 0;
+                x.a = 0;
+              };
+              
+            } else if (window.scrollY > section0On && window.scrollY < section1On) {
               if (currentSection != 1) {
                 visibleSection = 1;
                 x.a = 1;
               };
               
-            } else if (window.scrollY > section2On && window.scrollY < section3On) {
+            } else if (window.scrollY > section1On && window.scrollY < section2On) {
               if (currentSection != 2) {
                 visibleSection = 2;
                 x.a = 2;
               };
               
 
-            } else if (window.scrollY > section3On && window.scrollY < section4On){  
+            } else if (window.scrollY > section2On && window.scrollY < section3On){  
               if (currentSection != 3) {
                 visibleSection = 3;
                 x.a = 3;
               };
               
-            } else if (window.scrollY > section4On && window.scrollY < section5On ){  
-              console.log(window.scrollY);
+            } else if (window.scrollY >= section3On){  
+              console.log('end of Scroll', window.scrollY);
               if (currentSection != 4) {
                 visibleSection = 4;
                 x.a = 4;
-              };
-              
-            } else if (window.scrollY > section5On ){  
-              console.log(window.scrollY);
-              if (currentSection != 5) {
-                visibleSection = 5;
-                x.a = 5;
               };
               
             }
@@ -127,7 +134,10 @@ anime.timeline({loop: false})
       $(`#section${val}`).fadeIn();
       $(`.fade-section:not(#section${val})`).fadeOut();
 
-      $('#toggle-text').html(listOfTitles[val-1]);
+      //$('#toggle-text').hide().html(listOfTitles[val]).fadeIn(500);
+
+      $(`#highlight${val}`).attr('style', 'font-weight: bold');
+      $(`.highlight:not(#highlight${val})`).attr('style', 'font-weight: initial');
 
       console.log("Someone changed the value of x.a to " + val);
 
