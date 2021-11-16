@@ -94,18 +94,30 @@ span#toggle-light {
 }
 
 #highlights {
-  /* height: 100%; */
-  /* width: 15vw; */
-  display: flex;
-  /* flex-direction: column; */
-  justify-content: space-around;
-  align-items: center;
-  /* float: left; */
-  /* background-image: var(--top-light); */
-  /* background-position: bottom; */
-  background-position: right 0vh bottom 0vh;
-  background-size: contain;
-  background-repeat: no-repeat;
+  
+/* height: 100%; */
+  
+/* width: 15vw; */
+  
+display: flex;
+  
+/* flex-direction: column; */
+  
+justify-content: space-around;
+  
+align-items: center;
+  
+/* float: left; */
+  
+/* background-image: var(--top-light); */
+  
+/* background-position: bottom; */
+  
+background-position: right 0vh bottom 0vh;
+  
+background-size: contain;
+  
+background-repeat: no-repeat;
 }
 
 /* fade items on scroll with this: */
@@ -378,16 +390,21 @@ span#toggle-light {
   position: absolute;
   height: 70vh;
   padding-left: calc(.5rem + 4vw);
-  padding-right: calc(1.5rem + 10vw);
+  padding-right: calc(0.5rem + 4vw);
   display: none;
 }
 
 #section0 {
-  display: block
+  display: block;
+  width: 100%;
 }
 
 .resume-section {
   height: 100vh;
+}
+
+.general-section-content {
+  padding-top: 2rem;
 }
 
 
@@ -402,7 +419,7 @@ span#toggle-light {
 section.resume-section {
   max-width: 100%;
   border: red;
-  border-style: solid;
+  /* border-style: solid; */
 }
 
 section.resume-section .resume-section-content {
@@ -683,9 +700,11 @@ section#project2 {
 /* DOWNLOAD CV */
 
 #download-cv-section {
-display: flex;
-position: fixed;
-bottom: 0;
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  flex-direction: row-reverse;
 }
 
 .cv-icon {
@@ -694,7 +713,7 @@ section#project2 {
   display: inline-block;
   background-color: white;
   padding: 0.3rem;
-  border-radius: 20%;
+  /* border-radius: 20%; */
 }
 
 #cv-box {
@@ -769,7 +788,7 @@ section#contact {
 #desktop-light {
   height: 10rem;
   width: 10rem;
-  border: 0.3rem solid rgb(189 93 56);
+  /* border: 0.3rem solid rgb(189 93 56); */
   cursor: pointer;
   background-size: cover;
   background-repeat: no-repeat;
@@ -778,6 +797,9 @@ section#contact {
   background-clip: content-box;
   /* background-color: #bd5d38; */
   filter: invert(82%) sepia(8%) saturate(1133%) hue-rotate(329deg) brightness(94%) contrast(88%);
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10vh;
 }
 
 #light-btn {

@@ -47,12 +47,12 @@ anime.timeline({loop: false})
     const windowHeight = window.innerHeight;
     console.log('windowHeight', windowHeight);
 
-    const adjustFactor = windowHeight / 3;
+    //const adjustFactor = windowHeight / 2;
 
-    const section0On = windowHeight - adjustFactor;
-    const section1On = windowHeight*2 - adjustFactor;
-    const section2On = windowHeight*3 - adjustFactor;
-    const section3On = windowHeight*4 - adjustFactor;
+
+    const section2On = windowHeight*2;
+    const section3On = windowHeight*3;
+    const section4On = windowHeight*4;
 
     const listOfTitles = ['<span class="text-primary">Full-stack</span><span>developer</span>','Skills','Portfolio','Portfolio','Contact']
 
@@ -74,32 +74,32 @@ anime.timeline({loop: false})
             
             currentSection = visibleSection.valueOf();
             
-            if (window.scrollY <= section0On) {
+            if (window.scrollY <= windowHeight) {
               if (currentSection != 0) {
                 visibleSection = 0;
                 x.a = 0;
               };
               
-            } else if (window.scrollY > section0On && window.scrollY < section1On) {
+            } else if (window.scrollY > windowHeight && window.scrollY < section2On) {
               if (currentSection != 1) {
                 visibleSection = 1;
                 x.a = 1;
               };
               
-            } else if (window.scrollY > section1On && window.scrollY < section2On) {
+            } else if (window.scrollY > section2On && window.scrollY < section3On) {
               if (currentSection != 2) {
                 visibleSection = 2;
                 x.a = 2;
               };
               
 
-            } else if (window.scrollY > section2On && window.scrollY < section3On){  
+            } else if (window.scrollY > section3On && window.scrollY < section4On){  
               if (currentSection != 3) {
                 visibleSection = 3;
                 x.a = 3;
               };
               
-            } else if (window.scrollY >= section3On){  
+            } else if (window.scrollY == section4On){  
               console.log('end of Scroll', window.scrollY);
               if (currentSection != 4) {
                 visibleSection = 4;
@@ -209,14 +209,14 @@ document.getElementById('toggle-light').onclick = () => {
 const inDarkMode = (rootDataset.theme === 'dark');
 rootDataset.theme = inDarkMode ? '' : 'dark';
 }						
-
-document.getElementById('desktop-light').onclick = () => {
-const inDarkMode = (rootDataset.theme === 'dark');
-rootDataset.theme = inDarkMode ? '' : 'dark';
-}
 */
+document.getElementById('desktop-light').onclick = () => {
+  const inDarkMode = (rootDataset.theme === 'dark');
+  rootDataset.theme = inDarkMode ? '' : 'dark';
+}
+
 $('#first-name-last-name').delay(200).animate({opacity:1});
-$('#light-btn').delay(200).animate({opacity: 1}, 1000);
+//$('#light-btn').delay(200).animate({opacity: 1}, 1000);
 
 
 /*
