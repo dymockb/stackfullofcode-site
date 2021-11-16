@@ -136,6 +136,10 @@ anime.timeline({loop: false})
 
       //$('#toggle-text').hide().html(listOfTitles[val]).fadeIn(500);
 
+      const whatIsVal = val.valueOf();
+
+      val = whatIsVal == 3 ? 2 : val;
+
       $(`#highlight${val}`).attr('style', 'font-weight: bold');
       $(`.highlight:not(#highlight${val})`).attr('style', 'font-weight: initial');
 
