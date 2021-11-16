@@ -82,7 +82,7 @@ body {
   font-size: var(--bs-body-font-size);
   font-weight: var(--bs-body-font-weight);
   line-height: var(--bs-body-line-height);
-  color: #c87657;
+  color: var(--bs-body-color);
   text-align: var(--bs-body-text-align);
   background-color: var(--bs-body-bg);
   -webkit-text-size-adjust: 100%;
@@ -239,8 +239,6 @@ sup {
 a {
   color: #bd5d38;
   text-decoration: underline;
-  /* display: inline; */
-  text-align: center;
 }
 a:hover {
   color: #974a2d;
@@ -11292,7 +11290,7 @@ textarea.form-control-lg {
   }
 }
 body {
-  /* padding-top: 3.375rem; */
+  padding-top: 3.375rem;
   color: #6c757d;
 }
 
@@ -11406,16 +11404,16 @@ p.lead {
 }
 
 .dev-icons {
-  font-size: 2rem;
+  font-size: 3rem;
 }
 
 section.resume-section {
   display: flex;
   align-items: center;
-  padding-left: 1.8rem;
+  padding-left: 1rem;
   padding-right: 1rem;
   padding-top: 5rem;
-  padding-bottom: 4rem;
+  padding-bottom: 5rem;
   max-width: 75rem;
 }
 section.resume-section .resume-section-content {

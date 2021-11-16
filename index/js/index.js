@@ -32,6 +32,116 @@ anime.timeline({loop: false})
   
   $(document).ready(function () {
 
+
+    function vhToPixels (vh) {
+      return Math.round(window.innerHeight / (100 / vh));
+    }
+
+    
+    const windowHeight = vhToPixels(100);
+    console.log('windowHeight', windowHeight);
+    const fraction = (windowHeight*4) /6;
+    console.log('fraction', fraction, windowHeight*4);
+
+    const section1On = fraction;
+    const section2On = fraction*2;
+    const section3On = fraction*3;
+    const section4On = fraction*4;
+    const section5On = fraction*5;
+
+    const listOfTitles = ['Skills','Portfolio','Portfolio','Contact']
+
+    let visibleSection = 0;
+
+    let scrolling = false;
+
+    window.onscroll = () => {
+        scrolling = true;
+    };
+
+    setInterval(() => {
+
+        if (scrolling) {
+            scrolling = false;
+            
+            currentSection = visibleSection.valueOf();
+            
+            if (window.scrollY > section1On && window.scrollY < section2On) {
+              if (currentSection != 1) {
+                visibleSection = 1;
+                x.a = 1;
+              };
+              
+            } else if (window.scrollY > section2On && window.scrollY < section3On) {
+              if (currentSection != 2) {
+                visibleSection = 2;
+                x.a = 2;
+              };
+              
+
+            } else if (window.scrollY > section3On && window.scrollY < section4On){  
+              if (currentSection != 3) {
+                visibleSection = 3;
+                x.a = 3;
+              };
+              
+            } else if (window.scrollY > section4On && window.scrollY < section5On ){  
+              console.log(window.scrollY);
+              if (currentSection != 4) {
+                visibleSection = 4;
+                x.a = 4;
+              };
+              
+            } else if (window.scrollY > section5On ){  
+              console.log(window.scrollY);
+              if (currentSection != 5) {
+                visibleSection = 5;
+                x.a = 5;
+              };
+              
+            }
+            
+        }
+
+    },300);
+
+    x = {
+      aInternal: 10,
+      aListener: function(val) {},
+      set a(val) {
+        this.aInternal = val;
+        this.aListener(val);
+      },
+      get a() {
+        return this.aInternal;
+      },
+      registerListener: function(listener) {
+        this.aListener = listener;
+      }
+    }
+
+    console.log('x.a', x.a);
+
+    x.registerListener(function(val) {
+
+      $(`#section${val}`).fadeIn();
+      $(`.fade-section:not(#section${val})`).fadeOut();
+
+      $('#toggle-text').html(listOfTitles[val-1]);
+
+      console.log("Someone changed the value of x.a to " + val);
+
+    });
+    
+    /*
+    window.addEventListener("scroll", () => { 
+      
+      console.log(window.scrollY);
+
+
+    });
+    */
+    
     anime.timeline({loop: false})
       .add({
         targets: '.ml11 .line',
@@ -80,6 +190,7 @@ $('.nav-link').click(function(){
 
 const rootDataset = document.documentElement.dataset;
 
+/*
 document.getElementById('toggle-light').onclick = () => {
 const inDarkMode = (rootDataset.theme === 'dark');
 rootDataset.theme = inDarkMode ? '' : 'dark';
@@ -89,11 +200,12 @@ document.getElementById('desktop-light').onclick = () => {
 const inDarkMode = (rootDataset.theme === 'dark');
 rootDataset.theme = inDarkMode ? '' : 'dark';
 }
-
+*/
 $('#first-name-last-name').delay(200).animate({opacity:1});
 $('#light-btn').delay(200).animate({opacity: 1}, 1000);
 
 
+/*
 const myImg = document.getElementById('portfolio2-title');
 
 let countObs = 0;
@@ -140,6 +252,7 @@ fadeInElements.forEach(elem => {
   observer.observe(elem);
 });
 
+*/
 
 
 $('.php-email-form').submit(function(e){
@@ -196,7 +309,7 @@ error: function (jqXHR, textStatus, errorThrown) {
   
 }) // end of PHP submit
     
-  
+/*  
 var debugInput = document.querySelector("input");
 function updateDebugState() {
   document.body.classList.toggle('debug-on', debugInput.checked);
@@ -204,6 +317,7 @@ function updateDebugState() {
 
 debugInput.addEventListener("click", updateDebugState);
 updateDebugState();
+*/
 
 });
 
