@@ -28,22 +28,16 @@ anime.timeline({loop: false})
 
   //const fsWrapper = document.querySelector('.ml11 .letters');
   //fsWrapper.innerHTML = fsWrapper.textContent.replace(/([^\x00-\x80]|\w)/g, "<span class='letter'>$&</span>");
-    
+
+
   
   $(document).ready(function () {
-
-    $('.carousel').carousel();
-
 
     
     function vhToPixels (vh) {
       return Math.round(window.innerHeight / (100 / vh));
     }
     
-
-
-    const _1vh = window.innerHeight / 100;
-
     const windowHeight = window.innerHeight;
     console.log('windowHeight', windowHeight);
 
@@ -147,15 +141,53 @@ anime.timeline({loop: false})
       console.log("Someone changed the value of x.a to " + val);
 
     });
+
+
+  $('#home-btn').on('click', function (){
+
+      console.log('click');
+      window.scrollTo({
+        top: 0,
+        left: 0,
+        behavior: 'smooth'
+      });
     
-    /*
-    window.addEventListener("scroll", () => { 
-      
-      console.log(window.scrollY);
+  });
 
+    $('#skills-btn').on('click', function (){
 
+      console.log('click');
+      window.scrollTo({
+        top: 10,
+        left: 0,
+        behavior: 'smooth'
+      });
+    
+  });
+  
+  $('#portfolio-btn').on('click', function (){
+  
+    console.log('click');
+    window.scrollTo({
+      top: windowHeight + 10,
+      left: 0,
+      behavior: 'smooth'
     });
-    */
+  
+  });
+
+    
+  $('#contact-btn').on('click', function (){
+  
+    console.log('click');
+    window.scrollTo({
+      top: section4On,
+      left: 0,
+      behavior: 'smooth'
+    });
+  
+  });
+    
     
     anime.timeline({loop: false})
       .add({

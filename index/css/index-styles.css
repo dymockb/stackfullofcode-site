@@ -95,7 +95,36 @@ span#toggle-light {
   width: 100%;
 }
 
-#highlights {/* height: 100%; *//* width: 15vw; */height: 4vh;display: flex;/* flex-direction: column; */justify-content: space-between;align-items: center;/* float: left; */background-image: url("../assets/img/circle.svg");/* background-position: bottom; */background-position: 0% 0vh;background-size: contain;background-repeat: no-repeat;/* border-top: white; *//* border-style: solid; */}
+#highlights {
+	/* height: 100%; */
+	/* width: 15vw; */
+	height: 4vh;
+	display: flex;
+	/* flex-direction: column; */
+	justify-content: space-between;
+	align-items: center;
+	/* float: left; */
+	background-image: url("../assets/img/circle.svg");
+	/* background-position: bottom; */
+	background-position: 0% 0vh;
+	background-size: contain;
+	background-repeat: no-repeat;
+	/* border-top: white; */
+	/* border-style: solid; */
+	}
+
+.menu-btn {
+    border: 0;
+    padding: 10px 35px;
+    color: #fff;
+    transition: 0.4s;
+    border-radius: 50px;
+    background: #bd5d38;
+}
+
+.menu-btn:hover {
+	background: #62321f
+}
 
 /* fade items on scroll with this: */
 
