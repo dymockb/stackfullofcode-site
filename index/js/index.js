@@ -35,11 +35,11 @@ anime.timeline({loop: false})
     $('.carousel').carousel();
 
 
-    /*
+    
     function vhToPixels (vh) {
       return Math.round(window.innerHeight / (100 / vh));
     }
-    */
+    
 
 
     const _1vh = window.innerHeight / 100;
@@ -63,6 +63,7 @@ anime.timeline({loop: false})
     window.onscroll = () => {
         scrolling = true;
         //$('#highlights').attr('style', `background-position: right 0px bottom ${window.scrollY / 4 }px`);
+        $('#highlights').attr('style', `background-position: ${((window.scrollY / 4 )/windowHeight)*100}%`);
       };
 
     setInterval(() => {
@@ -73,33 +74,36 @@ anime.timeline({loop: false})
 
             
             currentSection = visibleSection.valueOf();
+            console.log(window.scrollY);
             
-            if (window.scrollY <= windowHeight) {
+          //if (window.scrollY == windowHeight) {
+            if (window.scrollY == 0) {
               if (currentSection != 0) {
                 visibleSection = 0;
                 x.a = 0;
               };
               
-            } else if (window.scrollY > windowHeight && window.scrollY < section2On) {
+            //} else if (window.scrollY > windowHeight && window.scrollY < section2On) {
+            } else if (window.scrollY > 0 && window.scrollY < windowHeight) {
               if (currentSection != 1) {
                 visibleSection = 1;
                 x.a = 1;
               };
               
-            } else if (window.scrollY > section2On && window.scrollY < section3On) {
+            } else if (window.scrollY > windowHeight && window.scrollY < section2On) {
               if (currentSection != 2) {
                 visibleSection = 2;
                 x.a = 2;
               };
               
 
-            } else if (window.scrollY > section3On && window.scrollY < section4On){  
+            } else if (window.scrollY > section2On && window.scrollY < section3On){  
               if (currentSection != 3) {
                 visibleSection = 3;
                 x.a = 3;
               };
               
-            } else if (window.scrollY == section4On){  
+            } else if (window.scrollY > section3On){  
               console.log('end of Scroll', window.scrollY);
               if (currentSection != 4) {
                 visibleSection = 4;
