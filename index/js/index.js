@@ -71,11 +71,8 @@ anime.timeline({loop: false})
         if (scrolling) {
             scrolling = false;
 
-
-            
             currentSection = visibleSection.valueOf();
-            console.log(window.scrollY);
-            
+         
           //if (window.scrollY == windowHeight) {
             if (window.scrollY == 0) {
               if (currentSection != 0) {
@@ -97,13 +94,13 @@ anime.timeline({loop: false})
               };
               
 
-            } else if (window.scrollY > section2On && window.scrollY < section3On){  
+            } else if (window.scrollY > section2On && window.scrollY < section4On){  
               if (currentSection != 3) {
                 visibleSection = 3;
                 x.a = 3;
               };
               
-            } else if (window.scrollY > section3On){  
+            } else if (window.scrollY == section4On){  
               console.log('end of Scroll', window.scrollY);
               if (currentSection != 4) {
                 visibleSection = 4;

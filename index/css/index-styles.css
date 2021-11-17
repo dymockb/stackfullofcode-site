@@ -95,7 +95,7 @@ span#toggle-light {
   width: 100%;
 }
 
-#highlights {/* height: 100%; *//* width: 15vw; */height: 4vh;display: flex;/* flex-direction: column; */justify-content: space-around;align-items: center;/* float: left; */background-image: url("../assets/img/circle.svg");/* background-position: bottom; */background-position: 0% 0vh;background-size: contain;background-repeat: no-repeat;/* border-top: white; */border-style: solid;}
+#highlights {/* height: 100%; *//* width: 15vw; */height: 4vh;display: flex;/* flex-direction: column; */justify-content: space-between;align-items: center;/* float: left; */background-image: url("../assets/img/circle.svg");/* background-position: bottom; */background-position: 0% 0vh;background-size: contain;background-repeat: no-repeat;/* border-top: white; *//* border-style: solid; */}
 
 /* fade items on scroll with this: */
 
@@ -687,11 +687,12 @@ section#project2 {
   bottom: 0;
   width: 100%;
   flex-direction: row-reverse;
+  align-items: center;
 }
 
 .cv-icon {
-  height: calc(1.5rem + 5.7vw);
-  width: calc(1.5rem + 5.7vw) !important;
+  /* height: calc(1.5rem + 5.7vw); */
+  /* width: calc(1.5rem + 5.7vw) !important; */
   display: inline-block;
   background-color: white;
   padding: 0.3rem;
