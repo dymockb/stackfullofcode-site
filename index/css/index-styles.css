@@ -40,6 +40,7 @@ breakpoints 275, 576, 768, 922, 1200, 1400
 }
 
 body {
+	max-width: 1280px;
 	font-family: Arial, Helvetica, sans-serif;
 	padding-top: 0;
 	background-color: white;
@@ -86,7 +87,8 @@ span#toggle-light {
   flex-wrap: wrap;
   padding-left: 1rem;
   padding-top: 1rem;
-  padding-right: 10vw;
+  padding-right: 1rem;
+  justify-content: space-between;
 }
 
 #full-stack-developer {
@@ -404,7 +406,8 @@ background-repeat: no-repeat;
 }
 
 .general-section-content {
-  padding-top: 2rem;
+  
+padding-top: 2rem;
 }
 
 
@@ -452,10 +455,13 @@ margin: 0;
 
 section#about {
   height: 100vh;
+  width: 1;
   /* display: flex; */
   position: fixed;
-  right: 0;
-  left: 0;
+  /* right: 0; */
+  left: 50%;
+  transform: translateX(-50%);
+  /* max-width: 1280px; */
   /* bottom: 0; */
   /* flex-direction: column; */
   /* justify-content: flex-end; */
@@ -481,7 +487,7 @@ section#about {
 .letters {
 	display: flex;
 	flex-wrap: wrap;
-	font-size: calc(1.75rem + 5.7vw);
+	/* font-size: calc(1.75rem + 5.7vw); */
 	cursor: default;
 	/* width: 90%; */
 }
@@ -567,7 +573,7 @@ li.list-inline-item {
 	height: calc(1.5rem + 5.7vw);
 	width: calc(1.5rem + 5.7vw) !important;
 	display: inline-block;
-	background-size: contain;
+	background-size: 80% 80%;
 	background-repeat: no-repeat;
 	background-position: center;
 	border-radius: 10%;
@@ -575,6 +581,7 @@ li.list-inline-item {
 	transition: filter 1s;
 	filter: var(--icon-colours);
 	background-color: white;
+	/* padding: -0.8000000000000007rem; */
 }
 
 .icon-bootstrap {	background-image: var(--logo-bootstrap) }
