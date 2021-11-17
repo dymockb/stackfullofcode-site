@@ -57,7 +57,7 @@ anime.timeline({loop: false})
     window.onscroll = () => {
         scrolling = true;
         //$('#highlights').attr('style', `background-position: right 0px bottom ${window.scrollY / 4 }px`);
-        $('#highlights').attr('style', `background-position: ${((window.scrollY / 4 )/windowHeight)*100}%`);
+        $('#slider').attr('style', `background-position: ${((window.scrollY / 4 )/windowHeight)*100}%`);
       };
 
     setInterval(() => {
@@ -135,8 +135,8 @@ anime.timeline({loop: false})
 
       val = whatIsVal == 3 ? 2 : val;
 
-      $(`#highlight${val}`).attr('style', 'font-weight: bold');
-      $(`.highlight:not(#highlight${val})`).attr('style', 'font-weight: initial');
+      $(`#menu-btn${val}`).attr('style', 'background: #62321f');
+      $(`.menu-btn:not(#menu-btn${val})`).attr('style', 'background: ##bd5d38');
 
       console.log("Someone changed the value of x.a to " + val);
 
@@ -154,7 +154,7 @@ anime.timeline({loop: false})
     
   });
 
-    $('#skills-btn').on('click', function (){
+    $('#menu-btn1').on('click', function (){
 
       console.log('click');
       window.scrollTo({
@@ -165,7 +165,7 @@ anime.timeline({loop: false})
     
   });
   
-  $('#portfolio-btn').on('click', function (){
+  $('#menu-btn2').on('click', function (){
   
     console.log('click');
     window.scrollTo({
@@ -177,7 +177,7 @@ anime.timeline({loop: false})
   });
 
     
-  $('#contact-btn').on('click', function (){
+  $('#menu-btn4').on('click', function (){
   
     console.log('click');
     window.scrollTo({
