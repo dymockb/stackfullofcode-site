@@ -152,8 +152,8 @@ anime.timeline({loop: false})
 
       val = whatIsVal == 3 ? 2 : val;
 
-      $(`#menu-btn${val}`).attr('style', 'background: #62321f');
-      $(`.menu-btn:not(#menu-btn${val})`).attr('style', 'background: ##bd5d38');
+      $(`#menu-btn${val}`).attr('style', 'background: #bd5d38; color: white ');
+      $(`.menu-btn:not(#menu-btn${val})`).attr('style', 'background: white; color: black');
 
       console.log("Someone changed the value of x.a to " + val);
 
