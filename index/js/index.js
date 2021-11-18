@@ -33,6 +33,21 @@ anime.timeline({loop: false})
   
   $(document).ready(function () {
 
+    /*
+    // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
+    let vh = window.innerHeight * 0.01;
+    // Then we set the value in the --vh custom property to the root of the document
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+
+    // We listen to the resize event
+    window.addEventListener('resize', () => {
+    // We execute the same script as before
+    vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+    console.log(window.innerHeight);
+    });
+    */
+
     
     function vhToPixels (vh) {
       return Math.round(window.innerHeight / (100 / vh));
@@ -54,6 +69,8 @@ anime.timeline({loop: false})
 
     let scrolling = false;
 
+    let currentSection; 
+
     window.onscroll = () => {
         scrolling = true;
         //$('#highlights').attr('style', `background-position: right 0px bottom ${window.scrollY / 4 }px`);
@@ -65,7 +82,7 @@ anime.timeline({loop: false})
         if (scrolling) {
             scrolling = false;
 
-            currentSection = visibleSection.valueOf();
+          currentSection = visibleSection.valueOf();
          
           //if (window.scrollY == windowHeight) {
             if (window.scrollY == 0) {
@@ -94,7 +111,7 @@ anime.timeline({loop: false})
                 x.a = 3;
               };
               
-            } else if (window.scrollY == section4On){  
+            } else if (window.scrollY >= section4On){  
               console.log('end of Scroll', window.scrollY);
               if (currentSection != 4) {
                 visibleSection = 4;

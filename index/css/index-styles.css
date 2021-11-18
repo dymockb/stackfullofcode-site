@@ -5,11 +5,7 @@ breakpoints 275, 576, 768, 922, 1200, 1400
 
 
 #preload-img {
-  background: url("../assets/img/inkscape/hanging-bg-chnd-off.svg") no-repeat;
-  background: url("../assets/img/inkscape/new-bulb-on.svg") no-repeat;
-	background: url("../assets/img/inkscape/hanging-bg-bulb-on.svg") no-repeat;
 	background: url("../assets/img/inkscape/new-bulb-on.svg") no-repeat;
-  background: url("../assets/img/inkscape/top-bulb-on.svg") no-repeat;
 }
 
 :root {
@@ -95,11 +91,7 @@ span#toggle-light {
   width: 100%;
 }
 
-#home-btn {
-margin-right: 1rem;
-font-size: 1.2rem;
-color: black;
-}
+#home-btn {width: 2rem;/* margin-right: 1rem; */font-size: 1.2rem;color: black;}
 
 #home-and-buttons {
   display: flex;
@@ -126,6 +118,33 @@ span#toggle-light {
 	/* border-top: white; */
 	/* border-style: solid; */
 	}
+
+.some-dots {
+    display: flex;
+}
+
+.dot {
+    height: 0.5rem;
+    width: 0.5rem;
+    background: #17a2b8;
+}  
+#dots-row {
+    height: 3vh;
+    display: flex;
+    justify-content: space-between;
+}
+
+#no-dots-left {
+    width: 2rem;
+    background: black;
+}
+#skills-dots {}
+#skill-dot1 {} 
+#portfolio-dots {}
+#portfolio-dot1 {}
+#portfolio-dot2 {}
+#contact-dots{}
+#contact-dot1 {}
 
 
   #slider {
