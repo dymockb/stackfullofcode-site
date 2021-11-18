@@ -29,7 +29,10 @@ anime.timeline({loop: false})
   //const fsWrapper = document.querySelector('.ml11 .letters');
   //fsWrapper.innerHTML = fsWrapper.textContent.replace(/([^\x00-\x80]|\w)/g, "<span class='letter'>$&</span>");
 
-
+  $(document).on("click", '[data-toggle="lightbox"]', function(event) {
+    event.preventDefault();
+    $(this).ekkoLightbox();
+  });
   
   $(document).ready(function () {
 

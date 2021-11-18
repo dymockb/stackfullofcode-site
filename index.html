@@ -9,8 +9,10 @@
 	<script src="https://use.fontawesome.com/releases/v5.15.4/js/all.js" crossorigin="anonymous"></script>
 	<link href="https://fonts.googleapis.com/css?family=Saira+Extra+Condensed:500,700" rel="stylesheet" type="text/css" />
 	<link href="https://fonts.googleapis.com/css?family=Muli:400,400i,800,800i" rel="stylesheet" type="text/css" />
-
+<!--
 	<link href="project1/vendors/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+-->
+  <link href="index/vendors/ekko-lightbox.css" rel="stylesheet" />
   <link href="index/css/styles.css" rel="stylesheet" />
 	<link href="index/css/index-styles.css" rel="stylesheet" />
 <style>
@@ -134,10 +136,25 @@
 
     <div id="section2" class="fade-section">
 
+      <!--
       <a href="project1/"><h2>Gazetter</h2></a>
       <div class="project-screenshot">
         <img class="d-block w-100" src="index/assets/img/project1/p1dt.png">
-      </div>    
+      </div>
+      -->
+      <div class="container">
+      <div class="row">
+        <a href="https://unsplash.it/1200/768.jpg?image=251" data-toggle="lightbox" data-gallery="gallery" class="col-md-4">
+          <img src="https://unsplash.it/600.jpg?image=251" class="img-fluid rounded">
+        </a>
+        <a href="https://unsplash.it/1200/768.jpg?image=252" data-toggle="lightbox" data-gallery="gallery" class="col-md-4">
+          <img src="https://unsplash.it/600.jpg?image=252" class="img-fluid rounded">
+        </a>
+        <a href="https://unsplash.it/1200/768.jpg?image=253" data-toggle="lightbox" data-gallery="gallery" class="col-md-4">
+          <img src="https://unsplash.it/600.jpg?image=253" class="img-fluid rounded">
+        </a>
+      </div>
+    </div>
 
     </div>
 
@@ -227,9 +244,11 @@
 
   <script src="index/js/jquery.min.js"></script>
   <!--
-  <script src="index/js/bootstrap.bundle.min.js"></script>
-  -->
+
   <script src="project1/vendors/bootstrap/js/bootstrap.bundle.min.js"></script>
+-->
+  <script src="index/js/bootstrap.bundle.min.js"></script>
+  <script src="index/js/ekko-lightbox.js"></script>
   <script src="index/vendors/anime/anime.min.js"></script>
   <script src="index/js/scripts.js"></script>
   <script src="index/js/index.js"></script>
