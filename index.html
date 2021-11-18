@@ -21,7 +21,9 @@
 
 <body>
 <section id="about">
- 
+
+<div id="top-section">
+  <div id="desktop-light"></div>
   <div id="top-words">
     <h1 id="first-name-last-name" class="mb-0 default-cursor">
         <span id="dymock">Dymock</span>
@@ -65,19 +67,16 @@
       </div>
     </h1>
   </div>
-  <div id="home-and-buttons">
-    <div id="home-btn" class="highlight pointer">
-      <i class="fas fa-igloo"></i>
-    </div>
+</div>
 
   <div id="highlights">
     <button class="menu-btn pointer" id="menu-btn1">Skills</button>
     <button class="menu-btn pointer" id="menu-btn2">Portfolio</button>
     <button class="menu-btn pointer" id="menu-btn4">Contact</button>  
   </div>
-</div>
-<div id="all-dots">
-  <div id="no-dots-left">A</div>
+
+
+
   <div id="dots-row">
     <div id="skills-dots" class="some-dots">
       <div id="skill-dot1" class="dot"></div>
@@ -90,7 +89,7 @@
       <div id="contact-dot1" class="dot"></div>
     </div>
   </div>
-</div>
+
 
   <div id="slider">
   </div>
@@ -99,7 +98,7 @@
 
     <div id="section0" class="fade-section">
 
-      <div id="desktop-light"></div>
+
 
     </div>
 
@@ -112,15 +111,17 @@
           <li class="list-inline-item"><i class="tech-icon icon-html5 pointer" title="HTML5"></i></li>
           <li class="list-inline-item"><i class="tech-icon icon-css3 pointer" title="CSS 3"></i></li>
           <li class="list-inline-item"><i class="tech-icon icon-javascript pointer" title="Javascript"></i></li>
-          <li class="list-inline-item"><i class="tech-icon icon-bootstrap pointer" title="Bootstrap"></i></li>
-          
           <li class="list-inline-item"><i class="tech-icon icon-mariadb pointer" title="MariaDB"></i></li>
           <li class="list-inline-item"><i class="tech-icon icon-nodejs pointer" title="Node JS"></i></li>
           <li class="list-inline-item"><i class="tech-icon icon-php-icon pointer" title="PHP"></i></li>
-          <li class="list-inline-item"><i class="tech-icon icon-semantic-ui pointer" title="Semantic UI"></i></li>
           <li class="list-inline-item"><i class="tech-icon icon-sql-database-generic pointer" title="SQL"></i></li>                  
           <li class="list-inline-item"><i class="tech-icon icon-jquery pointer" title="JQuery"></i></li>
         </ul>
+        <h4>Frameworks</h4>
+          <ul class="list-inline dev-icons">
+            <li class="list-inline-item"><i class="tech-icon icon-bootstrap pointer" title="Bootstrap"></i></li>
+            <li class="list-inline-item"><i class="tech-icon icon-semantic-ui pointer" title="Semantic UI"></i></li>
+          </ul>
         <div id="cert-section">
         <h4>Certifications</h4>
         <ul id="certs-list" class="mb-0 aos-item"> <!-- class="fa-ul mb-0" -->
@@ -133,31 +134,35 @@
 
     <div id="section2" class="fade-section">
 
-
-      <img class="d-block w-100" src="index/assets/img/project1/p1dt.png">
-          
+      <a href="project1/"><h2>Gazetter</h2></a>
+      <div class="project-screenshot">
+        <img class="d-block w-100" src="index/assets/img/project1/p1dt.png">
+      </div>    
 
     </div>
 
     <div id="section3" class="fade-section">
 
-      <img class="d-block w-100" src="index/assets/img/project2/p2dt.png" alt="First slide">
-
+      <a href="project2/"><h2>Company Directory</h2></a>
+      <div class="project-screenshot">
+        <img class="d-block w-100" src="index/assets/img/project2/p2dt.png" alt="First slide">
+      </div>
 
     </div>
 
     <div id="section4" class="fade-section">
+      <div class="contact general-section-content">
       <form action="forms/contact.php" method="post" role="form" class="php-email-form">
           <div class="row">
-            <div class="col-md-6 form-group">
+            <div class="col-md-6 form-group db-form-field">
               <input type="text" name="name" class="form-control" id="name" placeholder="Your Name" required="">
             </div>
-            <div class="col-md-6 form-group mt-3 mt-md-0">
+            <div class="col-md-6 form-group mt-3 mt-md-0 db-form-field">
               <input type="email" class="form-control" name="email" id="email" placeholder="Your Email" required="">
             </div>
           </div>
-          <div class="form-group mt-3">
-            <textarea class="form-control" name="message" rows="5" placeholder="Message" required=""></textarea>
+          <div class="form-group mt-3 db-form-field">
+            <textarea class="form-control" name="message" placeholder="Message" required=""></textarea>
           </div>
           <div class="my-3">
             <div class="loading">Loading</div>
@@ -168,6 +173,7 @@
             <button type="submit">Send Message</button>
           </div>
       </form>
+    </div>
 
     </div>
 
