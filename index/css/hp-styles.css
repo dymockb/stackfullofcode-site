@@ -1,0 +1,60 @@
+#first-name-last-name {
+	background: white;
+	width: fit-content;
+	/* opacity: 0; */
+	/* position: absolute; */
+}
+
+.fs-word {
+	display: flex;
+	flex-wrap: nowrap
+}
+
+.letters {
+	display: flex;
+	flex-wrap: wrap;
+	/* font-size: calc(1.75rem + 5.7vw); */
+	cursor: default;
+	/* width: 90%; */
+}
+
+.text-wrapper {
+  color: white;
+  /* background: white; */
+}
+
+.ml11 {
+  font-weight: 700;
+  /* font-size: 3.5em; */
+  color: white;
+}
+
+.ml11 .text-wrapper {
+  /* position: relative; */
+  /* display: inline-block; */
+  /* padding-top: 0.1em; */
+  /* padding-right: 0.05em; */
+  /* padding-bottom: 0.15em; */
+  color: #212529;
+}
+
+.ml11 .line {
+  opacity: 0;
+  position: absolute;
+  left: 0;
+  height: 100%;
+  width: 0;
+  background-color: #f9fafb;
+  transform-origin: 0 50%;
+}
+
+.ml11 .line1 { 
+  top: 0; 
+  left: 0;
+}
+
+.ml11 .letter {
+  display: inline-block;
+  line-height: 1em;
+  background: white;
+}
