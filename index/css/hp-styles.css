@@ -21,6 +21,8 @@
 
   --icon-colours: invert(0%);
 
+  --img-border: #bd5d38;
+
   --mobile-icon-rotate: rotate(0deg);
 
 	transition: filter 1s;
@@ -193,7 +195,8 @@
   float: left;
   width: 25%;
   height: auto;
-  border: 2px solid #fff;
+  border: 2px solid;
+  border-color: var(--img-border);
   -webkit-transition: -webkit-transform .15s ease;
   -moz-transition: -moz-transform .15s ease;
   -o-transition: -o-transform .15s ease;
@@ -201,13 +204,16 @@
   transition: transform .15s ease;
   position: relative;
   filter: var(--icon-colours);
+  border-radius: 8px;
+  margin-right: 0.5rem;
 }
 
 .container .gallery2 a img {
   float: left;
   width: 25%;
   height: auto;
-  border: 2px solid #fff;
+  border: 2px solid;
+  border-color: var(--img-border);
   -webkit-transition: -webkit-transform .15s ease;
   -moz-transition: -moz-transform .15s ease;
   -o-transition: -o-transform .15s ease;
@@ -215,6 +221,8 @@
   transition: transform .15s ease;
   position: relative;
   filter: var(--icon-colours);
+  border-radius: 8px;
+  margin-right: 0.5rem;
 }
 
 .sl-image {
@@ -266,5 +274,7 @@
   --icon-colours: invert(100%); 
 
   --mobile-icon-rotate: rotate(180deg);
+
+  --img-border: #42a2c7;
 
 }
