@@ -32,6 +32,17 @@ anime.timeline({loop: false})
   
   $(document).ready(function () {
 
+    AOS.init({
+      easing: 'ease-in-out-sine'
+    });
+
+    (function() {
+      var $gallery2 = new SimpleLightbox('.gallery2 a', {overlay: true});
+    })();
+    (function() {
+        var $gallery = new SimpleLightbox('.gallery a', {overlay: true});       
+    })();
+
     /*
     // First we get the viewport height and we multiple it by 1% to get a value for a vh unit
     let vh = window.innerHeight * 0.01;
@@ -230,13 +241,14 @@ document.getElementById('toggle-light').onclick = () => {
 const inDarkMode = (rootDataset.theme === 'dark');
 rootDataset.theme = inDarkMode ? '' : 'dark';
 }						
-
+*/
 document.getElementById('desktop-light').onclick = () => {
   const inDarkMode = (rootDataset.theme === 'dark');
   rootDataset.theme = inDarkMode ? '' : 'dark';
 }
-*/
-$('#first-name-last-name').delay(200).animate({opacity:1});
+
+
+//$('#first-name-last-name').delay(200).animate({opacity:1});
 //$('#light-btn').delay(200).animate({opacity: 1}, 1000);
 
 

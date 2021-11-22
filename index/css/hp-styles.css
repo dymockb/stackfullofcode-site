@@ -1,8 +1,33 @@
+:root {
+	--desktop-lightbulb-img: url("../assets/img/inkscape/new-bulb-off.svg");
+	--top-light: url("../assets/img/inkscape/hanging-bg-bulb-off.svg");
+	--top-chnd: url("../assets/img/inkscape/hanging-bg-chnd-off.svg");
+  
+  --top-bulb: url("../assets/img/inkscape/top-bulb-off.svg");
+
+	--hover-light: url("../assets/img/inkscape/new-bulb-on.svg");
+	
+
+	--logo-bootstrap: url("../assets/img/logos/bootstrap.svg");
+	--logo-css3: url("../assets/img/logos/css3.svg");
+	--logo-html5: url("../assets/img/logos/html5.svg");
+  --logo-javascript: url("../assets/img/logos/javascript.svg");
+	--logo-jquery: url("../assets/img/logos/jquery.svg");
+	--logo-mariadb: url("../assets/img/logos/mariadb.svg");
+	--logo-nodejs: url("../assets/img/logos/nodejs.svg");
+	--logo-php-icon: url("../assets/img/logos/php-icon.svg");
+  --logo-semantic-ui: url("../assets/img/logos/semantic-ui.svg");
+  --logo-sql-database-generic: url("../assets/img/logos/sql-database-generic.svg");
+
+  --icon-colours: invert(0%);
+
+	transition: filter 1s;
+	
+}
+
 #first-name-last-name {
 	background: white;
 	width: fit-content;
-	/* opacity: 0; */
-	/* position: absolute; */
 }
 
 .fs-word {
@@ -57,4 +82,80 @@
   display: inline-block;
   line-height: 1em;
   background: white;
+}
+
+/* lightbox */
+
+.container .gallery a img {
+  float: left;
+  width: 25%;
+  height: auto;
+  border: 2px solid #fff;
+  -webkit-transition: -webkit-transform .15s ease;
+  -moz-transition: -moz-transform .15s ease;
+  -o-transition: -o-transform .15s ease;
+  -ms-transition: -ms-transform .15s ease;
+  transition: transform .15s ease;
+  position: relative;
+  filter: var(--icon-colours);
+}
+
+.container .gallery2 a img {
+  float: left;
+  width: 25%;
+  height: auto;
+  border: 2px solid #fff;
+  -webkit-transition: -webkit-transform .15s ease;
+  -moz-transition: -moz-transform .15s ease;
+  -o-transition: -o-transform .15s ease;
+  -ms-transition: -ms-transform .15s ease;
+  transition: transform .15s ease;
+  position: relative;
+  filter: var(--icon-colours);
+}
+
+.clear {
+  clear: both;
+}
+
+/* light switch */
+
+#desktop-light:hover {
+	transition: background-image .5s;
+	background-image: var(--hover-light);
+}	
+
+#desktop-light {
+  height: 8rem;
+  width: 10rem;
+  /* border: 0.3rem solid rgb(189 93 56); */
+  cursor: pointer;
+  background-size: 120px;
+  background-repeat: no-repeat;
+  background-image: var(--desktop-lightbulb-img);
+  transition: background-image 1s;
+  background-clip: content-box;
+  background-position: center;
+  /* background-color: #bd5d38; */
+  filter: invert(82%) sepia(8%) saturate(1133%) hue-rotate(329deg) brightness(94%) contrast(88%);
+  /* margin-left: auto; */
+  /* margin-right: auto; */
+  /* margin-top: 10vh; */
+  /* position: absolute; */
+  /* right: -13vw; */
+}
+
+
+/*DARK THEME */
+
+[data-theme="dark"] {
+  filter: invert(100%);
+
+	--desktop-lightbulb-img: url("../assets/img/inkscape/new-bulb-on.svg");
+	--top-light: url("../assets/img/inkscape/hanging-bg-bulb-on.svg");
+	--hover-light: url("../assets/img/inkscape/new-bulb-on.svg");
+  --top-bulb: url("../assets/img/inkscape/top-bulb-on.svg");
+
+  --icon-colours: invert(100%); 
+
 }
