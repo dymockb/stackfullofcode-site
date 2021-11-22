@@ -229,13 +229,15 @@ $('.nav-link').click(function(){
 
 const rootDataset = document.documentElement.dataset;
 
-/*
-document.getElementById('toggle-light').onclick = () => {
-const inDarkMode = (rootDataset.theme === 'dark');
-rootDataset.theme = inDarkMode ? '' : 'dark';
-}						
-*/
+
+document.getElementById('mobile-dark-switch').onclick = () => {
+  console.log('ww');
+  const inDarkMode = (rootDataset.theme === 'dark');
+  rootDataset.theme = inDarkMode ? '' : 'dark';
+}
+
 document.getElementById('desktop-light').onclick = () => {
+  console.log('hi');
   const inDarkMode = (rootDataset.theme === 'dark');
   rootDataset.theme = inDarkMode ? '' : 'dark';
 }

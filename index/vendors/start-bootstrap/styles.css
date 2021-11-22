@@ -11335,6 +11335,8 @@ p.lead {
 #sideNav {
   padding-left: 1rem;
   padding-right: 1rem;
+  align-items: cet;
+  /* align-items: center; */
 }
 #sideNav .navbar-nav .nav-item .nav-link {
   font-weight: 800;
