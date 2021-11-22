@@ -25,10 +25,15 @@
 	
 }
 
+.container {
+  padding: 0;
+}
+
 #first-name-last-name {
 	background: white;
 	width: fit-content;
 }
+
 
 .fs-word {
 	display: flex;
@@ -37,16 +42,14 @@
 
 .letters {
 	display: flex;
-	flex-wrap: wrap;
-	/* font-size: calc(1.75rem + 5.7vw); */
+	flex-wrap: wrap;	
 	cursor: default;
-	/* width: 90%; */
 }
 
 .text-wrapper {
-  color: white;
-  /* background: white; */
+  color: #343a40;
 }
+
 
 .ml11 {
   font-weight: 700;
@@ -55,12 +58,11 @@
 }
 
 .ml11 .text-wrapper {
-  /* position: relative; */
-  /* display: inline-block; */
-  /* padding-top: 0.1em; */
-  /* padding-right: 0.05em; */
-  /* padding-bottom: 0.15em; */
-  color: #212529;
+  position: relative;
+  display: inline-block;
+  padding-top: 0.1em;
+  padding-right: 0.05em;
+  padding-bottom: 0.15em;
 }
 
 .ml11 .line {
@@ -68,8 +70,8 @@
   position: absolute;
   left: 0;
   height: 100%;
-  width: 0;
-  background-color: #f9fafb;
+  width: 3px;
+  background-color: rgb(24, 23, 23);
   transform-origin: 0 50%;
 }
 
@@ -84,6 +86,81 @@
   background: white;
 }
 
+/*download cv*/
+
+#download-cv-section {
+  display: flex;
+  /* position: fixed; */
+  /* bottom: 3vh; */
+  width: 100%;
+  /* flex-direction: row-reverse; */
+  align-items: center;
+}
+
+.cv-icon {
+  /* height: calc(1.5rem + 5.7vw); */
+  /* width: calc(1.5rem + 5.7vw) !important; */
+  display: inline-block;
+  background-color: white;
+  padding: 0.3rem;
+  /* border-radius: 20%; */
+}
+
+/*tech icons */
+
+
+.icon {
+	height: calc(1.25rem + 5.7vw);
+	width: calc(1.25rem + 5.7vw);
+	display: inline-block;
+}
+
+.dev-icons {
+  font-size: 1rem;
+}
+
+.tech-icon {
+	height: calc(1.5rem + 5.7vw);
+	width: calc(1.5rem + 5.7vw) !important;
+	display: inline-block;
+	background-size: 80% 80%;
+	background-repeat: no-repeat;
+	background-position: center;
+	border-radius: 10%;
+	/*  transition: background-image 1s; */
+	transition: filter 1s;
+	filter: var(--icon-colours);
+	background-color: white;
+	/* padding: -0.8000000000000007rem; */
+}
+
+.icon-bootstrap {	background-image: var(--logo-bootstrap) }
+.icon-css3 { background-image: var(--logo-css3) }
+.icon-html5 {	background-image: var(--logo-html5) }
+.icon-javascript { background-image: var(--logo-javascript) }
+.icon-jquery { background-image: var(--logo-jquery) }
+.icon-mariadb {	background-image: var(--logo-mariadb) }
+.icon-nodejs {	background-image: var(--logo-nodejs) }
+.icon-php-icon {	background-image: var(--logo-php-icon) }
+.icon-semantic-ui {	background-image: var(--logo-semantic-ui) }
+.icon-sql-database-generic {	background-image: var(--logo-sql-database-generic) }
+
+.cert-image {
+	height: calc(2rem + 5.7vw);
+	width: calc(2rem + 5.7vw);
+	margin-right: 1rem;
+}
+
+.cert-item {
+	display: flex;
+	align-items: center;
+	flex-wrap: nowrap;
+}
+
+.framework-icon {
+  display: inline-flex;
+  align-items: center;
+}
 /* lightbox */
 
 .container .gallery a img {
@@ -111,6 +188,10 @@
   -ms-transition: -ms-transform .15s ease;
   transition: transform .15s ease;
   position: relative;
+  filter: var(--icon-colours);
+}
+
+.sl-image {
   filter: var(--icon-colours);
 }
 

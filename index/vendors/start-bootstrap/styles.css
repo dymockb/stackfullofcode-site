@@ -240,7 +240,7 @@ a {
   color: #bd5d38;
   text-decoration: underline;
   /* display: inline; */
-  text-align: center;
+  /* text-align: center; */
 }
 a:hover {
   color: #974a2d;
