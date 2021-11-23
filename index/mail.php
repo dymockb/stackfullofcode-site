@@ -13,7 +13,7 @@ $mail = new PHPMailer(true);
 
 try {
     //Server settings
-    $mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
+    //$mail->SMTPDebug = SMTP::DEBUG_SERVER;                      //Enable verbose debug output
     $mail->isSMTP();                                            //Send using SMTP
     $mail->Host       = 'dymockbrett.co.uk';                    //Set the SMTP server to send through 'smtp.example.com'
     $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
@@ -38,7 +38,7 @@ try {
     //Content
     $mail->isHTML(true);                                  //Set email format to HTML
     $mail->Subject = 'Reply from Dymock Brett';
-    $mail->Body    = 'Hi ' . $_REQUEST['name'] . '.  Thanks for your message - a copy is below: <br><br>' . $_REQUEST['message'];
+    $mail->Body    = 'Hi ' . $_REQUEST['name'] . ', <br><br>Thanks for your message, it\'s been received - I\'ll get back to you soon.  Best,<br><br> Dymock <br><br> ------------ <br> Your message: <br>' . $_REQUEST['message'];
     //$mail->Body    = 'This is the HTML message body <b>in bold!</b>';
     //$mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
     $mail->AltBody = $_REQUEST['message'];
