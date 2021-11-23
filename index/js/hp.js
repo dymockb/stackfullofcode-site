@@ -103,7 +103,7 @@ $(document).ready(function () {
   $('.loading').attr('style', 'display: block');
 
   $.ajax({
-  url: "index/mail.php",
+  url: "index/php/mail.php",
   type: "POST",
   dataType: "json",
   data: emailMsgObj,
