@@ -18,7 +18,7 @@ try {
     $mail->Host       = 'dymockbrett.co.uk';                    //Set the SMTP server to send through 'smtp.example.com'
     $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
     $mail->Username   = 'no-reply@dymockbrett.co.uk';           //SMTP username
-    $mail->Password   = 'Tgyhu678!';                            //SMTP password
+    $mail->Password   = ;                                       //SMTP password capitalT, 6 end with !
     $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;            //Enable implicit TLS encryption
     $mail->Port       = 465;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
 

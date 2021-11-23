@@ -2,6 +2,14 @@
 
 $(document).ready(function () {
 
+  if ($('#preloader').length) {
+		$('#preloader').delay(500).fadeOut('fast', function () {
+			$(this).remove();
+			console.log("Window loaded");
+    });
+  }
+
+
   AOS.init({
     easing: 'ease-in-out-sine'
   });
