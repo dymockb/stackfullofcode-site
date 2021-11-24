@@ -1,21 +1,19 @@
 :root {
 	--desktop-lightbulb-img: url("../assets/img/inkscape/new-bulb-off.svg");
-	--top-light: url("../assets/img/inkscape/hanging-bg-bulb-off.svg");
-	--top-chnd: url("../assets/img/inkscape/hanging-bg-chnd-off.svg");
-  
-  --top-bulb: url("../assets/img/inkscape/top-bulb-off.svg");
-
 	--hover-light: url("../assets/img/inkscape/new-bulb-on.svg");
 	
 
 	--logo-bootstrap: url("../assets/img/logos/bootstrap.svg");
 	--logo-css3: url("../assets/img/logos/css3.svg");
+	--logo-c--4: url("../assets/img/logos/c--4.svg");
 	--logo-html5: url("../assets/img/logos/html5.svg");
+  --logo-java: url("../assets/img/logos/java.svg");
   --logo-javascript: url("../assets/img/logos/javascript.svg");
 	--logo-jquery: url("../assets/img/logos/jquery.svg");
 	--logo-mariadb: url("../assets/img/logos/mariadb.svg");
 	--logo-nodejs: url("../assets/img/logos/nodejs.svg");
 	--logo-php-icon: url("../assets/img/logos/php-icon.svg");
+	--logo-python: url("../assets/img/logos/python.svg");
   --logo-semantic-ui: url("../assets/img/logos/semantic-ui.svg");
   --logo-sql-database-generic: url("../assets/img/logos/sql-database-generic.svg");
 
@@ -28,6 +26,13 @@
 	transition: filter 1s;
 	
 }
+
+/*
+--top-light: url("../assets/img/inkscape/hanging-bg-bulb-off.svg");
+	--top-chnd: url("../assets/img/inkscape/hanging-bg-chnd-off.svg");
+  
+  --top-bulb: url("../assets/img/inkscape/top-bulb-off.svg");
+  */
 
 .pointer {
   cursor: pointer;
@@ -166,14 +171,26 @@
 
 .icon-bootstrap {	background-image: var(--logo-bootstrap) }
 .icon-css3 { background-image: var(--logo-css3) }
+.icon-c--4 { background-image: var(--logo-c--4) }
 .icon-html5 {	background-image: var(--logo-html5) }
+.icon-java { background-image: var(--logo-java) }
 .icon-javascript { background-image: var(--logo-javascript) }
 .icon-jquery { background-image: var(--logo-jquery) }
 .icon-mariadb {	background-image: var(--logo-mariadb) }
 .icon-nodejs {	background-image: var(--logo-nodejs) }
 .icon-php-icon {	background-image: var(--logo-php-icon) }
+.icon-python {	background-image: var(--logo-python) }
 .icon-semantic-ui {	background-image: var(--logo-semantic-ui) }
 .icon-sql-database-generic {	background-image: var(--logo-sql-database-generic) }
+
+
+.framework-link {
+  text-decoration: none;
+}
+
+.framework-text {
+  padding: 0 0.5rem;
+}
 
 .cert-image {
 	height: calc(2rem + 5.7vw);
@@ -258,7 +275,6 @@ background: #bd5d38;
 #desktop-light {
   height: 8rem;
   width: 10rem;
-  /* border: 0.3rem solid rgb(189 93 56); */
   cursor: pointer;
   background-size: 120px;
   background-repeat: no-repeat;
@@ -266,30 +282,22 @@ background: #bd5d38;
   transition: background-image 1s;
   background-clip: content-box;
   background-position: center;
-  /* background-color: #bd5d38; */
   filter: invert(82%) sepia(8%) saturate(1133%) hue-rotate(329deg) brightness(94%) contrast(88%);
-  /* margin-left: auto; */
-  /* margin-right: auto; */
-  /* margin-top: 10vh; */
-  /* position: absolute; */
-  /* right: -13vw; */
 }
 
 
-/*DARK THEME */
+/*DARK THEME 
+  --top-bulb: url("../assets/img/inkscape/top-bulb-on.svg");
+  --top-light: url("../assets/img/inkscape/hanging-bg-bulb-on.svg");
+	--hover-light: url("../assets/img/inkscape/new-bulb-on.svg");
+  */
 
 [data-theme="dark"] {
+
   filter: invert(100%);
-
 	--desktop-lightbulb-img: url("../assets/img/inkscape/new-bulb-on.svg");
-	--top-light: url("../assets/img/inkscape/hanging-bg-bulb-on.svg");
-	--hover-light: url("../assets/img/inkscape/new-bulb-on.svg");
-  --top-bulb: url("../assets/img/inkscape/top-bulb-on.svg");
-
   --icon-colours: invert(100%); 
-
   --mobile-icon-rotate: rotate(180deg);
-
   --img-border: #42a2c7;
 
 }
