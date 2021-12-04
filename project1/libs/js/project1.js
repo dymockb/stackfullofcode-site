@@ -1825,8 +1825,9 @@ function countryBasics(isoA2){ // add 1 layer: capitalMarker; call getXR & openC
 					//.name.nativeName.official
 					let currencyName = result.data[0].currencies[currency].name;						
 					document.getElementById("currencyName").innerHTML = currencyName.length > 0 ? currencyName : '';
-					document.getElementById('flagIMG').setAttribute('src', `https://www.countryflags.io/${flagA2}/flat/64.png`);
-					
+					//document.getElementById('flagIMG').setAttribute('src', `https://www.countryflags.io/${flagA2}/flat/64.png`);
+					document.getElementById('flagIMG').setAttribute('src', `https://flagcdn.com/108x81/${flagA2}.png`);
+
 					getXR(currency);
 					
 					
@@ -2718,7 +2719,7 @@ function displayCountry(isoa3Code) {
 	 if (countryBorders[io].A3code == isoa3Code) {
 		 currentCountry = countryBorders[io].name;
 		 isoA2 = countryBorders[io].A2code;
-		 flagA2 = countryBorders[io].A2code;
+		 flagA2 = countryBorders[io].A2code.toLowerCase();
 	 }
 	}
 	
