@@ -14,6 +14,7 @@
 	--logo-nodejs: url("../assets/img/logos/nodejs.svg");
 	--logo-php-icon: url("../assets/img/logos/php-icon.svg");
 	--logo-python: url("../assets/img/logos/python.svg");
+	--logo-react: url("../assets/img/logos/react.svg");
   --logo-semantic-ui: url("../assets/img/logos/semantic-ui.svg");
   --logo-sql-database-generic: url("../assets/img/logos/sql-database-generic.svg");
 
@@ -180,6 +181,7 @@
 .icon-nodejs {	background-image: var(--logo-nodejs) }
 .icon-php-icon {	background-image: var(--logo-php-icon) }
 .icon-python {	background-image: var(--logo-python) }
+.icon-react {	background-image: var(--logo-react) }
 .icon-semantic-ui {	background-image: var(--logo-semantic-ui) }
 .icon-sql-database-generic {	background-image: var(--logo-sql-database-generic) }
 
