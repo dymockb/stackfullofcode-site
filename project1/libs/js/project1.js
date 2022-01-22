@@ -132,6 +132,22 @@ L.easyButton('fa-rss-square', function() {
 }).addTo(mymap);
 
 L.easyButton('fa-temperature-low', function() {
+
+	if(charts == 0){
+		let errorStart = document.createElement('span');
+		errorStart.innerHTML = "Unable to create charts - the ";
+
+		let errorEnd = document.createElement('span');
+		errorEnd.innerHTML = " seems to be offline.";
+		
+		let errorSpan = document.createElement('a');
+		errorSpan.innerHTML = "World Bank Climate Data API";
+		errorSpan.setAttribute('href', 'https://datahelpdesk.worldbank.org/knowledgebase/articles/902061-climate-data-api');
+		document.getElementById('weatherError').appendChild(errorStart);
+		document.getElementById('weatherError').appendChild(errorSpan);
+		document.getElementById('weatherError').appendChild(errorEnd);
+	}
+
 	document.getElementById('weatherBtn').click();
 }).addTo(mymap);
 
@@ -2207,54 +2223,60 @@ function weatherChartRain(isoa3Code) {
 			countryCode: isoa3Code
 		},
 		success: function (result) {
+
+			if(result.data != null){
 									
-			let chartData = [];
-			let min = result.data[0].data;
-			
-			for (let c = 0; c < result.data.length; c++) {
-				chartData.push(result.data[c].data);
-				min = min < result.data[c].data ? min : result.data[c].data;
+				let chartData = [];
+				let min = result.data[0].data;
+				
+				for (let c = 0; c < result.data.length; c++) {
+					chartData.push(result.data[c].data);
+					min = min < result.data[c].data ? min : result.data[c].data;
+				}
+				
+				let ctx = document.getElementById('rainChart').getContext('2d');
+				rainChart = new Chart(ctx, {
+						type: 'bar',
+						data: {
+								//labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],							
+								labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+								datasets: [{
+										label: 'Average Monthly Rainfall (mm)',
+										data: chartData,	
+										//data: [12, 19, 3, 5, 2, 3],
+										backgroundColor: [
+												//'rgba(255, 99, 132, 0.2)',
+												'rgba(54, 162, 235, 0.2)',
+												//'rgba(255, 206, 86, 0.2)',
+												//'rgba(75, 192, 192, 0.2)',
+												//'rgba(153, 102, 255, 0.2)',
+												//'rgba(255, 159, 64, 0.2)'
+										],
+										borderColor: [
+												//'rgba(255, 99, 132, 1)',
+												'rgba(54, 162, 235, 1)',
+												//'rgba(255, 206, 86, 1)',
+												//'rgba(75, 192, 192, 1)',
+												//'rgba(153, 102, 255, 1)',
+												//'rgba(255, 159, 64, 1)'
+										],
+										borderWidth: 1
+								}]
+						},
+						options: {
+								scales: {
+										y: {
+												//beginAtZero: true
+												min: 0
+										}
+								}
+						}
+				});
+				charts++;	
+			} else {
+				console.log("WB Rain Error");
+				document.getElementById("rainChart").style.display = "none";
 			}
-			
-			let ctx = document.getElementById('rainChart').getContext('2d');
-			rainChart = new Chart(ctx, {
-					type: 'bar',
-					data: {
-							//labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],							
-							labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
-							datasets: [{
-									label: 'Average Monthly Rainfall (mm)',
-									data: chartData,	
-									//data: [12, 19, 3, 5, 2, 3],
-									backgroundColor: [
-											//'rgba(255, 99, 132, 0.2)',
-											'rgba(54, 162, 235, 0.2)',
-											//'rgba(255, 206, 86, 0.2)',
-											//'rgba(75, 192, 192, 0.2)',
-											//'rgba(153, 102, 255, 0.2)',
-											//'rgba(255, 159, 64, 0.2)'
-									],
-									borderColor: [
-											//'rgba(255, 99, 132, 1)',
-											'rgba(54, 162, 235, 1)',
-											//'rgba(255, 206, 86, 1)',
-											//'rgba(75, 192, 192, 1)',
-											//'rgba(153, 102, 255, 1)',
-											//'rgba(255, 159, 64, 1)'
-									],
-									borderWidth: 1
-							}]
-					},
-					options: {
-							scales: {
-									y: {
-											//beginAtZero: true
-											min: 0
-									}
-							}
-					}
-			});
-			charts++;	
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
 				layersAdded++;
@@ -2272,7 +2294,7 @@ function weatherChartCelcius(isoa3Code) {
 	
 		$.ajax({
 		url: "libs/php/weatherChartCelcius.php",
-		type: "POST",
+		type: "GET",
 		dataType: "json",
 		data: {
 			countryCode: isoa3Code
@@ -2280,54 +2302,60 @@ function weatherChartCelcius(isoa3Code) {
 		success: function (result) {
 						
 			console.log('Celcius chart',result)
+
+			if(result.data != null) {
 			
-			let chartData = [];
-			let minTemp = 100;
-			
-			for (let c = 0; c < result.data.length; c++) {
-				chartData.push(result.data[c].data);
-				minTemp = minTemp < result.data[c].data ? minTemp : result.data[c].data;
+				let chartData = [];
+				let minTemp = 100;
+				
+				for (let c = 0; c < result.data.length; c++) {
+					chartData.push(result.data[c].data);
+					minTemp = minTemp < result.data[c].data ? minTemp : result.data[c].data;
+				}
+				
+				let ctx = document.getElementById('celciusChart').getContext('2d');
+				celciusChart = new Chart(ctx, {
+						type: 'bar',
+						data: {
+								//labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],						
+								labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
+								datasets: [{
+										label: 'Average Monthly Temperature (Celcius)',
+										data: chartData,	
+										//data: [12, 19, 3, 5, 2, 3],
+										backgroundColor: [
+												'rgba(255, 99, 132, 0.2)'
+												//'rgba(54, 162, 235, 0.2)',
+												//'rgba(255, 206, 86, 0.2)',
+												//'rgba(75, 192, 192, 0.2)',
+												//'rgba(153, 102, 255, 0.2)',
+												//'rgba(255, 159, 64, 0.2)'
+										],
+										borderColor: [
+												'rgba(255, 99, 132, 1)'
+												//'rgba(54, 162, 235, 1)',
+												//'rgba(255, 206, 86, 1)',
+												//'rgba(75, 192, 192, 1)',
+												//'rgba(153, 102, 255, 1)',
+												//'rgba(255, 159, 64, 1)'
+										],
+										borderWidth: 1
+								}]
+						},
+						options: {
+								scales: {
+										y: {
+												//beginAtZero: true
+												min: minTemp - 3
+										}
+								}
+						}
+				});
+				charts++;					
+			} else {
+				console.log("WB Temp error");
+				document.getElementById("celciusChart").style.display = "none";
 			}
-			
-			let ctx = document.getElementById('celciusChart').getContext('2d');
-			celciusChart = new Chart(ctx, {
-					type: 'bar',
-					data: {
-							//labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],						
-							labels: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'],
-							datasets: [{
-									label: 'Average Monthly Temperature (Celcius)',
-									data: chartData,	
-									//data: [12, 19, 3, 5, 2, 3],
-									backgroundColor: [
-											'rgba(255, 99, 132, 0.2)'
-											//'rgba(54, 162, 235, 0.2)',
-											//'rgba(255, 206, 86, 0.2)',
-											//'rgba(75, 192, 192, 0.2)',
-											//'rgba(153, 102, 255, 0.2)',
-											//'rgba(255, 159, 64, 0.2)'
-									],
-									borderColor: [
-											'rgba(255, 99, 132, 1)'
-											//'rgba(54, 162, 235, 1)',
-											//'rgba(255, 206, 86, 1)',
-											//'rgba(75, 192, 192, 1)',
-											//'rgba(153, 102, 255, 1)',
-											//'rgba(255, 159, 64, 1)'
-									],
-									borderWidth: 1
-							}]
-					},
-					options: {
-							scales: {
-									y: {
-											//beginAtZero: true
-											min: minTemp - 3
-									}
-							}
-					}
-			});
-			charts++;					
 		},
 		error: function (jqXHR, textStatus, errorThrown) {
 				layersAdded++;
