@@ -11,6 +11,6 @@
 
 	$cd_dbname = "companydirectory";
 	$cd_user = "root";
-	$cd_password = "";
+	$cd_password = "root";
 
 ?>
