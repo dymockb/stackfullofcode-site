@@ -13,4 +13,9 @@
 	$cd_user = "root";
 	$cd_password = "root";
 
+	// tso login:
+	// $cd_dbname = "companydirectory";
+	// $cd_user = "project2user";
+	// $cd_password = "p2user";
+
 ?>
