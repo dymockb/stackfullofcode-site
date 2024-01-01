@@ -96,11 +96,9 @@ let mymap = L.map("mapid", {
 });
 
 let baseMaps = {
-	"Atlas": l1
-	/*,
+	"Atlas": l1,
 	"Watercolour": l2,
 	"Terrain": l3
-	*/
 }
 
 new L.Control.Zoom({
@@ -127,8 +125,6 @@ L.easyButton('fa-info-circle', function() {
 	document.getElementById('infoSym').click();
 }).addTo(mymap);
 
-/* hide News and Weather patterns buttons
-
 L.easyButton('fa-rss-square', function() {
 
 	document.getElementById('newsArticles').click();
@@ -154,8 +150,6 @@ L.easyButton('fa-temperature-low', function() {
 
 	document.getElementById('weatherBtn').click();
 }).addTo(mymap);
-
-*/
 
 L.easyButton('fa-calendar-day', function() {
 	document.getElementById('holidayBtn').click();
@@ -299,8 +293,8 @@ function onLocationError(e) {
 
 	function recursiveRandom(countriesParam) {
 		let randCountry = countryBorders[Math.floor(Math.random()*countryBorders.length)];
-		//console.log(randCountry);
-		//console.log('random country: ', randCountry.name, randCountry.A3code);
+		console.log(randCountry);
+		console.log('random country: ', randCountry.name, randCountry.A3code);
 		if (randCountry.name == 'Kosovo' || randCountry.name == 'N. Cyprus' || randCountry.name == 'Somaliland' || randCountry.A3code == 'ESH'){
 			recursiveRandom(countriesParam);
 		} else {
@@ -318,7 +312,7 @@ function addOverlays(overlaysObj) {
 	
 	//if (layersAdded == totalLayers && overlayProbs == 0) {
 	if (layersAdded == totalLayers) {
-		let layersControl = L.control.layers({}, overlaysObj);//baseMaps
+		let layersControl = L.control.layers(baseMaps, overlaysObj);
 		layersControl.addTo(mymap);
 		controlsOnAndOff.push(layersControl);
 		
@@ -467,14 +461,14 @@ function placeBorder(isoa3Code){ // add 2 layers: selectedCountryLayer, wikiClus
 				if (isoa3Code == 'FJI') {
 					bounds._southWest.lng += 360;
 					fijiUpdated = true;
-					//console.log(bounds);
+					console.log(bounds);
 				}
 //			}
 //			if (!russiaUpdated) {
 				if (isoa3Code == 'RUS') {
 					bounds._southWest.lng += 360;
 					russiaUpdated = true;
-					//console.log(bounds);
+					console.log(bounds);
 				}
 //			}
 				
@@ -622,7 +616,7 @@ function openCageCapital(capital, isoA2){
 			isoA2: isoA2,
 		},
 		success: function(result) {
-			//console.log('cage capital', result);
+			console.log('cage capital', result);
 			if (!result.data.results) {
 				abortfunction('openCageCapital Error');
 			}
@@ -707,7 +701,7 @@ function worldBankInfo(isoa3Code){ //add 1 layer: capital marker, also get unspl
 		isoA3: isoa3Code
 	},
 	success: function(result) {
-		//console.log('world bank result:', result.data);
+		console.log('world bank result:', result.data);
 		let capital = result.data[1][0].capitalCity;
 		lat = result.data[1][0].latitude;
 		lng = result.data[1][0].longitude;
@@ -771,7 +765,7 @@ function unsplashImages(countryName) { //
 		qString: countryName
 	},
 	success: function(result) {
-		//console.log('images result:',result);
+		console.log('images result:',result);
 
 		for (let i = 0; i < result.data.length; i ++) {
 			
@@ -828,7 +822,7 @@ function getWebcams (isoA2code) { // add 1 layer: webcams
 		},
 		success: function (result) {
 			
-		//console.log('webcams', result.data);
+		console.log('webcams', result.data);
 		
 		if (result.data.length > 0) {
 		let webcamMarkers = [];
@@ -1322,7 +1316,7 @@ function getGeonamesCities(isoA2) { // 3 layers added: cityCirclesLayer (and Cit
 				weatherEasyButton = L.easyButton('fa-cloud-sun', function(e) {
 					//document.getElementById('weatherBtn').click();
 
-					//console.log(e._currentState);
+					console.log(e._currentState);
 					if (weatherOn == false) {
 						e._currentState.icon.firstChild.setAttribute('style', 'color: #ffd68b');
 						for (let i = 0; i < layersOnAndOff.length; i ++) {
@@ -1508,7 +1502,7 @@ function hereLandmarks(markerlist) { // called inside getGeonamesCities. 1 layer
 						landmarkList.push(marker);
 					
 					} else {
-						//console.log("NOTHING!!!");
+						console.log("NOTHING!!!");
 					}
 					
 				}	
@@ -1708,7 +1702,7 @@ function getWikipedia (currentCountry, bounds) { // called inside place border a
 				west: bounds['_southWest'].lng
 			},
 			success: function(result) {
-				//console.log('bbox result', result.data);
+				console.log('bbox result', result.data);
 				let listOfTitlesbbox = []
 
 				for (let oneArt = 0; oneArt < result.data.geonames.length; oneArt++) {
@@ -1821,7 +1815,7 @@ function countryBasics(isoA2){ // add 1 layer: capitalMarker; call getXR & openC
 			countryCode: isoA2
 		},
 		success: function (result) {
-			//console.log('geonames CountryInfo result',result.data);
+			console.log('geonames CountryInfo result',result.data);
 			document.getElementById("population").innerHTML = parseInt(result.data.geonames[0].population).toLocaleString('en-US');
 			document.getElementById("currency").innerHTML = result.data.geonames[0].currencyCode;
 			document.getElementById("population").innerHTML = parseInt(result.data.geonames[0].population).toLocaleString('en-US');
@@ -1842,7 +1836,7 @@ function countryBasics(isoA2){ // add 1 layer: capitalMarker; call getXR & openC
 					countryCode: isoA2
 				},
 				success: function (result) {
-					//console.log('restcountries result',result.data);			
+					console.log('restcountries result',result.data);			
 					let nativeName = result.data[0];
 					//.name.nativeName.official
 					let currencyName = result.data[0].currencies[currency].name;						
@@ -1882,7 +1876,7 @@ function getTimezone (lat,lng) {
 		},
 		success: function(result) {
 			
-			//console.log('timezone result', result.data);
+			console.log('timezone result', result.data);
 			//document.getElementById('timezone').innerHTML = result.data.timezoneId;
 			document.getElementById('localTime').innerHTML = result.data.time.slice(-5);
 			
@@ -1948,7 +1942,7 @@ function getNews(isoA2code) {
 			countryCode: isoA2code
 		},
 	success: function (result) {
-		//console.log('news result',result);
+		console.log('news result',result);
 				
 		let translatedObjs = []
 		let countOfArticles = 5;
@@ -2032,7 +2026,7 @@ function getNews(isoA2code) {
 						},
 						success: function (result) {
 							
-						//console.log('translate result', result);
+						console.log('translate result', result);
 						
 						if (result.data.ok == true) {
 						//if (result.data.code == 200) {
@@ -2072,7 +2066,7 @@ function getNews(isoA2code) {
 						
 						translatedObjs.push(translatedObj);
 						if (translatedObjs[0].EN_source == true) {
-							//console.log('english text');
+							console.log('english text');
 							for (let c = 0; c < countOfArticles; c++){
 								createAccordianArticle(result.data[c]);
 								if (c == countOfArticles-1) {
@@ -2307,7 +2301,7 @@ function weatherChartCelcius(isoa3Code) {
 		},
 		success: function (result) {
 						
-			//console.log('Celcius chart',result)
+			console.log('Celcius chart',result)
 
 			if(result.data != null) {
 			
@@ -2390,7 +2384,7 @@ function getHolidays(isoA2code){
 			currentYear: year
 		},
 		success: function (result) {
-			//console.log('holidays', result.data);			
+			console.log('holidays', result.data);			
 			if (result.data.status != 404 ) {
 				
 			
@@ -2578,7 +2572,7 @@ function getHolidays(isoA2code){
 				
 				//works when selectable is true
 				select: function(start, end, allDay) {
-					//console.log('something');
+					console.log('something');
 				},
 				events: holidayDays,				
 				droppable: false, // this allows things to be dropped onto the calendar !!!
@@ -2690,7 +2684,7 @@ function getXR(currency){
 			symbol: currency
 		},
 		success: function (result) {
-			//console.log('exchange rate result', result);
+			console.log('exchange rate result', result);
 
 			let currency = result.symbol;
 			document.getElementById("exchangeRate").innerHTML = result.data[1].toFixed(2) + ' ' + currency + ' = 1 USD';
@@ -2736,8 +2730,8 @@ function displayCountry(isoa3Code) {
 	addOverlays(overlaysObj);
 	resetSlideShow();
 	 if (charts > 0) {
-		//rainChart.destroy();
-		//celciusChart.destroy(); 
+		rainChart.destroy();
+		celciusChart.destroy(); 
 	 }
 	
 	selectDropDown['value'] = isoa3Code;
@@ -2771,9 +2765,9 @@ function displayCountry(isoa3Code) {
 	
 
 	getHolidays(isoA2);
-	//weatherChartCelcius(isoa3Code);
-	//weatherChartRain(isoa3Code);
-	//getNews(isoA2);
+	weatherChartCelcius(isoa3Code);
+	weatherChartRain(isoa3Code);
+	getNews(isoA2);
 	unsplashImages(currentCountry);
 
 } // end of DISPLAY COUNTRY 
@@ -2905,7 +2899,7 @@ window.onload = (event) => {
 	if ($('#preloader').length) {
 		$('#preloader').delay(1000).fadeOut('slow', function () {
 			$(this).remove();
-			//console.log("Window loaded", event);
+			console.log("Window loaded", event);
 		
 			$(document).ready(function () {
 				
@@ -2972,7 +2966,7 @@ window.onload = (event) => {
 				
 				*/
 				function recursiveLoad () {
-					//console.log('load attempt'); 
+					console.log('load attempt'); 
 					 
 					$.ajax({
 					url: "libs/php/getCountryBorders.php",
@@ -3217,7 +3211,7 @@ function addWeatherLayer(listOfCities) {
 			checklat = lat;
 			checklng = lng
 			
-			//console.log('send to php', lat, lng);
+			console.log('send to php', lat, lng);
 			
 			counter ++;
 			
@@ -3230,7 +3224,7 @@ function addWeatherLayer(listOfCities) {
 					locationLng: lng,
 				},
 				success: function(result) {
-					//console.log('weather', result.data);
+					console.log('weather', result.data);
 
 					let weatherMarkers = []
 										
@@ -3271,7 +3265,7 @@ function addWeatherLayer(listOfCities) {
 			
 		} else {
 			
-				//console.log('allWM',allWeatherMarkers);
+				console.log('allWM',allWeatherMarkers);
 
 				let weatherMarkersLayerGroup = L.layerGroup();
 		
@@ -3299,12 +3293,12 @@ function addWeatherLayer(listOfCities) {
 							let updatedHeat = e.target.options.data;
 
 							if (e.target.options.maxtemp < 25) {
-								//console.log('max temp less than 25');	
+								console.log('max temp less than 25');	
 								let color = 'orange';							
 								heatmapData['data'] = updatedHeat;
 								
 							} else if (e.target.options.maxtemp < 35) {
-								//console.log('max temp less than 35');
+								console.log('max temp less than 35');
 								let color = 'red';							
 								heatmapData['data'] = updatedHeat;
 
@@ -3312,7 +3306,7 @@ function addWeatherLayer(listOfCities) {
 
 						})
 						cityWeatherTimeMarkers.on('remove', function () {
-							//console.log('layer removed');
+							console.log('layer removed');
 						})
 					
 					};
@@ -3321,7 +3315,7 @@ function addWeatherLayer(listOfCities) {
 					
 					};
 					
-					//console.log('wm3',weatherMarkersLayerGroup);
+					console.log('wm3',weatherMarkersLayerGroup);
 
 					let sliderControl = L.control.sliderControl({
 						position: "topright", 
@@ -3336,7 +3330,7 @@ function addWeatherLayer(listOfCities) {
 					//And initialize the slider
 					sliderControl.startSlider();	
 					
-					//console.log('ll', checklat,checklng);
+					console.log('ll', checklat,checklng);
 					
 		}
 	}

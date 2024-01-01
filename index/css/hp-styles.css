@@ -13,6 +13,7 @@
   --logo-jupyter: url("../assets/img/logos/jupyter.svg");
 	--logo-mariadb: url("../assets/img/logos/mariadb.svg");
   --logo-matplotlib: url("../assets/img/logos/matplotlib.svg");
+  --logo-mongodb: url("../assets/img/logos/mongodb-icon.svg");
 	--logo-nodejs: url("../assets/img/logos/nodejs.svg");
 	--logo-numpy: url("../assets/img/logos/numpy.svg");
 	--logo-php-icon: url("../assets/img/logos/php-icon.svg");
@@ -22,6 +23,7 @@
   --logo-scikit-learn: url("../assets/img/logos/scikit-learn.svg");
   --logo-semantic-ui: url("../assets/img/logos/semantic-ui.svg");
   --logo-sql-database-generic: url("../assets/img/logos/sql-database-generic.svg");
+  --logo-vuejs: url("../assets/img/logos/vue-js.svg");
 
   --icon-colours: invert(0%);
 
@@ -190,6 +192,7 @@
 .icon-jupyter { background-image: var(--logo-jupyter) }
 .icon-mariadb {	background-image: var(--logo-mariadb) }
 .icon-matplotlib {	background-image: var(--logo-matplotlib) }
+.icon-mongodb {	background-image: var(--logo-mongodb) }
 .icon-nodejs {	background-image: var(--logo-nodejs) }
 .icon-numpy {	background-image: var(--logo-numpy) }
 .icon-php-icon {	background-image: var(--logo-php-icon) }
@@ -199,6 +202,7 @@
 .icon-semantic-ui {	background-image: var(--logo-semantic-ui) }
 .icon-scikit-learn {	background-image: var(--logo-scikit-learn) }
 .icon-sql-database-generic {	background-image: var(--logo-sql-database-generic) }
+.icon-vuejs {	background-image: var(--logo-vuejs) }
 
 
 .framework-link {
@@ -214,12 +218,20 @@
 	width: calc(2rem + 5.7vw);
 	margin-right: 1rem;
   filter: var(--icon-colours);
+  background-size: 80% 80%;
+	background-repeat: no-repeat;
+	background-position: center;
+	border-radius: 10%;
+	/*  transition: background-image 1s; */
+	transition: filter 1s;
+	background-color: white;
 }
 
 .cert-item {
 	display: flex;
 	align-items: center;
 	flex-wrap: nowrap;
+  margin-bottom: 1rem;
 }
 
 .framework-icon {
